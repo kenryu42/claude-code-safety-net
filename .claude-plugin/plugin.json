@@ -1,0 +1,23 @@
+{
+  "name": "safety-net",
+  "version": "0.1.0",
+  "description": "Block destructive git and filesystem commands in Claude Code",
+  "author": {
+    "name": "J Liew",
+    "email": "jliew@420024lab.com"
+  },
+  "homepage": "https://github.com/kenryu42/claude-code-safety-net",
+  "repository": "https://github.com/kenryu42/claude-code-safety-net.git",
+  "license": "MIT",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "git",
+    "safety net",
+    "destructive",
+    "command",
+    "guard",
+    "hook",
+    "plugin"
+  ]
+}

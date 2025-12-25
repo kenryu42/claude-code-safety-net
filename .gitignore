@@ -1,0 +1,26 @@
+# --- Project Specific ---
+.claude/
+log*
+plan-*.md
+*-plan-*.md
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Tools & Linters ---
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# --- Build Artifacts ---
+*.egg-info/
+dist/
+build/
+
+# --- Virtual Environments ---
+.venv/
+env/
+venv/
+ENV/

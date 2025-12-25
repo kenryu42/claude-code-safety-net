@@ -1,0 +1,22 @@
+{
+  "name": "dev",
+  "metadata": {
+    "description": "Development marketplace for safety net plugin",
+    "version": "1.0.0"
+  },
+  "owner": {
+    "name": "J Liew",
+    "email": "jliew@420024lab.com"
+  },
+  "plugins": [
+    {
+      "name": "safety-net",
+      "description": "Block destructive git and filesystem commands in Claude Code",
+      "source": "./",
+      "author": {
+        "name": "J Liew",
+        "email": "jliew@420024lab.com"
+      }
+    }
+  ]
+}
