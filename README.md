@@ -11,7 +11,20 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
 
 We learned the [hard way](https://www.reddit.com/r/ClaudeAI/comments/1pgxckk/claude_cli_deleted_my_entire_home_directory_wiped/) that instructions aren't enough to keep AI agents in check.
 After Claude Code silently wiped out hours of progress with a single `rm -rf ~/` or `git checkout --`, we were reminded that **"soft"** rules in an `CLAUDE.md` or `AGENTS.md` file cannot replace **hard** technical constraints.
-We’ve now moved from documentation to mechanical enforcement, using a dedicated hook to programmatically prevent agents from running destructive commands.
+We've now moved from documentation to mechanical enforcement, using a dedicated hook to programmatically prevent agents from running destructive commands.
+
+## Why Hooks Instead of settings.json?
+
+Claude Code's `.claude/settings.json` supports deny rules for Bash commands, but these use [simple prefix matching](https://code.claude.com/docs/en/iam#tool-specific-permission-rules)—not pattern matching or semantic analysis. This makes them insufficient for nuanced safety rules:
+
+| Limitation | Example |
+|------------|---------|
+| Can't distinguish safe vs. dangerous variants | `Bash(git checkout)` blocks both `git checkout -b new-branch` (safe) and `git checkout -- file` (dangerous) |
+| Can't parse flags semantically | `Bash(rm -rf)` blocks `rm -rf /tmp/cache` (safe) but allows `rm -r -f /` (dangerous, different flag order) |
+| Can't detect shell wrappers | `sh -c "rm -rf /"` bypasses a `Bash(rm)` deny rule entirely |
+| Can't analyze interpreter one-liners | `python -c 'os.system("rm -rf /")'` executes without matching any rm rule |
+
+This hook provides **semantic command analysis**: it parses arguments, understands flag combinations, recursively analyzes shell wrappers, and distinguishes safe operations (temp directories, within cwd) from dangerous ones.
 
 ## Quick Start
 
