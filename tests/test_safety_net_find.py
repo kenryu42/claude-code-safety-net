@@ -16,6 +16,9 @@ class FindDeleteTests(SafetyNetTestCase):
     def test_find_exec_echo_delete_allowed(self) -> None:
         self._assert_allowed("find . -exec echo -delete \\; -print")
 
+    def test_find_exec_plus_terminator_mentions_delete_allowed(self) -> None:
+        self._assert_allowed("find . -exec echo -delete + -print")
+
     def test_busybox_find_delete_blocked(self) -> None:
         self._assert_blocked(
             'busybox find . -name "*.pyc" -delete',
