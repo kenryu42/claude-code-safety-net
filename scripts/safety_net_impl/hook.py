@@ -16,7 +16,7 @@ from os import getenv
 
 from .rules_git import _analyze_git
 from .rules_rm import _analyze_rm
-from .shell import _shlex_split, _split_shell_commands, _strip_wrappers
+from .shell import _shlex_split, _short_opts, _split_shell_commands, _strip_wrappers
 
 _MAX_RECURSION_DEPTH = 5
 
@@ -24,6 +24,16 @@ _STRICT_SUFFIX = " [strict mode - disable with: unset SAFETY_NET_STRICT]"
 
 _REASON_FIND_DELETE = (
     "find -delete permanently deletes matched files. Use -print first."
+)
+
+_REASON_XARGS_RM_RF = (
+    "xargs can feed arbitrary input to rm -rf. "
+    "List files first, then delete individually."
+)
+
+_REASON_PARALLEL_RM_RF = (
+    "parallel can feed arbitrary input to rm -rf. "
+    "List files first, then delete individually."
 )
 
 
@@ -156,6 +166,287 @@ def _extract_pythonish_code_arg(tokens: list[str]) -> str | None:
     return None
 
 
+def _rm_has_recursive_force(tokens: list[str]) -> bool:
+    """Return True if the rm invocation is effectively `rm -rf`."""
+
+    if not tokens:
+        return False
+
+    opts: list[str] = []
+    for tok in tokens[1:]:
+        if tok == "--":
+            break
+        opts.append(tok)
+
+    opts_lower = [t.lower() for t in opts]
+    short = _short_opts(opts)
+    recursive = "--recursive" in opts_lower or "r" in short or "R" in short
+    force = "--force" in opts_lower or "f" in short
+    return recursive and force
+
+
+def _extract_xargs_child_command(tokens: list[str]) -> list[str] | None:
+    """Return the command tokens `xargs` will execute, or None if unspecified.
+
+    This is a best-effort scan over xargs options to find where the child command
+    starts. It is intentionally conservative and does not attempt to fully model
+    platform-specific xargs behavior.
+    """
+
+    if not tokens or _normalize_cmd_token(tokens[0]) != "xargs":
+        return None
+
+    consumes_value = {
+        "-a",
+        "-I",
+        "-J",
+        "-L",
+        "-l",
+        "-n",
+        "-R",
+        "-S",
+        "-s",
+        "-P",
+        "-d",
+        "-E",
+        "--arg-file",
+        "--delimiter",
+        "--eof",
+        "--max-args",
+        "--max-lines",
+        "--max-procs",
+        "--max-chars",
+        "--process-slot-var",
+    }
+
+    i = 1
+    while i < len(tokens):
+        tok = tokens[i]
+
+        if tok == "--":
+            i += 1
+            break
+        if not tok.startswith("-") or tok == "-":
+            break
+
+        # Long options (best-effort).
+        if tok.startswith("--"):
+            if tok in consumes_value:
+                i += 2
+                continue
+            for opt in (
+                "--arg-file=",
+                "--delimiter=",
+                "--max-args=",
+                "--max-lines=",
+                "--max-procs=",
+                "--max-chars=",
+                "--process-slot-var=",
+                "--eof=",
+            ):
+                if tok.startswith(opt):
+                    i += 1
+                    break
+            else:
+                i += 1
+            continue
+
+        # Short options.
+        if tok == "-i":
+            # -i enables replacement (optional attached arg), but does NOT consume
+            # the next token in the common form `xargs -i cmd ...`.
+            i += 1
+            continue
+        if tok in consumes_value:
+            i += 2
+            continue
+
+        # Common attached forms.
+        if tok.startswith("-I") and len(tok) > 2:
+            i += 1
+            continue
+        if tok.startswith("-i") and len(tok) > 2:
+            i += 1
+            continue
+        if tok.startswith("-n") and len(tok) > 2 and tok[2:].isdigit():
+            i += 1
+            continue
+        if tok.startswith("-P") and len(tok) > 2 and tok[2:].isdigit():
+            i += 1
+            continue
+        if tok.startswith("-L") and len(tok) > 2 and tok[2:].isdigit():
+            i += 1
+            continue
+        if tok.startswith("-R") and len(tok) > 2 and tok[2:].isdigit():
+            i += 1
+            continue
+        if tok.startswith("-S") and len(tok) > 2 and tok[2:].isdigit():
+            i += 1
+            continue
+        if tok.startswith("-s") and len(tok) > 2 and tok[2:].isdigit():
+            i += 1
+            continue
+        if tok.startswith("-a") and len(tok) > 2:
+            i += 1
+            continue
+        if tok.startswith("-d") and len(tok) > 2:
+            i += 1
+            continue
+        if tok.startswith("-E") and len(tok) > 2:
+            i += 1
+            continue
+        if tok.startswith("-J") and len(tok) > 2:
+            i += 1
+            continue
+
+        # Unknown short option; best-effort skip.
+        i += 1
+
+    if i >= len(tokens):
+        return None
+    return tokens[i:]
+
+
+def _xargs_replacement_tokens(tokens: list[str]) -> set[str]:
+    """Return replacement tokens used by xargs (-I/-i/-J/--replace).
+
+    If xargs is not in replacement mode, returns an empty set.
+    """
+
+    if not tokens or _normalize_cmd_token(tokens[0]) != "xargs":
+        return set()
+
+    repl: set[str] = set()
+
+    i = 1
+    while i < len(tokens):
+        tok = tokens[i]
+        if tok == "--":
+            break
+        if not tok.startswith("-") or tok == "-":
+            break
+
+        if tok in {"-I", "-J"}:
+            if i + 1 < len(tokens):
+                repl.add(tokens[i + 1])
+                i += 2
+                continue
+            break
+
+        if tok.startswith("-I") and len(tok) > 2:
+            repl.add(tok[2:])
+            i += 1
+            continue
+        if tok.startswith("-J") and len(tok) > 2:
+            repl.add(tok[2:])
+            i += 1
+            continue
+
+        if tok == "-i":
+            # -i enables replacement mode with the default token "{}".
+            repl.add("{}")
+            i += 1
+            continue
+        if tok.startswith("-i") and len(tok) > 2:
+            repl.add(tok[2:])
+            i += 1
+            continue
+
+        if tok in {"--replace", "--replace=", "--replace-str"}:
+            # Treat as replacement mode; default replacement is "{}".
+            repl.add("{}")
+            i += 1
+            continue
+        if tok.startswith("--replace="):
+            repl.add(tok.split("=", 1)[1] or "{}")
+            i += 1
+            continue
+
+        # Other options; we don't need to fully parse them here.
+        i += 1
+
+    return repl
+
+
+def _extract_parallel_template_and_args(
+    tokens: list[str],
+) -> tuple[list[str], list[str], bool] | None:
+    """Return (template_tokens, args, args_dynamic) for GNU parallel.
+
+    When `:::` is present, args are the tokens after it.
+    When `:::` is absent, parallel reads args from stdin (args_dynamic=True).
+    """
+
+    if not tokens or _normalize_cmd_token(tokens[0]) != "parallel":
+        return None
+
+    args_dynamic = ":::" not in tokens
+    if args_dynamic:
+        marker = len(tokens)
+        args: list[str] = []
+    else:
+        marker = tokens.index(":::")
+        args = tokens[marker + 1 :]
+
+    i = 1
+    consumes_value = {
+        "-j",
+        "--jobs",
+        "-S",
+        "--sshlogin",
+        "--sshloginfile",
+        "--results",
+        "--joblog",
+        "--workdir",
+        "--tmpdir",
+        "--tempdir",
+        "--tagstring",
+    }
+    while i < marker:
+        tok = tokens[i]
+        if tok == "--":
+            i += 1
+            break
+        if not tok.startswith("-") or tok == "-":
+            break
+
+        # Best-effort handling for options that consume a value.
+        if tok in consumes_value:
+            i += 2
+            continue
+
+        if tok.startswith("--"):
+            for opt in (
+                "--jobs=",
+                "--sshlogin=",
+                "--sshloginfile=",
+                "--results=",
+                "--joblog=",
+                "--workdir=",
+                "--tmpdir=",
+                "--tempdir=",
+                "--tagstring=",
+            ):
+                if tok.startswith(opt):
+                    i += 1
+                    break
+            else:
+                i += 1
+            continue
+
+        if tok.startswith("-j") and len(tok) > 2:
+            i += 1
+            continue
+        if tok.startswith("-S") and len(tok) > 2:
+            i += 1
+            continue
+
+        i += 1
+
+    template = tokens[i:marker]
+    return template, args, args_dynamic
+
+
 def _redact_secrets(text: str) -> str:
     # Heuristic redaction: do not echo likely secrets back into logs.
     redacted = text
@@ -170,7 +461,17 @@ def _redact_secrets(text: str) -> str:
 
     # Authorization headers.
     redacted = re.sub(
-        r"(?i)(authorization\s*:\s*)([^\s]+)",
+        r"(?i)([\"']\s*authorization\s*:\s*)([^\"']+)([\"'])",
+        r"\1<redacted>\3",
+        redacted,
+    )
+    redacted = re.sub(
+        r"(?i)(authorization\s*:\s*)([^\s\"']+)(\s+[^\s\"']+)",
+        r"\1<redacted>",
+        redacted,
+    )
+    redacted = re.sub(
+        r"(?i)(authorization\s*:\s*)([^\s\"']+)",
         r"\1<redacted>",
         redacted,
     )
@@ -223,9 +524,7 @@ def _dangerous_in_text(text: str) -> str | None:
             "Use --force-with-lease if necessary."
         )
     # Preserve case for -D vs -d (git treats these as different options).
-    if re.search(r"(?i)\bgit\s+branch\b", original) and re.search(
-        r"\s-D\b", original
-    ):
+    if re.search(r"(?i)\bgit\s+branch\b", original) and re.search(r"\s-D\b", original):
         return "git branch -D force-deletes without merge check. Use -d for safety."
     if "git stash drop" in t:
         return (
@@ -317,6 +616,235 @@ def _analyze_segment(
                 )
 
     allow_tmpdir_var = not re.search(r"\bTMPDIR=", segment)
+
+    if head == "xargs":
+        child = _extract_xargs_child_command(tokens)
+        if child is None:
+            return None
+        child = _strip_wrappers(child)
+        if not child:
+            return None
+
+        child_head = _normalize_cmd_token(child[0])
+
+        # xargs feeds dynamic input into the child command; do not trust any rm
+        # targets visible on the command line.
+        if child_head == "rm" and _rm_has_recursive_force(["rm", *child[1:]]):
+            return segment, _REASON_XARGS_RM_RF
+        if child_head == "busybox" and len(child) >= 3:
+            applet = _normalize_cmd_token(child[1])
+            if applet == "rm" and _rm_has_recursive_force(["rm", *child[2:]]):
+                return segment, _REASON_XARGS_RM_RF
+
+        if child_head in {"bash", "sh", "zsh", "dash", "ksh"}:
+            cmd_str = _extract_dash_c_arg(child)
+            if cmd_str is not None:
+                repl_tokens = _xargs_replacement_tokens(tokens)
+                if repl_tokens and cmd_str.strip() in repl_tokens:
+                    return (
+                        segment,
+                        (
+                            f"xargs {child[0]} -c can execute arbitrary commands "
+                            "from input."
+                        ),
+                    )
+                if repl_tokens and any(t and t in cmd_str for t in repl_tokens):
+                    # xargs replacement mode substitutes dynamic input into the
+                    # command string; do not trust placeholder-based rm -rf.
+                    reason = _dangerous_in_text(cmd_str)
+                    if reason and reason.startswith("rm -rf"):
+                        return segment, _REASON_XARGS_RM_RF
+                if depth >= _MAX_RECURSION_DEPTH:
+                    return segment, "Command analysis recursion limit reached."
+                analyzed = _analyze_command(
+                    cmd_str,
+                    depth=depth + 1,
+                    cwd=cwd,
+                    strict=strict,
+                )
+                if analyzed:
+                    return analyzed
+            elif _has_shell_dash_c(child):
+                return (
+                    segment,
+                    f"xargs {child[0]} -c can execute arbitrary commands from input.",
+                )
+
+        if child_head == "busybox" and len(child) >= 2:
+            applet = _normalize_cmd_token(child[1])
+            if applet == "rm":
+                reason = _analyze_rm(
+                    ["rm", *child[2:]],
+                    allow_tmpdir_var=allow_tmpdir_var,
+                    cwd=cwd,
+                    strict=strict,
+                )
+                return (segment, reason) if reason else None
+            if applet == "find":
+                if _find_has_delete(child[2:]):
+                    return segment, _REASON_FIND_DELETE
+
+        if child_head == "git":
+            reason = _analyze_git(["git", *child[1:]])
+            return (segment, reason) if reason else None
+        if child_head == "rm":
+            reason = _analyze_rm(
+                ["rm", *child[1:]],
+                allow_tmpdir_var=allow_tmpdir_var,
+                cwd=cwd,
+                strict=strict,
+            )
+            return (segment, reason) if reason else None
+        if child_head == "find":
+            if _find_has_delete(child[1:]):
+                return segment, _REASON_FIND_DELETE
+
+        return None
+
+    if head == "parallel":
+        extracted = _extract_parallel_template_and_args(tokens)
+        if extracted is None:
+            return None
+
+        template, args_after_marker, args_dynamic = extracted
+
+        template = _strip_wrappers(template)
+        if not template:
+            if not args_dynamic:
+                # `parallel ::: <cmd> ...` runs each argument as a full command.
+                for cmd_str in args_after_marker:
+                    if depth >= _MAX_RECURSION_DEPTH:
+                        return segment, "Command analysis recursion limit reached."
+                    analyzed = _analyze_command(
+                        cmd_str,
+                        depth=depth + 1,
+                        cwd=cwd,
+                        strict=strict,
+                    )
+                    if analyzed:
+                        return analyzed
+            return None
+
+        template_head = _normalize_cmd_token(template[0])
+        if template_head in {"bash", "sh", "zsh", "dash", "ksh"}:
+            cmd_str = _extract_dash_c_arg(template)
+            if cmd_str is not None:
+                # If the command string uses replacement placeholders, model
+                # the substitution when args are known; otherwise deny.
+                if "{}" in cmd_str:
+                    if args_dynamic:
+                        if cmd_str.strip() == "{}":
+                            return (
+                                segment,
+                                (
+                                    f"parallel {template[0]} -c can execute arbitrary "
+                                    "commands from input."
+                                ),
+                            )
+                        reason = _dangerous_in_text(cmd_str)
+                        if reason and reason.startswith("rm -rf"):
+                            return segment, _REASON_PARALLEL_RM_RF
+                    elif args_after_marker:
+                        for arg in args_after_marker:
+                            if depth >= _MAX_RECURSION_DEPTH:
+                                return (
+                                    segment,
+                                    "Command analysis recursion limit reached.",
+                                )
+                            analyzed = _analyze_command(
+                                cmd_str.replace("{}", arg),
+                                depth=depth + 1,
+                                cwd=cwd,
+                                strict=strict,
+                            )
+                            if analyzed:
+                                return analyzed
+                        return None
+                if depth >= _MAX_RECURSION_DEPTH:
+                    return segment, "Command analysis recursion limit reached."
+                analyzed = _analyze_command(
+                    cmd_str,
+                    depth=depth + 1,
+                    cwd=cwd,
+                    strict=strict,
+                )
+                if analyzed:
+                    return analyzed
+            elif _has_shell_dash_c(template):
+                return (
+                    segment,
+                    (
+                        f"parallel {template[0]} -c can execute arbitrary commands "
+                        "from input."
+                    ),
+                )
+
+        if template_head == "busybox" and len(template) >= 2:
+            applet = _normalize_cmd_token(template[1])
+            if applet == "rm":
+                rm_template = ["rm", *template[2:]]
+
+                if args_dynamic and _rm_has_recursive_force(rm_template):
+                    return segment, _REASON_PARALLEL_RM_RF
+
+                rm_templates: list[list[str]] = [rm_template]
+                if args_after_marker:
+                    if any("{}" in tok for tok in rm_template):
+                        rm_templates = [
+                            [tok.replace("{}", arg) for tok in rm_template]
+                            for arg in args_after_marker
+                        ]
+                    else:
+                        rm_templates = [
+                            [*rm_template, arg] for arg in args_after_marker
+                        ]
+
+                for rm_tokens in rm_templates:
+                    reason = _analyze_rm(
+                        rm_tokens,
+                        allow_tmpdir_var=allow_tmpdir_var,
+                        cwd=cwd,
+                        strict=strict,
+                    )
+                    if reason:
+                        return segment, reason
+                return None
+            if applet == "find":
+                if _find_has_delete(template[2:]):
+                    return segment, _REASON_FIND_DELETE
+
+        if template_head == "git":
+            reason = _analyze_git(["git", *template[1:]])
+            return (segment, reason) if reason else None
+        if template_head == "rm":
+            if args_dynamic and _rm_has_recursive_force(["rm", *template[1:]]):
+                return segment, _REASON_PARALLEL_RM_RF
+
+            templates: list[list[str]] = [template]
+            if args_after_marker:
+                if any("{}" in tok for tok in template):
+                    templates = [
+                        [tok.replace("{}", arg) for tok in template]
+                        for arg in args_after_marker
+                    ]
+                else:
+                    templates = [[*template, arg] for arg in args_after_marker]
+
+            for rm_tokens in templates:
+                reason = _analyze_rm(
+                    ["rm", *rm_tokens[1:]],
+                    allow_tmpdir_var=allow_tmpdir_var,
+                    cwd=cwd,
+                    strict=strict,
+                )
+                if reason:
+                    return segment, reason
+            return None
+        if template_head == "find":
+            if _find_has_delete(template[1:]):
+                return segment, _REASON_FIND_DELETE
+
+        return None
 
     if head == "busybox" and len(tokens) >= 2:
         applet = _normalize_cmd_token(tokens[1])
