@@ -7,7 +7,11 @@ import shlex
 from unittest import mock
 
 from scripts import safety_net
-from scripts.safety_net_impl.hook import _segment_changes_cwd
+from scripts.safety_net_impl.hook import (
+    _analyze_segment,
+    _segment_changes_cwd,
+    _xargs_replacement_tokens,
+)
 
 from .safety_net_test_base import SafetyNetTestCase
 
@@ -186,6 +190,9 @@ class EdgeCasesTests(SafetyNetTestCase):
                 "shell -c wrapper",
             )
 
+    def test_non_strict_bash_c_without_arg_allows(self) -> None:
+        self._assert_allowed("bash -c")
+
     def test_bash_double_dash_does_not_treat_dash_c_as_wrapper_allowed(self) -> None:
         self._assert_allowed("bash -- -c 'echo ok'")
 
@@ -208,6 +215,26 @@ class EdgeCasesTests(SafetyNetTestCase):
         self._assert_blocked(
             "find . -delete 'unterminated",
             "find -delete",
+        )
+
+    def test_non_strict_unparseable_non_dangerous_allows(self) -> None:
+        self._assert_allowed("echo 'unterminated")
+
+    def test_non_strict_unparseable_git_restore_help_allows(self) -> None:
+        self._assert_allowed("git restore --help 'unterminated")
+
+    def test_non_strict_unparseable_git_checkout_dash_dash_still_blocked_by_heuristic(
+        self,
+    ) -> None:
+        self._assert_blocked(
+            "git checkout -- file.txt 'unterminated",
+            "git checkout --",
+        )
+
+    def test_non_strict_unparseable_git_restore_blocked_by_heuristic(self) -> None:
+        self._assert_blocked(
+            "git restore file.txt 'unterminated",
+            "git restore discards",
         )
 
     def test_deny_output_redacts_url_credentials(self) -> None:
@@ -275,6 +302,21 @@ class EdgeCasesTests(SafetyNetTestCase):
             "git reset --hard",
         )
 
+    def test_command_substitution_git_reset_hard_blocked(self) -> None:
+        self._assert_blocked("echo $(git reset --hard )", "git reset --hard")
+
+    def test_command_substitution_find_delete_blocked(self) -> None:
+        self._assert_blocked("echo $(find . -delete )", "find -delete")
+
+    def test_command_substitution_rm_f_allowed(self) -> None:
+        self._assert_allowed("echo $(rm -f /tmp/a )")
+
+    def test_command_substitution_git_status_allowed(self) -> None:
+        self._assert_allowed("echo $(git status )")
+
+    def test_command_substitution_find_without_delete_allowed(self) -> None:
+        self._assert_allowed("echo $(find . -name foo )")
+
     def test_xargs_rm_rf_blocked(self) -> None:
         self._assert_blocked(
             "echo / | xargs rm -rf",
@@ -299,6 +341,86 @@ class EdgeCasesTests(SafetyNetTestCase):
             "echo / | xargs -i rm -rf",
             "rm -rf",
         )
+
+    def test_xargs_attached_n_option_still_blocks_child_rm(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs -n1 rm -rf",
+            "rm -rf",
+        )
+
+    def test_xargs_attached_P_option_still_blocks_child_rm(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs -P2 rm -rf",
+            "rm -rf",
+        )
+
+    def test_xargs_long_opt_equals_still_blocks_child_rm(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs --arg-file=/tmp/paths rm -rf",
+            "rm -rf",
+        )
+
+    def test_xargs_replace_long_option_enables_placeholder_analysis(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs --replace bash -c 'rm -rf {}'",
+            "xargs",
+        )
+
+    def test_xargs_replace_long_option_with_custom_token_enables_placeholder_analysis(
+        self,
+    ) -> None:
+        self._assert_blocked(
+            "echo / | xargs --replace=FOO bash -c 'rm -rf FOO'",
+            "xargs",
+        )
+
+    def test_xargs_replace_long_option_empty_value_defaults_to_braces(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs --replace= bash -c 'rm -rf {}'",
+            "xargs",
+        )
+
+    def test_xargs_only_options_without_child_command_allowed(self) -> None:
+        self._assert_allowed("echo ok | xargs -n1")
+
+    def test_xargs_attached_i_option_still_blocks_child_rm(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs -i{} rm -rf",
+            "rm -rf",
+        )
+
+    def test_xargs_replacement_token_parsing_ignores_unknown_options(self) -> None:
+        self._assert_blocked(
+            "echo / | xargs --replace -t bash -c 'rm -rf {}'",
+            "xargs",
+        )
+
+    def test_xargs_replace_I_bash_c_script_is_input_denied_safe_input(self) -> None:
+        self._assert_blocked(
+            "echo ok | xargs -I{} bash -c {}",
+            "arbitrary commands",
+        )
+
+    def test_xargs_bash_c_without_arg_denied_safe_input(self) -> None:
+        self._assert_blocked(
+            "echo ok | xargs bash -c",
+            "arbitrary commands",
+        )
+
+    def test_xargs_bash_c_script_analyzed_blocks(self) -> None:
+        self._assert_blocked(
+            "echo ok | xargs bash -c 'git reset --hard'",
+            "git reset --hard",
+        )
+
+    def test_xargs_child_wrappers_only_allowed(self) -> None:
+        self._assert_allowed("echo ok | xargs sudo --")
+
+    def test_xargs_busybox_rm_non_destructive_allowed(self) -> None:
+        self._assert_allowed("echo ok | xargs busybox rm -f /tmp/test")
+
+    def test_xargs_find_without_delete_allowed(self) -> None:
+        self._assert_allowed("echo ok | xargs find . -name foo")
 
     def test_xargs_replace_I_bash_c_placeholder_rm_rf_blocked(self) -> None:
         self._assert_blocked(
@@ -392,11 +514,51 @@ class EdgeCasesTests(SafetyNetTestCase):
             "parallel",
         )
 
+    def test_parallel_bash_c_script_is_input_denied_safe_input(self) -> None:
+        self._assert_blocked(
+            "echo ok | parallel bash -c {}",
+            "arbitrary",
+        )
+
     def test_parallel_results_option_blocks_rm_rf(self) -> None:
         self._assert_blocked(
             "parallel --results out rm -rf {} ::: /",
             "rm -rf",
             cwd=str(self.tmpdir),
+        )
+
+    def test_parallel_jobs_attached_option_blocks(self) -> None:
+        self._assert_blocked(
+            "parallel -j2 rm -rf {} ::: /",
+            "root or home",
+            cwd=str(self.tmpdir),
+        )
+
+    def test_parallel_jobs_long_equals_option_blocks(self) -> None:
+        self._assert_blocked(
+            "parallel --jobs=2 rm -rf {} ::: /",
+            "root or home",
+            cwd=str(self.tmpdir),
+        )
+
+    def test_parallel_unknown_long_option_is_ignored_for_template_parsing(self) -> None:
+        self._assert_blocked(
+            "parallel --eta rm -rf {} ::: /",
+            "root or home",
+            cwd=str(self.tmpdir),
+        )
+
+    def test_parallel_unknown_short_option_ignored_for_template_parsing(self) -> None:
+        self._assert_blocked(
+            "parallel -q rm -rf {} ::: /",
+            "root or home",
+            cwd=str(self.tmpdir),
+        )
+
+    def test_parallel_busybox_find_delete_blocked(self) -> None:
+        self._assert_blocked(
+            "parallel busybox find . -delete ::: ok",
+            "find -delete",
         )
 
     def test_parallel_stdin_mode_blocks_rm_rf(self) -> None:
@@ -422,6 +584,9 @@ class EdgeCasesTests(SafetyNetTestCase):
             "parallel ::: 'rm -rf /'",
             "rm -rf",
         )
+
+    def test_parallel_commands_mode_allows_when_all_commands_safe(self) -> None:
+        self._assert_allowed("parallel ::: 'echo ok' 'true'")
 
     def test_parallel_rm_rf_args_after_marker_without_placeholder_blocked(self) -> None:
         self._assert_blocked(
@@ -467,6 +632,47 @@ class EdgeCasesTests(SafetyNetTestCase):
             "parallel busybox rm -rf {} ::: build",
             cwd=str(self.tmpdir),
         )
+
+    def test_parallel_bash_c_without_placeholder_analyzes_script(self) -> None:
+        self._assert_blocked(
+            "parallel bash -c 'git reset --hard' ::: ok",
+            "git reset --hard",
+        )
+
+    def test_parallel_bash_c_without_placeholder_allows_safe_script(self) -> None:
+        self._assert_allowed("parallel bash -c 'echo ok' ::: ok")
+
+    def test_parallel_busybox_rm_rf_args_after_marker_without_placeholder_blocked(
+        self,
+    ) -> None:
+        self._assert_blocked(
+            "parallel busybox rm -rf ::: /",
+            "root or home",
+        )
+
+    def test_parallel_busybox_find_without_delete_allowed(self) -> None:
+        self._assert_allowed("parallel busybox find . -name foo ::: ok")
+
+    def test_parallel_git_reset_hard_blocked(self) -> None:
+        self._assert_blocked(
+            "parallel git reset --hard ::: ok",
+            "git reset --hard",
+        )
+
+    def test_parallel_find_delete_blocked(self) -> None:
+        self._assert_blocked(
+            "parallel find . -delete ::: ok",
+            "find -delete",
+        )
+
+    def test_parallel_find_without_delete_allowed(self) -> None:
+        self._assert_allowed("parallel find . -name foo ::: ok")
+
+    def test_busybox_find_delete_blocked(self) -> None:
+        self._assert_blocked("busybox find . -delete", "find -delete")
+
+    def test_busybox_find_without_delete_allowed(self) -> None:
+        self._assert_allowed("busybox find . -name foo")
 
     def test_parallel_stdin_without_template_allowed(self) -> None:
         self._assert_allowed("echo ok | parallel")
@@ -745,6 +951,24 @@ class EdgeCasesTests(SafetyNetTestCase):
 
     def test_segment_changes_cwd_regex_fallback_on_unparseable(self) -> None:
         self.assertTrue(_segment_changes_cwd("cd 'unterminated"))
+
+    def test_analyze_segment_empty_returns_none(self) -> None:
+        self.assertIsNone(
+            _analyze_segment(
+                "   ",
+                depth=0,
+                cwd=None,
+                strict=False,
+                paranoid_rm=False,
+                paranoid_interpreters=False,
+            )
+        )
+
+    def test_xargs_replacement_tokens_can_terminate_without_break(self) -> None:
+        self.assertEqual(_xargs_replacement_tokens(["xargs", "--replace"]), {"{}"})
+
+    def test_segment_changes_cwd_builtin_only_is_false(self) -> None:
+        self.assertFalse(_segment_changes_cwd("builtin"))
 
     def test_shell_split_with_leading_operator_still_blocks(self) -> None:
         self._assert_blocked("&& git reset --hard", "git reset --hard")
