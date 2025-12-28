@@ -49,4 +49,7 @@ The hook receives JSON input on stdin containing `tool_name` and `tool_input`. F
 
 ## Environment Variables
 
-- `SAFETY_NET_STRICT=1`: Strict mode (block unparseable commands and block non-temp rm -rf)
+- `SAFETY_NET_STRICT=1`: Strict mode (fail-closed on unparseable hook input/commands)
+- `SAFETY_NET_PARANOID=1`: Paranoid mode (enables all paranoid checks)
+- `SAFETY_NET_PARANOID_RM=1`: Paranoid rm (blocks non-temp `rm -rf` even within cwd)
+- `SAFETY_NET_PARANOID_INTERPRETERS=1`: Paranoid interpreters (blocks interpreter one-liners)

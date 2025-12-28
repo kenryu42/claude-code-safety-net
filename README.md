@@ -152,13 +152,33 @@ tests/
 
 ### Strict Mode
 
-By default, unparseable commands are allowed through, and `rm -rf` is allowed only for temp
-paths and paths within the current working directory. Enable strict mode to additionally
-block unparseable commands and block non-temp `rm -rf`:
+By default, unparseable commands are allowed through. Enable strict mode to fail-closed
+when the hook input or shell command cannot be safely analyzed (e.g., invalid JSON,
+unterminated quotes, malformed `bash -c` wrappers):
 
 ```bash
 export SAFETY_NET_STRICT=1
 ```
+
+### Paranoid Mode
+
+Paranoid mode enables stricter safety checks that may be disruptive to normal workflows.
+You can enable it globally or via focused toggles:
+
+```bash
+# Enable all paranoid checks
+export SAFETY_NET_PARANOID=1
+
+# Or enable specific paranoid checks
+export SAFETY_NET_PARANOID_RM=1
+export SAFETY_NET_PARANOID_INTERPRETERS=1
+```
+
+Paranoid behavior:
+
+- **rm**: blocks non-temp `rm -rf` even within the current working directory.
+- **interpreters**: blocks interpreter one-liners like `python -c`, `node -e`, `ruby -e`,
+  and `perl -e` (these can hide destructive commands).
 
 ### Shell Wrapper Detection
 

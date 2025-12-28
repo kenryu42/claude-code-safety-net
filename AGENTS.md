@@ -142,7 +142,10 @@ class TestFilesystem(TempDirTestCase):
 
 | Variable | Effect |
 |----------|--------|
-| `SAFETY_NET_STRICT=1` | Block unparseable commands and non-temp `rm -rf` |
+| `SAFETY_NET_STRICT=1` | Fail-closed on unparseable hook input/commands |
+| `SAFETY_NET_PARANOID=1` | Enable all paranoid checks (rm + interpreters) |
+| `SAFETY_NET_PARANOID_RM=1` | Block non-temp `rm -rf` even within the current working directory |
+| `SAFETY_NET_PARANOID_INTERPRETERS=1` | Block interpreter one-liners like `python -c`, `node -e`, etc. |
 
 ## What Gets Blocked
 
