@@ -17,5 +17,5 @@ check:
 # Bump version and generate changelog
 bump:
     uv run cz bump
-    git push --follow-tags
+    git push -u origin HEAD --follow-tags
     gh release create $(git describe --tags --abbrev=0) --notes "$(uv run cz changelog $(git describe --tags --abbrev=0) --dry-run)"
