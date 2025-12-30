@@ -1,5 +1,7 @@
 """Shell parsing helpers for the safety net."""
 
+from __future__ import annotations
+
 import shlex
 
 
