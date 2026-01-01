@@ -3,6 +3,7 @@
 log*
 plan-*.md
 *-plan-*.md
+.safety-net.json
 
 # --- Python ---
 __pycache__/

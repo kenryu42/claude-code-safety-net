@@ -1,3 +1,4 @@
 !plan-*.md
 !*-plan-*.md
 !coverage.json
+!.safety-net.json
