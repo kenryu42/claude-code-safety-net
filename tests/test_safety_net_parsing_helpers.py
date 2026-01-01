@@ -20,9 +20,25 @@ from scripts.safety_net_impl.rules_git import (
     _checkout_positional_args,
     _git_subcommand_and_rest,
 )
+from scripts.safety_net_impl.shell import _short_opts
 
 
 class HookParsingHelpersTests(TestCase):
+    def test_short_opts_stops_at_double_dash(self) -> None:
+        # given: tokens with -Ap after -- (a filename, not options)
+        # when: extracting short options
+        # then: A and p should NOT be in the result
+        self.assertEqual(_short_opts(["git", "add", "--", "-Ap"]), set())
+        self.assertEqual(_short_opts(["rm", "-r", "--", "-f"]), {"r"})
+
+    def test_short_opts_extracts_before_double_dash(self) -> None:
+        # given: tokens with options before --
+        # when: extracting short options
+        # then: only options before -- are extracted
+        self.assertEqual(
+            _short_opts(["git", "-v", "add", "-n", "--", "-x"]), {"v", "n"}
+        )
+
     def test_rm_has_recursive_force_empty_tokens_false(self) -> None:
         self.assertFalse(_rm_has_recursive_force([]))
 
@@ -48,9 +64,7 @@ class HookParsingHelpersTests(TestCase):
 
     def test_extract_xargs_child_command_long_option_consumes_value(self) -> None:
         self.assertEqual(
-            _extract_xargs_child_command(
-                ["xargs", "--max-args", "5", "rm", "-rf"]
-            ),
+            _extract_xargs_child_command(["xargs", "--max-args", "5", "rm", "-rf"]),
             ["rm", "-rf"],
         )
 
@@ -200,7 +214,7 @@ class HookParsingHelpersTests(TestCase):
         cases: list[tuple[list[str], tuple[list[str], list[str], bool] | None]] = [
             (["echo", "ok"], None),
             (["parallel"], ([], [], True)),
-            (["parallel", ":::"] , ([], [], False)),
+            (["parallel", ":::"], ([], [], False)),
             (["parallel", "-S", "login", "rm", ":::", "/"], (["rm"], ["/"], False)),
             (["parallel", "-Slogin", "rm", ":::", "/"], (["rm"], ["/"], False)),
             (["parallel", "--tmpdir=/tmp", "rm", ":::", "/"], (["rm"], ["/"], False)),

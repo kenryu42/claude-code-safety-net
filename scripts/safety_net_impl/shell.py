@@ -193,9 +193,23 @@ def _strip_wrappers(tokens: list[str]) -> list[str]:
 
 
 def _short_opts(tokens: list[str]) -> set[str]:
+    """Extract individual short option characters from tokens.
+
+    Stops at `--` end-of-options marker to avoid treating positional
+    arguments (e.g., filenames starting with `-`) as options.
+
+    Also stops parsing a token at the first non-alpha character to avoid
+    false positives from attached option values (e.g., `-C/path` should
+    only contribute `C`, not `C`, `/`, `p`, `a`, `t`, `h`).
+    """
     opts: set[str] = set()
     for tok in tokens:
+        if tok == "--":
+            break  # End of options; remaining tokens are positional args
         if tok.startswith("--") or not tok.startswith("-") or tok == "-":
             continue
-        opts.update(tok[1:])
+        for ch in tok[1:]:
+            if not ch.isalpha():
+                break
+            opts.add(ch)
     return opts
