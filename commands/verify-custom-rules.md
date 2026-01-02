@@ -7,7 +7,7 @@ allowed-tools: Bash
 
 Verify the custom rules config file using the verify_config.py script.
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/verify_config.py
+python3 --version >/dev/null 2>&1 && python3 "${CLAUDE_PLUGIN_ROOT}/scripts/verify_config.py" || python "${CLAUDE_PLUGIN_ROOT}/scripts/verify_config.py"
 ```
 
 If the config has validation errors, inform the user:

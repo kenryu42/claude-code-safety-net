@@ -68,7 +68,7 @@ mkdir -p ~/.cc-safety-net
 
 Write config, then validate:
 ```bash
-${CLAUDE_PLUGIN_ROOT}/scripts/verify_config.py
+python3 --version >/dev/null 2>&1 && python3 "${CLAUDE_PLUGIN_ROOT}/scripts/verify_config.py" || python "${CLAUDE_PLUGIN_ROOT}/scripts/verify_config.py"
 ```
 
 If validation errors:
