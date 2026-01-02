@@ -1,6 +1,6 @@
 [project]
 name = "safety-net"
-version = "0.3.0"
+version = "0.3.1"
 description = "Block destructive git and filesystem commands in Claude Code"
 readme = "README.md"
 requires-python = ">=3.10"
