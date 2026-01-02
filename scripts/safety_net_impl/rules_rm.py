@@ -1,5 +1,7 @@
 """Filesystem (rm) command analysis rules for the safety net."""
 
+from __future__ import annotations
+
 import os
 import posixpath
 

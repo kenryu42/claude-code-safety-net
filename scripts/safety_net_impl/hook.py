@@ -8,6 +8,8 @@ Exit behavior:
   - Exit 0 with no output = allow command
 """
 
+from __future__ import annotations
+
 import json
 import posixpath
 import re

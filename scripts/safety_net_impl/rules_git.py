@@ -1,5 +1,7 @@
 """Git command analysis rules for the safety net."""
 
+from __future__ import annotations
+
 from .shell import _short_opts
 
 _REASON_GIT_CHECKOUT_DOUBLE_DASH = (
