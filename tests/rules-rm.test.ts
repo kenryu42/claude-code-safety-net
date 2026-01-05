@@ -352,6 +352,50 @@ describe("rm -rf cwd-aware", () => {
 			cleanup();
 		}
 	});
+
+	test("TMPDIR= empty assignment blocked (expands to /)", () => {
+		setup();
+		try {
+			assertBlocked("TMPDIR= rm -rf $TMPDIR/test-dir", "rm -rf", tmpDir);
+		} finally {
+			cleanup();
+		}
+	});
+
+	test("TMPDIR=/tmp-malicious blocked (not a real temp path)", () => {
+		setup();
+		try {
+			assertBlocked(
+				"TMPDIR=/tmp-malicious rm -rf $TMPDIR/test-dir",
+				"rm -rf",
+				tmpDir,
+			);
+		} finally {
+			cleanup();
+		}
+	});
+
+	test("TMPDIR=/tmp/subdir allowed (subpath of /tmp)", () => {
+		setup();
+		try {
+			assertAllowed("TMPDIR=/tmp/subdir rm -rf $TMPDIR/test-dir", tmpDir);
+		} finally {
+			cleanup();
+		}
+	});
+
+	test("TMPDIR=/var/tmp-malicious blocked (not a real temp path)", () => {
+		setup();
+		try {
+			assertBlocked(
+				"TMPDIR=/var/tmp-malicious rm -rf $TMPDIR/test-dir",
+				"rm -rf",
+				tmpDir,
+			);
+		} finally {
+			cleanup();
+		}
+	});
 });
 
 describe("analyzeRm (unit)", () => {
