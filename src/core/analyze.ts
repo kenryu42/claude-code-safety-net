@@ -1,6 +1,7 @@
 import { tmpdir } from "node:os";
 import {
 	type AnalyzeOptions,
+	type AnalyzeResult,
 	type Config,
 	DANGEROUS_PATTERNS,
 	INTERPRETERS,
@@ -41,7 +42,7 @@ const REASON_RM_HOME_CWD =
 export function analyzeCommand(
 	command: string,
 	options: AnalyzeOptions = {},
-): string | null {
+): AnalyzeResult | null {
 	const config = options.config ?? loadConfig(options.cwd);
 	return analyzeCommandInternal(command, 0, { ...options, config });
 }
@@ -50,7 +51,7 @@ function analyzeCommandInternal(
 	command: string,
 	depth: number,
 	options: AnalyzeOptions & { config: Config },
-): string | null {
+): AnalyzeResult | null {
 	if (depth >= MAX_RECURSION_DEPTH) {
 		return null;
 	}
@@ -60,10 +61,12 @@ function analyzeCommandInternal(
 	let effectiveCwd: string | null | undefined = options.cwd;
 
 	for (const segment of segments) {
+		const segmentStr = segment.join(" ");
+
 		if (segment.length === 1 && segment[0]?.includes(" ")) {
 			const textReason = dangerousInText(segment[0]);
 			if (textReason) {
-				return textReason;
+				return { reason: textReason, segment: segmentStr };
 			}
 			if (segmentChangesCwd(segment)) {
 				effectiveCwd = null;
@@ -77,7 +80,7 @@ function analyzeCommandInternal(
 			effectiveCwd,
 		});
 		if (reason) {
-			return reason;
+			return { reason, segment: segmentStr };
 		}
 
 		if (segmentChangesCwd(segment)) {
@@ -159,7 +162,9 @@ function analyzeSegment(
 	if (SHELL_WRAPPERS.has(normalizedHead)) {
 		const dashCArg = extractDashCArg(stripped);
 		if (dashCArg) {
-			return analyzeCommandInternal(dashCArg, depth + 1, options);
+			return (
+				analyzeCommandInternal(dashCArg, depth + 1, options)?.reason ?? null
+			);
 		}
 	}
 
@@ -172,7 +177,7 @@ function analyzeSegment(
 
 			const innerResult = analyzeCommandInternal(codeArg, depth + 1, options);
 			if (innerResult) {
-				return innerResult;
+				return innerResult.reason;
 			}
 
 			if (containsDangerousCode(codeArg)) {
@@ -894,7 +899,7 @@ function analyzeParallel(
 		for (const arg of args) {
 			const result = analyzeCommandInternal(arg, depth + 1, options);
 			if (result) {
-				return result;
+				return result.reason;
 			}
 		}
 		return null;
@@ -928,7 +933,7 @@ function analyzeParallel(
 							options,
 						);
 						if (result) {
-							return result;
+							return result.reason;
 						}
 					}
 					return null;
@@ -937,14 +942,14 @@ function analyzeParallel(
 				// Check if the script pattern is dangerous (e.g., rm -rf {})
 				const result = analyzeCommandInternal(dashCArg, depth + 1, options);
 				if (result) {
-					return result;
+					return result.reason;
 				}
 				return null;
 			}
 			// Script doesn't have placeholder - analyze it directly
 			const result = analyzeCommandInternal(dashCArg, depth + 1, options);
 			if (result) {
-				return result;
+				return result.reason;
 			}
 			// If there's a placeholder in the shell wrapper args (not script),
 			// it's still dangerous
