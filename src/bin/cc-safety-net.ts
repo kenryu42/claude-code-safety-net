@@ -115,13 +115,13 @@ async function runClaudeCodeHook(): Promise<void> {
 	if (result) {
 		const sessionId = input.session_id;
 		if (sessionId) {
-			writeAuditLog(sessionId, command, command, result, cwd);
+			writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
 		}
-		outputDeny(result, command);
+		outputDeny(result.reason, command, result.segment);
 	}
 }
 
-function outputDeny(reason: string, command?: string): void {
+function outputDeny(reason: string, command?: string, segment?: string): void {
 	let message = `BLOCKED by Safety Net\n\nReason: ${reason}`;
 
 	if (command) {
@@ -131,6 +131,15 @@ function outputDeny(reason: string, command?: string): void {
 				? `${safeCommand.slice(0, 200)}...`
 				: safeCommand;
 		message += `\n\nCommand: ${excerpt}`;
+	}
+
+	if (segment && segment !== command) {
+		const safeSegment = redactSecrets(segment);
+		const segmentExcerpt =
+			safeSegment.length > 200
+				? `${safeSegment.slice(0, 200)}...`
+				: safeSegment;
+		message += `\n\nSegment: ${segmentExcerpt}`;
 	}
 
 	message +=
