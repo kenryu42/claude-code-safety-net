@@ -6,7 +6,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "bun run \"${CLAUDE_PLUGIN_ROOT}/src/bin/cc-safety-net.ts --claude-code\""
+						"command": "bun run ${CLAUDE_PLUGIN_ROOT}/src/bin/cc-safety-net.ts --claude-code"
 					}
 				]
 			}
