@@ -42,15 +42,17 @@ export interface AnalyzeResult {
 
 /** Claude Code hook input format */
 export interface HookInput {
+	session_id?: string;
+	transcript_path?: string;
+	cwd?: string;
+	permission_mode?: string;
 	hook_event_name: string;
 	tool_name: string;
 	tool_input: {
 		command: string;
-		timeout?: number;
-		workdir?: string;
 		description?: string;
 	};
-	session_id?: string;
+	tool_use_id?: string;
 }
 
 /** Claude Code hook output format */
