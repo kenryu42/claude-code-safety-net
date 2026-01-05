@@ -39,6 +39,9 @@ const REASON_INTERPRETER_BLOCKED =
 const REASON_RM_HOME_CWD =
 	"rm -rf in home directory is dangerous. Change to a project directory first.";
 
+const REASON_STRICT_UNPARSEABLE =
+	"Command could not be safely analyzed (strict mode). Verify manually.";
+
 export function analyzeCommand(
 	command: string,
 	options: AnalyzeOptions = {},
@@ -57,6 +60,19 @@ function analyzeCommandInternal(
 	}
 
 	const segments = splitShellCommands(command);
+
+	// Strict mode: block if command couldn't be parsed (unclosed quotes, etc.)
+	// Detected when splitShellCommands returns a single segment containing the raw command
+	if (
+		options.strict &&
+		segments.length === 1 &&
+		segments[0]?.length === 1 &&
+		segments[0][0] === command &&
+		command.includes(" ")
+	) {
+		return { reason: REASON_STRICT_UNPARSEABLE, segment: command };
+	}
+
 	const originalCwd = options.cwd;
 	let effectiveCwd: string | null | undefined = options.cwd;
 
@@ -573,19 +589,40 @@ function hasRecursiveForceFlags(tokens: string[]): boolean {
 function isTmpdirOverriddenToNonTemp(
 	envAssignments: Map<string, string>,
 ): boolean {
-	const tmpdirValue = envAssignments.get("TMPDIR");
-	if (!tmpdirValue) {
+	if (!envAssignments.has("TMPDIR")) {
 		return false;
 	}
+	const tmpdirValue = envAssignments.get("TMPDIR") ?? "";
+
+	// Empty TMPDIR is dangerous: $TMPDIR/foo expands to /foo
+	if (tmpdirValue === "") {
+		return true;
+	}
+
+	// Check if it's a known temp path (exact match or subpath)
+	const sysTmpdir = tmpdir();
 	if (
-		tmpdirValue.startsWith("/tmp") ||
-		tmpdirValue.startsWith("/var/tmp") ||
-		tmpdirValue.startsWith(tmpdir()) ||
-		tmpdirValue === ""
+		isPathOrSubpath(tmpdirValue, "/tmp") ||
+		isPathOrSubpath(tmpdirValue, "/var/tmp") ||
+		isPathOrSubpath(tmpdirValue, sysTmpdir)
 	) {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Check if a path equals or is a subpath of basePath.
+ * E.g., isPathOrSubpath("/tmp/foo", "/tmp") → true
+ *       isPathOrSubpath("/tmp-malicious", "/tmp") → false
+ */
+function isPathOrSubpath(path: string, basePath: string): boolean {
+	if (path === basePath) {
+		return true;
+	}
+	// Ensure basePath ends with / for proper prefix matching
+	const baseWithSlash = basePath.endsWith("/") ? basePath : `${basePath}/`;
+	return path.startsWith(baseWithSlash);
 }
 
 function analyzeFind(tokens: string[]): string | null {
