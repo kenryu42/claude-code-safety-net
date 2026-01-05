@@ -37,6 +37,18 @@ describe("edge cases", () => {
 			});
 		});
 
+		test("strict mode unparseable safe command denies", () => {
+			withEnv({ SAFETY_NET_STRICT: "1" }, () => {
+				const result = runGuard("echo 'unterminated");
+				expect(result).not.toBeNull();
+				expect(result).toContain("could not be safely analyzed");
+			});
+		});
+
+		test("non-strict mode unparseable safe command allows", () => {
+			assertAllowed("echo 'unterminated");
+		});
+
 		test("strict mode bash -c without arg allows", () => {
 			withEnv({ SAFETY_NET_STRICT: "1" }, () => {
 				assertAllowed("bash -c");
