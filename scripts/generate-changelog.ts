@@ -2,10 +2,15 @@
 
 import { $ } from "bun";
 
-const EXCLUDED_AUTHORS = ["actions-user", "github-actions[bot]", "kenryu42"];
-const REPO = process.env.GITHUB_REPOSITORY ?? "kenryu42/claude-code-safety-net";
+export const EXCLUDED_AUTHORS = [
+	"actions-user",
+	"github-actions[bot]",
+	"kenryu42",
+];
+export const REPO =
+	process.env.GITHUB_REPOSITORY ?? "kenryu42/claude-code-safety-net";
 
-async function getLatestReleasedTag(): Promise<string | null> {
+export async function getLatestReleasedTag(): Promise<string | null> {
 	try {
 		const tag =
 			await $`gh release list --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq '.[0].tagName // empty'`.text();
@@ -15,7 +20,9 @@ async function getLatestReleasedTag(): Promise<string | null> {
 	}
 }
 
-async function generateChangelog(previousTag: string): Promise<string[]> {
+export async function generateChangelog(
+	previousTag: string,
+): Promise<string[]> {
 	const notes: string[] = [];
 
 	try {
@@ -38,7 +45,7 @@ async function generateChangelog(previousTag: string): Promise<string[]> {
 	return notes;
 }
 
-async function getContributors(previousTag: string): Promise<string[]> {
+export async function getContributors(previousTag: string): Promise<string[]> {
 	const notes: string[] = [];
 
 	try {
@@ -98,4 +105,6 @@ async function main(): Promise<void> {
 	}
 }
 
-main();
+if (import.meta.main) {
+	main();
+}
