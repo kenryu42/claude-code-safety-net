@@ -1,13 +1,6 @@
 import type { Plugin } from "@opencode-ai/plugin";
 import { analyzeCommand, loadConfig } from "./core/analyze.ts";
 
-// import type { AnalyzeOptions, Config, CustomRule } from "./types.ts";
-
-// export { analyzeCommand, loadConfig };
-// export type { AnalyzeOptions, Config, CustomRule };
-
-// export { validateConfig, validateConfigFile } from "./core/config.ts";
-
 function envTruthy(name: string): boolean {
 	const value = process.env[name];
 	return value === "1" || value?.toLowerCase() === "true";
