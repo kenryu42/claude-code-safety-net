@@ -15,13 +15,17 @@ Duplicate rule names (case-insensitive) → project wins.
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/kenryu42/claude-code-safety-net/main/assets/cc-safety-net.schema.json",
   "version": 1,
   "rules": [...]
 }
 ```
 
+- `$schema`: Optional. Enables IDE autocomplete and inline validation.
 - `version`: Required. Must be `1`.
 - `rules`: Optional. Defaults to `[]`.
+
+**Always include `$schema`** when generating config files for IDE support.
 
 ## Rule Fields
 
@@ -48,6 +52,7 @@ Duplicate rule names (case-insensitive) → project wins.
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/kenryu42/claude-code-safety-net/main/assets/cc-safety-net.schema.json",
   "version": 1,
   "rules": [
     {
@@ -65,6 +70,7 @@ Duplicate rule names (case-insensitive) → project wins.
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/kenryu42/claude-code-safety-net/main/assets/cc-safety-net.schema.json",
   "version": 1,
   "rules": [
     {
@@ -82,6 +88,7 @@ Duplicate rule names (case-insensitive) → project wins.
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/kenryu42/claude-code-safety-net/main/assets/cc-safety-net.schema.json",
   "version": 1,
   "rules": [
     {
