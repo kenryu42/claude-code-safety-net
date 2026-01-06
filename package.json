@@ -14,6 +14,7 @@
 	"scripts": {
 		"build": "bun build src/index.ts src/bin/cc-safety-net.ts --outdir dist --target node && bun run build:types",
 		"build:types": "tsc --emitDeclarationOnly --declaration --noEmit false",
+		"build:schema": "bun run scripts/build-schema.ts",
 		"clean": "rm -rf dist",
 		"check": "bun run lint && bun run typecheck && bun run knip && bun run sg:scan && AGENT=1 bun test",
 		"lint": "biome check --write",
