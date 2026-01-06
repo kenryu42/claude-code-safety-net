@@ -4,71 +4,67 @@
   "title": "Safety Net Configuration",
   "description": "Configuration file for cc-safety-net plugin custom rules",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["version"],
   "properties": {
     "$schema": {
-      "type": "string",
-      "description": "JSON Schema reference for IDE support"
+      "description": "JSON Schema reference for IDE support",
+      "type": "string"
     },
     "version": {
-      "type": "integer",
+      "type": "number",
       "const": 1,
       "description": "Schema version (must be 1)"
     },
     "rules": {
-      "type": "array",
       "default": [],
       "description": "Custom blocking rules",
+      "type": "array",
       "items": {
-        "$ref": "#/$defs/CustomRule"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$",
+            "description": "Unique identifier for the rule (case-insensitive for duplicate detection)"
+          },
+          "command": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+            "description": "Base command to match (e.g., 'git', 'npm', 'docker'). Paths are normalized to basename."
+          },
+          "subcommand": {
+            "description": "Optional subcommand to match (e.g., 'add', 'install'). If omitted, matches any subcommand.",
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$"
+          },
+          "block_args": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Arguments that trigger the block. Command is blocked if ANY of these are present."
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "description": "Message shown when the command is blocked"
+          }
+        },
+        "required": [
+          "name",
+          "command",
+          "block_args",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "description": "A custom rule that blocks specific command patterns"
       }
     }
   },
-  "$defs": {
-    "CustomRule": {
-      "type": "object",
-      "description": "A custom rule that blocks specific command patterns",
-      "additionalProperties": false,
-      "required": ["name", "command", "block_args", "reason"],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Unique identifier for the rule (case-insensitive for duplicate detection)",
-          "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$",
-          "examples": ["block-git-add-all", "block-npm-global"]
-        },
-        "command": {
-          "type": "string",
-          "description": "Base command to match (e.g., 'git', 'npm', 'docker'). Paths are normalized to basename.",
-          "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
-          "examples": ["git", "npm", "docker"]
-        },
-        "subcommand": {
-          "type": "string",
-          "description": "Optional subcommand to match (e.g., 'add', 'install'). If omitted, matches any subcommand.",
-          "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
-          "examples": ["add", "install", "system"]
-        },
-        "block_args": {
-          "type": "array",
-          "description": "Arguments that trigger the block. Command is blocked if ANY of these are present.",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Argument to block (literal match, short options are expanded)"
-          },
-          "examples": [["-A", "--all", "."], ["-g", "--global"]]
-        },
-        "reason": {
-          "type": "string",
-          "description": "Message shown when the command is blocked",
-          "minLength": 1,
-          "maxLength": 256,
-          "examples": ["Use 'git add <specific-files>' instead of blanket add."]
-        }
-      }
-    }
-  }
+  "required": [
+    "version"
+  ],
+  "additionalProperties": false
 }
