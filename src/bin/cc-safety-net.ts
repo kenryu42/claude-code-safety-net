@@ -11,7 +11,7 @@ const VERSION = "0.4.0";
 function printHelp(): void {
 	console.log(`cc-safety-net v${VERSION}
 
-A Claude Code plugin that blocks destructive git and filesystem commands.
+Blocks destructive git and filesystem commands before execution.
 
 USAGE:
   cc-safety-net -cc, --claude-code      Run as Claude Code PreToolUse hook (reads JSON from stdin)
