@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/kenryu42/claude-code-safety-net/blob/main/README.md
+    about: Check the README for usage and configuration details.
+  - name: 🤝 Contributing
+    url: https://github.com/kenryu42/claude-code-safety-net/blob/main/CONTRIBUTING.md
+    about: Learn how to contribute to this project.

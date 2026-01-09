@@ -1,0 +1,85 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below to help us understand and reproduce the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the bug — what you expected vs what actually occurred.
+      placeholder: |
+        I ran `git checkout -- file.txt` and expected it to be blocked,
+        but it executed successfully without any warning.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Please provide steps to reproduce the issue.
+      placeholder: |
+        1. Open Claude Code / OpenCode in a project directory
+        2. Ask the agent to run `git checkout -- README.md`
+        3. The command executes instead of being blocked
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation Method
+      description: How did you install the plugin?
+      options:
+        - Claude Code
+        - OpenCode
+        - Other (please describe in additional context)
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide your environment details.
+      value: |
+        - OS: (e.g. `macOS 26` / `Windows 11` / `Ubuntu 22.04`)
+        - Node.js Version: (e.g. `18.x` / `20.x`)
+        - Safety Net Version: (e.g. `0.4.0`)
+        - Claude Code / OpenCode Version: (e.g. `2.1.2` / `1.0.220`)
+        - Claude Code for VS Code Version (optional): (e.g. `2.1.3`)
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Error Messages
+      description: |
+        If applicable, paste any relevant logs or error output.
+        Audit logs can be found at `~/.cc-safety-net/logs/<session_id>.jsonl`
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the problem.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
