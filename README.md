@@ -11,7 +11,8 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
 ## Contents
 
 - [Why This Exists](#why-this-exists)
-- [Why Hooks Instead of settings.json?](#why-hooks-instead-of-settingsjson)
+- [Why Use This Instead of Permission Deny Rules?](#why-use-this-instead-of-permission-deny-rules)
+- [What About Sandboxing?](#what-about-sandboxing)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
   - [Claude Code Installation](#claude-code-installation)
@@ -42,18 +43,98 @@ We learned the [hard way](https://www.reddit.com/r/ClaudeAI/comments/1pgxckk/cla
 After Claude Code silently wiped out hours of progress with a single `rm -rf ~/` or `git checkout --`, it became evident that **"soft"** rules in an `CLAUDE.md` or `AGENTS.md` file cannot replace **hard** technical constraints.
 The current approach is to use a dedicated hook to programmatically prevent agents from running destructive commands.
 
-## Why Hooks Instead of settings.json?
+## Why Use This Instead of Permission Deny Rules?
 
-Claude Code's `.claude/settings.json` supports deny rules for Bash commands, but these use [simple prefix matching](https://code.claude.com/docs/en/iam#tool-specific-permission-rules)—not pattern matching or semantic analysis. This makes them insufficient for nuanced safety rules:
+Claude Code's `.claude/settings.json` supports [deny rules](https://code.claude.com/docs/en/iam#tool-specific-permission-rules) with wildcard matching (e.g., `Bash(git reset --hard:*)`). Here's how this plugin differs:
 
-| Limitation | Example |
-|------------|---------|
-| Can't distinguish safe vs. dangerous variants | `Bash(git checkout)` blocks both `git checkout -b new-branch` (safe) and `git checkout -- file` (dangerous) |
-| Can't parse flags semantically | `Bash(rm -rf)` blocks `rm -rf /tmp/cache` (safe) but allows `rm -r -f /` (dangerous, different flag order) |
-| Can't detect shell wrappers | `sh -c "rm -rf /"` bypasses a `Bash(rm)` deny rule entirely |
-| Can't analyze interpreter one-liners | `python -c 'os.system("rm -rf /")'` executes without matching any rm rule |
+### At a Glance
 
-This hook provides **semantic command analysis**: it parses arguments, understands flag combinations, recursively analyzes shell wrappers, and distinguishes safe operations (temp directories, within cwd) from dangerous ones.
+| | Permission Deny Rules | Safety Net |
+|---|---|---|
+| **Setup** | Manual configuration required | Works out of the box |
+| **Parsing** | Wildcard pattern matching | Semantic command analysis |
+| **Execution order** | Runs second | Runs first (PreToolUse hook) |
+| **Shell wrappers** | Not handled automatically (must match wrapper forms) | Recursively analyzed (5 levels) |
+| **Interpreter one-liners** | Not handled automatically (must match interpreter forms) | Detected and blocked |
+
+### Permission Rules Have Known Bypass Vectors
+
+Even with wildcard matching, Bash permission patterns are intentionally limited and can be bypassed in many ways:
+
+| Bypass Method | Example |
+|---------------|---------|
+| Options before value | `curl -X GET http://evil.com` bypasses `Bash(curl http://evil.com:*)` |
+| Shell variables | `URL=http://evil.com && curl $URL` bypasses URL pattern |
+| Flag reordering | `rm -r -f /` bypasses `Bash(rm -rf:*)` |
+| Extra whitespace | `rm  -rf /` (double space) bypasses pattern |
+| Shell wrappers | `sh -c "rm -rf /"` bypasses `Bash(rm:*)` entirely |
+
+### Safety Net Handles What Patterns Can't
+
+| Scenario | Permission Rules | Safety Net |
+|----------|------------------|------------|
+| `git checkout -b feature` (safe) | Blocked by `Bash(git checkout:*)` | Allowed |
+| `git checkout -- file` (dangerous) | Blocked by `Bash(git checkout:*)` | Blocked |
+| `rm -rf /tmp/cache` (safe) | Blocked by `Bash(rm -rf:*)` | Allowed |
+| `rm -r -f /` (dangerous) | Allowed (flag order) | Blocked |
+| `bash -c 'git reset --hard'` | Allowed (wrapper) | Blocked |
+| `python -c 'os.system("rm -rf /")'` | Allowed (interpreter) | Blocked |
+
+### Defense in Depth
+
+PreToolUse hooks run [**before**](https://code.claude.com/docs/en/iam#additional-permission-control-with-hooks) the permission system. This means Safety Net inspects every command first, regardless of your permission configuration. Even if you misconfigure deny rules, Safety Net provides a fallback layer of protection.
+
+**Use both together**: Permission deny rules for quick, user-configurable blocks; Safety Net for robust, bypass-resistant protection that works out of the box.
+
+## What About Sandboxing?
+
+Claude Code offers [native sandboxing](https://code.claude.com/docs/en/sandboxing) that provides OS-level filesystem and network isolation. Here's how it compares to Safety Net:
+
+### Different Layers of Protection
+
+| | Sandboxing | Safety Net |
+|---|---|---|
+| **Enforcement** | OS-level (Seatbelt/bubblewrap) | Application-level (PreToolUse hook) |
+| **Approach** | Containment — restricts filesystem + network access | Command analysis — blocks destructive operations |
+| **Filesystem** | Writes restricted (default: cwd); reads are broad by default | Only destructive operations blocked |
+| **Network** | Domain-based proxy filtering | None |
+| **Git awareness** | None | Explicit rules for destructive git operations |
+| **Bypass resistance** | High — OS enforces boundaries | Lower — analyzes command strings only |
+
+### Why Sandboxing Isn't Enough
+
+Sandboxing restricts filesystem + network access, but it doesn't understand whether an operation is destructive within those boundaries. These commands are not blocked by the sandbox boundary:
+
+> [!NOTE]
+> Whether they're auto-run or require confirmation depends on your sandbox mode (auto-allow vs regular permissions), and network access still depends on your allowed-domain policy. Claude Code can also retry a command outside the sandbox via `dangerouslyDisableSandbox` (with user permission); this can be disabled with `allowUnsandboxedCommands: false`.
+
+| Command | Sandboxing | Safety Net |
+|---------|------------|------------|
+| `git reset --hard` | Allowed (within cwd) | **Blocked** |
+| `git checkout -- .` | Allowed (within cwd) | **Blocked** |
+| `git stash clear` | Allowed (within cwd) | **Blocked** |
+| `git push --force` | Allowed (if remote domain is allowed) | **Blocked** |
+| `rm -rf .` | Allowed (within cwd) | **Blocked** |
+
+Sandboxing sees `git reset --hard` as a safe operation—it only modifies files within the current directory. But you just lost all uncommitted work.
+
+### When to Use Sandboxing Instead
+
+Sandboxing is the better choice when your primary concern is:
+
+- **Prompt injection attacks** — Reduces exfiltration risk by restricting outbound domains (depends on your allowed-domain policy)
+- **Malicious dependencies** — Limits filesystem writes and network access by default (subject to your sandbox configuration)
+- **Untrusted code execution** — OS-level containment is stronger than pattern matching
+- **Network control** — Safety Net has no network protection
+
+### Recommended: Use Both
+
+They protect against different threats:
+
+- **Sandboxing** contains blast radius — even if something goes wrong, damage is limited to cwd and approved network domains
+- **Safety Net** prevents footguns — catches git-specific mistakes that are technically "safe" from the sandbox's perspective
+
+Running both together provides defense-in-depth. Sandboxing handles unknown threats; Safety Net handles known destructive patterns that sandboxing permits.
 
 ## Prerequisites
 
