@@ -24,7 +24,6 @@ describe("Gemini CLI hook", () => {
 				hook_event_name: "BeforeTool",
 				tool_name: "run_shell_command",
 				tool_input: { command: "rm -rf /" },
-				cwd: "/tmp/test",
 			};
 			const { stdout, exitCode } = await runGeminiHook(input);
 			expect(exitCode).toBe(0);
