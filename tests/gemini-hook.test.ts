@@ -66,7 +66,7 @@ describe("Gemini CLI hook", () => {
 	});
 
 	describe("output format", () => {
-		test("outputs Gemini format with decision: block", async () => {
+		test("outputs Gemini format with decision: deny", async () => {
 			const input = {
 				hook_event_name: "BeforeTool",
 				tool_name: "run_shell_command",
