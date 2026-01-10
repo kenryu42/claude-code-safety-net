@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 async function runGeminiHook(
 	input: object,
-): Promise<{ stdout: string; exitCode: number }> {
+): Promise<{ stdout: string; stderr: string; exitCode: number }> {
 	const proc = Bun.spawn(["bun", "src/bin/cc-safety-net.ts", "-gc"], {
 		stdin: "pipe",
 		stdout: "pipe",
@@ -10,9 +10,11 @@ async function runGeminiHook(
 	});
 	proc.stdin.write(JSON.stringify(input));
 	proc.stdin.end();
-	const stdout = await new Response(proc.stdout).text();
+	const stdoutPromise = new Response(proc.stdout).text();
+	const stderrPromise = new Response(proc.stderr).text();
+	const [stdout, stderr] = await Promise.all([stdoutPromise, stderrPromise]);
 	const exitCode = await proc.exited;
-	return { stdout: stdout.trim(), exitCode };
+	return { stdout: stdout.trim(), stderr: stderr.trim(), exitCode };
 }
 
 describe("Gemini CLI hook", () => {
