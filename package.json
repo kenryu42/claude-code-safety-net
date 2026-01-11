@@ -1,6 +1,6 @@
 {
   "name": "cc-safety-net",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Claude Code / OpenCode plugin - block destructive git and filesystem commands before execution",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
