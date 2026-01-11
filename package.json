@@ -1,36 +1,36 @@
 {
-	"name": "cc-safety-net",
-	"version": "0.5.0",
-	"description": "Claude Code / OpenCode plugin - block destructive git and filesystem commands before execution",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"type": "module",
-	"bin": {
-		"cc-safety-net": "dist/bin/cc-safety-net.js"
-	},
-	"files": [
-		"dist"
-	],
-	"scripts": {
-		"build": "bun build src/index.ts src/bin/cc-safety-net.ts --outdir dist --target node && bun run build:types && bun run build:schema",
-		"build:types": "tsc --emitDeclarationOnly --declaration --noEmit false",
-		"build:schema": "bun run scripts/build-schema.ts",
-		"clean": "rm -rf dist",
-		"check": "bun run lint && bun run typecheck && bun run knip && bun run sg:scan && AGENT=1 bun test --coverage",
-		"lint": "biome check --write",
-		"typecheck": "tsc --project tsconfig.typecheck.json",
-		"knip": "knip --production",
-		"sg:scan": "ast-grep scan",
-		"test": "bun test",
-		"prepare": "husky && bun run setup-hooks",
-		"setup-hooks": "bun -e 'await Bun.write(\".husky/pre-commit\", \"#!/usr/bin/env sh\\n\\nbun run knip && bun run lint-staged\\n\")' && chmod +x .husky/pre-commit"
-	},
-	"author": {
-		"name": "J Liew",
-		"email": "jliew@420024lab.com"
-	},
-	"license": "MIT",
-	"repository": {
+  "name": "cc-safety-net",
+  "version": "0.5.0",
+  "description": "Claude Code / OpenCode plugin - block destructive git and filesystem commands before execution",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "cc-safety-net": "dist/bin/cc-safety-net.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts src/bin/cc-safety-net.ts --outdir dist --target node && bun run build:types && bun run build:schema",
+    "build:types": "tsc --emitDeclarationOnly --declaration --noEmit false",
+    "build:schema": "bun run scripts/build-schema.ts",
+    "clean": "rm -rf dist",
+    "check": "bun run lint && bun run typecheck && bun run knip && bun run sg:scan && AGENT=1 bun test --coverage",
+    "lint": "biome check --write",
+    "typecheck": "tsc --project tsconfig.typecheck.json",
+    "knip": "knip --production",
+    "sg:scan": "ast-grep scan",
+    "test": "bun test",
+    "prepare": "husky && bun run setup-hooks",
+    "setup-hooks": "bun -e 'await Bun.write(\".husky/pre-commit\", \"#!/usr/bin/env sh\\n\\nbun run knip && bun run lint-staged\\n\")' && chmod +x .husky/pre-commit"
+  },
+  "author": {
+    "name": "J Liew",
+    "email": "jliew@420024lab.com"
+  },
+  "license": "MIT",
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/kenryu42/claude-code-safety-net.git"
   },
@@ -38,34 +38,34 @@
     "url": "https://github.com/kenryu42/claude-code-safety-net/issues"
   },
   "homepage": "https://github.com/kenryu42/claude-code-safety-net#readme",
-	"devDependencies": {
-		"@ast-grep/cli": "^0.40.4",
-		"@biomejs/biome": "2.3.10",
-		"@opencode-ai/plugin": "^1.0.224",
-		"@types/bun": "latest",
-		"@types/shell-quote": "^1.7.5",
-		"husky": "^9.1.7",
-		"knip": "^5.79.0",
-		"lint-staged": "^16.2.7",
-		"zod": "^4.3.5"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
-	},
-	"dependencies": {
-		"shell-quote": "^1.8.3"
-	},
-	"trustedDependencies": [
-		"@ast-grep/cli"
-	],
-	"engines": {
-		"node": ">=18"
-	},
-	"keywords": [
-		"claude-code",
-		"opencode",
-		"safety",
-		"plugin",
-		"security"
-	]
+  "devDependencies": {
+    "@ast-grep/cli": "^0.40.4",
+    "@biomejs/biome": "2.3.10",
+    "@opencode-ai/plugin": "^1.0.224",
+    "@types/bun": "latest",
+    "@types/shell-quote": "^1.7.5",
+    "husky": "^9.1.7",
+    "knip": "^5.79.0",
+    "lint-staged": "^16.2.7",
+    "zod": "^4.3.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "shell-quote": "^1.8.3"
+  },
+  "trustedDependencies": [
+    "@ast-grep/cli"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "claude-code",
+    "opencode",
+    "safety",
+    "plugin",
+    "security"
+  ]
 }

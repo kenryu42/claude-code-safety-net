@@ -4,115 +4,115 @@
 
 /** Custom rule definition from .safety-net.json */
 export interface CustomRule {
-	/** Unique identifier for the rule */
-	name: string;
-	/** Base command to match (e.g., "git", "npm") */
-	command: string;
-	/** Optional subcommand to match (e.g., "add", "install") */
-	subcommand?: string;
-	/** Arguments that trigger the block */
-	block_args: string[];
-	/** Message shown when blocked */
-	reason: string;
+  /** Unique identifier for the rule */
+  name: string;
+  /** Base command to match (e.g., "git", "npm") */
+  command: string;
+  /** Optional subcommand to match (e.g., "add", "install") */
+  subcommand?: string;
+  /** Arguments that trigger the block */
+  block_args: string[];
+  /** Message shown when blocked */
+  reason: string;
 }
 
 /** Configuration loaded from .safety-net.json */
 export interface Config {
-	/** Schema version (must be 1) */
-	version: number;
-	/** Custom blocking rules */
-	rules: CustomRule[];
+  /** Schema version (must be 1) */
+  version: number;
+  /** Custom blocking rules */
+  rules: CustomRule[];
 }
 
 /** Result of config validation */
 export interface ValidationResult {
-	/** List of validation error messages */
-	errors: string[];
-	/** Set of rule names found (for duplicate detection) */
-	ruleNames: Set<string>;
+  /** List of validation error messages */
+  errors: string[];
+  /** Set of rule names found (for duplicate detection) */
+  ruleNames: Set<string>;
 }
 
 /** Result of command analysis */
 export interface AnalyzeResult {
-	/** The reason the command was blocked */
-	reason: string;
-	/** The specific segment that triggered the block */
-	segment: string;
+  /** The reason the command was blocked */
+  reason: string;
+  /** The specific segment that triggered the block */
+  segment: string;
 }
 
 /** Claude Code hook input format */
 export interface HookInput {
-	session_id?: string;
-	transcript_path?: string;
-	cwd?: string;
-	permission_mode?: string;
-	hook_event_name: string;
-	tool_name: string;
-	tool_input: {
-		command: string;
-		description?: string;
-	};
-	tool_use_id?: string;
+  session_id?: string;
+  transcript_path?: string;
+  cwd?: string;
+  permission_mode?: string;
+  hook_event_name: string;
+  tool_name: string;
+  tool_input: {
+    command: string;
+    description?: string;
+  };
+  tool_use_id?: string;
 }
 
 /** Claude Code hook output format */
 export interface HookOutput {
-	hookSpecificOutput: {
-		hookEventName: string;
-		permissionDecision: "allow" | "deny";
-		permissionDecisionReason?: string;
-	};
+  hookSpecificOutput: {
+    hookEventName: string;
+    permissionDecision: 'allow' | 'deny';
+    permissionDecisionReason?: string;
+  };
 }
 
 /** Gemini CLI hook input format */
 export interface GeminiHookInput {
-	session_id?: string;
-	transcript_path?: string;
-	cwd?: string;
-	hook_event_name: string;
-	timestamp?: string;
-	tool_name?: string;
-	tool_input?: {
-		command?: string;
-		[key: string]: unknown;
-	};
+  session_id?: string;
+  transcript_path?: string;
+  cwd?: string;
+  hook_event_name: string;
+  timestamp?: string;
+  tool_name?: string;
+  tool_input?: {
+    command?: string;
+    [key: string]: unknown;
+  };
 }
 
 /** Gemini CLI hook output format */
 export interface GeminiHookOutput {
-	decision: "deny";
-	reason: string;
-	systemMessage: string;
-	continue?: boolean;
-	stopReason?: string;
-	suppressOutput?: boolean;
+  decision: 'deny';
+  reason: string;
+  systemMessage: string;
+  continue?: boolean;
+  stopReason?: string;
+  suppressOutput?: boolean;
 }
 
 /** Options for command analysis */
 export interface AnalyzeOptions {
-	/** Current working directory */
-	cwd?: string;
-	/** Effective cwd after cd commands (null = unknown, undefined = use cwd) */
-	effectiveCwd?: string | null;
-	/** Loaded configuration */
-	config?: Config;
-	/** Fail-closed on unparseable commands */
-	strict?: boolean;
-	/** Block non-temp rm -rf even within cwd */
-	paranoidRm?: boolean;
-	/** Block interpreter one-liners */
-	paranoidInterpreters?: boolean;
-	/** Allow $TMPDIR paths (false when TMPDIR is overridden to non-temp) */
-	allowTmpdirVar?: boolean;
+  /** Current working directory */
+  cwd?: string;
+  /** Effective cwd after cd commands (null = unknown, undefined = use cwd) */
+  effectiveCwd?: string | null;
+  /** Loaded configuration */
+  config?: Config;
+  /** Fail-closed on unparseable commands */
+  strict?: boolean;
+  /** Block non-temp rm -rf even within cwd */
+  paranoidRm?: boolean;
+  /** Block interpreter one-liners */
+  paranoidInterpreters?: boolean;
+  /** Allow $TMPDIR paths (false when TMPDIR is overridden to non-temp) */
+  allowTmpdirVar?: boolean;
 }
 
 /** Audit log entry */
 export interface AuditLogEntry {
-	ts: string;
-	command: string;
-	segment: string;
-	reason: string;
-	cwd?: string | null;
+  ts: string;
+  command: string;
+  segment: string;
+  reason: string;
+  cwd?: string | null;
 }
 
 /** Constants */
@@ -124,41 +124,25 @@ export const COMMAND_PATTERN = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
 export const MAX_REASON_LENGTH = 256;
 
 /** Shell operators that split commands */
-export const SHELL_OPERATORS = new Set(["&&", "||", "|&", "|", "&", ";", "\n"]);
+export const SHELL_OPERATORS = new Set(['&&', '||', '|&', '|', '&', ';', '\n']);
 
 /** Shell wrappers that need recursive analysis */
-export const SHELL_WRAPPERS = new Set([
-	"bash",
-	"sh",
-	"zsh",
-	"ksh",
-	"dash",
-	"fish",
-	"csh",
-	"tcsh",
-]);
+export const SHELL_WRAPPERS = new Set(['bash', 'sh', 'zsh', 'ksh', 'dash', 'fish', 'csh', 'tcsh']);
 
 /** Interpreters that can execute code */
-export const INTERPRETERS = new Set([
-	"python",
-	"python3",
-	"python2",
-	"node",
-	"ruby",
-	"perl",
-]);
+export const INTERPRETERS = new Set(['python', 'python3', 'python2', 'node', 'ruby', 'perl']);
 
 /** Dangerous commands to detect in interpreter code */
 export const DANGEROUS_PATTERNS = [
-	/\brm\s+.*-[rR].*-f\b/,
-	/\brm\s+.*-f.*-[rR]\b/,
-	/\brm\s+-rf\b/,
-	/\brm\s+-fr\b/,
-	/\bgit\s+reset\s+--hard\b/,
-	/\bgit\s+checkout\s+--\b/,
-	/\bgit\s+clean\s+-f\b/,
-	/\bfind\b.*\s-delete\b/,
+  /\brm\s+.*-[rR].*-f\b/,
+  /\brm\s+.*-f.*-[rR]\b/,
+  /\brm\s+-rf\b/,
+  /\brm\s+-fr\b/,
+  /\bgit\s+reset\s+--hard\b/,
+  /\bgit\s+checkout\s+--\b/,
+  /\bgit\s+clean\s+-f\b/,
+  /\bfind\b.*\s-delete\b/,
 ];
 
 export const PARANOID_INTERPRETERS_SUFFIX =
-	"\n\n(Paranoid mode: interpreter one-liners are blocked.)";
+  '\n\n(Paranoid mode: interpreter one-liners are blocked.)';

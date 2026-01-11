@@ -1,21 +1,16 @@
 #!/usr/bin/env node
-import { analyzeCommand, loadConfig } from "../core/analyze.ts";
-import { redactSecrets, writeAuditLog } from "../core/audit.ts";
-import { CUSTOM_RULES_DOC } from "../core/custom-rules-doc.ts";
-import { envTruthy } from "../core/env.ts";
-import { formatBlockedMessage } from "../core/format.ts";
-import { verifyConfig } from "../core/verify-config.ts";
-import type {
-	GeminiHookInput,
-	GeminiHookOutput,
-	HookInput,
-	HookOutput,
-} from "../types.ts";
+import { analyzeCommand, loadConfig } from '../core/analyze.ts';
+import { redactSecrets, writeAuditLog } from '../core/audit.ts';
+import { CUSTOM_RULES_DOC } from '../core/custom-rules-doc.ts';
+import { envTruthy } from '../core/env.ts';
+import { formatBlockedMessage } from '../core/format.ts';
+import { verifyConfig } from '../core/verify-config.ts';
+import type { GeminiHookInput, GeminiHookOutput, HookInput, HookOutput } from '../types.ts';
 
-const VERSION = "0.5.0";
+const VERSION = '0.5.0';
 
 function printHelp(): void {
-	console.log(`cc-safety-net v${VERSION}
+  console.log(`cc-safety-net v${VERSION}
 
 Blocks destructive git and filesystem commands before execution.
 
@@ -39,221 +34,215 @@ CONFIG FILES:
 }
 
 function printVersion(): void {
-	console.log(VERSION);
+  console.log(VERSION);
 }
 
 function printCustomRulesDoc(): void {
-	console.log(CUSTOM_RULES_DOC);
+  console.log(CUSTOM_RULES_DOC);
 }
 
-type HookMode = "claude-code" | "gemini-cli";
+type HookMode = 'claude-code' | 'gemini-cli';
 
 function handleCliFlags(): HookMode | null {
-	const args = process.argv.slice(2);
+  const args = process.argv.slice(2);
 
-	if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
-		printHelp();
-		process.exit(0);
-	}
+  if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+    printHelp();
+    process.exit(0);
+  }
 
-	if (args.includes("--version") || args.includes("-V")) {
-		printVersion();
-		process.exit(0);
-	}
+  if (args.includes('--version') || args.includes('-V')) {
+    printVersion();
+    process.exit(0);
+  }
 
-	if (args.includes("--verify-config") || args.includes("-vc")) {
-		process.exit(verifyConfig());
-	}
+  if (args.includes('--verify-config') || args.includes('-vc')) {
+    process.exit(verifyConfig());
+  }
 
-	if (args.includes("--custom-rules-doc")) {
-		printCustomRulesDoc();
-		process.exit(0);
-	}
+  if (args.includes('--custom-rules-doc')) {
+    printCustomRulesDoc();
+    process.exit(0);
+  }
 
-	if (args.includes("--claude-code") || args.includes("-cc")) {
-		return "claude-code";
-	}
+  if (args.includes('--claude-code') || args.includes('-cc')) {
+    return 'claude-code';
+  }
 
-	if (args.includes("--gemini-cli") || args.includes("-gc")) {
-		return "gemini-cli";
-	}
+  if (args.includes('--gemini-cli') || args.includes('-gc')) {
+    return 'gemini-cli';
+  }
 
-	console.error(`Unknown option: ${args[0]}`);
-	console.error("Run 'cc-safety-net --help' for usage.");
-	process.exit(1);
+  console.error(`Unknown option: ${args[0]}`);
+  console.error("Run 'cc-safety-net --help' for usage.");
+  process.exit(1);
 }
 
 async function runClaudeCodeHook(): Promise<void> {
-	const chunks: Buffer[] = [];
+  const chunks: Buffer[] = [];
 
-	for await (const chunk of process.stdin) {
-		chunks.push(chunk as Buffer);
-	}
+  for await (const chunk of process.stdin) {
+    chunks.push(chunk as Buffer);
+  }
 
-	const inputText = Buffer.concat(chunks).toString("utf-8").trim();
+  const inputText = Buffer.concat(chunks).toString('utf-8').trim();
 
-	if (!inputText) {
-		return;
-	}
+  if (!inputText) {
+    return;
+  }
 
-	let input: HookInput;
-	try {
-		input = JSON.parse(inputText) as HookInput;
-	} catch {
-		if (envTruthy("SAFETY_NET_STRICT")) {
-			outputDeny("Failed to parse hook input JSON (strict mode)");
-		}
-		return;
-	}
+  let input: HookInput;
+  try {
+    input = JSON.parse(inputText) as HookInput;
+  } catch {
+    if (envTruthy('SAFETY_NET_STRICT')) {
+      outputDeny('Failed to parse hook input JSON (strict mode)');
+    }
+    return;
+  }
 
-	if (input.tool_name !== "Bash") {
-		return;
-	}
+  if (input.tool_name !== 'Bash') {
+    return;
+  }
 
-	const command = input.tool_input?.command;
-	if (!command) {
-		return;
-	}
+  const command = input.tool_input?.command;
+  if (!command) {
+    return;
+  }
 
-	const cwd = input.cwd ?? process.cwd();
-	const strict = envTruthy("SAFETY_NET_STRICT");
-	const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
-	const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
-	const paranoidInterpreters =
-		paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+  const cwd = input.cwd ?? process.cwd();
+  const strict = envTruthy('SAFETY_NET_STRICT');
+  const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
+  const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
+  const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
 
-	const config = loadConfig(cwd);
+  const config = loadConfig(cwd);
 
-	const result = analyzeCommand(command, {
-		cwd,
-		config,
-		strict,
-		paranoidRm,
-		paranoidInterpreters,
-	});
+  const result = analyzeCommand(command, {
+    cwd,
+    config,
+    strict,
+    paranoidRm,
+    paranoidInterpreters,
+  });
 
-	if (result) {
-		const sessionId = input.session_id;
-		if (sessionId) {
-			writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-		}
-		outputDeny(result.reason, command, result.segment);
-	}
+  if (result) {
+    const sessionId = input.session_id;
+    if (sessionId) {
+      writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
+    }
+    outputDeny(result.reason, command, result.segment);
+  }
 }
 
 function outputDeny(reason: string, command?: string, segment?: string): void {
-	const message = formatBlockedMessage({
-		reason,
-		command,
-		segment,
-		redact: redactSecrets,
-	});
+  const message = formatBlockedMessage({
+    reason,
+    command,
+    segment,
+    redact: redactSecrets,
+  });
 
-	const output: HookOutput = {
-		hookSpecificOutput: {
-			hookEventName: "PreToolUse",
-			permissionDecision: "deny",
-			permissionDecisionReason: message,
-		},
-	};
+  const output: HookOutput = {
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: message,
+    },
+  };
 
-	console.log(JSON.stringify(output));
+  console.log(JSON.stringify(output));
 }
 
 async function runGeminiCLIHook(): Promise<void> {
-	const chunks: Buffer[] = [];
+  const chunks: Buffer[] = [];
 
-	for await (const chunk of process.stdin) {
-		chunks.push(chunk as Buffer);
-	}
+  for await (const chunk of process.stdin) {
+    chunks.push(chunk as Buffer);
+  }
 
-	const inputText = Buffer.concat(chunks).toString("utf-8").trim();
+  const inputText = Buffer.concat(chunks).toString('utf-8').trim();
 
-	if (!inputText) {
-		return;
-	}
+  if (!inputText) {
+    return;
+  }
 
-	let input: GeminiHookInput;
-	try {
-		input = JSON.parse(inputText) as GeminiHookInput;
-	} catch {
-		if (envTruthy("SAFETY_NET_STRICT")) {
-			outputGeminiDeny("Failed to parse hook input JSON (strict mode)");
-		}
-		return;
-	}
+  let input: GeminiHookInput;
+  try {
+    input = JSON.parse(inputText) as GeminiHookInput;
+  } catch {
+    if (envTruthy('SAFETY_NET_STRICT')) {
+      outputGeminiDeny('Failed to parse hook input JSON (strict mode)');
+    }
+    return;
+  }
 
-	if (input.hook_event_name !== "BeforeTool") {
-		return;
-	}
+  if (input.hook_event_name !== 'BeforeTool') {
+    return;
+  }
 
-	if (input.tool_name !== "run_shell_command") {
-		return;
-	}
+  if (input.tool_name !== 'run_shell_command') {
+    return;
+  }
 
-	const command = input.tool_input?.command;
-	if (!command) {
-		return;
-	}
+  const command = input.tool_input?.command;
+  if (!command) {
+    return;
+  }
 
-	const cwd = input.cwd ?? process.cwd();
-	const strict = envTruthy("SAFETY_NET_STRICT");
-	const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
-	const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
-	const paranoidInterpreters =
-		paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+  const cwd = input.cwd ?? process.cwd();
+  const strict = envTruthy('SAFETY_NET_STRICT');
+  const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
+  const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
+  const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
 
-	const config = loadConfig(cwd);
+  const config = loadConfig(cwd);
 
-	const result = analyzeCommand(command, {
-		cwd,
-		config,
-		strict,
-		paranoidRm,
-		paranoidInterpreters,
-	});
+  const result = analyzeCommand(command, {
+    cwd,
+    config,
+    strict,
+    paranoidRm,
+    paranoidInterpreters,
+  });
 
-	if (result) {
-		const sessionId = input.session_id;
-		if (sessionId) {
-			writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-		}
-		outputGeminiDeny(result.reason, command, result.segment);
-	}
+  if (result) {
+    const sessionId = input.session_id;
+    if (sessionId) {
+      writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
+    }
+    outputGeminiDeny(result.reason, command, result.segment);
+  }
 }
 
-function outputGeminiDeny(
-	reason: string,
-	command?: string,
-	segment?: string,
-): void {
-	const message = formatBlockedMessage({
-		reason,
-		command,
-		segment,
-		redact: redactSecrets,
-	});
+function outputGeminiDeny(reason: string, command?: string, segment?: string): void {
+  const message = formatBlockedMessage({
+    reason,
+    command,
+    segment,
+    redact: redactSecrets,
+  });
 
-	// Gemini CLI expects exit code 0 with JSON for policy blocks; exit 2 is for hook errors.
-	const output: GeminiHookOutput = {
-		decision: "deny",
-		reason: message,
-		systemMessage: message,
-	};
+  // Gemini CLI expects exit code 0 with JSON for policy blocks; exit 2 is for hook errors.
+  const output: GeminiHookOutput = {
+    decision: 'deny',
+    reason: message,
+    systemMessage: message,
+  };
 
-	console.log(JSON.stringify(output));
+  console.log(JSON.stringify(output));
 }
 
 async function main(): Promise<void> {
-	const mode = handleCliFlags();
-	if (mode === "claude-code") {
-		await runClaudeCodeHook();
-	} else if (mode === "gemini-cli") {
-		await runGeminiCLIHook();
-	}
+  const mode = handleCliFlags();
+  if (mode === 'claude-code') {
+    await runClaudeCodeHook();
+  } else if (mode === 'gemini-cli') {
+    await runGeminiCLIHook();
+  }
 }
 
 main().catch((error: unknown) => {
-	console.error("Safety Net error:", error);
-	process.exit(1);
+  console.error('Safety Net error:', error);
+  process.exit(1);
 });
