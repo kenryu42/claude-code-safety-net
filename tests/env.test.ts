@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { envTruthy } from '../src/core/env.ts';
+import { envAssignmentTruthy, envTruthy } from '../src/core/env.ts';
 
 describe('envTruthy', () => {
   test("returns true for '1'", () => {
@@ -59,5 +59,32 @@ describe('envTruthy', () => {
     process.env.TEST_ENV_TRUTHY = 'yes';
     expect(envTruthy('TEST_ENV_TRUTHY')).toBe(false);
     delete process.env.TEST_ENV_TRUTHY;
+  });
+});
+
+describe('envAssignmentTruthy', () => {
+  test("returns true for '1'", () => {
+    const assignments = new Map<string, string>([['TEST_ENV_TRUTHY', '1']]);
+    expect(envAssignmentTruthy(assignments, 'TEST_ENV_TRUTHY')).toBe(true);
+  });
+
+  test("returns true for 'true'", () => {
+    const assignments = new Map<string, string>([['TEST_ENV_TRUTHY', 'true']]);
+    expect(envAssignmentTruthy(assignments, 'TEST_ENV_TRUTHY')).toBe(true);
+  });
+
+  test("returns true for 'TRUE'", () => {
+    const assignments = new Map<string, string>([['TEST_ENV_TRUTHY', 'TRUE']]);
+    expect(envAssignmentTruthy(assignments, 'TEST_ENV_TRUTHY')).toBe(true);
+  });
+
+  test("returns false for 'false'", () => {
+    const assignments = new Map<string, string>([['TEST_ENV_TRUTHY', 'false']]);
+    expect(envAssignmentTruthy(assignments, 'TEST_ENV_TRUTHY')).toBe(false);
+  });
+
+  test('returns false for missing key', () => {
+    const assignments = new Map<string, string>();
+    expect(envAssignmentTruthy(assignments, 'TEST_ENV_TRUTHY')).toBe(false);
   });
 });

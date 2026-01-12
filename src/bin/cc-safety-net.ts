@@ -27,6 +27,7 @@ ENVIRONMENT VARIABLES:
   SAFETY_NET_PARANOID=1           Enable all paranoid checks
   SAFETY_NET_PARANOID_RM=1        Block non-temp rm -rf within cwd
   SAFETY_NET_PARANOID_INTERPRETERS=1  Block interpreter one-liners
+  SAFETY_NET_ALLOW=1              Allow all commands (explicit override)
 
 CONFIG FILES:
   ~/.cc-safety-net/config.json    User-scope config

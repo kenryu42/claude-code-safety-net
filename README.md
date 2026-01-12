@@ -472,6 +472,17 @@ Paranoid behavior:
 - **interpreters**: blocks interpreter one-liners like `python -c`, `node -e`, `ruby -e`,
   and `perl -e` (these can hide destructive commands).
 
+### Allow Override
+
+If you intentionally need to run a blocked command, you can explicitly override the safety net
+for a single invocation by setting `SAFETY_NET_ALLOW=1` in the environment:
+
+```bash
+SAFETY_NET_ALLOW=1 git reset --hard
+```
+
+This bypass should be used sparingly and only when you understand the impact of the command.
+
 ### Shell Wrapper Detection
 
 The guard recursively analyzes commands wrapped in shells:

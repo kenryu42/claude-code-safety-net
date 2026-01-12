@@ -106,6 +106,18 @@ describe('edge cases', () => {
     });
   });
 
+  describe('allow override', () => {
+    test('SAFETY_NET_ALLOW bypasses blocks', () => {
+      withEnv({ SAFETY_NET_ALLOW: '1' }, () => {
+        assertAllowed('git reset --hard');
+      });
+    });
+
+    test('SAFETY_NET_ALLOW env assignment bypasses blocks', () => {
+      assertAllowed('SAFETY_NET_ALLOW=1 git reset --hard');
+    });
+  });
+
   describe('shell wrappers', () => {
     test('sh -lc wrapper blocked', () => {
       assertBlocked("sh -lc 'git reset --hard'", 'git reset --hard');

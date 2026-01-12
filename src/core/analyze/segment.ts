@@ -5,7 +5,7 @@ import {
   PARANOID_INTERPRETERS_SUFFIX,
   SHELL_WRAPPERS,
 } from '../../types.ts';
-
+import { envAssignmentTruthy, envTruthy } from '../env.ts';
 import { checkCustomRules } from '../rules-custom.ts';
 import { analyzeGit } from '../rules-git.ts';
 import { analyzeRm, isHomeDirectory } from '../rules-rm.ts';
@@ -73,6 +73,10 @@ export function analyzeSegment(
 
   const head = stripped[0];
   if (!head) {
+    return null;
+  }
+
+  if (envTruthy('SAFETY_NET_ALLOW') || envAssignmentTruthy(envAssignments, 'SAFETY_NET_ALLOW')) {
     return null;
   }
 

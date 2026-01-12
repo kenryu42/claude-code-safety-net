@@ -70,6 +70,7 @@ When committing changes to files in `commands/`, `hooks/`, or `.opencode/`, use 
 - `SAFETY_NET_PARANOID=1`: Paranoid mode (enables all paranoid checks)
 - `SAFETY_NET_PARANOID_RM=1`: Paranoid rm (blocks non-temp `rm -rf` even within cwd)
 - `SAFETY_NET_PARANOID_INTERPRETERS=1`: Paranoid interpreters (blocks interpreter one-liners)
+- `SAFETY_NET_ALLOW=1`: Allow override for intentionally running blocked commands
 
 ## Custom Rules
 
