@@ -13,6 +13,9 @@ import { analyzeSegment, segmentChangesCwd } from './segment.ts';
 const REASON_STRICT_UNPARSEABLE =
   'Command could not be safely analyzed (strict mode). Verify manually.';
 
+const REASON_RECURSION_LIMIT =
+  'Command exceeds maximum recursion depth and cannot be safely analyzed.';
+
 export type InternalOptions = AnalyzeOptions & { config: Config };
 
 export function analyzeCommandInternal(
@@ -21,7 +24,7 @@ export function analyzeCommandInternal(
   options: InternalOptions,
 ): AnalyzeResult | null {
   if (depth >= MAX_RECURSION_DEPTH) {
-    return null;
+    return { reason: REASON_RECURSION_LIMIT, segment: command };
   }
 
   const segments = splitShellCommands(command);

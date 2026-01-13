@@ -643,13 +643,12 @@ describe('edge cases', () => {
   });
 
   describe('recursion', () => {
-    test('shell dash c recursion limit reached returns null', () => {
+    test('shell dash c recursion limit reached blocks command', () => {
       let cmd = 'rm -rf /some/path';
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 11; i++) {
         cmd = `bash -c ${JSON.stringify(cmd)}`;
       }
-      const result = runGuard(cmd);
-      expect(result).toBeNull();
+      assertBlocked(cmd, 'recursion');
     });
   });
 
@@ -714,23 +713,20 @@ describe('edge cases', () => {
   });
 
   describe('recursion depth boundary', () => {
-    test('shell dash c recursion at exactly MAX_RECURSION_DEPTH (5) returns null', () => {
+    test('shell dash c recursion at exactly MAX_RECURSION_DEPTH (10) blocks', () => {
       let cmd = 'rm -rf /some/path';
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 10; i++) {
         cmd = `bash -c ${JSON.stringify(cmd)}`;
       }
-      const result = runGuard(cmd);
-      expect(result).toBeNull();
+      assertBlocked(cmd, 'recursion');
     });
 
-    test('shell dash c recursion at depth 4 still blocks', () => {
+    test('shell dash c recursion at depth 9 still blocks with rm reason', () => {
       let cmd = 'rm -rf /some/path';
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 9; i++) {
         cmd = `bash -c ${JSON.stringify(cmd)}`;
       }
-      const result = runGuard(cmd);
-      expect(result).not.toBeNull();
-      expect(result).toContain('rm -rf');
+      assertBlocked(cmd, 'rm -rf');
     });
   });
 

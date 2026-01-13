@@ -116,7 +116,7 @@ export interface AuditLogEntry {
 }
 
 /** Constants */
-export const MAX_RECURSION_DEPTH = 5;
+export const MAX_RECURSION_DEPTH = 10;
 export const MAX_STRIP_ITERATIONS = 20;
 
 export const NAME_PATTERN = /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/;
