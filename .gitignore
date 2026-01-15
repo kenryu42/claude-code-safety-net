@@ -9,6 +9,3 @@ plan-*.md
 
 # --- Node.js ---
 node_modules/
-
-# --- Build Artifacts ---
-dist/
