@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun build src/index.ts src/bin/cc-safety-net.ts --outdir dist --target node && bun run build:types && bun run build:schema",
+    "build": "bun run scripts/build.ts",
     "build:types": "tsc --emitDeclarationOnly --declaration --noEmit false",
     "build:schema": "bun run scripts/build-schema.ts",
     "clean": "rm -rf dist",
