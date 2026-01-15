@@ -18,7 +18,6 @@ First off, thanks for taking the time to contribute! This document provides guid
   - [Adding a Git Rule](#adding-a-git-rule)
   - [Adding an rm Rule](#adding-an-rm-rule)
   - [Adding Other Command Rules](#adding-other-command-rules)
-- [Before You Start: Proposing New Features](#before-you-start-proposing-new-features)
 - [Pull Request Process](#pull-request-process)
 - [Publishing](#publishing)
 - [Getting Help](#getting-help)
