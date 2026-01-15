@@ -6,7 +6,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "npx -y cc-safety-net --claude-code"
+						"command": "$(command -v cc-safety-net || echo 'npx -y cc-safety-net') --claude-code"
 					}
 				]
 			}
