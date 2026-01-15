@@ -1,6 +1,6 @@
 {
 	"name": "safety-net",
-	"version": "0.5.1",
+	"version": "0.6.0",
 	"description": "Block destructive git and filesystem commands before execution",
 	"author": {
 		"name": "J Liew",
