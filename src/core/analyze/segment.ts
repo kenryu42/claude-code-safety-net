@@ -1,6 +1,7 @@
 import {
   type AnalyzeOptions,
   type Config,
+  EVAL_COMMANDS,
   INTERPRETERS,
   PARANOID_INTERPRETERS_SUFFIX,
   SHELL_WRAPPERS,
@@ -18,6 +19,7 @@ import {
 } from '../shell.ts';
 
 import { DISPLAY_COMMANDS } from './constants.ts';
+import { analyzeEvalSource } from './eval-source.ts';
 import { analyzeFind } from './find.ts';
 import { containsDangerousCode, extractInterpreterCodeArg } from './interpreters.ts';
 import { analyzeParallel } from './parallel.ts';
@@ -103,6 +105,14 @@ export function analyzeSegment(
       if (containsDangerousCode(codeArg)) {
         return REASON_INTERPRETER_DANGEROUS;
       }
+    }
+  }
+
+  // Check eval/source commands for dangerous patterns
+  if (EVAL_COMMANDS.has(normalizedHead)) {
+    const evalResult = analyzeEvalSource(stripped);
+    if (evalResult) {
+      return evalResult;
     }
   }
 

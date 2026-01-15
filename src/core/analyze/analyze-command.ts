@@ -8,6 +8,8 @@ import {
 import { splitShellCommands } from '../shell.ts';
 
 import { dangerousInText } from './dangerous-text.ts';
+import { detectSourceProcessSubstitution } from './eval-source.ts';
+import { detectPipeToShell } from './pipe-to-shell.ts';
 import { analyzeSegment, segmentChangesCwd } from './segment.ts';
 
 const REASON_STRICT_UNPARSEABLE =
@@ -22,6 +24,22 @@ export function analyzeCommandInternal(
 ): AnalyzeResult | null {
   if (depth >= MAX_RECURSION_DEPTH) {
     return null;
+  }
+
+  // Check for patterns that are lost during shell parsing
+  // These must be detected on the raw command string before splitting
+  // Run at all depths to catch nested patterns like "bash -c 'curl | bash'"
+
+  // Pipe-to-shell: "curl | bash" would be split into safe-looking segments
+  const pipeToShellReason = detectPipeToShell(command);
+  if (pipeToShellReason) {
+    return { reason: pipeToShellReason, segment: command };
+  }
+
+  // Source with process substitution: "source <(...)" loses the <( during parsing
+  const sourceProcessSubReason = detectSourceProcessSubstitution(command);
+  if (sourceProcessSubReason) {
+    return { reason: sourceProcessSubReason, segment: command };
   }
 
   const segments = splitShellCommands(command);

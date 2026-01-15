@@ -132,6 +132,9 @@ export const SHELL_WRAPPERS = new Set(['bash', 'sh', 'zsh', 'ksh', 'dash', 'fish
 /** Interpreters that can execute code */
 export const INTERPRETERS = new Set(['python', 'python3', 'python2', 'node', 'ruby', 'perl']);
 
+/** Commands that execute arbitrary code from arguments or stdin */
+export const EVAL_COMMANDS = new Set(['eval', 'source', '.']);
+
 /** Dangerous commands to detect in interpreter code */
 export const DANGEROUS_PATTERNS = [
   /\brm\s+.*-[rR].*-f\b/,
