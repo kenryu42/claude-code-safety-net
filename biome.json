@@ -6,7 +6,7 @@
       "tests/**",
       "scripts/**",
       "knip.ts",
-      "*.json",
+      "**/*.json",
       "!node_modules",
       "!dist",
       "!coverage"

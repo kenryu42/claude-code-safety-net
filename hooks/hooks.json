@@ -1,15 +1,15 @@
 {
-	"hooks": {
-		"PreToolUse": [
-			{
-				"matcher": "Bash",
-				"hooks": [
-					{
-						"type": "command",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/dist/bin/cc-safety-net.js --claude-code"
-					}
-				]
-			}
-		]
-	}
+          }
+        ]
+      }
+    ]
+  }
 }

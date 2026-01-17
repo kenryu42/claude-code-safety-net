@@ -52,19 +52,12 @@
             "description": "Message shown when the command is blocked"
           }
         },
-        "required": [
-          "name",
-          "command",
-          "block_args",
-          "reason"
-        ],
+        "required": ["name", "command", "block_args", "reason"],
         "additionalProperties": false,
         "description": "A custom rule that blocks specific command patterns"
       }
     }
   },
-  "required": [
-    "version"
-  ],
+  "required": ["version"],
   "additionalProperties": false
 }
