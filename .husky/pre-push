@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+# Run all checks (lint, typecheck, knip, tests)
+bun run check
+
+# Build the latest dist
+bun run build
+
+# Check if dist/ changed after build
+if ! git diff --quiet dist/; then
+  echo "⚠️  dist/ is out of date! Please commit the updated dist/ folder."
+  exit 1
+fi
