@@ -44,3 +44,13 @@ if (schemaResult.exitCode !== 0) {
   console.error('build:schema failed');
   process.exit(1);
 }
+
+// Verify expected output files exist
+const expectedFiles = ['dist/index.js', 'dist/index.d.ts', 'dist/bin/cc-safety-net.js'];
+for (const file of expectedFiles) {
+  if (!(await Bun.file(file).exists())) {
+    console.error(`Build verification failed: ${file} not found`);
+    process.exit(1);
+  }
+}
+console.log('  ✓ Build verification passed');
