@@ -22,23 +22,24 @@ A Claude Code / OpenCode plugin that blocks destructive git and filesystem comma
 
 ## Pre-commit Hooks
 
-Runs on commit (in order): knip → lint-staged (biome check --write)
+Runs on commit: `knip` → `lint-staged` (biome check --write, ast-grep scan)
 
 ## Commit Conventions
 
-When committing changes to files in `commands/`, `hooks/`, or `.opencode/`, use only `fix` or `feat` commit types. These directories contain user-facing skill definitions and hook configurations that represent features or fixes to the plugin's capabilities.
+For changes to `commands/`, `hooks/`, or `.opencode/`, use only `fix` or `feat` commit types.
 
 ## Code Style (TypeScript)
 
-### Formatting
-- Formatter: Biome
-- Line length: configured in `biome.json`
-- Use tabs for indentation (Biome default)
+### Formatting (Biome)
+- 2-space indentation, 100-char line width
+- Single quotes, trailing commas, semicolons required
+- Imports: auto-sorted by Biome, use relative imports within package
+- Prefer named exports over default exports
 
 ### Type Hints
 - **Required** on all functions
 - Use `| null` or `| undefined` appropriately
-- Use lowercase primitive types (`string`, `number`, `boolean`)
+- Use lowercase primitives (`string`, `number`, `boolean`)
 - Use `readonly` arrays where mutation isn't needed
 
 ```typescript
@@ -50,18 +51,6 @@ function analyzeRm(tokens: readonly string[], cwd: string | null): string | null
 function analyze(command, strict) { ... }  // Missing types
 ```
 
-### Imports
-- Order: handled by Biome (sorted automatically)
-- Use relative imports within same package
-- Prefer named exports over default exports
-
-```typescript
-import { parse } from "shell-quote"
-import type { Config, HookInput } from "../types"
-import { analyzeGit } from "./rules-git"
-import { splitShellCommands } from "./shell"
-```
-
 ### Naming
 - Functions/variables: `camelCase`
 - Types/interfaces: `PascalCase`
@@ -70,7 +59,7 @@ import { splitShellCommands } from "./shell"
 
 ### Error Handling
 - Print errors to stderr
-- Return exit codes: `0` = success, `1` = error
+- Exit codes: `0` = success, `1` = error
 - Block commands: exit 0 with JSON `permissionDecision: "deny"`
 
 ## Architecture
@@ -90,38 +79,27 @@ src/
     └── rules-custom.ts        # Custom rule evaluation
 ```
 
-| Module | Purpose |
-|--------|---------|
-| `index.ts` | OpenCode plugin export |
-| `bin/cc-safety-net.ts` | Claude Code CLI wrapper, JSON I/O |
-| `analyze.ts` | Main entry, command analysis orchestration |
-| `config.ts` | Config loading (`.safety-net.json`), Config type |
-| `rules-custom.ts` | Custom rule evaluation (`checkCustomRules`) |
-| `rules-git.ts` | Git rules (checkout, restore, reset, clean, push, branch, stash) |
-| `rules-rm.ts` | rm analysis (cwd-relative, temp paths, root/home detection) |
-| `shell.ts` | Shell parsing (`splitShellCommands`, `shlexSplit`, `stripWrappers`) |
-
 ## Testing
 
 Use Bun's built-in test runner with test helpers:
 
 ```typescript
-import { describe, test } from "bun:test"
-import { assertBlocked, assertAllowed } from "./helpers"
+import { describe, test } from 'bun:test';
+import { assertBlocked, assertAllowed } from './helpers.ts';
 
-describe("git rules", () => {
-  test("git reset --hard blocked", () => {
-    assertBlocked("git reset --hard", "git reset --hard")
-  })
+describe('git rules', () => {
+  test('git reset --hard blocked', () => {
+    assertBlocked('git reset --hard', 'git reset --hard');
+  });
 
-  test("git status allowed", () => {
-    assertAllowed("git status")
-  })
+  test('git status allowed', () => {
+    assertAllowed('git status');
+  });
 
-  test("with cwd", () => {
-    assertBlocked("rm -rf /", "rm -rf", "/home/user")
-  })
-})
+  test('with cwd', () => {
+    assertBlocked('rm -rf /', 'rm -rf', '/home/user');
+  });
+});
 ```
 
 ### Test Helpers
@@ -138,8 +116,8 @@ describe("git rules", () => {
 |----------|--------|
 | `SAFETY_NET_STRICT=1` | Fail-closed on unparseable hook input/commands |
 | `SAFETY_NET_PARANOID=1` | Enable all paranoid checks (rm + interpreters) |
-| `SAFETY_NET_PARANOID_RM=1` | Block non-temp `rm -rf` even within the current working directory |
-| `SAFETY_NET_PARANOID_INTERPRETERS=1` | Block interpreter one-liners like `python -c`, `node -e`, etc. |
+| `SAFETY_NET_PARANOID_RM=1` | Block non-temp `rm -rf` even within cwd |
+| `SAFETY_NET_PARANOID_INTERPRETERS=1` | Block interpreter one-liners |
 
 ## What Gets Blocked
 
@@ -164,7 +142,7 @@ describe("git rules", () => {
 
 ### Other Command Rules
 1. Add reason constant in `analyze.ts`: `const REASON_* = "..."`
-2. Add detection in `analyzeSegment()` 
+2. Add detection in `analyzeSegment()`
 3. Add tests in appropriate test file
 4. Run `bun run check`
 
@@ -195,27 +173,11 @@ Allowed commands produce no output (exit 0 silently).
 
 ## Bun Guidelines
 
-Default to using Bun instead of Node.js.
-
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Use `bunx <package> <command>` instead of `npx <package> <command>`
-- Bun automatically loads .env, so don't use dotenv.
-
-## APIs
-
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Bun.$`ls` instead of execa.
-
-## Testing
+Default to Bun instead of Node.js:
+- `bun <file>` instead of `node <file>`
+- `bun test` instead of jest/vitest
+- `bun install` instead of npm/yarn/pnpm install
+- `bunx <pkg>` instead of `npx <pkg>`
+- Bun auto-loads `.env` - no dotenv needed
 
 Use `AGENT=1 bun test` to run tests.
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.

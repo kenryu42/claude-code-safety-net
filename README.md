@@ -30,6 +30,7 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
   - [Setup via Slash Command](#setup-via-slash-command)
   - [Manual Setup](#manual-setup)
   - [Emoji Mode Indicators](#emoji-mode-indicators)
+- [Diagnostics](#diagnostics)
 - [Commands Blocked](#commands-blocked)
 - [Commands Allowed](#commands-allowed)
 - [What Happens When Blocked](#what-happens-when-blocked)
@@ -283,6 +284,35 @@ The status line displays different emojis based on the current configuration:
 | Strict + Paranoid | `🛡️ Safety Net 🔒👁️` | Both strict and paranoid modes enabled |
 
 Multiple mode emojis are combined when multiple environment variables are set.
+
+## Diagnostics
+
+Run the diagnostic command to verify your installation and troubleshoot issues:
+
+```bash
+npx cc-safety-net doctor
+# or with bun
+bunx cc-safety-net doctor
+```
+
+The doctor command checks:
+
+| Check | Description |
+|-------|-------------|
+| Hook Integration | Verifies the plugin is properly configured for each supported platform |
+| Self-Test | Runs sample commands to confirm blocking works correctly |
+| Configuration | Validates custom rules in user and project configs |
+| Environment | Shows status of mode flags (SAFETY_NET_STRICT, SAFETY_NET_PARANOID, etc.) |
+| Recent Activity | Summarizes blocked commands from the last 7 days |
+| System Info | Displays versions of all relevant tools |
+| Update Check | Checks if a newer version is available |
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--json` | Output in JSON format (useful for sharing in bug reports) |
+| `--skip-update-check` | Skip the npm version check |
 
 ## Commands Blocked
 

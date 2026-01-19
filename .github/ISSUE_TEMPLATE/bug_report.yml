@@ -8,6 +8,8 @@ body:
       value: |
         Thanks for taking the time to report a bug! Please fill out the sections below to help us understand and reproduce the issue.
 
+        **Tip:** Run `npx cc-safety-net doctor --json` to generate diagnostic info that can help us troubleshoot.
+
   - type: textarea
     id: description
     attributes:
@@ -65,6 +67,17 @@ body:
         If applicable, paste any relevant logs or error output.
         Audit logs can be found at `~/.cc-safety-net/logs/<session_id>.jsonl`
       render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: doctor-output
+    attributes:
+      label: Doctor Output
+      description: |
+        Run `npx cc-safety-net doctor --json` and paste the output here.
+        This helps us understand your environment and configuration.
+      render: json
     validations:
       required: false
 
