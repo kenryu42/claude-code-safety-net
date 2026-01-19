@@ -16,6 +16,7 @@ A Claude Code / OpenCode plugin that blocks destructive git and filesystem comma
 | Pattern match | `bun test --test-name-pattern "pattern"` |
 | Dead code | `bun run knip` |
 | AST rules | `bun run sg:scan` |
+| Doctor | `bun src/bin/cc-safety-net.ts doctor` |
 
 **`bun run check`** runs: biome check → typecheck → knip → ast-grep scan → bun test
 
