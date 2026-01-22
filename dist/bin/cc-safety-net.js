@@ -2354,7 +2354,7 @@ async function runClaudeCodeHook() {
 }
 
 // src/bin/copilot-cli.ts
-function outputDeny2(reason, command, segment) {
+function outputCopilotDeny(reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
     command,
@@ -2381,7 +2381,7 @@ async function runCopilotCliHook() {
     input = JSON.parse(inputText);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputDeny2("Failed to parse hook input JSON (strict mode)");
+      outputCopilotDeny("Failed to parse hook input JSON (strict mode)");
     }
     return;
   }
@@ -2393,7 +2393,7 @@ async function runCopilotCliHook() {
     toolArgs = JSON.parse(input.toolArgs);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputDeny2("Failed to parse toolArgs JSON (strict mode)");
+      outputCopilotDeny("Failed to parse toolArgs JSON (strict mode)");
     }
     return;
   }
@@ -2417,7 +2417,7 @@ async function runCopilotCliHook() {
   if (result) {
     const sessionId = `copilot-${input.timestamp}`;
     writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-    outputDeny2(result.reason, command, result.segment);
+    outputCopilotDeny(result.reason, command, result.segment);
   }
 }
 

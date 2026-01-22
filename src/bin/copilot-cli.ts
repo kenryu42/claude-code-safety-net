@@ -4,7 +4,7 @@ import { envTruthy } from '../core/env.ts';
 import { formatBlockedMessage } from '../core/format.ts';
 import type { CopilotCliHookInput, CopilotCliHookOutput } from '../types.ts';
 
-function outputDeny(reason: string, command?: string, segment?: string): void {
+function outputCopilotDeny(reason: string, command?: string, segment?: string): void {
   const message = formatBlockedMessage({
     reason,
     command,
@@ -38,7 +38,7 @@ export async function runCopilotCliHook(): Promise<void> {
     input = JSON.parse(inputText) as CopilotCliHookInput;
   } catch {
     if (envTruthy('SAFETY_NET_STRICT')) {
-      outputDeny('Failed to parse hook input JSON (strict mode)');
+      outputCopilotDeny('Failed to parse hook input JSON (strict mode)');
     }
     return;
   }
@@ -54,7 +54,7 @@ export async function runCopilotCliHook(): Promise<void> {
     toolArgs = JSON.parse(input.toolArgs) as { command?: string };
   } catch {
     if (envTruthy('SAFETY_NET_STRICT')) {
-      outputDeny('Failed to parse toolArgs JSON (strict mode)');
+      outputCopilotDeny('Failed to parse toolArgs JSON (strict mode)');
     }
     return;
   }
@@ -84,6 +84,6 @@ export async function runCopilotCliHook(): Promise<void> {
     // Generate a session ID from timestamp for audit logging
     const sessionId = `copilot-${input.timestamp}`;
     writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-    outputDeny(result.reason, command, result.segment);
+    outputCopilotDeny(result.reason, command, result.segment);
   }
 }
