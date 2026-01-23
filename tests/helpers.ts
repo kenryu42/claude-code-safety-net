@@ -1,8 +1,8 @@
 import { expect } from 'bun:test';
-import type { VersionFetcher } from '../src/bin/doctor/system-info.ts';
-import { analyzeCommand } from '../src/core/analyze.ts';
-import { loadConfig } from '../src/core/config.ts';
-import type { AnalyzeOptions, Config } from '../src/types.ts';
+import type { VersionFetcher } from '@/bin/doctor/system-info';
+import { analyzeCommand } from '@/core/analyze';
+import { loadConfig } from '@/core/config';
+import type { AnalyzeOptions, Config } from '@/types';
 
 function envTruthy(name: string): boolean {
   const val = process.env[name];
