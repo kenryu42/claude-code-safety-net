@@ -1,11 +1,10 @@
-import { SHELL_WRAPPERS } from '../../types.ts';
-import { analyzeGit } from '../rules-git.ts';
-import { analyzeRm } from '../rules-rm.ts';
-import { getBasename, stripWrappers } from '../shell.ts';
-
-import { analyzeFind } from './find.ts';
-import { hasRecursiveForceFlags } from './rm-flags.ts';
-import { extractDashCArg } from './shell-wrappers.ts';
+import { analyzeFind } from '@/core/analyze/find';
+import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { extractDashCArg } from '@/core/analyze/shell-wrappers';
+import { analyzeGit } from '@/core/rules-git';
+import { analyzeRm } from '@/core/rules-rm';
+import { getBasename, stripWrappers } from '@/core/shell';
+import { SHELL_WRAPPERS } from '@/types';
 
 const REASON_PARALLEL_RM =
   'parallel rm -rf with dynamic input is dangerous. Use explicit file list instead.';

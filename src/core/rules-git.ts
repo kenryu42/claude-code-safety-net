@@ -1,4 +1,4 @@
-import { extractShortOpts, getBasename } from './shell.ts';
+import { extractShortOpts, getBasename } from '@/core/shell';
 
 const REASON_CHECKOUT_DOUBLE_DASH =
   "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";

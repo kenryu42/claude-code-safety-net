@@ -1,6 +1,5 @@
-import { getBasename, stripWrappers } from '../shell.ts';
-
-import { hasRecursiveForceFlags } from './rm-flags.ts';
+import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { getBasename, stripWrappers } from '@/core/shell';
 
 const REASON_FIND_DELETE = 'find -delete permanently removes files. Use -print first to preview.';
 

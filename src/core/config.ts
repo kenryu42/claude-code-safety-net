@@ -7,7 +7,7 @@ import {
   MAX_REASON_LENGTH,
   NAME_PATTERN,
   type ValidationResult,
-} from '../types.ts';
+} from '@/types';
 
 const DEFAULT_CONFIG: Config = {
   version: 1,

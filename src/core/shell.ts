@@ -1,5 +1,5 @@
 import { type ParseEntry, parse } from 'shell-quote';
-import { MAX_STRIP_ITERATIONS, SHELL_OPERATORS } from '../types.ts';
+import { MAX_STRIP_ITERATIONS, SHELL_OPERATORS } from '@/types';
 
 // Proxy that preserves variable references as $VAR strings instead of expanding them
 const ENV_PROXY = new Proxy(

@@ -1,19 +1,12 @@
-import {
-  type AnalyzeOptions,
-  type AnalyzeResult,
-  type Config,
-  MAX_RECURSION_DEPTH,
-} from '../../types.ts';
-
-import { splitShellCommands } from '../shell.ts';
-
-import { dangerousInText } from './dangerous-text.ts';
-import { analyzeSegment, segmentChangesCwd } from './segment.ts';
+import { dangerousInText } from '@/core/analyze/dangerous-text';
+import { analyzeSegment, segmentChangesCwd } from '@/core/analyze/segment';
+import { splitShellCommands } from '@/core/shell';
+import { type AnalyzeOptions, type AnalyzeResult, type Config, MAX_RECURSION_DEPTH } from '@/types';
 
 const REASON_STRICT_UNPARSEABLE =
   'Command could not be safely analyzed (strict mode). Verify manually.';
 
-const REASON_RECURSION_LIMIT =
+export const REASON_RECURSION_LIMIT =
   'Command exceeds maximum recursion depth and cannot be safely analyzed.';
 
 export type InternalOptions = AnalyzeOptions & { config: Config };
@@ -42,7 +35,10 @@ export function analyzeCommandInternal(
   }
 
   const originalCwd = options.cwd;
-  let effectiveCwd: string | null | undefined = options.cwd;
+  // Preserve effectiveCwd from caller (e.g., after cd in prior segment of outer command)
+  // undefined = use cwd, null = unknown (after cd/pushd)
+  let effectiveCwd: string | null | undefined =
+    options.effectiveCwd !== undefined ? options.effectiveCwd : options.cwd;
 
   for (const segment of segments) {
     const segmentStr = segment.join(' ');
@@ -63,7 +59,11 @@ export function analyzeCommandInternal(
       cwd: originalCwd,
       effectiveCwd,
       analyzeNested: (nestedCommand: string): string | null => {
-        return analyzeCommandInternal(nestedCommand, depth + 1, options)?.reason ?? null;
+        // Pass current effectiveCwd so nested analysis sees CWD changes from prior segments
+        return (
+          analyzeCommandInternal(nestedCommand, depth + 1, { ...options, effectiveCwd })?.reason ??
+          null
+        );
       },
     });
     if (reason) {

@@ -2,7 +2,7 @@ import { appendFileSync, existsSync, mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-import type { AuditLogEntry } from '../types.ts';
+import type { AuditLogEntry } from '@/types';
 
 /**
  * Sanitize session ID to prevent path traversal attacks.

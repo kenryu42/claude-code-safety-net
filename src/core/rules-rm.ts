@@ -2,7 +2,7 @@ import { realpathSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { normalize, resolve } from 'node:path';
 
-import { hasRecursiveForceFlags } from './analyze/rm-flags.ts';
+import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
 
 const REASON_RM_RF =
   'rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.';

@@ -1,5 +1,5 @@
-import type { CustomRule } from '../types.ts';
-import { extractShortOpts, getBasename } from './shell.ts';
+import { extractShortOpts, getBasename } from '@/core/shell';
+import type { CustomRule } from '@/types';
 
 export function checkCustomRules(tokens: string[], rules: CustomRule[]): string | null {
   if (tokens.length === 0 || rules.length === 0) {

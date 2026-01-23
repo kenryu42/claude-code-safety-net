@@ -1,33 +1,32 @@
-import {
-  type AnalyzeOptions,
-  type Config,
-  INTERPRETERS,
-  PARANOID_INTERPRETERS_SUFFIX,
-  SHELL_WRAPPERS,
-} from '../../types.ts';
-
-import { checkCustomRules } from '../rules-custom.ts';
-import { analyzeGit } from '../rules-git.ts';
-import { analyzeRm, isHomeDirectory } from '../rules-rm.ts';
+import { DISPLAY_COMMANDS } from '@/core/analyze/constants';
+import { analyzeFind } from '@/core/analyze/find';
+import { containsDangerousCode, extractInterpreterCodeArg } from '@/core/analyze/interpreters';
+import { analyzeParallel } from '@/core/analyze/parallel';
+import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { extractDashCArg } from '@/core/analyze/shell-wrappers';
+import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
+import { analyzeXargs } from '@/core/analyze/xargs';
+import { checkCustomRules } from '@/core/rules-custom';
+import { analyzeGit } from '@/core/rules-git';
+import { analyzeRm, isHomeDirectory } from '@/core/rules-rm';
 import {
   getBasename,
   normalizeCommandToken,
   stripEnvAssignmentsWithInfo,
   stripWrappers,
   stripWrappersWithInfo,
-} from '../shell.ts';
+} from '@/core/shell';
+import {
+  type AnalyzeOptions,
+  type Config,
+  INTERPRETERS,
+  PARANOID_INTERPRETERS_SUFFIX,
+  SHELL_WRAPPERS,
+} from '@/types';
 
-import { DISPLAY_COMMANDS } from './constants.ts';
-import { analyzeFind } from './find.ts';
-import { containsDangerousCode, extractInterpreterCodeArg } from './interpreters.ts';
-import { analyzeParallel } from './parallel.ts';
-import { hasRecursiveForceFlags } from './rm-flags.ts';
-import { extractDashCArg } from './shell-wrappers.ts';
-import { isTmpdirOverriddenToNonTemp } from './tmpdir.ts';
-import { analyzeXargs } from './xargs.ts';
-
-const REASON_INTERPRETER_DANGEROUS = 'Detected potentially dangerous command in interpreter code.';
-const REASON_INTERPRETER_BLOCKED = 'Interpreter one-liners are blocked in paranoid mode.';
+export const REASON_INTERPRETER_DANGEROUS =
+  'Detected potentially dangerous command in interpreter code.';
+export const REASON_INTERPRETER_BLOCKED = 'Interpreter one-liners are blocked in paranoid mode.';
 const REASON_RM_HOME_CWD =
   'rm -rf in home directory is dangerous. Change to a project directory first.';
 
