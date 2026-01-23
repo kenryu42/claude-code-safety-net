@@ -2286,7 +2286,7 @@ function excerpt(text, maxLen) {
   return text.length > maxLen ? `${text.slice(0, maxLen)}...` : text;
 }
 
-// src/bin/claude-code.ts
+// src/bin/hooks/claude-code.ts
 function outputDeny(reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
@@ -2514,7 +2514,7 @@ function getVisibleCommands() {
   return commands.filter((cmd) => !cmd.hidden);
 }
 
-// src/bin/copilot-cli.ts
+// src/bin/hooks/copilot-cli.ts
 function outputCopilotDeny(reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
@@ -4685,7 +4685,7 @@ function formatTraceHuman(result, options) {
 function formatTraceJson(result) {
   return JSON.stringify(result, null, 2);
 }
-// src/bin/gemini-cli.ts
+// src/bin/hooks/gemini-cli.ts
 function outputGeminiDeny(reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
