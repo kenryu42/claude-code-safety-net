@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { envTruthy } from '../core/env.ts';
+import { envTruthy } from '@/core/env';
 
 /**
  * Read piped stdin content asynchronously.

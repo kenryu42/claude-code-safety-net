@@ -1,8 +1,8 @@
-import { analyzeCommand, loadConfig } from '../core/analyze.ts';
-import { redactSecrets, writeAuditLog } from '../core/audit.ts';
-import { envTruthy } from '../core/env.ts';
-import { formatBlockedMessage } from '../core/format.ts';
-import type { HookInput, HookOutput } from '../types.ts';
+import { analyzeCommand, loadConfig } from '@/core/analyze';
+import { redactSecrets, writeAuditLog } from '@/core/audit';
+import { envTruthy } from '@/core/env';
+import { formatBlockedMessage } from '@/core/format';
+import type { HookInput, HookOutput } from '@/types';
 
 function outputDeny(reason: string, command?: string, segment?: string): void {
   const message = formatBlockedMessage({
