@@ -6,7 +6,7 @@
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-D27656)](#claude-code-installation)
 [![OpenCode](https://img.shields.io/badge/OpenCode-black)](#opencode-installation)
 [![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-678AE3)](#gemini-cli-installation)
-[![Copilot CLI](https://img.shields.io/badge/Copilot%20CLI-2088FF)](#github-copilot-cli-installation)
+[![Copilot CLI](https://img.shields.io/badge/Copilot%20CLI-4EA5C9)](#github-copilot-cli-installation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
 
 <div align="center">
@@ -33,6 +33,7 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
   - [Manual Setup](#manual-setup)
   - [Emoji Mode Indicators](#emoji-mode-indicators)
 - [Diagnostics](#diagnostics)
+- [Explain (Debug Analysis)](#explain-debug-analysis)
 - [Commands Blocked](#commands-blocked)
 - [Commands Allowed](#commands-allowed)
 - [What Happens When Blocked](#what-happens-when-blocked)
@@ -362,6 +363,31 @@ The doctor command checks:
 |------|-------------|
 | `--json` | Output in JSON format (useful for sharing in bug reports) |
 | `--skip-update-check` | Skip the npm version check |
+
+## Explain (Debug Analysis)
+
+Trace how Safety Net analyzes a command step-by-step. Useful for debugging why a command is blocked or allowed, or when developing custom rules.
+
+```bash
+npx cc-safety-net explain "git reset --hard"
+# or with bun
+bunx cc-safety-net explain "git reset --hard"
+```
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--json` | Output analysis as JSON |
+| `--cwd <path>` | Use custom working directory for analysis |
+
+### Examples
+
+```bash
+cc-safety-net explain "rm -rf /"
+cc-safety-net explain --json "git checkout -- file.txt"
+cc-safety-net explain --cwd /tmp "git status"
+```
 
 ## Commands Blocked
 
