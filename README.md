@@ -468,7 +468,7 @@ Beyond the built-in protections, you can define your own blocking rules to enfor
 > Use `/set-custom-rules` to create custom rules interactively with natural language.
 >
 > **GitHub Copilot CLI users**: Since Copilot CLI doesn't support custom slash commands, prompt your agent with:
-> ```
+> ```text
 > run npx cc-safety-net --custom-rules-doc and help me set up custom rules
 > ```
 
