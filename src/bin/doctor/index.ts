@@ -2,9 +2,9 @@
  * Main entry point for the doctor command.
  */
 
-import { getActivitySummary } from './activity.ts';
-import { getConfigInfo } from './config.ts';
-import { getEnvironmentInfo } from './environment.ts';
+import { getActivitySummary } from '@/bin/doctor/activity';
+import { getConfigInfo } from '@/bin/doctor/config';
+import { getEnvironmentInfo } from '@/bin/doctor/environment';
 import {
   formatActivitySection,
   formatConfigSection,
@@ -13,12 +13,12 @@ import {
   formatSummary,
   formatSystemInfoSection,
   formatUpdateSection,
-} from './format.ts';
+} from '@/bin/doctor/format';
 // These will be implemented in subsequent phases
-import { detectAllHooks } from './hooks.ts';
-import { getPackageVersion, getSystemInfo } from './system-info.ts';
-import type { DoctorOptions, DoctorReport } from './types.ts';
-import { checkForUpdates } from './updates.ts';
+import { detectAllHooks } from '@/bin/doctor/hooks';
+import { getPackageVersion, getSystemInfo } from '@/bin/doctor/system-info';
+import type { DoctorOptions, DoctorReport } from '@/bin/doctor/types';
+import { checkForUpdates } from '@/bin/doctor/updates';
 
 export async function runDoctor(options: DoctorOptions = {}): Promise<number> {
   const cwd = options.cwd ?? process.cwd();

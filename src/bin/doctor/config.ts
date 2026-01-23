@@ -3,9 +3,9 @@
  */
 
 import { existsSync, readFileSync } from 'node:fs';
-import { getProjectConfigPath, getUserConfigPath, validateConfigFile } from '../../core/config.ts';
-import type { CustomRule } from '../../types.ts';
-import type { ConfigSourceInfo, EffectiveRule, ShadowedRule } from './types.ts';
+import type { ConfigSourceInfo, EffectiveRule, ShadowedRule } from '@/bin/doctor/types';
+import { getProjectConfigPath, getUserConfigPath, validateConfigFile } from '@/core/config';
+import type { CustomRule } from '@/types';
 
 export interface ConfigInfo {
   userConfig: ConfigSourceInfo;

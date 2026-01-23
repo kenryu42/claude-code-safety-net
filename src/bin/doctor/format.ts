@@ -11,18 +11,8 @@ import type {
   HookStatus,
   SystemInfo,
   UpdateInfo,
-} from './types.ts';
-
-// ANSI color codes (with TTY detection)
-const useColor = process.stdout.isTTY && !process.env.NO_COLOR;
-
-const colors = {
-  green: (s: string) => (useColor ? `\x1b[32m${s}\x1b[0m` : s),
-  yellow: (s: string) => (useColor ? `\x1b[33m${s}\x1b[0m` : s),
-  red: (s: string) => (useColor ? `\x1b[31m${s}\x1b[0m` : s),
-  dim: (s: string) => (useColor ? `\x1b[2m${s}\x1b[0m` : s),
-  bold: (s: string) => (useColor ? `\x1b[1m${s}\x1b[0m` : s),
-};
+} from '@/bin/doctor/types';
+import { colors } from '@/bin/utils/colors';
 
 const PLATFORM_NAMES: Record<string, string> = {
   'claude-code': 'Claude Code',

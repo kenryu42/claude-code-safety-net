@@ -2,7 +2,7 @@
  * Environment variable checking for the doctor command.
  */
 
-import type { EnvVarInfo } from './types.ts';
+import type { EnvVarInfo } from '@/bin/doctor/types';
 
 const ENV_VARS: Array<{
   name: string;

@@ -2,8 +2,8 @@
  * Update checking for the doctor command.
  */
 
-import { getPackageVersion } from './system-info.ts';
-import type { UpdateInfo } from './types.ts';
+import { getPackageVersion } from '@/bin/doctor/system-info';
+import type { UpdateInfo } from '@/bin/doctor/types';
 
 function isNewerVersion(latest: string, current: string): boolean {
   if (current === 'dev') return false;

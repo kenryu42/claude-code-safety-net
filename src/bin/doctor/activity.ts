@@ -5,9 +5,8 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-
-import type { AuditLogEntry } from '../../types.ts';
-import type { ActivitySummary } from './types.ts';
+import type { ActivitySummary } from '@/bin/doctor/types';
+import type { AuditLogEntry } from '@/types';
 
 function formatRelativeTime(date: Date): string {
   const diff = Date.now() - date.getTime();

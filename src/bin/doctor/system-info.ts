@@ -4,7 +4,7 @@
 
 import { spawn } from 'node:child_process';
 
-import type { SystemInfo } from './types.ts';
+import type { SystemInfo } from '@/bin/doctor/types';
 
 declare const __PKG_VERSION__: string | undefined;
 

@@ -5,11 +5,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-
-import { analyzeCommand } from '../../core/analyze.ts';
-import type { LoadConfigOptions } from '../../core/config.ts';
-import type { Config } from '../../types.ts';
-import type { HookStatus, SelfTestCase, SelfTestResult, SelfTestSummary } from './types.ts';
+import type { HookStatus, SelfTestCase, SelfTestResult, SelfTestSummary } from '@/bin/doctor/types';
+import { analyzeCommand } from '@/core/analyze';
+import type { LoadConfigOptions } from '@/core/config';
+import type { Config } from '@/types';
 
 interface HookDetectOptions extends LoadConfigOptions {
   homeDir?: string;
