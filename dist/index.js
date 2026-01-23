@@ -214,6 +214,194 @@ var require_parse = __commonJS((exports, module) => {
   };
 });
 
+// src/core/analyze/dangerous-text.ts
+function dangerousInText(text) {
+  const t = text.toLowerCase();
+  const stripped = t.trimStart();
+  const isEchoOrRg = stripped.startsWith("echo ") || stripped.startsWith("rg ");
+  const patterns = [
+    {
+      regex: /\brm\s+(-[^\s]*r[^\s]*\s+-[^\s]*f|-[^\s]*f[^\s]*\s+-[^\s]*r|-[^\s]*rf|-[^\s]*fr)\b/,
+      reason: "rm -rf"
+    },
+    {
+      regex: /\bgit\s+reset\s+--hard\b/,
+      reason: "git reset --hard"
+    },
+    {
+      regex: /\bgit\s+reset\s+--merge\b/,
+      reason: "git reset --merge"
+    },
+    {
+      regex: /\bgit\s+clean\s+(-[^\s]*f|-f)\b/,
+      reason: "git clean -f"
+    },
+    {
+      regex: /\bgit\s+push\s+[^|;]*(-f\b|--force\b)(?!-with-lease)/,
+      reason: "git push --force (use --force-with-lease instead)"
+    },
+    {
+      regex: /\bgit\s+branch\s+-D\b/,
+      reason: "git branch -D",
+      caseSensitive: true
+    },
+    {
+      regex: /\bgit\s+stash\s+(drop|clear)\b/,
+      reason: "git stash drop/clear"
+    },
+    {
+      regex: /\bgit\s+checkout\s+--\s/,
+      reason: "git checkout --"
+    },
+    {
+      regex: /\bgit\s+restore\b(?!.*--(staged|help))/,
+      reason: "git restore (without --staged)"
+    },
+    {
+      regex: /\bfind\b[^\n;|&]*\s-delete\b/,
+      reason: "find -delete",
+      skipForEchoRg: true
+    }
+  ];
+  for (const { regex, reason, skipForEchoRg, caseSensitive } of patterns) {
+    if (skipForEchoRg && isEchoOrRg)
+      continue;
+    const target = caseSensitive ? text : t;
+    if (regex.test(target)) {
+      return reason;
+    }
+  }
+  return null;
+}
+
+// src/core/analyze/constants.ts
+var DISPLAY_COMMANDS = new Set([
+  "echo",
+  "printf",
+  "cat",
+  "head",
+  "tail",
+  "less",
+  "more",
+  "grep",
+  "rg",
+  "ag",
+  "ack",
+  "sed",
+  "awk",
+  "cut",
+  "tr",
+  "sort",
+  "uniq",
+  "wc",
+  "tee",
+  "man",
+  "help",
+  "info",
+  "type",
+  "which",
+  "whereis",
+  "whatis",
+  "apropos",
+  "file",
+  "stat",
+  "ls",
+  "ll",
+  "dir",
+  "tree",
+  "pwd",
+  "date",
+  "cal",
+  "uptime",
+  "whoami",
+  "id",
+  "groups",
+  "hostname",
+  "uname",
+  "env",
+  "printenv",
+  "set",
+  "export",
+  "alias",
+  "history",
+  "jobs",
+  "fg",
+  "bg",
+  "test",
+  "true",
+  "false",
+  "read",
+  "return",
+  "exit",
+  "break",
+  "continue",
+  "shift",
+  "wait",
+  "trap",
+  "basename",
+  "dirname",
+  "realpath",
+  "readlink",
+  "md5sum",
+  "sha256sum",
+  "base64",
+  "xxd",
+  "od",
+  "hexdump",
+  "strings",
+  "diff",
+  "cmp",
+  "comm",
+  "join",
+  "paste",
+  "column",
+  "fmt",
+  "fold",
+  "nl",
+  "pr",
+  "expand",
+  "unexpand",
+  "rev",
+  "tac",
+  "shuf",
+  "seq",
+  "yes",
+  "timeout",
+  "time",
+  "sleep",
+  "watch",
+  "logger",
+  "write",
+  "wall",
+  "mesg",
+  "notify-send"
+]);
+
+// src/core/analyze/rm-flags.ts
+function hasRecursiveForceFlags(tokens) {
+  let hasRecursive = false;
+  let hasForce = false;
+  for (const token of tokens) {
+    if (token === "--")
+      break;
+    if (token === "-r" || token === "-R" || token === "--recursive") {
+      hasRecursive = true;
+    } else if (token === "-f" || token === "--force") {
+      hasForce = true;
+    } else if (token.startsWith("-") && !token.startsWith("--")) {
+      if (token.includes("r") || token.includes("R"))
+        hasRecursive = true;
+      if (token.includes("f"))
+        hasForce = true;
+    }
+  }
+  return hasRecursive && hasForce;
+}
+
+// node_modules/shell-quote/index.js
+var $quote = require_quote();
+var $parse = require_parse();
+
 // src/types.ts
 var MAX_RECURSION_DEPTH = 10;
 var MAX_STRIP_ITERATIONS = 20;
@@ -237,10 +425,6 @@ var DANGEROUS_PATTERNS = [
 var PARANOID_INTERPRETERS_SUFFIX = `
 
 (Paranoid mode: interpreter one-liners are blocked.)`;
-
-// node_modules/shell-quote/index.js
-var $quote = require_quote();
-var $parse = require_parse();
 
 // src/core/shell.ts
 var ENV_PROXY = new Proxy({}, {
@@ -590,144 +774,113 @@ function isOperator(token) {
   return typeof token === "object" && token !== null && "op" in token && SHELL_OPERATORS.has(token.op);
 }
 
-// src/core/analyze/dangerous-text.ts
-function dangerousInText(text) {
-  const t = text.toLowerCase();
-  const stripped = t.trimStart();
-  const isEchoOrRg = stripped.startsWith("echo ") || stripped.startsWith("rg ");
-  const patterns = [
-    {
-      regex: /\brm\s+(-[^\s]*r[^\s]*\s+-[^\s]*f|-[^\s]*f[^\s]*\s+-[^\s]*r|-[^\s]*rf|-[^\s]*fr)\b/,
-      reason: "rm -rf"
-    },
-    {
-      regex: /\bgit\s+reset\s+--hard\b/,
-      reason: "git reset --hard"
-    },
-    {
-      regex: /\bgit\s+reset\s+--merge\b/,
-      reason: "git reset --merge"
-    },
-    {
-      regex: /\bgit\s+clean\s+(-[^\s]*f|-f)\b/,
-      reason: "git clean -f"
-    },
-    {
-      regex: /\bgit\s+push\s+[^|;]*(-f\b|--force\b)(?!-with-lease)/,
-      reason: "git push --force (use --force-with-lease instead)"
-    },
-    {
-      regex: /\bgit\s+branch\s+-D\b/,
-      reason: "git branch -D",
-      caseSensitive: true
-    },
-    {
-      regex: /\bgit\s+stash\s+(drop|clear)\b/,
-      reason: "git stash drop/clear"
-    },
-    {
-      regex: /\bgit\s+checkout\s+--\s/,
-      reason: "git checkout --"
-    },
-    {
-      regex: /\bgit\s+restore\b(?!.*--(staged|help))/,
-      reason: "git restore (without --staged)"
-    },
-    {
-      regex: /\bfind\b[^\n;|&]*\s-delete\b/,
-      reason: "find -delete",
-      skipForEchoRg: true
-    }
-  ];
-  for (const { regex, reason, skipForEchoRg, caseSensitive } of patterns) {
-    if (skipForEchoRg && isEchoOrRg)
-      continue;
-    const target = caseSensitive ? text : t;
-    if (regex.test(target)) {
-      return reason;
+// src/core/analyze/find.ts
+var REASON_FIND_DELETE = "find -delete permanently removes files. Use -print first to preview.";
+function analyzeFind(tokens) {
+  if (findHasDelete(tokens.slice(1))) {
+    return REASON_FIND_DELETE;
+  }
+  for (let i = 0;i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token === "-exec" || token === "-execdir") {
+      const execTokens = tokens.slice(i + 1);
+      const semicolonIdx = execTokens.indexOf(";");
+      const plusIdx = execTokens.indexOf("+");
+      const endIdx = semicolonIdx !== -1 && plusIdx !== -1 ? Math.min(semicolonIdx, plusIdx) : semicolonIdx !== -1 ? semicolonIdx : plusIdx !== -1 ? plusIdx : execTokens.length;
+      let execCommand = execTokens.slice(0, endIdx);
+      execCommand = stripWrappers(execCommand);
+      if (execCommand.length > 0) {
+        let head = getBasename(execCommand[0] ?? "");
+        if (head === "busybox" && execCommand.length > 1) {
+          execCommand = execCommand.slice(1);
+          head = getBasename(execCommand[0] ?? "");
+        }
+        if (head === "rm" && hasRecursiveForceFlags(execCommand)) {
+          return "find -exec rm -rf is dangerous. Use explicit file list instead.";
+        }
+      }
     }
   }
   return null;
+}
+function findHasDelete(tokens) {
+  let i = 0;
+  let insideExec = false;
+  let execDepth = 0;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token) {
+      i++;
+      continue;
+    }
+    if (token === "-exec" || token === "-execdir") {
+      insideExec = true;
+      execDepth++;
+      i++;
+      continue;
+    }
+    if (insideExec && (token === ";" || token === "+")) {
+      execDepth--;
+      if (execDepth === 0) {
+        insideExec = false;
+      }
+      i++;
+      continue;
+    }
+    if (insideExec) {
+      i++;
+      continue;
+    }
+    if (token === "-name" || token === "-iname" || token === "-path" || token === "-ipath" || token === "-regex" || token === "-iregex" || token === "-type" || token === "-user" || token === "-group" || token === "-perm" || token === "-size" || token === "-mtime" || token === "-ctime" || token === "-atime" || token === "-newer" || token === "-printf" || token === "-fprint" || token === "-fprintf") {
+      i += 2;
+      continue;
+    }
+    if (token === "-delete") {
+      return true;
+    }
+    i++;
+  }
+  return false;
 }
 
-// src/core/rules-custom.ts
-function checkCustomRules(tokens, rules) {
-  if (tokens.length === 0 || rules.length === 0) {
-    return null;
-  }
-  const command = getBasename(tokens[0] ?? "");
-  const subcommand = extractSubcommand(tokens);
-  const shortOpts = extractShortOpts(tokens);
-  for (const rule of rules) {
-    if (!matchesCommand(command, rule.command)) {
-      continue;
-    }
-    if (rule.subcommand && subcommand !== rule.subcommand) {
-      continue;
-    }
-    if (matchesBlockArgs(tokens, rule.block_args, shortOpts)) {
-      return `[${rule.name}] ${rule.reason}`;
-    }
-  }
-  return null;
-}
-function matchesCommand(command, ruleCommand) {
-  return command === ruleCommand;
-}
-var OPTIONS_WITH_VALUES = new Set([
-  "-c",
-  "-C",
-  "--git-dir",
-  "--work-tree",
-  "--namespace",
-  "--config-env"
-]);
-function extractSubcommand(tokens) {
-  let skipNext = false;
+// src/core/analyze/interpreters.ts
+function extractInterpreterCodeArg(tokens) {
   for (let i = 1;i < tokens.length; i++) {
     const token = tokens[i];
     if (!token)
       continue;
-    if (skipNext) {
-      skipNext = false;
-      continue;
+    if ((token === "-c" || token === "-e") && tokens[i + 1]) {
+      return tokens[i + 1] ?? null;
     }
-    if (token === "--") {
-      const nextToken = tokens[i + 1];
-      if (nextToken && !nextToken.startsWith("-")) {
-        return nextToken;
-      }
-      return null;
-    }
-    if (OPTIONS_WITH_VALUES.has(token)) {
-      skipNext = true;
-      continue;
-    }
-    if (token.startsWith("-")) {
-      for (const opt of OPTIONS_WITH_VALUES) {
-        if (token.startsWith(`${opt}=`)) {
-          break;
-        }
-      }
-      continue;
-    }
-    return token;
   }
   return null;
 }
-function matchesBlockArgs(tokens, blockArgs, shortOpts) {
-  const blockArgsSet = new Set(blockArgs);
-  for (const token of tokens) {
-    if (blockArgsSet.has(token)) {
-      return true;
-    }
-  }
-  for (const opt of shortOpts) {
-    if (blockArgsSet.has(opt)) {
+function containsDangerousCode(code) {
+  for (const pattern of DANGEROUS_PATTERNS) {
+    if (pattern.test(code)) {
       return true;
     }
   }
   return false;
+}
+
+// src/core/analyze/shell-wrappers.ts
+function extractDashCArg(tokens) {
+  for (let i = 1;i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token)
+      continue;
+    if (token === "-c" && tokens[i + 1]) {
+      return tokens[i + 1] ?? null;
+    }
+    if (token.startsWith("-") && token.includes("c") && !token.startsWith("--")) {
+      const nextToken = tokens[i + 1];
+      if (nextToken && !nextToken.startsWith("-")) {
+        return nextToken;
+      }
+    }
+  }
+  return null;
 }
 
 // src/core/rules-git.ts
@@ -1014,29 +1167,6 @@ function analyzeGitWorktree(tokens) {
 import { realpathSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { normalize, resolve } from "node:path";
-
-// src/core/analyze/rm-flags.ts
-function hasRecursiveForceFlags(tokens) {
-  let hasRecursive = false;
-  let hasForce = false;
-  for (const token of tokens) {
-    if (token === "--")
-      break;
-    if (token === "-r" || token === "-R" || token === "--recursive") {
-      hasRecursive = true;
-    } else if (token === "-f" || token === "--force") {
-      hasForce = true;
-    } else if (token.startsWith("-") && !token.startsWith("--")) {
-      if (token.includes("r") || token.includes("R"))
-        hasRecursive = true;
-      if (token.includes("f"))
-        hasForce = true;
-    }
-  }
-  return hasRecursive && hasForce;
-}
-
-// src/core/rules-rm.ts
 var REASON_RM_RF = "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.";
 var REASON_RM_RF_ROOT_HOME = "rm -rf targeting root or home directory is extremely dangerous and always blocked.";
 function analyzeRm(tokens, options = {}) {
@@ -1251,218 +1381,6 @@ function isHomeDirectory(cwd) {
   } catch {
     return false;
   }
-}
-
-// src/core/analyze/constants.ts
-var DISPLAY_COMMANDS = new Set([
-  "echo",
-  "printf",
-  "cat",
-  "head",
-  "tail",
-  "less",
-  "more",
-  "grep",
-  "rg",
-  "ag",
-  "ack",
-  "sed",
-  "awk",
-  "cut",
-  "tr",
-  "sort",
-  "uniq",
-  "wc",
-  "tee",
-  "man",
-  "help",
-  "info",
-  "type",
-  "which",
-  "whereis",
-  "whatis",
-  "apropos",
-  "file",
-  "stat",
-  "ls",
-  "ll",
-  "dir",
-  "tree",
-  "pwd",
-  "date",
-  "cal",
-  "uptime",
-  "whoami",
-  "id",
-  "groups",
-  "hostname",
-  "uname",
-  "env",
-  "printenv",
-  "set",
-  "export",
-  "alias",
-  "history",
-  "jobs",
-  "fg",
-  "bg",
-  "test",
-  "true",
-  "false",
-  "read",
-  "return",
-  "exit",
-  "break",
-  "continue",
-  "shift",
-  "wait",
-  "trap",
-  "basename",
-  "dirname",
-  "realpath",
-  "readlink",
-  "md5sum",
-  "sha256sum",
-  "base64",
-  "xxd",
-  "od",
-  "hexdump",
-  "strings",
-  "diff",
-  "cmp",
-  "comm",
-  "join",
-  "paste",
-  "column",
-  "fmt",
-  "fold",
-  "nl",
-  "pr",
-  "expand",
-  "unexpand",
-  "rev",
-  "tac",
-  "shuf",
-  "seq",
-  "yes",
-  "timeout",
-  "time",
-  "sleep",
-  "watch",
-  "logger",
-  "write",
-  "wall",
-  "mesg",
-  "notify-send"
-]);
-
-// src/core/analyze/find.ts
-var REASON_FIND_DELETE = "find -delete permanently removes files. Use -print first to preview.";
-function analyzeFind(tokens) {
-  if (findHasDelete(tokens.slice(1))) {
-    return REASON_FIND_DELETE;
-  }
-  for (let i = 0;i < tokens.length; i++) {
-    const token = tokens[i];
-    if (token === "-exec" || token === "-execdir") {
-      const execTokens = tokens.slice(i + 1);
-      const semicolonIdx = execTokens.indexOf(";");
-      const plusIdx = execTokens.indexOf("+");
-      const endIdx = semicolonIdx !== -1 && plusIdx !== -1 ? Math.min(semicolonIdx, plusIdx) : semicolonIdx !== -1 ? semicolonIdx : plusIdx !== -1 ? plusIdx : execTokens.length;
-      let execCommand = execTokens.slice(0, endIdx);
-      execCommand = stripWrappers(execCommand);
-      if (execCommand.length > 0) {
-        let head = getBasename(execCommand[0] ?? "");
-        if (head === "busybox" && execCommand.length > 1) {
-          execCommand = execCommand.slice(1);
-          head = getBasename(execCommand[0] ?? "");
-        }
-        if (head === "rm" && hasRecursiveForceFlags(execCommand)) {
-          return "find -exec rm -rf is dangerous. Use explicit file list instead.";
-        }
-      }
-    }
-  }
-  return null;
-}
-function findHasDelete(tokens) {
-  let i = 0;
-  let insideExec = false;
-  let execDepth = 0;
-  while (i < tokens.length) {
-    const token = tokens[i];
-    if (!token) {
-      i++;
-      continue;
-    }
-    if (token === "-exec" || token === "-execdir") {
-      insideExec = true;
-      execDepth++;
-      i++;
-      continue;
-    }
-    if (insideExec && (token === ";" || token === "+")) {
-      execDepth--;
-      if (execDepth === 0) {
-        insideExec = false;
-      }
-      i++;
-      continue;
-    }
-    if (insideExec) {
-      i++;
-      continue;
-    }
-    if (token === "-name" || token === "-iname" || token === "-path" || token === "-ipath" || token === "-regex" || token === "-iregex" || token === "-type" || token === "-user" || token === "-group" || token === "-perm" || token === "-size" || token === "-mtime" || token === "-ctime" || token === "-atime" || token === "-newer" || token === "-printf" || token === "-fprint" || token === "-fprintf") {
-      i += 2;
-      continue;
-    }
-    if (token === "-delete") {
-      return true;
-    }
-    i++;
-  }
-  return false;
-}
-
-// src/core/analyze/interpreters.ts
-function extractInterpreterCodeArg(tokens) {
-  for (let i = 1;i < tokens.length; i++) {
-    const token = tokens[i];
-    if (!token)
-      continue;
-    if ((token === "-c" || token === "-e") && tokens[i + 1]) {
-      return tokens[i + 1] ?? null;
-    }
-  }
-  return null;
-}
-function containsDangerousCode(code) {
-  for (const pattern of DANGEROUS_PATTERNS) {
-    if (pattern.test(code)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-// src/core/analyze/shell-wrappers.ts
-function extractDashCArg(tokens) {
-  for (let i = 1;i < tokens.length; i++) {
-    const token = tokens[i];
-    if (!token)
-      continue;
-    if (token === "-c" && tokens[i + 1]) {
-      return tokens[i + 1] ?? null;
-    }
-    if (token.startsWith("-") && token.includes("c") && !token.startsWith("--")) {
-      const nextToken = tokens[i + 1];
-      if (nextToken && !nextToken.startsWith("-")) {
-        return nextToken;
-      }
-    }
-  }
-  return null;
 }
 
 // src/core/analyze/parallel.ts
@@ -1799,6 +1717,86 @@ function extractXargsChildCommandWithInfo(tokens) {
   return { childTokens: [], replacementToken };
 }
 
+// src/core/rules-custom.ts
+function checkCustomRules(tokens, rules) {
+  if (tokens.length === 0 || rules.length === 0) {
+    return null;
+  }
+  const command = getBasename(tokens[0] ?? "");
+  const subcommand = extractSubcommand(tokens);
+  const shortOpts = extractShortOpts(tokens);
+  for (const rule of rules) {
+    if (!matchesCommand(command, rule.command)) {
+      continue;
+    }
+    if (rule.subcommand && subcommand !== rule.subcommand) {
+      continue;
+    }
+    if (matchesBlockArgs(tokens, rule.block_args, shortOpts)) {
+      return `[${rule.name}] ${rule.reason}`;
+    }
+  }
+  return null;
+}
+function matchesCommand(command, ruleCommand) {
+  return command === ruleCommand;
+}
+var OPTIONS_WITH_VALUES = new Set([
+  "-c",
+  "-C",
+  "--git-dir",
+  "--work-tree",
+  "--namespace",
+  "--config-env"
+]);
+function extractSubcommand(tokens) {
+  let skipNext = false;
+  for (let i = 1;i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token)
+      continue;
+    if (skipNext) {
+      skipNext = false;
+      continue;
+    }
+    if (token === "--") {
+      const nextToken = tokens[i + 1];
+      if (nextToken && !nextToken.startsWith("-")) {
+        return nextToken;
+      }
+      return null;
+    }
+    if (OPTIONS_WITH_VALUES.has(token)) {
+      skipNext = true;
+      continue;
+    }
+    if (token.startsWith("-")) {
+      for (const opt of OPTIONS_WITH_VALUES) {
+        if (token.startsWith(`${opt}=`)) {
+          break;
+        }
+      }
+      continue;
+    }
+    return token;
+  }
+  return null;
+}
+function matchesBlockArgs(tokens, blockArgs, shortOpts) {
+  const blockArgsSet = new Set(blockArgs);
+  for (const token of tokens) {
+    if (blockArgsSet.has(token)) {
+      return true;
+    }
+  }
+  for (const opt of shortOpts) {
+    if (blockArgsSet.has(opt)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // src/core/analyze/segment.ts
 var REASON_INTERPRETER_DANGEROUS = "Detected potentially dangerous command in interpreter code.";
 var REASON_INTERPRETER_BLOCKED = "Interpreter one-liners are blocked in paranoid mode.";
@@ -1998,7 +1996,7 @@ function analyzeCommandInternal(command, depth, options) {
     return { reason: REASON_STRICT_UNPARSEABLE, segment: command };
   }
   const originalCwd = options.cwd;
-  let effectiveCwd = options.cwd;
+  let effectiveCwd = options.effectiveCwd !== undefined ? options.effectiveCwd : options.cwd;
   for (const segment of segments) {
     const segmentStr = segment.join(" ");
     if (segment.length === 1 && segment[0]?.includes(" ")) {
@@ -2016,7 +2014,7 @@ function analyzeCommandInternal(command, depth, options) {
       cwd: originalCwd,
       effectiveCwd,
       analyzeNested: (nestedCommand) => {
-        return analyzeCommandInternal(nestedCommand, depth + 1, options)?.reason ?? null;
+        return analyzeCommandInternal(nestedCommand, depth + 1, { ...options, effectiveCwd })?.reason ?? null;
       }
     });
     if (reason) {

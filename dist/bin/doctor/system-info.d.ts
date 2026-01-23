@@ -1,7 +1,7 @@
 /**
  * System information for the doctor command.
  */
-import type { SystemInfo } from './types.ts';
+import type { SystemInfo } from '@/bin/doctor/types';
 /**
  * Get the package version synchronously.
  * This is useful for callers that only need the version without fetching tool versions.

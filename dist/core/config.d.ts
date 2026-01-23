@@ -1,4 +1,4 @@
-import { type Config, type ValidationResult } from '../types.ts';
+import { type Config, type ValidationResult } from '@/types';
 export interface LoadConfigOptions {
     /** Override user config directory (for testing) */
     userConfigDir?: string;

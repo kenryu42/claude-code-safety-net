@@ -1,10 +1,10 @@
-import type { AnalyzeOptions, AnalyzeResult } from '../types.ts';
-import { findHasDelete } from './analyze/find.ts';
-import { extractParallelChildCommand } from './analyze/parallel.ts';
-import { hasRecursiveForceFlags } from './analyze/rm-flags.ts';
-import { segmentChangesCwd } from './analyze/segment.ts';
-import { extractXargsChildCommand, extractXargsChildCommandWithInfo } from './analyze/xargs.ts';
-import { loadConfig } from './config.ts';
+import { findHasDelete } from '@/core/analyze/find';
+import { extractParallelChildCommand } from '@/core/analyze/parallel';
+import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { segmentChangesCwd } from '@/core/analyze/segment';
+import { extractXargsChildCommand, extractXargsChildCommandWithInfo } from '@/core/analyze/xargs';
+import { loadConfig } from '@/core/config';
+import type { AnalyzeOptions, AnalyzeResult } from '@/types';
 export declare function analyzeCommand(command: string, options?: AnalyzeOptions): AnalyzeResult | null;
 export { loadConfig };
 /** @internal Exported for testing */

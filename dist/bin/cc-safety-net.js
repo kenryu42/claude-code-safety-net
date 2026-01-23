@@ -215,6 +215,194 @@ var require_parse = __commonJS((exports, module) => {
   };
 });
 
+// node_modules/shell-quote/index.js
+var $quote = require_quote();
+var $parse = require_parse();
+
+// src/core/analyze/dangerous-text.ts
+function dangerousInText(text) {
+  const t = text.toLowerCase();
+  const stripped = t.trimStart();
+  const isEchoOrRg = stripped.startsWith("echo ") || stripped.startsWith("rg ");
+  const patterns = [
+    {
+      regex: /\brm\s+(-[^\s]*r[^\s]*\s+-[^\s]*f|-[^\s]*f[^\s]*\s+-[^\s]*r|-[^\s]*rf|-[^\s]*fr)\b/,
+      reason: "rm -rf"
+    },
+    {
+      regex: /\bgit\s+reset\s+--hard\b/,
+      reason: "git reset --hard"
+    },
+    {
+      regex: /\bgit\s+reset\s+--merge\b/,
+      reason: "git reset --merge"
+    },
+    {
+      regex: /\bgit\s+clean\s+(-[^\s]*f|-f)\b/,
+      reason: "git clean -f"
+    },
+    {
+      regex: /\bgit\s+push\s+[^|;]*(-f\b|--force\b)(?!-with-lease)/,
+      reason: "git push --force (use --force-with-lease instead)"
+    },
+    {
+      regex: /\bgit\s+branch\s+-D\b/,
+      reason: "git branch -D",
+      caseSensitive: true
+    },
+    {
+      regex: /\bgit\s+stash\s+(drop|clear)\b/,
+      reason: "git stash drop/clear"
+    },
+    {
+      regex: /\bgit\s+checkout\s+--\s/,
+      reason: "git checkout --"
+    },
+    {
+      regex: /\bgit\s+restore\b(?!.*--(staged|help))/,
+      reason: "git restore (without --staged)"
+    },
+    {
+      regex: /\bfind\b[^\n;|&]*\s-delete\b/,
+      reason: "find -delete",
+      skipForEchoRg: true
+    }
+  ];
+  for (const { regex, reason, skipForEchoRg, caseSensitive } of patterns) {
+    if (skipForEchoRg && isEchoOrRg)
+      continue;
+    const target = caseSensitive ? text : t;
+    if (regex.test(target)) {
+      return reason;
+    }
+  }
+  return null;
+}
+
+// src/core/analyze/constants.ts
+var DISPLAY_COMMANDS = new Set([
+  "echo",
+  "printf",
+  "cat",
+  "head",
+  "tail",
+  "less",
+  "more",
+  "grep",
+  "rg",
+  "ag",
+  "ack",
+  "sed",
+  "awk",
+  "cut",
+  "tr",
+  "sort",
+  "uniq",
+  "wc",
+  "tee",
+  "man",
+  "help",
+  "info",
+  "type",
+  "which",
+  "whereis",
+  "whatis",
+  "apropos",
+  "file",
+  "stat",
+  "ls",
+  "ll",
+  "dir",
+  "tree",
+  "pwd",
+  "date",
+  "cal",
+  "uptime",
+  "whoami",
+  "id",
+  "groups",
+  "hostname",
+  "uname",
+  "env",
+  "printenv",
+  "set",
+  "export",
+  "alias",
+  "history",
+  "jobs",
+  "fg",
+  "bg",
+  "test",
+  "true",
+  "false",
+  "read",
+  "return",
+  "exit",
+  "break",
+  "continue",
+  "shift",
+  "wait",
+  "trap",
+  "basename",
+  "dirname",
+  "realpath",
+  "readlink",
+  "md5sum",
+  "sha256sum",
+  "base64",
+  "xxd",
+  "od",
+  "hexdump",
+  "strings",
+  "diff",
+  "cmp",
+  "comm",
+  "join",
+  "paste",
+  "column",
+  "fmt",
+  "fold",
+  "nl",
+  "pr",
+  "expand",
+  "unexpand",
+  "rev",
+  "tac",
+  "shuf",
+  "seq",
+  "yes",
+  "timeout",
+  "time",
+  "sleep",
+  "watch",
+  "logger",
+  "write",
+  "wall",
+  "mesg",
+  "notify-send"
+]);
+
+// src/core/analyze/rm-flags.ts
+function hasRecursiveForceFlags(tokens) {
+  let hasRecursive = false;
+  let hasForce = false;
+  for (const token of tokens) {
+    if (token === "--")
+      break;
+    if (token === "-r" || token === "-R" || token === "--recursive") {
+      hasRecursive = true;
+    } else if (token === "-f" || token === "--force") {
+      hasForce = true;
+    } else if (token.startsWith("-") && !token.startsWith("--")) {
+      if (token.includes("r") || token.includes("R"))
+        hasRecursive = true;
+      if (token.includes("f"))
+        hasForce = true;
+    }
+  }
+  return hasRecursive && hasForce;
+}
+
 // src/types.ts
 var MAX_RECURSION_DEPTH = 10;
 var MAX_STRIP_ITERATIONS = 20;
@@ -238,10 +426,6 @@ var DANGEROUS_PATTERNS = [
 var PARANOID_INTERPRETERS_SUFFIX = `
 
 (Paranoid mode: interpreter one-liners are blocked.)`;
-
-// node_modules/shell-quote/index.js
-var $quote = require_quote();
-var $parse = require_parse();
 
 // src/core/shell.ts
 var ENV_PROXY = new Proxy({}, {
@@ -591,144 +775,113 @@ function isOperator(token) {
   return typeof token === "object" && token !== null && "op" in token && SHELL_OPERATORS.has(token.op);
 }
 
-// src/core/analyze/dangerous-text.ts
-function dangerousInText(text) {
-  const t = text.toLowerCase();
-  const stripped = t.trimStart();
-  const isEchoOrRg = stripped.startsWith("echo ") || stripped.startsWith("rg ");
-  const patterns = [
-    {
-      regex: /\brm\s+(-[^\s]*r[^\s]*\s+-[^\s]*f|-[^\s]*f[^\s]*\s+-[^\s]*r|-[^\s]*rf|-[^\s]*fr)\b/,
-      reason: "rm -rf"
-    },
-    {
-      regex: /\bgit\s+reset\s+--hard\b/,
-      reason: "git reset --hard"
-    },
-    {
-      regex: /\bgit\s+reset\s+--merge\b/,
-      reason: "git reset --merge"
-    },
-    {
-      regex: /\bgit\s+clean\s+(-[^\s]*f|-f)\b/,
-      reason: "git clean -f"
-    },
-    {
-      regex: /\bgit\s+push\s+[^|;]*(-f\b|--force\b)(?!-with-lease)/,
-      reason: "git push --force (use --force-with-lease instead)"
-    },
-    {
-      regex: /\bgit\s+branch\s+-D\b/,
-      reason: "git branch -D",
-      caseSensitive: true
-    },
-    {
-      regex: /\bgit\s+stash\s+(drop|clear)\b/,
-      reason: "git stash drop/clear"
-    },
-    {
-      regex: /\bgit\s+checkout\s+--\s/,
-      reason: "git checkout --"
-    },
-    {
-      regex: /\bgit\s+restore\b(?!.*--(staged|help))/,
-      reason: "git restore (without --staged)"
-    },
-    {
-      regex: /\bfind\b[^\n;|&]*\s-delete\b/,
-      reason: "find -delete",
-      skipForEchoRg: true
-    }
-  ];
-  for (const { regex, reason, skipForEchoRg, caseSensitive } of patterns) {
-    if (skipForEchoRg && isEchoOrRg)
-      continue;
-    const target = caseSensitive ? text : t;
-    if (regex.test(target)) {
-      return reason;
+// src/core/analyze/find.ts
+var REASON_FIND_DELETE = "find -delete permanently removes files. Use -print first to preview.";
+function analyzeFind(tokens) {
+  if (findHasDelete(tokens.slice(1))) {
+    return REASON_FIND_DELETE;
+  }
+  for (let i = 0;i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token === "-exec" || token === "-execdir") {
+      const execTokens = tokens.slice(i + 1);
+      const semicolonIdx = execTokens.indexOf(";");
+      const plusIdx = execTokens.indexOf("+");
+      const endIdx = semicolonIdx !== -1 && plusIdx !== -1 ? Math.min(semicolonIdx, plusIdx) : semicolonIdx !== -1 ? semicolonIdx : plusIdx !== -1 ? plusIdx : execTokens.length;
+      let execCommand = execTokens.slice(0, endIdx);
+      execCommand = stripWrappers(execCommand);
+      if (execCommand.length > 0) {
+        let head = getBasename(execCommand[0] ?? "");
+        if (head === "busybox" && execCommand.length > 1) {
+          execCommand = execCommand.slice(1);
+          head = getBasename(execCommand[0] ?? "");
+        }
+        if (head === "rm" && hasRecursiveForceFlags(execCommand)) {
+          return "find -exec rm -rf is dangerous. Use explicit file list instead.";
+        }
+      }
     }
   }
   return null;
+}
+function findHasDelete(tokens) {
+  let i = 0;
+  let insideExec = false;
+  let execDepth = 0;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token) {
+      i++;
+      continue;
+    }
+    if (token === "-exec" || token === "-execdir") {
+      insideExec = true;
+      execDepth++;
+      i++;
+      continue;
+    }
+    if (insideExec && (token === ";" || token === "+")) {
+      execDepth--;
+      if (execDepth === 0) {
+        insideExec = false;
+      }
+      i++;
+      continue;
+    }
+    if (insideExec) {
+      i++;
+      continue;
+    }
+    if (token === "-name" || token === "-iname" || token === "-path" || token === "-ipath" || token === "-regex" || token === "-iregex" || token === "-type" || token === "-user" || token === "-group" || token === "-perm" || token === "-size" || token === "-mtime" || token === "-ctime" || token === "-atime" || token === "-newer" || token === "-printf" || token === "-fprint" || token === "-fprintf") {
+      i += 2;
+      continue;
+    }
+    if (token === "-delete") {
+      return true;
+    }
+    i++;
+  }
+  return false;
 }
 
-// src/core/rules-custom.ts
-function checkCustomRules(tokens, rules) {
-  if (tokens.length === 0 || rules.length === 0) {
-    return null;
-  }
-  const command = getBasename(tokens[0] ?? "");
-  const subcommand = extractSubcommand(tokens);
-  const shortOpts = extractShortOpts(tokens);
-  for (const rule of rules) {
-    if (!matchesCommand(command, rule.command)) {
-      continue;
-    }
-    if (rule.subcommand && subcommand !== rule.subcommand) {
-      continue;
-    }
-    if (matchesBlockArgs(tokens, rule.block_args, shortOpts)) {
-      return `[${rule.name}] ${rule.reason}`;
-    }
-  }
-  return null;
-}
-function matchesCommand(command, ruleCommand) {
-  return command === ruleCommand;
-}
-var OPTIONS_WITH_VALUES = new Set([
-  "-c",
-  "-C",
-  "--git-dir",
-  "--work-tree",
-  "--namespace",
-  "--config-env"
-]);
-function extractSubcommand(tokens) {
-  let skipNext = false;
+// src/core/analyze/interpreters.ts
+function extractInterpreterCodeArg(tokens) {
   for (let i = 1;i < tokens.length; i++) {
     const token = tokens[i];
     if (!token)
       continue;
-    if (skipNext) {
-      skipNext = false;
-      continue;
+    if ((token === "-c" || token === "-e") && tokens[i + 1]) {
+      return tokens[i + 1] ?? null;
     }
-    if (token === "--") {
-      const nextToken = tokens[i + 1];
-      if (nextToken && !nextToken.startsWith("-")) {
-        return nextToken;
-      }
-      return null;
-    }
-    if (OPTIONS_WITH_VALUES.has(token)) {
-      skipNext = true;
-      continue;
-    }
-    if (token.startsWith("-")) {
-      for (const opt of OPTIONS_WITH_VALUES) {
-        if (token.startsWith(`${opt}=`)) {
-          break;
-        }
-      }
-      continue;
-    }
-    return token;
   }
   return null;
 }
-function matchesBlockArgs(tokens, blockArgs, shortOpts) {
-  const blockArgsSet = new Set(blockArgs);
-  for (const token of tokens) {
-    if (blockArgsSet.has(token)) {
-      return true;
-    }
-  }
-  for (const opt of shortOpts) {
-    if (blockArgsSet.has(opt)) {
+function containsDangerousCode(code) {
+  for (const pattern of DANGEROUS_PATTERNS) {
+    if (pattern.test(code)) {
       return true;
     }
   }
   return false;
+}
+
+// src/core/analyze/shell-wrappers.ts
+function extractDashCArg(tokens) {
+  for (let i = 1;i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token)
+      continue;
+    if (token === "-c" && tokens[i + 1]) {
+      return tokens[i + 1] ?? null;
+    }
+    if (token.startsWith("-") && token.includes("c") && !token.startsWith("--")) {
+      const nextToken = tokens[i + 1];
+      if (nextToken && !nextToken.startsWith("-")) {
+        return nextToken;
+      }
+    }
+  }
+  return null;
 }
 
 // src/core/rules-git.ts
@@ -1015,29 +1168,6 @@ function analyzeGitWorktree(tokens) {
 import { realpathSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { normalize, resolve } from "node:path";
-
-// src/core/analyze/rm-flags.ts
-function hasRecursiveForceFlags(tokens) {
-  let hasRecursive = false;
-  let hasForce = false;
-  for (const token of tokens) {
-    if (token === "--")
-      break;
-    if (token === "-r" || token === "-R" || token === "--recursive") {
-      hasRecursive = true;
-    } else if (token === "-f" || token === "--force") {
-      hasForce = true;
-    } else if (token.startsWith("-") && !token.startsWith("--")) {
-      if (token.includes("r") || token.includes("R"))
-        hasRecursive = true;
-      if (token.includes("f"))
-        hasForce = true;
-    }
-  }
-  return hasRecursive && hasForce;
-}
-
-// src/core/rules-rm.ts
 var REASON_RM_RF = "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.";
 var REASON_RM_RF_ROOT_HOME = "rm -rf targeting root or home directory is extremely dangerous and always blocked.";
 function analyzeRm(tokens, options = {}) {
@@ -1252,218 +1382,6 @@ function isHomeDirectory(cwd) {
   } catch {
     return false;
   }
-}
-
-// src/core/analyze/constants.ts
-var DISPLAY_COMMANDS = new Set([
-  "echo",
-  "printf",
-  "cat",
-  "head",
-  "tail",
-  "less",
-  "more",
-  "grep",
-  "rg",
-  "ag",
-  "ack",
-  "sed",
-  "awk",
-  "cut",
-  "tr",
-  "sort",
-  "uniq",
-  "wc",
-  "tee",
-  "man",
-  "help",
-  "info",
-  "type",
-  "which",
-  "whereis",
-  "whatis",
-  "apropos",
-  "file",
-  "stat",
-  "ls",
-  "ll",
-  "dir",
-  "tree",
-  "pwd",
-  "date",
-  "cal",
-  "uptime",
-  "whoami",
-  "id",
-  "groups",
-  "hostname",
-  "uname",
-  "env",
-  "printenv",
-  "set",
-  "export",
-  "alias",
-  "history",
-  "jobs",
-  "fg",
-  "bg",
-  "test",
-  "true",
-  "false",
-  "read",
-  "return",
-  "exit",
-  "break",
-  "continue",
-  "shift",
-  "wait",
-  "trap",
-  "basename",
-  "dirname",
-  "realpath",
-  "readlink",
-  "md5sum",
-  "sha256sum",
-  "base64",
-  "xxd",
-  "od",
-  "hexdump",
-  "strings",
-  "diff",
-  "cmp",
-  "comm",
-  "join",
-  "paste",
-  "column",
-  "fmt",
-  "fold",
-  "nl",
-  "pr",
-  "expand",
-  "unexpand",
-  "rev",
-  "tac",
-  "shuf",
-  "seq",
-  "yes",
-  "timeout",
-  "time",
-  "sleep",
-  "watch",
-  "logger",
-  "write",
-  "wall",
-  "mesg",
-  "notify-send"
-]);
-
-// src/core/analyze/find.ts
-var REASON_FIND_DELETE = "find -delete permanently removes files. Use -print first to preview.";
-function analyzeFind(tokens) {
-  if (findHasDelete(tokens.slice(1))) {
-    return REASON_FIND_DELETE;
-  }
-  for (let i = 0;i < tokens.length; i++) {
-    const token = tokens[i];
-    if (token === "-exec" || token === "-execdir") {
-      const execTokens = tokens.slice(i + 1);
-      const semicolonIdx = execTokens.indexOf(";");
-      const plusIdx = execTokens.indexOf("+");
-      const endIdx = semicolonIdx !== -1 && plusIdx !== -1 ? Math.min(semicolonIdx, plusIdx) : semicolonIdx !== -1 ? semicolonIdx : plusIdx !== -1 ? plusIdx : execTokens.length;
-      let execCommand = execTokens.slice(0, endIdx);
-      execCommand = stripWrappers(execCommand);
-      if (execCommand.length > 0) {
-        let head = getBasename(execCommand[0] ?? "");
-        if (head === "busybox" && execCommand.length > 1) {
-          execCommand = execCommand.slice(1);
-          head = getBasename(execCommand[0] ?? "");
-        }
-        if (head === "rm" && hasRecursiveForceFlags(execCommand)) {
-          return "find -exec rm -rf is dangerous. Use explicit file list instead.";
-        }
-      }
-    }
-  }
-  return null;
-}
-function findHasDelete(tokens) {
-  let i = 0;
-  let insideExec = false;
-  let execDepth = 0;
-  while (i < tokens.length) {
-    const token = tokens[i];
-    if (!token) {
-      i++;
-      continue;
-    }
-    if (token === "-exec" || token === "-execdir") {
-      insideExec = true;
-      execDepth++;
-      i++;
-      continue;
-    }
-    if (insideExec && (token === ";" || token === "+")) {
-      execDepth--;
-      if (execDepth === 0) {
-        insideExec = false;
-      }
-      i++;
-      continue;
-    }
-    if (insideExec) {
-      i++;
-      continue;
-    }
-    if (token === "-name" || token === "-iname" || token === "-path" || token === "-ipath" || token === "-regex" || token === "-iregex" || token === "-type" || token === "-user" || token === "-group" || token === "-perm" || token === "-size" || token === "-mtime" || token === "-ctime" || token === "-atime" || token === "-newer" || token === "-printf" || token === "-fprint" || token === "-fprintf") {
-      i += 2;
-      continue;
-    }
-    if (token === "-delete") {
-      return true;
-    }
-    i++;
-  }
-  return false;
-}
-
-// src/core/analyze/interpreters.ts
-function extractInterpreterCodeArg(tokens) {
-  for (let i = 1;i < tokens.length; i++) {
-    const token = tokens[i];
-    if (!token)
-      continue;
-    if ((token === "-c" || token === "-e") && tokens[i + 1]) {
-      return tokens[i + 1] ?? null;
-    }
-  }
-  return null;
-}
-function containsDangerousCode(code) {
-  for (const pattern of DANGEROUS_PATTERNS) {
-    if (pattern.test(code)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-// src/core/analyze/shell-wrappers.ts
-function extractDashCArg(tokens) {
-  for (let i = 1;i < tokens.length; i++) {
-    const token = tokens[i];
-    if (!token)
-      continue;
-    if (token === "-c" && tokens[i + 1]) {
-      return tokens[i + 1] ?? null;
-    }
-    if (token.startsWith("-") && token.includes("c") && !token.startsWith("--")) {
-      const nextToken = tokens[i + 1];
-      if (nextToken && !nextToken.startsWith("-")) {
-        return nextToken;
-      }
-    }
-  }
-  return null;
 }
 
 // src/core/analyze/parallel.ts
@@ -1800,6 +1718,86 @@ function extractXargsChildCommandWithInfo(tokens) {
   return { childTokens: [], replacementToken };
 }
 
+// src/core/rules-custom.ts
+function checkCustomRules(tokens, rules) {
+  if (tokens.length === 0 || rules.length === 0) {
+    return null;
+  }
+  const command = getBasename(tokens[0] ?? "");
+  const subcommand = extractSubcommand(tokens);
+  const shortOpts = extractShortOpts(tokens);
+  for (const rule of rules) {
+    if (!matchesCommand(command, rule.command)) {
+      continue;
+    }
+    if (rule.subcommand && subcommand !== rule.subcommand) {
+      continue;
+    }
+    if (matchesBlockArgs(tokens, rule.block_args, shortOpts)) {
+      return `[${rule.name}] ${rule.reason}`;
+    }
+  }
+  return null;
+}
+function matchesCommand(command, ruleCommand) {
+  return command === ruleCommand;
+}
+var OPTIONS_WITH_VALUES = new Set([
+  "-c",
+  "-C",
+  "--git-dir",
+  "--work-tree",
+  "--namespace",
+  "--config-env"
+]);
+function extractSubcommand(tokens) {
+  let skipNext = false;
+  for (let i = 1;i < tokens.length; i++) {
+    const token = tokens[i];
+    if (!token)
+      continue;
+    if (skipNext) {
+      skipNext = false;
+      continue;
+    }
+    if (token === "--") {
+      const nextToken = tokens[i + 1];
+      if (nextToken && !nextToken.startsWith("-")) {
+        return nextToken;
+      }
+      return null;
+    }
+    if (OPTIONS_WITH_VALUES.has(token)) {
+      skipNext = true;
+      continue;
+    }
+    if (token.startsWith("-")) {
+      for (const opt of OPTIONS_WITH_VALUES) {
+        if (token.startsWith(`${opt}=`)) {
+          break;
+        }
+      }
+      continue;
+    }
+    return token;
+  }
+  return null;
+}
+function matchesBlockArgs(tokens, blockArgs, shortOpts) {
+  const blockArgsSet = new Set(blockArgs);
+  for (const token of tokens) {
+    if (blockArgsSet.has(token)) {
+      return true;
+    }
+  }
+  for (const opt of shortOpts) {
+    if (blockArgsSet.has(opt)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // src/core/analyze/segment.ts
 var REASON_INTERPRETER_DANGEROUS = "Detected potentially dangerous command in interpreter code.";
 var REASON_INTERPRETER_BLOCKED = "Interpreter one-liners are blocked in paranoid mode.";
@@ -1999,7 +1997,7 @@ function analyzeCommandInternal(command, depth, options) {
     return { reason: REASON_STRICT_UNPARSEABLE, segment: command };
   }
   const originalCwd = options.cwd;
-  let effectiveCwd = options.cwd;
+  let effectiveCwd = options.effectiveCwd !== undefined ? options.effectiveCwd : options.cwd;
   for (const segment of segments) {
     const segmentStr = segment.join(" ");
     if (segment.length === 1 && segment[0]?.includes(" ")) {
@@ -2017,7 +2015,7 @@ function analyzeCommandInternal(command, depth, options) {
       cwd: originalCwd,
       effectiveCwd,
       analyzeNested: (nestedCommand) => {
-        return analyzeCommandInternal(nestedCommand, depth + 1, options)?.reason ?? null;
+        return analyzeCommandInternal(nestedCommand, depth + 1, { ...options, effectiveCwd })?.reason ?? null;
       }
     });
     if (reason) {
@@ -2352,72 +2350,152 @@ async function runClaudeCodeHook() {
   }
 }
 
-// src/bin/copilot-cli.ts
-function outputCopilotDeny(reason, command, segment) {
-  const message = formatBlockedMessage({
-    reason,
-    command,
-    segment,
-    redact: redactSecrets
-  });
-  const output = {
-    permissionDecision: "deny",
-    permissionDecisionReason: message
-  };
-  console.log(JSON.stringify(output));
+// src/bin/commands/claude-code.ts
+var claudeCodeCommand = {
+  name: "claude-code",
+  aliases: ["-cc", "--claude-code"],
+  description: "Run as Claude Code PreToolUse hook (reads JSON from stdin)",
+  usage: "-cc, --claude-code",
+  options: [
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: ["cc-safety-net -cc", "cc-safety-net --claude-code"]
+};
+
+// src/bin/commands/custom-rules-doc.ts
+var customRulesDocCommand = {
+  name: "custom-rules-doc",
+  aliases: ["--custom-rules-doc"],
+  description: "Print custom rules documentation",
+  usage: "--custom-rules-doc",
+  options: [
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: ["cc-safety-net --custom-rules-doc"]
+};
+
+// src/bin/commands/doctor.ts
+var doctorCommand = {
+  name: "doctor",
+  aliases: ["--doctor"],
+  description: "Run diagnostic checks to verify installation and configuration",
+  usage: "doctor [options]",
+  options: [
+    {
+      flags: "--json",
+      description: "Output diagnostics as JSON"
+    },
+    {
+      flags: "--skip-update-check",
+      description: "Skip npm registry version check"
+    },
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: [
+    "cc-safety-net doctor",
+    "cc-safety-net doctor --json",
+    "cc-safety-net doctor --skip-update-check"
+  ]
+};
+
+// src/bin/commands/explain.ts
+var explainCommand = {
+  name: "explain",
+  description: "Show step-by-step analysis trace of how a command would be analyzed",
+  usage: "explain [options] <command>",
+  argument: "<command>",
+  options: [
+    {
+      flags: "--json",
+      description: "Output analysis as JSON"
+    },
+    {
+      flags: "--cwd",
+      argument: "<path>",
+      description: "Use custom working directory"
+    },
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: [
+    'cc-safety-net explain "git reset --hard"',
+    'cc-safety-net explain --json "rm -rf /"',
+    'cc-safety-net explain --cwd /tmp "git status"'
+  ]
+};
+
+// src/bin/commands/gemini-cli.ts
+var geminiCliCommand = {
+  name: "gemini-cli",
+  aliases: ["-gc", "--gemini-cli"],
+  description: "Run as Gemini CLI BeforeTool hook (reads JSON from stdin)",
+  usage: "-gc, --gemini-cli",
+  options: [
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: ["cc-safety-net -gc", "cc-safety-net --gemini-cli"]
+};
+
+// src/bin/commands/statusline.ts
+var statuslineCommand = {
+  name: "statusline",
+  aliases: ["--statusline"],
+  description: "Print status line with mode indicators for shell integration",
+  usage: "--statusline",
+  options: [
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: ["cc-safety-net --statusline"]
+};
+
+// src/bin/commands/verify-config.ts
+var verifyConfigCommand = {
+  name: "verify-config",
+  aliases: ["-vc", "--verify-config"],
+  description: "Validate custom rules configuration files",
+  usage: "-vc, --verify-config",
+  options: [
+    {
+      flags: "-h, --help",
+      description: "Show this help"
+    }
+  ],
+  examples: ["cc-safety-net -vc", "cc-safety-net --verify-config"]
+};
+
+// src/bin/commands/index.ts
+var commands = [
+  doctorCommand,
+  explainCommand,
+  claudeCodeCommand,
+  geminiCliCommand,
+  verifyConfigCommand,
+  customRulesDocCommand,
+  statuslineCommand
+];
+function findCommand(nameOrAlias) {
+  const normalized = nameOrAlias.toLowerCase();
+  return commands.find((cmd) => cmd.name.toLowerCase() === normalized || cmd.aliases?.some((alias) => alias.toLowerCase() === normalized));
 }
-async function runCopilotCliHook() {
-  const chunks = [];
-  for await (const chunk of process.stdin) {
-    chunks.push(chunk);
-  }
-  const inputText = Buffer.concat(chunks).toString("utf-8").trim();
-  if (!inputText) {
-    return;
-  }
-  let input;
-  try {
-    input = JSON.parse(inputText);
-  } catch {
-    if (envTruthy("SAFETY_NET_STRICT")) {
-      outputCopilotDeny("Failed to parse hook input JSON (strict mode)");
-    }
-    return;
-  }
-  if (input.toolName !== "bash") {
-    return;
-  }
-  let toolArgs;
-  try {
-    toolArgs = JSON.parse(input.toolArgs);
-  } catch {
-    if (envTruthy("SAFETY_NET_STRICT")) {
-      outputCopilotDeny("Failed to parse toolArgs JSON (strict mode)");
-    }
-    return;
-  }
-  const command = toolArgs.command;
-  if (!command) {
-    return;
-  }
-  const cwd = input.cwd ?? process.cwd();
-  const strict = envTruthy("SAFETY_NET_STRICT");
-  const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
-  const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
-  const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
-  const config = loadConfig(cwd);
-  const result = analyzeCommand(command, {
-    cwd,
-    config,
-    strict,
-    paranoidRm,
-    paranoidInterpreters
-  });
-  if (result) {
-    const sessionId = `copilot-${input.timestamp ?? Date.now()}`;
-    writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-    outputCopilotDeny(result.reason, command, result.segment);
-  }
+function getVisibleCommands() {
+  return commands.filter((cmd) => !cmd.hidden);
 }
 
 // src/bin/custom-rules-doc.ts
@@ -2726,15 +2804,90 @@ function getEnvironmentInfo() {
   }));
 }
 
-// src/bin/doctor/format.ts
-var useColor = process.stdout.isTTY && !process.env.NO_COLOR;
+// src/bin/utils/colors.ts
+function shouldUseColor() {
+  return Boolean(process.stdout.isTTY && !process.env.NO_COLOR);
+}
+var green = (s) => shouldUseColor() ? `\x1B[32m${s}\x1B[0m` : s;
+var yellow = (s) => shouldUseColor() ? `\x1B[33m${s}\x1B[0m` : s;
+var blue = (s) => shouldUseColor() ? `\x1B[34m${s}\x1B[0m` : s;
+var magenta = (s) => shouldUseColor() ? `\x1B[35m${s}\x1B[0m` : s;
+var cyan = (s) => shouldUseColor() ? `\x1B[36m${s}\x1B[0m` : s;
+var red = (s) => shouldUseColor() ? `\x1B[31m${s}\x1B[0m` : s;
+var dim = (s) => shouldUseColor() ? `\x1B[2m${s}\x1B[0m` : s;
+var bold = (s) => shouldUseColor() ? `\x1B[1m${s}\x1B[0m` : s;
 var colors = {
-  green: (s) => useColor ? `\x1B[32m${s}\x1B[0m` : s,
-  yellow: (s) => useColor ? `\x1B[33m${s}\x1B[0m` : s,
-  red: (s) => useColor ? `\x1B[31m${s}\x1B[0m` : s,
-  dim: (s) => useColor ? `\x1B[2m${s}\x1B[0m` : s,
-  bold: (s) => useColor ? `\x1B[1m${s}\x1B[0m` : s
+  green,
+  yellow,
+  blue,
+  magenta,
+  cyan,
+  red,
+  dim,
+  bold
 };
+var ANSI_RESET = "\x1B[0m";
+var DISTINCT_COLORS = [
+  39,
+  82,
+  198,
+  226,
+  208,
+  51,
+  196,
+  46,
+  201,
+  214,
+  93,
+  154,
+  220,
+  27,
+  49,
+  190,
+  200,
+  33,
+  129,
+  227,
+  45,
+  160,
+  63,
+  118,
+  123,
+  202
+];
+function createRandom(seed) {
+  let state = seed;
+  return () => {
+    state = (state * 1664525 + 1013904223) % 4294967296;
+    return state / 4294967296;
+  };
+}
+function getShuffledPalette(seed) {
+  const palette = [...DISTINCT_COLORS];
+  const random = createRandom(seed);
+  for (let i = palette.length - 1;i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    const temp = palette[i];
+    palette[i] = palette[j];
+    palette[j] = temp;
+  }
+  return palette;
+}
+function generateDistinctColor(index, seed = 0) {
+  if (!shouldUseColor())
+    return "";
+  const palette = getShuffledPalette(seed);
+  const colorCode = palette[index % palette.length];
+  return `\x1B[38;5;${colorCode}m`;
+}
+function colorizeToken(token, index, seed = 0) {
+  if (!shouldUseColor())
+    return `"${token}"`;
+  const colorCode = generateDistinctColor(index, seed);
+  return `${colorCode}"${token}"${ANSI_RESET}`;
+}
+
+// src/bin/doctor/format.ts
 var PLATFORM_NAMES = {
   "claude-code": "Claude Code",
   opencode: "OpenCode",
@@ -3571,6 +3724,831 @@ function printReport(report) {
   console.log(formatSummary(report));
 }
 
+// src/bin/explain/config.ts
+import { existsSync as existsSync6 } from "node:fs";
+function getConfigSource(options) {
+  const projectPath = getProjectConfigPath(options?.cwd);
+  let invalidProjectPath = null;
+  if (existsSync6(projectPath)) {
+    const validation = validateConfigFile(projectPath);
+    if (validation.errors.length === 0) {
+      return { configSource: projectPath, configValid: true };
+    }
+    invalidProjectPath = projectPath;
+  }
+  const userPath = options?.userConfigPath ?? getUserConfigPath();
+  if (existsSync6(userPath)) {
+    const validation = validateConfigFile(userPath);
+    return { configSource: userPath, configValid: validation.errors.length === 0 };
+  }
+  if (invalidProjectPath) {
+    return { configSource: invalidProjectPath, configValid: false };
+  }
+  return { configSource: null, configValid: true };
+}
+function buildAnalyzeOptions(explainOptions) {
+  const cwd = explainOptions?.cwd ?? process.cwd();
+  const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
+  return {
+    cwd,
+    effectiveCwd: cwd,
+    config: explainOptions?.config ?? loadConfig(cwd),
+    strict: explainOptions?.strict ?? envTruthy("SAFETY_NET_STRICT"),
+    paranoidRm: paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM"),
+    paranoidInterpreters: paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS")
+  };
+}
+
+// src/bin/explain/redact.ts
+var ENV_ASSIGNMENT_RE2 = /^[A-Za-z_][A-Za-z0-9_]*=/;
+function redactEnvVars(envMap) {
+  const result = {};
+  for (const key of envMap.keys()) {
+    result[key] = "<redacted>";
+  }
+  return result;
+}
+function redactEnvAssignmentsInString(str) {
+  return str.replace(/\b([A-Za-z_][A-Za-z0-9_]*)=(?:"[^"]*"|'[^']*'|\S+)/g, "$1=<redacted>");
+}
+function redactEnvAssignmentTokens(tokens) {
+  return tokens.map((token) => {
+    if (ENV_ASSIGNMENT_RE2.test(token)) {
+      const eqIdx = token.indexOf("=");
+      return `${token.slice(0, eqIdx)}=<redacted>`;
+    }
+    return token;
+  });
+}
+
+// src/bin/explain/segment.ts
+var REASON_STRICT_UNPARSEABLE2 = "Command could not be safely analyzed (strict mode). Verify manually.";
+function isUnparseableCommand(command, segments) {
+  return segments.length === 1 && segments[0]?.length === 1 && segments[0][0] === command && command.includes(" ");
+}
+function explainInnerSegments(innerCmd, depth, options, steps) {
+  if (depth + 1 >= MAX_RECURSION_DEPTH) {
+    steps.push({
+      type: "error",
+      message: REASON_RECURSION_LIMIT
+    });
+    return { reason: REASON_RECURSION_LIMIT };
+  }
+  const innerSegments = splitShellCommands(innerCmd);
+  if (options.strict && isUnparseableCommand(innerCmd, innerSegments)) {
+    steps.push({
+      type: "strict-unparseable",
+      rawCommand: redactEnvAssignmentsInString(innerCmd),
+      reason: REASON_STRICT_UNPARSEABLE2
+    });
+    return { reason: REASON_STRICT_UNPARSEABLE2 };
+  }
+  let effectiveCwd = options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
+  for (const segment of innerSegments) {
+    if (segment.length === 1 && segment[0]?.includes(" ")) {
+      const textReason = dangerousInText(segment[0]);
+      if (textReason) {
+        steps.push({
+          type: "dangerous-text",
+          token: redactEnvAssignmentsInString(segment[0]),
+          matched: true,
+          reason: textReason
+        });
+        return { reason: textReason };
+      }
+      steps.push({
+        type: "dangerous-text",
+        token: redactEnvAssignmentsInString(segment[0]),
+        matched: false
+      });
+      if (segmentChangesCwd(segment)) {
+        steps.push({
+          type: "cwd-change",
+          segment: redactEnvAssignmentsInString(segment.join(" ")),
+          effectiveCwdNowUnknown: true
+        });
+        effectiveCwd = null;
+      }
+      continue;
+    }
+    const result = explainSegment(segment, depth + 1, { ...options, effectiveCwd }, steps);
+    if (result)
+      return result;
+    if (segmentChangesCwd(segment)) {
+      steps.push({
+        type: "cwd-change",
+        segment: redactEnvAssignmentsInString(segment.join(" ")),
+        effectiveCwdNowUnknown: true
+      });
+      effectiveCwd = null;
+    }
+  }
+  return null;
+}
+function explainSegment(tokens, depth, options, steps) {
+  if (depth >= MAX_RECURSION_DEPTH) {
+    steps.push({
+      type: "error",
+      message: REASON_RECURSION_LIMIT
+    });
+    return { reason: REASON_RECURSION_LIMIT };
+  }
+  const envResult = stripEnvAssignmentsWithInfo(tokens);
+  if (envResult.envAssignments.size > 0) {
+    steps.push({
+      type: "env-strip",
+      input: redactEnvAssignmentTokens(tokens),
+      envVars: redactEnvVars(envResult.envAssignments),
+      output: envResult.tokens
+    });
+  }
+  const wrapperResult = stripWrappersWithInfo(envResult.tokens);
+  const removed = envResult.tokens.slice(0, envResult.tokens.length - wrapperResult.tokens.length);
+  if (removed.length > 0) {
+    steps.push({
+      type: "leading-tokens-stripped",
+      input: redactEnvAssignmentTokens(envResult.tokens),
+      removed: redactEnvAssignmentTokens(removed),
+      output: wrapperResult.tokens
+    });
+  }
+  const strippedTokens = wrapperResult.tokens;
+  if (strippedTokens.length === 0) {
+    return null;
+  }
+  const head = strippedTokens[0];
+  if (!head)
+    return null;
+  const baseName = head.split("/").pop() ?? head;
+  const baseNameLower = baseName.toLowerCase();
+  if (SHELL_WRAPPERS.has(baseNameLower)) {
+    const innerCmd = extractDashCArg(strippedTokens);
+    if (innerCmd) {
+      const redactedInnerCmd = redactEnvAssignmentsInString(innerCmd);
+      steps.push({
+        type: "shell-wrapper",
+        wrapper: baseNameLower,
+        innerCommand: redactedInnerCmd
+      });
+      steps.push({
+        type: "recurse",
+        reason: "shell-wrapper",
+        innerCommand: redactedInnerCmd,
+        depth: depth + 1
+      });
+      return explainInnerSegments(innerCmd, depth, options, steps);
+    }
+  }
+  if (INTERPRETERS.has(baseNameLower)) {
+    const codeArg = extractInterpreterCodeArg(strippedTokens);
+    if (codeArg) {
+      const paranoidBlocked = !!options.paranoidInterpreters;
+      const redactedCodeArg = redactEnvAssignmentsInString(codeArg);
+      steps.push({
+        type: "interpreter",
+        interpreter: baseNameLower,
+        codeArg: redactedCodeArg,
+        paranoidBlocked
+      });
+      if (paranoidBlocked) {
+        return { reason: REASON_INTERPRETER_BLOCKED + PARANOID_INTERPRETERS_SUFFIX };
+      }
+      steps.push({
+        type: "recurse",
+        reason: "interpreter",
+        innerCommand: redactedCodeArg,
+        depth: depth + 1
+      });
+      const nestedResult = explainInnerSegments(codeArg, depth, options, steps);
+      if (nestedResult)
+        return nestedResult;
+      if (containsDangerousCode(codeArg)) {
+        steps.push({
+          type: "dangerous-text",
+          token: redactedCodeArg,
+          matched: true,
+          reason: REASON_INTERPRETER_DANGEROUS
+        });
+        return { reason: REASON_INTERPRETER_DANGEROUS };
+      }
+      return null;
+    }
+  }
+  if (baseNameLower === "busybox" && strippedTokens.length > 1) {
+    const subcommand = strippedTokens[1] ?? "unknown";
+    steps.push({
+      type: "busybox",
+      subcommand
+    });
+    const busyboxInnerCmd = strippedTokens.slice(1).join(" ");
+    steps.push({
+      type: "recurse",
+      reason: "busybox",
+      innerCommand: redactEnvAssignmentsInString(busyboxInnerCmd),
+      depth
+    });
+    return explainSegment(strippedTokens.slice(1), depth, options, steps);
+  }
+  const envAssignments = new Map(envResult.envAssignments);
+  for (const [k, v] of wrapperResult.envAssignments) {
+    envAssignments.set(k, v);
+  }
+  const allowTmpdirVar = !isTmpdirOverriddenToNonTemp(envAssignments);
+  const tmpdirValue = envAssignments.get("TMPDIR") ?? process.env.TMPDIR ?? null;
+  const effectiveCwd = options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
+  const cwdUnknown = effectiveCwd === null;
+  const cwdForRm = cwdUnknown ? undefined : effectiveCwd ?? options.cwd;
+  const originalCwd = cwdUnknown ? undefined : options.cwd;
+  const isGit = baseNameLower === "git";
+  const isRm = baseName === "rm";
+  const isFind = baseName === "find";
+  const isXargs = baseName === "xargs";
+  const isParallel = baseName === "parallel";
+  if (isRm || isXargs || isParallel) {
+    steps.push({
+      type: "tmpdir-check",
+      tmpdirValue,
+      isOverriddenToNonTemp: !allowTmpdirVar,
+      allowTmpdirVar
+    });
+  }
+  if (isGit) {
+    const reason = analyzeGit(strippedTokens);
+    steps.push({
+      type: "rule-check",
+      ruleModule: "rules-git.ts",
+      ruleFunction: "analyzeGit",
+      matched: !!reason,
+      reason: reason ?? undefined
+    });
+    if (reason)
+      return { reason };
+  }
+  if (isRm) {
+    if (effectiveCwd && isHomeDirectory(effectiveCwd) && hasRecursiveForceFlags(strippedTokens)) {
+      const reason2 = "rm -rf in home directory is dangerous. Change to a project directory first.";
+      steps.push({
+        type: "rule-check",
+        ruleModule: "rules-rm.ts",
+        ruleFunction: "isHomeDirectory",
+        matched: true,
+        reason: reason2
+      });
+      return { reason: reason2 };
+    }
+    const reason = analyzeRm(strippedTokens, {
+      cwd: effectiveCwd ?? undefined,
+      paranoid: options.paranoidRm,
+      allowTmpdirVar
+    });
+    steps.push({
+      type: "rule-check",
+      ruleModule: "rules-rm.ts",
+      ruleFunction: "analyzeRm",
+      matched: !!reason,
+      reason: reason ?? undefined
+    });
+    if (reason)
+      return { reason };
+  }
+  if (isFind) {
+    const reason = analyzeFind(strippedTokens);
+    steps.push({
+      type: "rule-check",
+      ruleModule: "analyze/find.ts",
+      ruleFunction: "analyzeFind",
+      matched: !!reason,
+      reason: reason ?? undefined
+    });
+    if (reason)
+      return { reason };
+  }
+  if (isXargs) {
+    const reason = analyzeXargs(strippedTokens, {
+      cwd: cwdForRm,
+      originalCwd,
+      paranoidRm: options.paranoidRm,
+      allowTmpdirVar
+    });
+    steps.push({
+      type: "rule-check",
+      ruleModule: "analyze/xargs.ts",
+      ruleFunction: "analyzeXargs",
+      matched: !!reason,
+      reason: reason ?? undefined
+    });
+    if (reason)
+      return { reason };
+  }
+  if (isParallel) {
+    const analyzeNested = (cmd) => {
+      const result = explainInnerSegments(cmd, depth, options, steps);
+      return result?.reason ?? null;
+    };
+    const reason = analyzeParallel(strippedTokens, {
+      cwd: cwdForRm,
+      originalCwd,
+      paranoidRm: options.paranoidRm,
+      allowTmpdirVar,
+      analyzeNested
+    });
+    steps.push({
+      type: "rule-check",
+      ruleModule: "analyze/parallel.ts",
+      ruleFunction: "analyzeParallel",
+      matched: !!reason,
+      reason: reason ?? undefined
+    });
+    if (reason)
+      return { reason };
+  }
+  const matchedKnown = isGit || isRm || isFind || isXargs || isParallel;
+  const tokensScanned = [];
+  let fallbackReason = null;
+  let embeddedCommandFound;
+  if (!matchedKnown && !DISPLAY_COMMANDS.has(normalizeCommandToken(head))) {
+    for (let i = 1;i < strippedTokens.length && !fallbackReason; i++) {
+      const token = strippedTokens[i];
+      if (!token)
+        continue;
+      tokensScanned.push(token);
+      const cmd = normalizeCommandToken(token);
+      if (cmd === "rm") {
+        embeddedCommandFound = "rm";
+        const rmTokens = ["rm", ...strippedTokens.slice(i + 1)];
+        fallbackReason = analyzeRm(rmTokens, {
+          cwd: cwdForRm,
+          originalCwd,
+          paranoid: options.paranoidRm,
+          allowTmpdirVar
+        });
+      }
+      if (!fallbackReason && cmd === "git") {
+        embeddedCommandFound = "git";
+        const gitTokens = ["git", ...strippedTokens.slice(i + 1)];
+        fallbackReason = analyzeGit(gitTokens);
+      }
+      if (!fallbackReason && cmd === "find") {
+        embeddedCommandFound = "find";
+        const findTokens = ["find", ...strippedTokens.slice(i + 1)];
+        fallbackReason = analyzeFind(findTokens);
+      }
+    }
+  }
+  steps.push({
+    type: "fallback-scan",
+    tokensScanned,
+    embeddedCommandFound
+  });
+  if (fallbackReason)
+    return { reason: fallbackReason };
+  const shouldCheckCustomRules = depth === 0 || !matchedKnown;
+  const hasRules = options.config?.rules && options.config.rules.length > 0;
+  if (shouldCheckCustomRules && hasRules && options.config) {
+    const customResult = checkCustomRules(strippedTokens, options.config.rules);
+    steps.push({
+      type: "custom-rules-check",
+      rulesChecked: true,
+      matched: !!customResult,
+      reason: customResult ?? undefined
+    });
+    if (customResult)
+      return { reason: customResult };
+  } else {
+    steps.push({
+      type: "custom-rules-check",
+      rulesChecked: false,
+      matched: false
+    });
+  }
+  return null;
+}
+
+// src/bin/explain/analyze.ts
+function explainCommand2(command, options) {
+  const trace = { steps: [], segments: [] };
+  const analyzeOpts = buildAnalyzeOptions(options);
+  const { configSource, configValid } = getConfigSource({ cwd: options?.cwd });
+  if (!command || !command.trim()) {
+    trace.steps.push({ type: "error", message: "No command provided" });
+    return {
+      trace,
+      result: "allowed",
+      configSource,
+      configValid
+    };
+  }
+  const segments = splitShellCommands(command);
+  const redactedInput = command.replace(/\b([A-Za-z_][A-Za-z0-9_]*)=(?:"[^"]*"|'[^']*'|\S+)/g, "$1=<redacted>");
+  const redactedSegments = segments.map((seg) => redactEnvAssignmentTokens(seg));
+  trace.steps.push({
+    type: "parse",
+    input: redactedInput,
+    segments: redactedSegments
+  });
+  if (analyzeOpts.strict && isUnparseableCommand(command, segments)) {
+    trace.steps.push({
+      type: "strict-unparseable",
+      rawCommand: redactedInput,
+      reason: REASON_STRICT_UNPARSEABLE2
+    });
+    return {
+      trace,
+      result: "blocked",
+      reason: REASON_STRICT_UNPARSEABLE2,
+      segment: redactEnvAssignmentsInString(command),
+      configSource,
+      configValid
+    };
+  }
+  let blocked = false;
+  let blockReason;
+  let blockSegment;
+  let effectiveCwd = analyzeOpts.effectiveCwd;
+  for (let i = 0;i < segments.length; i++) {
+    const segment = segments[i];
+    if (!segment)
+      continue;
+    const segmentSteps = [];
+    if (blocked) {
+      segmentSteps.push({
+        type: "segment-skipped",
+        index: i,
+        reason: "prior-segment-blocked"
+      });
+      trace.segments.push({ index: i, steps: segmentSteps });
+      continue;
+    }
+    if (segment.length === 1 && segment[0]?.includes(" ")) {
+      const textReason = dangerousInText(segment[0]);
+      if (textReason) {
+        segmentSteps.push({
+          type: "dangerous-text",
+          token: redactEnvAssignmentsInString(segment[0]),
+          matched: true,
+          reason: textReason
+        });
+        trace.segments.push({ index: i, steps: segmentSteps });
+        blocked = true;
+        blockReason = textReason;
+        blockSegment = redactEnvAssignmentsInString(segment.join(" "));
+        continue;
+      }
+      segmentSteps.push({
+        type: "dangerous-text",
+        token: redactEnvAssignmentsInString(segment[0]),
+        matched: false
+      });
+      if (segmentChangesCwd(segment)) {
+        segmentSteps.push({
+          type: "cwd-change",
+          segment: redactEnvAssignmentsInString(segment.join(" ")),
+          effectiveCwdNowUnknown: true
+        });
+        effectiveCwd = null;
+      }
+      trace.segments.push({ index: i, steps: segmentSteps });
+      continue;
+    }
+    const result = explainSegment(segment, 0, { ...analyzeOpts, effectiveCwd }, segmentSteps);
+    trace.segments.push({ index: i, steps: segmentSteps });
+    if (result) {
+      blocked = true;
+      blockReason = result.reason;
+      blockSegment = redactEnvAssignmentsInString(segment.join(" "));
+    }
+    if (segmentChangesCwd(segment)) {
+      segmentSteps.push({
+        type: "cwd-change",
+        segment: redactEnvAssignmentsInString(segment.join(" ")),
+        effectiveCwdNowUnknown: true
+      });
+      effectiveCwd = null;
+    }
+  }
+  return {
+    trace,
+    result: blocked ? "blocked" : "allowed",
+    reason: blockReason,
+    segment: blockSegment,
+    configSource,
+    configValid
+  };
+}
+// src/bin/explain/format-helpers.ts
+function getBoxChars(asciiOnly) {
+  if (asciiOnly) {
+    return {
+      dh: "=",
+      dv: "|",
+      dtl: "+",
+      dtr: "+",
+      dbl: "+",
+      dbr: "+",
+      h: "-",
+      v: "|",
+      tl: "+",
+      tr: "+",
+      bl: "+",
+      br: "+",
+      sh: "="
+    };
+  }
+  return {
+    dh: "═",
+    dv: "║",
+    dtl: "╔",
+    dtr: "╗",
+    dbl: "╚",
+    dbr: "╝",
+    h: "─",
+    v: "│",
+    tl: "┌",
+    tr: "┐",
+    bl: "└",
+    br: "┘",
+    sh: "━"
+  };
+}
+function formatHeader(box, width) {
+  const title = "  Command Analysis";
+  const padding = width - title.length;
+  return [
+    `${box.dtl}${box.dh.repeat(width)}${box.dtr}`,
+    `${box.dv}${title}${" ".repeat(padding)}${box.dv}`,
+    `${box.dbl}${box.dh.repeat(width)}${box.dbr}`
+  ];
+}
+function formatTokenArray(tokens) {
+  return JSON.stringify(tokens);
+}
+function formatColoredTokenArray(tokens, seed = 0) {
+  const coloredTokens = tokens.map((token, index) => colorizeToken(token, index, seed));
+  return `[${coloredTokens.join(",")}]`;
+}
+function wrapReason(reason, indent, maxWidth = 70) {
+  const words = reason.split(" ");
+  const lines = [];
+  let current = "";
+  for (const word of words) {
+    if (current.length + word.length + 1 > maxWidth) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = current ? `${current} ${word}` : word;
+    }
+  }
+  if (current)
+    lines.push(current);
+  return lines.map((line, i) => i === 0 ? line : `${indent}${line}`);
+}
+function formatStepStyleD(step, stepNum, box) {
+  const lines = [];
+  switch (step.type) {
+    case "parse":
+      return null;
+    case "env-strip": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Strip environment variables`);
+      const envKeys = Object.keys(step.envVars);
+      lines.push(`  Removed: ${envKeys.map((k) => `${k}=<redacted>`).join(", ")}`);
+      lines.push(`  Tokens:  ${formatTokenArray(step.output)}`);
+      return { lines, incrementStep: true };
+    }
+    case "leading-tokens-stripped": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Strip wrappers`);
+      lines.push(`  Removed: ${step.removed.join(", ")}`);
+      lines.push(`  Tokens:  ${formatTokenArray(step.output)}`);
+      return { lines, incrementStep: true };
+    }
+    case "shell-wrapper": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Detect shell wrapper`);
+      lines.push(`  Wrapper: ${step.wrapper} -c`);
+      lines.push(`  Inner:   ${step.innerCommand}`);
+      return { lines, incrementStep: true };
+    }
+    case "interpreter": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Detect interpreter`);
+      lines.push(`  Interpreter: ${step.interpreter}`);
+      lines.push(`  Code:        ${step.codeArg}`);
+      if (step.paranoidBlocked) {
+        lines.push(`  Result:      ✗ BLOCKED (paranoid mode)`);
+      }
+      return { lines, incrementStep: true };
+    }
+    case "busybox": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Busybox wrapper`);
+      lines.push(`  Subcommand: ${step.subcommand}`);
+      return { lines, incrementStep: true };
+    }
+    case "recurse":
+      return { lines: [], incrementStep: false };
+    case "rule-check": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Match rules`);
+      const ruleRef = `${step.ruleModule}:${step.ruleFunction}()`;
+      lines.push(`  Rule:   ${ruleRef}`);
+      if (step.matched) {
+        lines.push(`  Result: MATCHED`);
+      } else {
+        lines.push(`  Result: No match`);
+      }
+      return { lines, incrementStep: true };
+    }
+    case "tmpdir-check":
+      return null;
+    case "fallback-scan": {
+      if (step.embeddedCommandFound) {
+        lines.push("");
+        lines.push(`STEP ${stepNum} ${box.h} Fallback scan`);
+        lines.push(`  Found: ${step.embeddedCommandFound}`);
+        return { lines, incrementStep: true };
+      }
+      return null;
+    }
+    case "custom-rules-check": {
+      if (step.rulesChecked) {
+        lines.push("");
+        lines.push(`STEP ${stepNum} ${box.h} Custom rules`);
+        if (step.matched) {
+          lines.push(`  Result: MATCHED`);
+        } else {
+          lines.push(`  Result: No match`);
+        }
+        return { lines, incrementStep: true };
+      }
+      return null;
+    }
+    case "cwd-change":
+      return null;
+    case "dangerous-text": {
+      if (step.matched) {
+        lines.push("");
+        lines.push(`STEP ${stepNum} ${box.h} Dangerous text check`);
+        lines.push(`  Token:  ${step.token}`);
+        lines.push(`  Result: MATCHED`);
+        return { lines, incrementStep: true };
+      }
+      return null;
+    }
+    case "strict-unparseable": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Strict mode check`);
+      lines.push(`  Command: ${step.rawCommand}`);
+      lines.push(`  Result:  ✗ UNPARSEABLE`);
+      return { lines, incrementStep: true };
+    }
+    case "segment-skipped":
+      return null;
+    case "error": {
+      lines.push("");
+      lines.push(`ERROR: ${step.message}`);
+      return { lines, incrementStep: false };
+    }
+    default:
+      return null;
+  }
+}
+
+// src/bin/explain/format.ts
+function formatTraceHuman(result, options) {
+  const box = getBoxChars(options?.asciiOnly ?? false);
+  const width = 58;
+  const lines = [];
+  let stepNum = 1;
+  lines.push(...formatHeader(box, width));
+  lines.push("");
+  const errorStep = result.trace.steps.find((s) => s.type === "error");
+  if (errorStep && errorStep.type === "error") {
+    lines.push("ERROR");
+    lines.push(`  ${errorStep.message}`);
+    lines.push("");
+    lines.push("RESULT");
+    lines.push(`  Status: ${result.result === "blocked" ? colors.red("BLOCKED") : colors.green("ALLOWED")}`);
+    lines.push("");
+    lines.push("CONFIG");
+    const configPath2 = result.configSource ?? "none";
+    lines.push(`  Path: ${configPath2}`);
+    return lines.join(`
+`);
+  }
+  const parseStep = result.trace.steps.find((s) => s.type === "parse");
+  if (parseStep && parseStep.type === "parse") {
+    lines.push("INPUT");
+    lines.push(`  ${parseStep.input}`);
+    lines.push("");
+    lines.push(`STEP ${stepNum} ${box.h} Split shell commands`);
+    stepNum++;
+    for (let i = 0;i < parseStep.segments.length; i++) {
+      const seg = parseStep.segments[i];
+      if (seg) {
+        const seed = Math.random();
+        lines.push(`  Segment ${i + 1}: ${formatColoredTokenArray(seg, seed)}`);
+      }
+    }
+  }
+  const segments = result.trace.segments;
+  const hasMultipleSegments = segments.length > 1;
+  for (const seg of segments) {
+    if (hasMultipleSegments) {
+      lines.push("");
+      let segCommand = "";
+      if (parseStep && parseStep.type === "parse") {
+        const tokens = parseStep.segments[seg.index];
+        if (tokens) {
+          segCommand = tokens.join(" ");
+        }
+      }
+      const maxLabelLen = width - 4;
+      let displayCommand = segCommand;
+      const baseLabel = ` Segment ${seg.index + 1}: `;
+      const suffix = " ";
+      if (segCommand) {
+        const totalLen = baseLabel.length + segCommand.length + suffix.length;
+        if (totalLen > maxLabelLen) {
+          const availableForCmd = maxLabelLen - baseLabel.length - suffix.length;
+          displayCommand = `${segCommand.substring(0, availableForCmd - 1)}…`;
+        }
+      }
+      const labelContent = segCommand ? `${baseLabel}${displayCommand}${suffix}` : ` Segment ${seg.index + 1} `;
+      const coloredContent = segCommand ? `${baseLabel}${colors.cyan(displayCommand)}${suffix}` : labelContent;
+      const segLineLen = width - labelContent.length;
+      const leftLen = Math.floor(segLineLen / 2);
+      const rightLen = segLineLen - leftLen;
+      lines.push(`${box.sh.repeat(leftLen)}${coloredContent}${box.sh.repeat(rightLen)}`);
+    }
+    const skippedStep = seg.steps.find((s) => s.type === "segment-skipped");
+    if (skippedStep) {
+      lines.push("");
+      lines.push("  (skipped — prior segment blocked)");
+      continue;
+    }
+    let inRecursion = false;
+    let hasVisibleSteps = false;
+    for (const step of seg.steps) {
+      const formattedStep = formatStepStyleD(step, stepNum, box);
+      if (formattedStep) {
+        hasVisibleSteps = true;
+        if (step.type === "recurse") {
+          lines.push("");
+          const recurseLabel = " RECURSING ";
+          const recurseLineLen = width - recurseLabel.length - 4;
+          lines.push(`  ${box.tl}${box.h}${recurseLabel}${box.h.repeat(recurseLineLen)}`);
+          lines.push(`  ${box.v}`);
+          inRecursion = true;
+          continue;
+        }
+        for (const line of formattedStep.lines) {
+          if (inRecursion) {
+            lines.push(`  ${box.v} ${line}`);
+          } else {
+            lines.push(line);
+          }
+        }
+        if (formattedStep.incrementStep) {
+          stepNum++;
+        }
+      }
+    }
+    if (inRecursion) {
+      lines.push(`  ${box.v}`);
+      lines.push(`  ${box.bl}${box.h.repeat(width - 2)}`);
+      inRecursion = false;
+    }
+    if (!hasVisibleSteps) {
+      lines.push("");
+      lines.push(`  ${colors.green("✓")} Allowed (no matching rules)`);
+    }
+  }
+  lines.push("");
+  lines.push("RESULT");
+  if (result.result === "blocked") {
+    lines.push(`  Status: ${colors.red("BLOCKED")}`);
+    if (result.reason) {
+      const reasonLines = wrapReason(result.reason, "          ");
+      lines.push(`  Reason: ${reasonLines[0]}`);
+      for (let i = 1;i < reasonLines.length; i++) {
+        lines.push(reasonLines[i] ?? "");
+      }
+    }
+  } else {
+    lines.push(`  Status: ${colors.green("ALLOWED")}`);
+  }
+  lines.push("");
+  lines.push("CONFIG");
+  const configPath = result.configSource ?? "none";
+  const configStatus = result.configValid ? "" : " (invalid)";
+  lines.push(`  Path: ${configPath}${configStatus}`);
+  return lines.join(`
+`);
+}
+function formatTraceJson(result) {
+  return JSON.stringify(result, null, 2);
+}
 // src/bin/gemini-cli.ts
 function outputGeminiDeny(reason, command, segment) {
   const message = formatBlockedMessage({
@@ -3638,40 +4616,92 @@ async function runGeminiCLIHook() {
 
 // src/bin/help.ts
 var version = "0.6.2";
+var INDENT = "  ";
+var PROGRAM_NAME = "cc-safety-net";
+function formatOptionFlags(option) {
+  return option.argument ? `${option.flags} ${option.argument}` : option.flags;
+}
+function getOptionsColumnWidth(options) {
+  return Math.max(...options.map((opt) => formatOptionFlags(opt).length));
+}
+function formatCommandSummary(cmd, maxUsageWidth) {
+  const usage = `${PROGRAM_NAME} ${cmd.usage}`;
+  return `${INDENT}${usage.padEnd(maxUsageWidth + PROGRAM_NAME.length + 3)}${cmd.description}`;
+}
+function printCommandHelp(command) {
+  const lines = [];
+  lines.push(`${PROGRAM_NAME} ${command.name}`);
+  lines.push("");
+  lines.push(`${INDENT}${command.description}`);
+  lines.push("");
+  lines.push("USAGE:");
+  lines.push(`${INDENT}${PROGRAM_NAME} ${command.usage}`);
+  lines.push("");
+  if (command.options.length > 0) {
+    lines.push("OPTIONS:");
+    const optWidth = getOptionsColumnWidth(command.options);
+    for (const opt of command.options) {
+      const flags = formatOptionFlags(opt);
+      lines.push(`${INDENT}${flags.padEnd(optWidth + 2)}${opt.description}`);
+    }
+    lines.push("");
+  }
+  if (command.examples && command.examples.length > 0) {
+    lines.push("EXAMPLES:");
+    for (const example of command.examples) {
+      lines.push(`${INDENT}${example}`);
+    }
+  }
+  console.log(lines.join(`
+`));
+}
 function printHelp() {
-  console.log(`cc-safety-net v${version}
-
-Blocks destructive git and filesystem commands before execution.
-
-USAGE:
-  cc-safety-net doctor                   Run diagnostic checks
-  cc-safety-net doctor --json            Output diagnostics as JSON
-  cc-safety-net doctor --skip-update-check  Skip npm registry check
-  cc-safety-net -cc, --claude-code       Run as Claude Code PreToolUse hook (reads JSON from stdin)
-  cc-safety-net -cp, --copilot-cli       Run as Copilot CLI preToolUse hook (reads JSON from stdin)
-  cc-safety-net -gc, --gemini-cli        Run as Gemini CLI BeforeTool hook (reads JSON from stdin)
-  cc-safety-net -vc, --verify-config     Validate config files
-  cc-safety-net --custom-rules-doc       Print custom rules documentation
-  cc-safety-net --statusline             Print status line with mode indicators
-  cc-safety-net -h,  --help              Show this help
-  cc-safety-net -V,  --version           Show version
-
-ENVIRONMENT VARIABLES:
-  SAFETY_NET_STRICT=1             Fail-closed on unparseable commands
-  SAFETY_NET_PARANOID=1           Enable all paranoid checks
-  SAFETY_NET_PARANOID_RM=1        Block non-temp rm -rf within cwd
-  SAFETY_NET_PARANOID_INTERPRETERS=1  Block interpreter one-liners
-
-CONFIG FILES:
-  ~/.cc-safety-net/config.json    User-scope config
-  .safety-net.json                Project-scope config`);
+  const visibleCommands = getVisibleCommands();
+  const maxUsageWidth = Math.max(...visibleCommands.map((cmd) => cmd.usage.length));
+  const lines = [];
+  lines.push(`${PROGRAM_NAME} v${version}`);
+  lines.push("");
+  lines.push("Blocks destructive git and filesystem commands before execution.");
+  lines.push("");
+  lines.push("COMMANDS:");
+  for (const cmd of visibleCommands) {
+    lines.push(formatCommandSummary(cmd, maxUsageWidth));
+  }
+  lines.push("");
+  lines.push("GLOBAL OPTIONS:");
+  lines.push(`${INDENT}-h, --help       Show help (use with command for command-specific help)`);
+  lines.push(`${INDENT}-V, --version    Show version`);
+  lines.push("");
+  lines.push("HELP:");
+  lines.push(`${INDENT}${PROGRAM_NAME} help <command>     Show help for a specific command`);
+  lines.push(`${INDENT}${PROGRAM_NAME} <command> --help   Show help for a specific command`);
+  lines.push("");
+  lines.push("ENVIRONMENT VARIABLES:");
+  lines.push(`${INDENT}SAFETY_NET_STRICT=1               Fail-closed on unparseable commands`);
+  lines.push(`${INDENT}SAFETY_NET_PARANOID=1             Enable all paranoid checks`);
+  lines.push(`${INDENT}SAFETY_NET_PARANOID_RM=1          Block non-temp rm -rf within cwd`);
+  lines.push(`${INDENT}SAFETY_NET_PARANOID_INTERPRETERS=1  Block interpreter one-liners`);
+  lines.push("");
+  lines.push("CONFIG FILES:");
+  lines.push(`${INDENT}~/.cc-safety-net/config.json      User-scope config`);
+  lines.push(`${INDENT}.safety-net.json                  Project-scope config`);
+  console.log(lines.join(`
+`));
 }
 function printVersion() {
   console.log(version);
 }
+function showCommandHelp(commandName) {
+  const command = findCommand(commandName);
+  if (!command) {
+    return false;
+  }
+  printCommandHelp(command);
+  return true;
+}
 
 // src/bin/statusline.ts
-import { existsSync as existsSync6, readFileSync as readFileSync5 } from "node:fs";
+import { existsSync as existsSync7, readFileSync as readFileSync5 } from "node:fs";
 import { homedir as homedir6 } from "node:os";
 import { join as join5 } from "node:path";
 async function readStdinAsync() {
@@ -3701,7 +4731,7 @@ function getSettingsPath() {
 }
 function isPluginEnabled() {
   const settingsPath = getSettingsPath();
-  if (!existsSync6(settingsPath)) {
+  if (!existsSync7(settingsPath)) {
     return false;
   }
   try {
@@ -3752,7 +4782,7 @@ async function printStatusline() {
 }
 
 // src/bin/verify-config.ts
-import { existsSync as existsSync7, readFileSync as readFileSync6, writeFileSync } from "node:fs";
+import { existsSync as existsSync8, readFileSync as readFileSync6, writeFileSync } from "node:fs";
 import { resolve as resolve3 } from "node:path";
 var HEADER = "Safety Net Config";
 var SEPARATOR = "═".repeat(HEADER.length);
@@ -3807,14 +4837,14 @@ function verifyConfig(options = {}) {
   let hasErrors = false;
   const configsChecked = [];
   printHeader();
-  if (existsSync7(userConfig)) {
+  if (existsSync8(userConfig)) {
     const result = validateConfigFile(userConfig);
     configsChecked.push({ scope: "User", path: userConfig, result });
     if (result.errors.length > 0) {
       hasErrors = true;
     }
   }
-  if (existsSync7(projectConfig)) {
+  if (existsSync8(projectConfig)) {
     const result = validateConfigFile(projectConfig);
     configsChecked.push({
       scope: "Project",
@@ -3855,9 +4885,95 @@ All configs valid.`);
 function printCustomRulesDoc() {
   console.log(CUSTOM_RULES_DOC);
 }
+function hasHelpFlag(args) {
+  return args.includes("--help") || args.includes("-h");
+}
+function handleHelpCommand(args) {
+  if (args[0] !== "help") {
+    return false;
+  }
+  const commandName = args[1];
+  if (!commandName) {
+    printHelp();
+    process.exit(0);
+  }
+  if (showCommandHelp(commandName)) {
+    process.exit(0);
+  }
+  console.error(`Unknown command: ${commandName}`);
+  console.error("Run 'cc-safety-net --help' for available commands.");
+  process.exit(1);
+}
+function handleCommandHelp(args) {
+  if (!hasHelpFlag(args)) {
+    return false;
+  }
+  const commandName = args[0];
+  if (!commandName || commandName.startsWith("-")) {
+    return false;
+  }
+  const command = findCommand(commandName);
+  if (command) {
+    showCommandHelp(commandName);
+    process.exit(0);
+  }
+  return false;
+}
+function parseExplainFlags(args) {
+  let json = false;
+  let cwd;
+  const remaining = [];
+  let i = 0;
+  while (i < args.length) {
+    const arg = args[i];
+    if (arg === "--help" || arg === "-h") {
+      i++;
+      continue;
+    }
+    if (arg === "--") {
+      remaining.push(...args.slice(i + 1));
+      break;
+    }
+    if (!arg?.startsWith("--")) {
+      remaining.push(...args.slice(i));
+      break;
+    }
+    if (arg === "--json") {
+      json = true;
+      i++;
+    } else if (arg === "--cwd") {
+      i++;
+      if (i >= args.length || args[i]?.startsWith("--")) {
+        console.error("Error: --cwd requires a path");
+        return null;
+      }
+      cwd = args[i];
+      i++;
+    } else {
+      remaining.push(...args.slice(i));
+      break;
+    }
+  }
+  const command = remaining.length === 1 ? remaining[0] : $quote(remaining);
+  if (!command) {
+    console.error("Error: No command provided");
+    console.error("Usage: cc-safety-net explain [--json] [--cwd <path>] <command>");
+    return null;
+  }
+  return { json, cwd, command };
+}
 function handleCliFlags() {
   const args = process.argv.slice(2);
-  if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
+  if (handleHelpCommand(args)) {
+    return null;
+  }
+  if (handleCommandHelp(args)) {
+    return null;
+  }
+  if (args[0] === "explain") {
+    return "explain";
+  }
+  if (args.length === 0 || hasHelpFlag(args)) {
     printHelp();
     process.exit(0);
   }
@@ -3915,6 +5031,24 @@ async function main() {
       skipUpdateCheck: flags.skipUpdateCheck
     });
     process.exit(exitCode);
+  } else if (mode === "explain") {
+    const args = process.argv.slice(3);
+    if (hasHelpFlag(args) || args.length === 0) {
+      showCommandHelp("explain");
+      process.exit(0);
+    }
+    const flags = parseExplainFlags(args);
+    if (!flags) {
+      process.exit(1);
+    }
+    const result = explainCommand2(flags.command, { cwd: flags.cwd });
+    const asciiOnly = !!process.env.NO_COLOR || !process.stdout.isTTY;
+    if (flags.json) {
+      console.log(formatTraceJson(result));
+    } else {
+      console.log(formatTraceHuman(result, { asciiOnly }));
+    }
+    process.exit(0);
   }
 }
 main().catch((error) => {

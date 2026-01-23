@@ -1,7 +1,7 @@
 /**
  * Configuration display with source tracking and shadow detection.
  */
-import type { ConfigSourceInfo, EffectiveRule, ShadowedRule } from './types.ts';
+import type { ConfigSourceInfo, EffectiveRule, ShadowedRule } from '@/bin/doctor/types';
 export interface ConfigInfo {
     userConfig: ConfigSourceInfo;
     projectConfig: ConfigSourceInfo;

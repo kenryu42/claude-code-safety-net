@@ -1,7 +1,7 @@
 /**
  * Output formatting utilities for the doctor command.
  */
-import type { ActivitySummary, DoctorReport, EffectiveRule, EnvVarInfo, HookStatus, SystemInfo, UpdateInfo } from './types.ts';
+import type { ActivitySummary, DoctorReport, EffectiveRule, EnvVarInfo, HookStatus, SystemInfo, UpdateInfo } from '@/bin/doctor/types';
 /**
  * Format the hooks section as a table with failure details below.
  */

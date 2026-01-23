@@ -1,8 +1,8 @@
 /**
  * Hook detection with integrated self-test for the doctor command.
  */
-import type { LoadConfigOptions } from '../../core/config.ts';
-import type { HookStatus } from './types.ts';
+import type { HookStatus } from '@/bin/doctor/types';
+import type { LoadConfigOptions } from '@/core/config';
 interface HookDetectOptions extends LoadConfigOptions {
     homeDir?: string;
 }
