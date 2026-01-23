@@ -45,6 +45,6 @@ bun run check
 - [ ] Code follows project conventions (type hints, naming, etc.)
 - [ ] `bun run check` passes (lint, types, dead code, rules, tests)
 - [ ] Tests added for new rules (minimum 90% coverage required)
-- [ ] Tested locally with Claude Code, Opencode
+- [ ] Tested locally with Claude Code, OpenCode, Gemini CLI or GitHub Copilot CLI
 - [ ] Updated documentation if needed (README, AGENTS.md)
 - [ ] No version changes in `package.json`
