@@ -252,9 +252,9 @@ export function explainSegment(
       type: 'recurse',
       reason: 'busybox',
       innerCommand: redactEnvAssignmentsInString(busyboxInnerCmd),
-      depth: depth,
+      depth: depth + 1,
     });
-    return explainSegment(strippedTokens.slice(1), depth, options, steps);
+    return explainSegment(strippedTokens.slice(1), depth + 1, options, steps);
   }
 
   const envAssignments = new Map(envResult.envAssignments);

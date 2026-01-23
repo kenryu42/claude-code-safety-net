@@ -114,7 +114,6 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
     }
 
     const result = explainSegment(segment, 0, { ...analyzeOpts, effectiveCwd }, segmentSteps);
-    trace.segments.push({ index: i, steps: segmentSteps });
 
     if (result) {
       blocked = true;
@@ -130,6 +129,8 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
       });
       effectiveCwd = null;
     }
+
+    trace.segments.push({ index: i, steps: segmentSteps });
   }
 
   return {

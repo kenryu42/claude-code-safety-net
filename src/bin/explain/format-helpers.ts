@@ -80,10 +80,6 @@ function formatTokenArray(tokens: readonly string[]): string {
  * Format a token array with each token in a unique distinct color.
  * Uses a curated palette for maximum visual distinction.
  */
-/**
- * Format a token array with each token in a unique distinct color.
- * Uses a curated palette for maximum visual distinction.
- */
 export function formatColoredTokenArray(tokens: readonly string[], seed = 0): string {
   const coloredTokens = tokens.map((token, index) => colorizeToken(token, index, seed));
   return `[${coloredTokens.join(',')}]`;
