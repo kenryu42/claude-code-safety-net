@@ -398,8 +398,8 @@ When adding rules, ensure you test these edge cases:
 
 - [ ] Code follows project conventions (type hints, naming, etc.)
 - [ ] `bun run check` passes (lint, types, dead code, tests)
-- [ ] Tests added for new rules
-- [ ] Tested locally with Claude Code and Opencode
+- [ ] Tests added for new rules (minimum 90% coverage required)
+- [ ] Tested locally with Claude Code, OpenCode, Gemini CLI or GitHub Copilot CLI
 - [ ] Updated documentation if needed (README, AGENTS.md)
 - [ ] No version changes in `package.json`
 
