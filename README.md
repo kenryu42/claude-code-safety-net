@@ -384,9 +384,9 @@ bunx cc-safety-net explain "git reset --hard"
 ### Examples
 
 ```bash
-cc-safety-net explain "rm -rf /"
-cc-safety-net explain --json "git checkout -- file.txt"
-cc-safety-net explain --cwd /tmp "git status"
+npx cc-safety-net explain "rm -rf /"
+npx cc-safety-net explain --json "git checkout -- file.txt"
+npx cc-safety-net explain --cwd /tmp "git status"
 ```
 
 ## Commands Blocked
