@@ -3,7 +3,7 @@ name: Windows Tests
 on:
   workflow_dispatch:
   push:
-    branches: [fix/windows-path-separator]
+    branches: ["**"]
     paths:
       - "src/**"
       - "tests/**"
