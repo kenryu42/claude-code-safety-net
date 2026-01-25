@@ -2312,6 +2312,13 @@ function normalizePathForComparison(p) {
   if (IS_WINDOWS) {
     normalized = normalized.replace(/\//g, "\\");
     normalized = normalized.toLowerCase();
+    if (normalized.length > 3 && normalized.endsWith("\\")) {
+      normalized = normalized.slice(0, -1);
+    }
+  } else {
+    if (normalized.length > 1 && normalized.endsWith("/")) {
+      normalized = normalized.slice(0, -1);
+    }
   }
   return normalized;
 }
