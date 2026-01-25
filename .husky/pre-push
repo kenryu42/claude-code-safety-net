@@ -11,5 +11,6 @@ if ! git diff --quiet dist/; then
   echo "📦 dist/ changed, auto-committing..."
   git add -A dist/
   git commit -m "chore: sync dist" --no-verify
-  echo "✅ Committed dist/ changes"
+  echo "⚠️  dist/ committed. Run 'git push' again to include it."
+  exit 1
 fi
