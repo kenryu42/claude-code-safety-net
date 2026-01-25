@@ -3616,6 +3616,7 @@ function printReport(report) {
 
 // src/bin/explain/config.ts
 import { existsSync as existsSync5 } from "node:fs";
+import { resolve as resolve3 } from "node:path";
 
 // src/core/env.ts
 function envTruthy(name) {
@@ -3645,7 +3646,7 @@ function getConfigSource(options) {
   return { configSource: null, configValid: true };
 }
 function buildAnalyzeOptions(explainOptions) {
-  const cwd = explainOptions?.cwd ?? process.cwd();
+  const cwd = resolve3(explainOptions?.cwd ?? process.cwd());
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   return {
     cwd,
@@ -4860,7 +4861,7 @@ async function readStdinAsync() {
   if (process.stdin.isTTY) {
     return null;
   }
-  return new Promise((resolve3) => {
+  return new Promise((resolve4) => {
     let data = "";
     process.stdin.setEncoding("utf-8");
     process.stdin.on("data", (chunk) => {
@@ -4868,10 +4869,10 @@ async function readStdinAsync() {
     });
     process.stdin.on("end", () => {
       const trimmed = data.trim();
-      resolve3(trimmed || null);
+      resolve4(trimmed || null);
     });
     process.stdin.on("error", () => {
-      resolve3(null);
+      resolve4(null);
     });
   });
 }
@@ -4935,7 +4936,7 @@ async function printStatusline() {
 
 // src/bin/verify-config.ts
 import { existsSync as existsSync8, readFileSync as readFileSync6, writeFileSync } from "node:fs";
-import { resolve as resolve3 } from "node:path";
+import { resolve as resolve4 } from "node:path";
 var HEADER = "Safety Net Config";
 var SEPARATOR = "═".repeat(HEADER.length);
 var SCHEMA_URL = "https://raw.githubusercontent.com/kenryu42/claude-code-safety-net/main/assets/cc-safety-net.schema.json";
@@ -5000,7 +5001,7 @@ function verifyConfig(options = {}) {
     const result = validateConfigFile(projectConfig);
     configsChecked.push({
       scope: "Project",
-      path: resolve3(projectConfig),
+      path: resolve4(projectConfig),
       result
     });
     if (result.errors.length > 0) {
