@@ -1166,7 +1166,7 @@ function analyzeGitWorktree(tokens) {
 // src/core/rules-rm.ts
 import { realpathSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { normalize, resolve } from "node:path";
+import { normalize, resolve, sep } from "node:path";
 var REASON_RM_RF = "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.";
 var REASON_RM_RF_ROOT_HOME = "rm -rf targeting root or home directory is extremely dangerous and always blocked.";
 function analyzeRm(tokens, options = {}) {
@@ -1291,7 +1291,7 @@ function isTempTarget(path, allowTmpdirVar) {
     return true;
   }
   const systemTmpdir = tmpdir();
-  if (normalized.startsWith(`${systemTmpdir}/`) || normalized === systemTmpdir) {
+  if (normalized.startsWith(`${systemTmpdir}${sep}`) || normalized === systemTmpdir) {
     return true;
   }
   if (allowTmpdirVar) {
@@ -1343,20 +1343,20 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
   if (target.includes("$") || target.includes("`")) {
     return false;
   }
-  if (target.startsWith("/")) {
+  if (target.startsWith("/") || /^[A-Za-z]:[\\/]/.test(target)) {
     try {
       const normalizedTarget = normalize(target);
-      const normalizedCwd = `${normalize(originalCwd)}/`;
+      const normalizedCwd = `${normalize(originalCwd)}${sep}`;
       return normalizedTarget.startsWith(normalizedCwd);
     } catch {
       return false;
     }
   }
-  if (target.startsWith("./") || !target.includes("/")) {
+  if (target.startsWith("./") || target.startsWith(".\\") || !target.includes("/") && !target.includes("\\")) {
     try {
       const resolved = resolve(resolveCwd, target);
       const normalizedOriginalCwd = normalize(originalCwd);
-      return resolved.startsWith(`${normalizedOriginalCwd}/`) || resolved === normalizedOriginalCwd;
+      return resolved.startsWith(`${normalizedOriginalCwd}${sep}`) || resolved === normalizedOriginalCwd;
     } catch {
       return false;
     }
@@ -1367,7 +1367,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
   try {
     const resolved = resolve(resolveCwd, target);
     const normalizedCwd = normalize(originalCwd);
-    return resolved.startsWith(`${normalizedCwd}/`) || resolved === normalizedCwd;
+    return resolved.startsWith(`${normalizedCwd}${sep}`) || resolved === normalizedCwd;
   } catch {
     return false;
   }
