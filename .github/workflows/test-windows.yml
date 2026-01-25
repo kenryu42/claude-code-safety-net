@@ -1,0 +1,68 @@
+name: Windows Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/test-windows.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/test-windows.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-windows:
+    name: Windows Tests
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+        env:
+          BUN_INSTALL_ALLOW_SCRIPTS: "@ast-grep/cli"
+
+      - name: Build
+        run: bun run build
+
+      - name: Run tests
+        run: bun test
+        env:
+          AGENT: "1"
+
+      - name: Run doctor command
+        run: bun src/bin/cc-safety-net.ts doctor --skip-update-check
+
+      - name: Test rm -rf within cwd (issue #26)
+        run: |
+          # Create test directory structure
+          mkdir test-dir
+          cd test-dir
+
+          # Test: rm -rf dist should be ALLOWED within cwd
+          $result = bun ../src/bin/cc-safety-net.ts explain "rm -rf dist" 2>&1
+          Write-Host "Result: $result"
+
+          if ($result -match "ALLOWED") {
+            Write-Host "✅ PASS: rm -rf dist within cwd is correctly ALLOWED"
+          } else {
+            Write-Host "❌ FAIL: rm -rf dist within cwd should be ALLOWED but was blocked"
+            exit 1
+          }
+        shell: pwsh
