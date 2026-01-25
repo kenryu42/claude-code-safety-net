@@ -2,6 +2,9 @@
  * Tests for the explain command CLI flag parsing.
  */
 import { describe, expect, test } from 'bun:test';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 describe('explain CLI flag parsing', () => {
   test('explain preserves --debug in command when it appears after first positional arg', async () => {
@@ -100,20 +103,26 @@ describe('explain CLI flag parsing', () => {
   });
 
   test('explain --cwd <path> passes cwd to analysis', async () => {
-    const proc = Bun.spawn(
-      ['bun', 'src/bin/cc-safety-net.ts', 'explain', '--json', '--cwd', '/tmp', 'rm -rf ./foo'],
-      {
-        stdout: 'pipe',
-        stderr: 'pipe',
-      },
-    );
+    // Use platform-appropriate temp directory instead of hardcoded /tmp
+    const tempDir = mkdtempSync(join(tmpdir(), 'safety-net-explain-'));
+    try {
+      const proc = Bun.spawn(
+        ['bun', 'src/bin/cc-safety-net.ts', 'explain', '--json', '--cwd', tempDir, 'rm -rf ./foo'],
+        {
+          stdout: 'pipe',
+          stderr: 'pipe',
+        },
+      );
 
-    const output = await new Response(proc.stdout).text();
-    const exitCode = await proc.exited;
+      const output = await new Response(proc.stdout).text();
+      const exitCode = await proc.exited;
 
-    const parsed = JSON.parse(output);
-    expect(parsed.result).toBe('allowed');
-    expect(exitCode).toBe(0);
+      const parsed = JSON.parse(output);
+      expect(parsed.result).toBe('allowed');
+      expect(exitCode).toBe(0);
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 
   test('explain --cwd without path shows error', async () => {

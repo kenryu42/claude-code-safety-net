@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { analyzeRm } from '@/core/rules-rm';
-import { assertAllowed, assertBlocked, withEnv } from '../helpers.ts';
+import { assertAllowed, assertBlocked, toShellPath, withEnv } from '../helpers.ts';
 
 describe('rm -rf blocked', () => {
   test('rm -rf blocked', () => {
@@ -214,7 +214,7 @@ describe('rm -rf cwd-aware', () => {
     setup();
     try {
       const inside = join(tmpDir, 'dist');
-      assertAllowed(`rm -rf ${inside}`, tmpDir);
+      assertAllowed(`rm -rf ${toShellPath(inside)}`, tmpDir);
     } finally {
       cleanup();
     }
@@ -232,7 +232,7 @@ describe('rm -rf cwd-aware', () => {
   test('rm -rf cwd itself blocked', () => {
     setup();
     try {
-      assertBlocked(`rm -rf ${tmpDir}`, 'rm -rf', tmpDir);
+      assertBlocked(`rm -rf ${toShellPath(tmpDir)}`, 'rm -rf', tmpDir);
     } finally {
       cleanup();
     }
