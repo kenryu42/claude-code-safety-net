@@ -1592,6 +1592,13 @@ function splitShellCommands(command) {
       i++;
       continue;
     }
+    if (isRedirectOp(token)) {
+      if (current.length > 0 && /^\d+$/.test(current[current.length - 1] ?? "")) {
+        current.pop();
+      }
+      i += 2;
+      continue;
+    }
     if (typeof token !== "string") {
       i++;
       continue;
@@ -1911,6 +1918,10 @@ function getBasename(token) {
 }
 function isOperator(token) {
   return typeof token === "object" && token !== null && "op" in token && SHELL_OPERATORS.has(token.op);
+}
+var REDIRECT_OPS = new Set([">", ">>", "<", ">&", "<&", ">|"]);
+function isRedirectOp(token) {
+  return typeof token === "object" && token !== null && "op" in token && REDIRECT_OPS.has(token.op);
 }
 
 // src/core/analyze/find.ts
