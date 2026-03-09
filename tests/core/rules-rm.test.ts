@@ -173,6 +173,14 @@ describe('rm -rf with redirects', () => {
     }
   });
 
+  test('rm -rf numeric dir before redirect not stripped as fd', () => {
+    assertBlocked('rm -rf 123 > /dev/null', 'rm -rf');
+  });
+
+  test('echo $(rm -rf /tmp/foo 2>/dev/null) allowed in subshell', () => {
+    assertAllowed('echo $(rm -rf /tmp/foo 2>/dev/null)');
+  });
+
   test('rm -rf /outside/cwd 2>/dev/null still blocked', () => {
     const cwd = mkdtempSync(join(tmpdir(), 'safety-net-test-'));
     try {

@@ -41,7 +41,7 @@ export function splitShellCommands(command: string): string[][] {
     // string. Strip the fd number and skip the redirect target so they
     // are not treated as command arguments.
     if (isRedirectOp(token)) {
-      if (current.length > 0 && /^\d+$/.test(current[current.length - 1] ?? '')) {
+      if (current.length > 0 && /^\d{1,2}$/.test(current[current.length - 1] ?? '')) {
         current.pop();
       }
       i += 2; // skip operator + redirect target
@@ -148,6 +148,17 @@ function extractCommandSubstitution(
         currentSegment = [];
       }
       i++;
+      continue;
+    }
+
+    if (depth === 1 && token && isRedirectOp(token)) {
+      if (
+        currentSegment.length > 0 &&
+        /^\d{1,2}$/.test(currentSegment[currentSegment.length - 1] ?? '')
+      ) {
+        currentSegment.pop();
+      }
+      i += 2; // skip operator + redirect target
       continue;
     }
 
