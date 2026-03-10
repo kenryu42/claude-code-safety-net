@@ -541,12 +541,14 @@ function getActivitySummary(days = 7, logsDir = join(homedir(), ".cc-safety-net"
             entries.push(entry);
             hasRecentEntry = true;
           }
-        } catch {}
+        } catch {
+        }
       }
       if (hasRecentEntry) {
         sessionCount++;
       }
-    } catch {}
+    } catch {
+    }
   }
   entries.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
   const recentEntries = entries.slice(0, 3).map((e) => ({
@@ -968,6 +970,7 @@ function colorizeToken(token, index, seed = 0) {
 var PLATFORM_NAMES = {
   "claude-code": "Claude Code",
   opencode: "OpenCode",
+  "copilot-cli": "Copilot CLI",
   "gemini-cli": "Gemini CLI"
 };
 function formatHooksSection(hooks) {
@@ -1373,7 +1376,7 @@ All checks passed.`);
 }
 
 // src/bin/doctor/hooks.ts
-import { existsSync as existsSync4, readFileSync as readFileSync4 } from "node:fs";
+import { existsSync as existsSync4, readdirSync as readdirSync2, readFileSync as readFileSync4 } from "node:fs";
 import { homedir as homedir4, tmpdir as tmpdir3 } from "node:os";
 import { join as join3 } from "node:path";
 
@@ -3188,6 +3191,7 @@ function analyzeCommand(command, options = {}) {
 }
 
 // src/bin/doctor/hooks.ts
+var COPILOT_CLI_MODE_PATTERN = /(?:^|\s)(?:--copilot-cli|-cp)(?=\s|$)/;
 var SELF_TEST_CASES = [
   { command: "git reset --hard", description: "git reset --hard", expectBlocked: true },
   { command: "rm -rf /", description: "rm -rf /", expectBlocked: true },
@@ -3372,6 +3376,82 @@ function detectOpenCode(homeDir) {
     errors: errors.length > 0 ? errors : undefined
   };
 }
+function isCopilotSafetyNetCommand(command) {
+  if (!command) {
+    return false;
+  }
+  return command.includes("cc-safety-net") && COPILOT_CLI_MODE_PATTERN.test(command);
+}
+function configHasCopilotSafetyNet(config) {
+  for (const hookEntries of Object.values(config.hooks ?? {})) {
+    if (!Array.isArray(hookEntries)) {
+      continue;
+    }
+    for (const hook of hookEntries) {
+      if (!hook || hook.type !== "command") {
+        continue;
+      }
+      if ([hook.command, hook.bash, hook.powershell].some(isCopilotSafetyNetCommand)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+function listCopilotHookFiles(configDir, errors) {
+  if (!existsSync4(configDir)) {
+    return [];
+  }
+  try {
+    return readdirSync2(configDir, { withFileTypes: true }).filter((entry) => entry.isFile() && entry.name.endsWith(".json")).map((entry) => join3(configDir, entry.name)).sort();
+  } catch (e) {
+    errors.push(`Failed to read ${configDir}: ${e instanceof Error ? e.message : String(e)}`);
+    return [];
+  }
+}
+function getCopilotHookMethod(matches) {
+  const scopes = new Set(matches.map((match) => match.scope));
+  if (scopes.size > 1) {
+    return "personal + repository hooks";
+  }
+  return scopes.has("personal") ? "personal hooks" : "repository hooks";
+}
+function detectCopilotCLI(homeDir, cwd) {
+  const errors = [];
+  const matches = [];
+  const candidates = [
+    { scope: "personal", dir: join3(homeDir, ".copilot", "hooks") },
+    { scope: "repository", dir: join3(cwd, ".github", "hooks") }
+  ];
+  for (const candidate of candidates) {
+    const configPaths = listCopilotHookFiles(candidate.dir, errors);
+    for (const configPath of configPaths) {
+      try {
+        const config = JSON.parse(readFileSync4(configPath, "utf-8"));
+        if (configHasCopilotSafetyNet(config)) {
+          matches.push({ path: configPath, scope: candidate.scope });
+        }
+      } catch (e) {
+        errors.push(`Failed to parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+  }
+  if (matches.length === 0) {
+    return {
+      platform: "copilot-cli",
+      status: "n/a",
+      errors: errors.length > 0 ? errors : undefined
+    };
+  }
+  return {
+    platform: "copilot-cli",
+    status: "configured",
+    method: getCopilotHookMethod(matches),
+    configPath: matches.map((match) => match.path).join(", "),
+    selfTest: runSelfTest(),
+    errors: errors.length > 0 ? errors : undefined
+  };
+}
 function checkGeminiHooksEnabled(homeDir, cwd, errors) {
   const candidates = [
     join3(homeDir, ".gemini", "settings.json"),
@@ -3449,7 +3529,12 @@ function detectGeminiCLI(homeDir, cwd) {
 }
 function detectAllHooks(cwd, options) {
   const homeDir = options?.homeDir ?? homedir4();
-  return [detectClaudeCode(homeDir), detectOpenCode(homeDir), detectGeminiCLI(homeDir, cwd)];
+  return [
+    detectClaudeCode(homeDir),
+    detectOpenCode(homeDir),
+    detectCopilotCLI(homeDir, cwd),
+    detectGeminiCLI(homeDir, cwd)
+  ];
 }
 
 // src/bin/doctor/system-info.ts
@@ -4622,7 +4707,8 @@ function writeAuditLog(sessionId, command, segment, reason, cwd, options = {}) {
     };
     appendFileSync(logFile, `${JSON.stringify(entry)}
 `, "utf-8");
-  } catch {}
+  } catch {
+  }
 }
 function redactSecrets(text) {
   let result = text;

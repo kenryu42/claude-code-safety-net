@@ -17,6 +17,7 @@ import { colors } from '@/bin/utils/colors';
 const PLATFORM_NAMES: Record<string, string> = {
   'claude-code': 'Claude Code',
   opencode: 'OpenCode',
+  'copilot-cli': 'Copilot CLI',
   'gemini-cli': 'Gemini CLI',
 };
 

@@ -210,20 +210,20 @@ gemini extensions install https://github.com/kenryu42/gemini-safety-net
 Safety Net supports GitHub Copilot CLI via its [hooks system](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-hooks).
 
 > [!NOTE]
-> Copilot CLI hooks must be installed at the **project level** (in each repository). User-level hooks (`~/.github/hooks/` or `~/.copilot/hooks/`) are not currently supported by Copilot CLI. See [copilot-cli#1067](https://github.com/github/copilot-cli/issues/1067) to track progress on user-level hook support.
+> Copilot CLI `0.0.422+` also loads personal hooks from `~/.copilot/hooks/*.json`, in addition to repository hooks in `.github/hooks/*.json`. Put Safety Net in `~/.copilot/hooks` for user-level protection across all repositories, or use the same config in `.github/hooks` when you want repo-scoped policy.
 
-1. **Create the hooks directory** in your repository:
+1. **Create the personal hooks directory**:
 
    ```bash
-   mkdir -p .github/hooks
+   mkdir -p ~/.copilot/hooks
    ```
 
-2. **Create `.github/hooks/safety-net.json`**:
+2. **Create `~/.copilot/hooks/safety-net.json`**:
 
    ```json
    {
-     "version": 1,
-     "hooks": {
+      "version": 1,
+      "hooks": {
        "preToolUse": [
          {
            "type": "command",
@@ -236,9 +236,11 @@ Safety Net supports GitHub Copilot CLI via its [hooks system](https://docs.githu
    }
    ```
 
-3. **Restart Copilot CLI** — hooks are loaded at session start.
+3. **Optional:** copy the same file to `.github/hooks/safety-net.json` inside a repository if you want shared, repo-level enforcement as well.
 
-The hook will intercept bash commands and block destructive operations before they execute.
+4. **Restart Copilot CLI** — hooks are loaded at session start.
+
+The hook will intercept bash commands and block destructive operations before they execute. `cc-safety-net doctor` detects Safety Net in both Copilot hook locations.
 
 ## Status Line Integration
 

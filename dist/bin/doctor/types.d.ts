@@ -2,7 +2,7 @@
  * Type definitions for the doctor command.
  */
 /** Hook platform identifiers */
-export type HookPlatform = 'claude-code' | 'opencode' | 'gemini-cli';
+export type HookPlatform = 'claude-code' | 'opencode' | 'copilot-cli' | 'gemini-cli';
 /** Self-test case definition */
 export interface SelfTestCase {
     command: string;

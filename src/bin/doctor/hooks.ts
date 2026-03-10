@@ -2,7 +2,7 @@
  * Hook detection with integrated self-test for the doctor command.
  */
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { HookStatus, SelfTestCase, SelfTestResult, SelfTestSummary } from '@/bin/doctor/types';
@@ -13,6 +13,26 @@ import type { Config } from '@/types';
 interface HookDetectOptions extends LoadConfigOptions {
   homeDir?: string;
 }
+
+type CopilotHookScope = 'personal' | 'repository';
+
+interface CopilotHookCommand {
+  type?: string;
+  bash?: string;
+  powershell?: string;
+  command?: string;
+}
+
+interface CopilotHookConfig {
+  hooks?: Record<string, CopilotHookCommand[] | undefined>;
+}
+
+interface CopilotHookMatch {
+  path: string;
+  scope: CopilotHookScope;
+}
+
+const COPILOT_CLI_MODE_PATTERN = /(?:^|\s)(?:--copilot-cli|-cp)(?=\s|$)/;
 
 /** Self-test cases for validating the analyzer */
 const SELF_TEST_CASES: SelfTestCase[] = [
@@ -269,6 +289,102 @@ function detectOpenCode(homeDir: string): HookStatus {
   };
 }
 
+function isCopilotSafetyNetCommand(command: string | undefined): boolean {
+  if (!command) {
+    return false;
+  }
+
+  return command.includes('cc-safety-net') && COPILOT_CLI_MODE_PATTERN.test(command);
+}
+
+function configHasCopilotSafetyNet(config: CopilotHookConfig): boolean {
+  for (const hookEntries of Object.values(config.hooks ?? {})) {
+    if (!Array.isArray(hookEntries)) {
+      continue;
+    }
+
+    for (const hook of hookEntries) {
+      if (!hook || hook.type !== 'command') {
+        continue;
+      }
+
+      if ([hook.command, hook.bash, hook.powershell].some(isCopilotSafetyNetCommand)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function listCopilotHookFiles(configDir: string, errors: string[]): string[] {
+  if (!existsSync(configDir)) {
+    return [];
+  }
+
+  try {
+    return readdirSync(configDir, { withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.json'))
+      .map((entry) => join(configDir, entry.name))
+      .sort();
+  } catch (e) {
+    errors.push(`Failed to read ${configDir}: ${e instanceof Error ? e.message : String(e)}`);
+    return [];
+  }
+}
+
+function getCopilotHookMethod(matches: readonly CopilotHookMatch[]): string {
+  const scopes = new Set(matches.map((match) => match.scope));
+
+  if (scopes.size > 1) {
+    return 'personal + repository hooks';
+  }
+
+  return scopes.has('personal') ? 'personal hooks' : 'repository hooks';
+}
+
+function detectCopilotCLI(homeDir: string, cwd: string): HookStatus {
+  const errors: string[] = [];
+  const matches: CopilotHookMatch[] = [];
+  const candidates: Array<{ scope: CopilotHookScope; dir: string }> = [
+    { scope: 'personal', dir: join(homeDir, '.copilot', 'hooks') },
+    { scope: 'repository', dir: join(cwd, '.github', 'hooks') },
+  ];
+
+  for (const candidate of candidates) {
+    const configPaths = listCopilotHookFiles(candidate.dir, errors);
+
+    for (const configPath of configPaths) {
+      try {
+        const config = JSON.parse(readFileSync(configPath, 'utf-8')) as CopilotHookConfig;
+
+        if (configHasCopilotSafetyNet(config)) {
+          matches.push({ path: configPath, scope: candidate.scope });
+        }
+      } catch (e) {
+        errors.push(`Failed to parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+  }
+
+  if (matches.length === 0) {
+    return {
+      platform: 'copilot-cli',
+      status: 'n/a',
+      errors: errors.length > 0 ? errors : undefined,
+    };
+  }
+
+  return {
+    platform: 'copilot-cli',
+    status: 'configured',
+    method: getCopilotHookMethod(matches),
+    configPath: matches.map((match) => match.path).join(', '),
+    selfTest: runSelfTest(),
+    errors: errors.length > 0 ? errors : undefined,
+  };
+}
+
 /**
  * Check if hooks are enabled in Gemini CLI settings.
  * Returns true if tools.enableHooks is true in either global or local settings.
@@ -404,5 +520,10 @@ function detectGeminiCLI(homeDir: string, cwd: string): HookStatus {
 export function detectAllHooks(cwd: string, options?: HookDetectOptions): HookStatus[] {
   const homeDir = options?.homeDir ?? homedir();
 
-  return [detectClaudeCode(homeDir), detectOpenCode(homeDir), detectGeminiCLI(homeDir, cwd)];
+  return [
+    detectClaudeCode(homeDir),
+    detectOpenCode(homeDir),
+    detectCopilotCLI(homeDir, cwd),
+    detectGeminiCLI(homeDir, cwd),
+  ];
 }

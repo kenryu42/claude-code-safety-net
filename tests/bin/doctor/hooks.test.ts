@@ -8,6 +8,27 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { detectAllHooks, stripJsonComments } from '@/bin/doctor/hooks';
 
+function writeCopilotHookConfig(
+  configPath: string,
+  command = 'npx -y cc-safety-net --copilot-cli',
+): void {
+  writeFileSync(
+    configPath,
+    JSON.stringify({
+      version: 1,
+      hooks: {
+        preToolUse: [
+          {
+            type: 'command',
+            command,
+            timeoutSec: 15,
+          },
+        ],
+      },
+    }),
+  );
+}
+
 describe('detectAllHooks', () => {
   test('detects configured hooks and runs self-test', () => {
     const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
@@ -34,6 +55,10 @@ describe('detectAllHooks', () => {
         "plugin": ["cc-safety-net",],
       }`,
     );
+
+    const copilotDir = join(homeDir, '.copilot', 'hooks');
+    mkdirSync(copilotDir, { recursive: true });
+    writeCopilotHookConfig(join(copilotDir, 'safety-net.json'));
 
     const geminiDir = join(homeDir, '.gemini');
     const geminiExtDir = join(geminiDir, 'extensions');
@@ -63,6 +88,11 @@ describe('detectAllHooks', () => {
       expect(opencode?.status).toBe('configured');
       expect(opencode?.method).toBe('plugin array');
       expect(opencode?.selfTest?.total).toBe(3);
+
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('personal hooks');
+      expect(copilot?.selfTest?.passed).toBe(copilot?.selfTest?.total);
 
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('configured');
@@ -114,6 +144,10 @@ describe('detectAllHooks', () => {
     mkdirSync(opencodeDir, { recursive: true });
     writeFileSync(join(opencodeDir, 'opencode.json'), '{ invalid json }');
 
+    const copilotDir = join(homeDir, '.copilot', 'hooks');
+    mkdirSync(copilotDir, { recursive: true });
+    writeFileSync(join(copilotDir, 'broken.json'), '{ invalid json }');
+
     const geminiDir = join(homeDir, '.gemini');
     const geminiExtDir = join(geminiDir, 'extensions');
     mkdirSync(geminiExtDir, { recursive: true });
@@ -130,9 +164,62 @@ describe('detectAllHooks', () => {
       expect(opencode?.status).toBe('n/a');
       expect(opencode?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
 
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+      expect(copilot?.status).toBe('n/a');
+      expect(copilot?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
+
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('n/a');
       expect(gemini?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Copilot CLI: detects repository hooks in .github/hooks', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    const repoHooksDir = join(projectDir, '.github', 'hooks');
+    mkdirSync(repoHooksDir, { recursive: true });
+    writeCopilotHookConfig(join(repoHooksDir, 'safety-net.json'), 'bunx cc-safety-net -cp');
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('repository hooks');
+      expect(copilot?.configPath).toContain('.github/hooks/safety-net.json');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Copilot CLI: reports combined scope when personal and repository hooks are configured', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    const personalHooksDir = join(homeDir, '.copilot', 'hooks');
+    mkdirSync(personalHooksDir, { recursive: true });
+    writeCopilotHookConfig(join(personalHooksDir, 'personal.json'));
+
+    const repoHooksDir = join(projectDir, '.github', 'hooks');
+    mkdirSync(repoHooksDir, { recursive: true });
+    writeCopilotHookConfig(join(repoHooksDir, 'repo.json'));
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('personal + repository hooks');
+      expect(copilot?.configPath).toContain('personal.json');
+      expect(copilot?.configPath).toContain('repo.json');
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }

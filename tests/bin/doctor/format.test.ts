@@ -109,6 +109,14 @@ describe('formatHooksSection', () => {
     expect(output).toContain('N/A');
   });
 
+  test('formats Copilot CLI hook names', () => {
+    const hooks: HookStatus[] = [{ platform: 'copilot-cli', status: 'n/a' }];
+
+    const output = formatHooksSection(hooks);
+    expect(output).toContain('Copilot CLI');
+    expect(output).toContain('N/A');
+  });
+
   test('shows error for failed detection', () => {
     const hooks: HookStatus[] = [{ platform: 'opencode', status: 'n/a', errors: ['Parse error'] }];
 
