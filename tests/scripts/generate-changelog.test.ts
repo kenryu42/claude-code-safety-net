@@ -7,6 +7,7 @@ import {
   getContributorsForRepo,
   getLatestReleasedTag,
   isIncludedCommit,
+  REPO,
   runChangelog,
 } from '../../scripts/generate-changelog';
 
@@ -280,7 +281,7 @@ describe('getContributorsForRepo', () => {
 describe('getContributors', () => {
   test('uses default repo wrapper', async () => {
     const runner = createRunner({
-      'gh api "/repos/kenryu42/claude-code-safety-net/compare/v1.0.0...HEAD" --jq \'.commits[] | {login: .author.login, message: .commit.message}\'':
+      [`gh api "/repos/${REPO}/compare/v1.0.0...HEAD" --jq '.commits[] | {login: .author.login, message: .commit.message}'`]:
         JSON.stringify({
           login: 'alice',
           message: 'feat: add thing',
@@ -326,7 +327,7 @@ describe('runChangelog', () => {
         'v1.0.0\n',
       'git log v1.0.0..HEAD --oneline --format="%h %s"': 'abc123 feat: core change',
       'git diff-tree --no-commit-id --name-only -r abc123': 'src/core/analyze.ts\n',
-      'gh api "/repos/kenryu42/claude-code-safety-net/compare/v1.0.0...HEAD" --jq \'.commits[] | {login: .author.login, message: .commit.message}\'':
+      [`gh api "/repos/${REPO}/compare/v1.0.0...HEAD" --jq '.commits[] | {login: .author.login, message: .commit.message}'`]:
         compare,
     });
     const logs: string[] = [];

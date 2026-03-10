@@ -192,7 +192,7 @@ describe('detectAllHooks', () => {
       const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
       expect(copilot?.status).toBe('configured');
       expect(copilot?.method).toBe('repository hooks');
-      expect(copilot?.configPath).toContain('.github/hooks/safety-net.json');
+      expect(copilot?.configPath?.replaceAll('\\', '/')).toContain('.github/hooks/safety-net.json');
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
