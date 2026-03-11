@@ -454,7 +454,7 @@ function splitShellCommands(command) {
       continue;
     }
     if (isRedirectOp(token)) {
-      if (current.length > 0 && /^\d+$/.test(current[current.length - 1] ?? "")) {
+      if (current.length > 0 && /^\d{1,2}$/.test(current[current.length - 1] ?? "")) {
         current.pop();
       }
       i += 2;
@@ -543,6 +543,13 @@ function extractCommandSubstitution(tokens, startIndex) {
         currentSegment = [];
       }
       i++;
+      continue;
+    }
+    if (depth === 1 && token && isRedirectOp(token)) {
+      if (currentSegment.length > 0 && /^\d{1,2}$/.test(currentSegment[currentSegment.length - 1] ?? "")) {
+        currentSegment.pop();
+      }
+      i += 2;
       continue;
     }
     if (typeof token === "string") {
