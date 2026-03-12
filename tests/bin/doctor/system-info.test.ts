@@ -80,6 +80,11 @@ describe('defaultVersionFetcher', () => {
     expect(result).toBeNull();
   });
 
+  test('returns null when spawn throws synchronously for invalid command input', async () => {
+    const result = await defaultVersionFetcher(['\u0000']);
+    expect(result).toBeNull();
+  });
+
   test('returns version for existing commands', async () => {
     const result = await defaultVersionFetcher(['bun', '--version']);
     expect(result).not.toBeNull();

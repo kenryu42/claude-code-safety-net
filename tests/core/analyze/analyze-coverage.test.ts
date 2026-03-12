@@ -136,6 +136,14 @@ describe('analyzeCommand (coverage)', () => {
     expect(result).toBeNull();
   });
 
+  test('TMPDIR traversal override blocks $TMPDIR', () => {
+    const result = analyzeCommand('TMPDIR=/tmp/../root rm -rf $TMPDIR/test-dir', {
+      cwd: '/tmp',
+      config: EMPTY_CONFIG,
+    });
+    expect(result?.reason).toContain('rm -rf');
+  });
+
   test('xargs child git command is analyzed', () => {
     const result = analyzeCommand('xargs git reset --hard', {
       cwd: '/tmp',

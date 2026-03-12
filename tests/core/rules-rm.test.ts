@@ -377,6 +377,15 @@ describe('rm -rf cwd-aware', () => {
     }
   });
 
+  test('TMPDIR=/tmp/../root blocked (path traversal escapes temp)', () => {
+    setup();
+    try {
+      assertBlocked('TMPDIR=/tmp/../root rm -rf $TMPDIR/test-dir', 'rm -rf', tmpDir);
+    } finally {
+      cleanup();
+    }
+  });
+
   test('TMPDIR=/var/tmp-malicious blocked (not a real temp path)', () => {
     setup();
     try {

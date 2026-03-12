@@ -89,6 +89,10 @@ describe('shell parsing helpers', () => {
       expect(splitShellCommands('echo "unterminated')).toEqual([['echo "unterminated']]);
     });
 
+    test('ignores trailing shell comments without creating extra segments', () => {
+      expect(splitShellCommands('echo hi # comment')).toEqual([['echo', 'hi']]);
+    });
+
     test('extracts arithmetic substitution segments (nested parens)', () => {
       expect(splitShellCommands('echo $((1+2))')).toEqual([['echo'], ['1+2']]);
     });
@@ -193,6 +197,12 @@ describe('shell parsing helpers', () => {
       const result = stripWrappersWithInfo(['FOO+=bar', 'rm', '-rf']);
       expect(result.tokens).toEqual(['rm', '-rf']);
       expect(result.envAssignments.get('FOO')).toBeUndefined();
+    });
+
+    test('captures empty env assignment values', () => {
+      const result = stripWrappersWithInfo(['FOO=', 'rm', '-rf']);
+      expect(result.tokens).toEqual(['rm', '-rf']);
+      expect(result.envAssignments.get('FOO')).toBe('');
     });
   });
 });
