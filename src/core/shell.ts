@@ -20,12 +20,7 @@ export function splitShellCommands(command: string): string[][] {
   let i = 0;
 
   while (i < tokens.length) {
-    const token = tokens[i];
-    if (token === undefined) {
-      i++;
-      continue;
-    }
-
+    const token = tokens[i] as ParseEntry;
     if (isOperator(token)) {
       if (current.length > 0) {
         segments.push(current);
@@ -182,9 +177,6 @@ function parseEnvAssignment(token: string): { name: string; value: string } | nu
     return null;
   }
   const eqIdx = token.indexOf('=');
-  if (eqIdx < 0) {
-    return null;
-  }
   return { name: token.slice(0, eqIdx), value: token.slice(eqIdx + 1) };
 }
 

@@ -5,22 +5,42 @@ on:
   push:
     branches: [main]
     paths:
+      - ".github/workflows/**"
       - "src/**"
       - "scripts/**"
       - "tests/**"
+      - "assets/**"
+      - "package.json"
+      - "bun.lock"
+      - "tsconfig.json"
+      - "tsconfig.build.json"
+      - "biome.json"
+      - "knip.ts"
+      - "sgconfig.yml"
+      - "ast-grep/**"
   pull_request:
     branches: [main]
     paths:
+      - ".github/workflows/**"
       - "src/**"
       - "scripts/**"
       - "tests/**"
+      - "assets/**"
+      - "package.json"
+      - "bun.lock"
+      - "tsconfig.json"
+      - "tsconfig.build.json"
+      - "biome.json"
+      - "knip.ts"
+      - "sgconfig.yml"
+      - "ast-grep/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  quality:
+  full-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,39 +51,12 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
         env:
           BUN_INSTALL_ALLOW_SCRIPTS: "@ast-grep/cli"
 
-      - name: Run linter
-        run: bun run lint
-
-      - name: Run type checker
-        run: bun run typecheck
-
-      - name: Run dead code detection
-        run: bun run knip
-
-      - name: Run ast-grep scan
-        run: bun run sg:scan
-
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install
-        env:
-          BUN_INSTALL_ALLOW_SCRIPTS: "@ast-grep/cli"
-
-      - name: Run tests with coverage
-        run: AGENT=1 bun test --coverage --coverage-reporter=lcov
+      - name: Run full checks
+        run: bun run check:ci
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
@@ -72,7 +65,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [quality, test]
+    needs: [full-check]
     permissions:
       contents: write
 
@@ -86,7 +79,7 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
         env:
           BUN_INSTALL_ALLOW_SCRIPTS: "@ast-grep/cli"
 

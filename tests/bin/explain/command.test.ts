@@ -333,6 +333,12 @@ describe('explainCommand guard parity fixes', () => {
     expect(result.result).toBe('allowed');
   });
 
+  test('Fix #3: TMPDIR traversal override blocks rm', () => {
+    const result = explainCommand('TMPDIR=/tmp/../root rm -rf $TMPDIR/foo', { cwd: '/tmp' });
+    expect(result.result).toBe('blocked');
+    expect(result.reason).toContain('rm -rf');
+  });
+
   test('Fix #4: fallback scan finds embedded git in non-head position', () => {
     const result = explainCommand('nice git reset --hard');
     expect(result.result).toBe('blocked');

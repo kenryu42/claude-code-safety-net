@@ -1,4 +1,5 @@
 import { tmpdir } from 'node:os';
+import { normalize, sep } from 'node:path';
 
 export function isTmpdirOverriddenToNonTemp(envAssignments: Map<string, string>): boolean {
   if (!envAssignments.has('TMPDIR')) {
@@ -11,12 +12,14 @@ export function isTmpdirOverriddenToNonTemp(envAssignments: Map<string, string>)
     return true;
   }
 
+  const normalizedTmpdirValue = normalize(tmpdirValue);
+
   // Check if it's a known temp path (exact match or subpath)
-  const sysTmpdir = tmpdir();
+  const sysTmpdir = normalize(tmpdir());
   if (
-    isPathOrSubpath(tmpdirValue, '/tmp') ||
-    isPathOrSubpath(tmpdirValue, '/var/tmp') ||
-    isPathOrSubpath(tmpdirValue, sysTmpdir)
+    isPathOrSubpath(normalizedTmpdirValue, normalize('/tmp')) ||
+    isPathOrSubpath(normalizedTmpdirValue, normalize('/var/tmp')) ||
+    isPathOrSubpath(normalizedTmpdirValue, sysTmpdir)
   ) {
     return false;
   }
@@ -32,7 +35,7 @@ function isPathOrSubpath(path: string, basePath: string): boolean {
   if (path === basePath) {
     return true;
   }
-  // Ensure basePath ends with / for proper prefix matching
-  const baseWithSlash = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  // Ensure basePath ends with the platform separator for proper prefix matching.
+  const baseWithSlash = basePath.endsWith(sep) ? basePath : `${basePath}${sep}`;
   return path.startsWith(baseWithSlash);
 }

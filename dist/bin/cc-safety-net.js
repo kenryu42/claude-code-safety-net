@@ -1580,10 +1580,6 @@ function splitShellCommands(command) {
   let i = 0;
   while (i < tokens.length) {
     const token = tokens[i];
-    if (token === undefined) {
-      i++;
-      continue;
-    }
     if (isOperator(token)) {
       if (current.length > 0) {
         segments.push(current);
@@ -1714,9 +1710,6 @@ function parseEnvAssignment(token) {
     return null;
   }
   const eqIdx = token.indexOf("=");
-  if (eqIdx < 0) {
-    return null;
-  }
   return { name: token.slice(0, eqIdx), value: token.slice(eqIdx + 1) };
 }
 function stripEnvAssignmentsWithInfo(tokens) {
@@ -2736,6 +2729,7 @@ function parseParallelCommand(tokens) {
 
 // src/core/analyze/tmpdir.ts
 import { tmpdir as tmpdir2 } from "node:os";
+import { normalize as normalize2, sep as sep2 } from "node:path";
 function isTmpdirOverriddenToNonTemp(envAssignments) {
   if (!envAssignments.has("TMPDIR")) {
     return false;
@@ -2744,8 +2738,9 @@ function isTmpdirOverriddenToNonTemp(envAssignments) {
   if (tmpdirValue === "") {
     return true;
   }
-  const sysTmpdir = tmpdir2();
-  if (isPathOrSubpath(tmpdirValue, "/tmp") || isPathOrSubpath(tmpdirValue, "/var/tmp") || isPathOrSubpath(tmpdirValue, sysTmpdir)) {
+  const normalizedTmpdirValue = normalize2(tmpdirValue);
+  const sysTmpdir = normalize2(tmpdir2());
+  if (isPathOrSubpath(normalizedTmpdirValue, normalize2("/tmp")) || isPathOrSubpath(normalizedTmpdirValue, normalize2("/var/tmp")) || isPathOrSubpath(normalizedTmpdirValue, sysTmpdir)) {
     return false;
   }
   return true;
@@ -2754,7 +2749,7 @@ function isPathOrSubpath(path, basePath) {
   if (path === basePath) {
     return true;
   }
-  const baseWithSlash = basePath.endsWith("/") ? basePath : `${basePath}/`;
+  const baseWithSlash = basePath.endsWith(sep2) ? basePath : `${basePath}${sep2}`;
   return path.startsWith(baseWithSlash);
 }
 
