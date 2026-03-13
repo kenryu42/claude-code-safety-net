@@ -486,12 +486,30 @@ describe('git rules helpers', () => {
       expect(_getCheckoutPositionalArgs(['-b', 'new', 'main'])).toEqual(['main']);
     });
 
-    test('unknown long option consumes value', () => {
-      expect(_getCheckoutPositionalArgs(['--unknown', 'main', 'file.txt'])).toEqual(['file.txt']);
+    test('unknown long option does not consume value', () => {
+      expect(_getCheckoutPositionalArgs(['--unknown', 'main', 'file.txt'])).toEqual([
+        'main',
+        'file.txt',
+      ]);
     });
 
     test('unknown short option skipped', () => {
       expect(_getCheckoutPositionalArgs(['-x', 'main'])).toEqual(['main']);
+    });
+
+    test('documented no-value long options ignored', () => {
+      expect(_getCheckoutPositionalArgs(['--no-quiet', 'main', 'file.txt'])).toEqual([
+        'main',
+        'file.txt',
+      ]);
+      expect(_getCheckoutPositionalArgs(['--guess', 'main', 'file.txt'])).toEqual([
+        'main',
+        'file.txt',
+      ]);
+      expect(_getCheckoutPositionalArgs(['--no-recurse-submodules', 'main', 'file.txt'])).toEqual([
+        'main',
+        'file.txt',
+      ]);
     });
 
     test('optional value options recurse-submodules', () => {
@@ -504,6 +522,11 @@ describe('git rules helpers', () => {
     test('optional value options track', () => {
       expect(_getCheckoutPositionalArgs(['--track', 'main'])).toEqual(['main']);
       expect(_getCheckoutPositionalArgs(['--track=direct', 'main'])).toEqual(['main']);
+    });
+
+    test('documented options with required values are consumed', () => {
+      expect(_getCheckoutPositionalArgs(['--inter-hunk-context', '3', 'main'])).toEqual(['main']);
+      expect(_getCheckoutPositionalArgs(['--conflict', 'merge', 'main'])).toEqual(['main']);
     });
   });
 });
