@@ -137,6 +137,60 @@ describe('rm -rf allowed', () => {
   });
 });
 
+describe('rm -rf with redirects', () => {
+  test('rm -rf /tmp/foo 2>/dev/null allowed', () => {
+    assertAllowed('rm -rf /tmp/foo 2>/dev/null');
+  });
+
+  test('rm -rf /tmp/foo 2> /dev/null allowed', () => {
+    assertAllowed('rm -rf /tmp/foo 2> /dev/null');
+  });
+
+  test('rm -rf ./subdir 2>/dev/null allowed within cwd', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'safety-net-test-'));
+    try {
+      assertAllowed('rm -rf ./subdir 2>/dev/null', cwd);
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  test('rm -rf ./subdir 2>&1 allowed within cwd', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'safety-net-test-'));
+    try {
+      assertAllowed('rm -rf ./subdir 2>&1', cwd);
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  test('rm -rf ./subdir > /tmp/log allowed', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'safety-net-test-'));
+    try {
+      assertAllowed('rm -rf ./subdir > /tmp/log', cwd);
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  test('rm -rf numeric dir before redirect not stripped as fd', () => {
+    assertBlocked('rm -rf 123 > /dev/null', 'rm -rf');
+  });
+
+  test('echo $(rm -rf /tmp/foo 2>/dev/null) allowed in subshell', () => {
+    assertAllowed('echo $(rm -rf /tmp/foo 2>/dev/null)');
+  });
+
+  test('rm -rf /outside/cwd 2>/dev/null still blocked', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'safety-net-test-'));
+    try {
+      assertBlocked('rm -rf /outside/cwd 2>/dev/null', 'rm -rf', cwd);
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('rm -rf cwd-aware', () => {
   let tmpDir: string;
 

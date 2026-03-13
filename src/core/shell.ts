@@ -30,6 +30,19 @@ export function splitShellCommands(command: string): string[][] {
       continue;
     }
 
+    // Handle redirect operators from shell-quote (e.g. { op: '>' }).
+    // shell-quote parses "2>/dev/null" into ["2", {op:">"}, "/dev/null"],
+    // leaving the fd number as a prior string and the target as the next
+    // string. Strip the fd number and skip the redirect target so they
+    // are not treated as command arguments.
+    if (isRedirectOp(token)) {
+      if (current.length > 0 && /^\d{1,2}$/.test(current[current.length - 1] ?? '')) {
+        current.pop();
+      }
+      i += 2; // skip operator + redirect target
+      continue;
+    }
+
     if (typeof token !== 'string') {
       i++;
       continue;
@@ -130,6 +143,17 @@ function extractCommandSubstitution(
         currentSegment = [];
       }
       i++;
+      continue;
+    }
+
+    if (depth === 1 && token && isRedirectOp(token)) {
+      if (
+        currentSegment.length > 0 &&
+        /^\d{1,2}$/.test(currentSegment[currentSegment.length - 1] ?? '')
+      ) {
+        currentSegment.pop();
+      }
+      i += 2; // skip operator + redirect target
       continue;
     }
 
@@ -430,5 +454,16 @@ function isOperator(token: ParseEntry): boolean {
     token !== null &&
     'op' in token &&
     SHELL_OPERATORS.has(token.op as string)
+  );
+}
+
+const REDIRECT_OPS = new Set(['>', '>>', '<', '>&', '<&', '>|']);
+
+function isRedirectOp(token: ParseEntry): boolean {
+  return (
+    typeof token === 'object' &&
+    token !== null &&
+    'op' in token &&
+    REDIRECT_OPS.has(token.op as string)
   );
 }
