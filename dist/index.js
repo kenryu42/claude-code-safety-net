@@ -1129,7 +1129,8 @@ function _getRedirectTargetInfo(tokens, index) {
   }
   const firstTarget = tokens[index + 1];
   if (typeof firstTarget !== "string") {
-    return { redirectTarget: null, advance: 1 };
+    const isGlobTarget = firstTarget && typeof firstTarget === "object" && "pattern" in firstTarget && typeof firstTarget.pattern === "string";
+    return { redirectTarget: null, advance: isGlobTarget ? 2 : 1 };
   }
   let redirectTarget = firstTarget;
   let nextIndex = index + 2;

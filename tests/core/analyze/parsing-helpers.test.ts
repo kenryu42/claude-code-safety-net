@@ -186,6 +186,14 @@ describe('shell parsing helpers', () => {
       ]);
     });
 
+    test('drops glob redirect targets instead of treating them as args', () => {
+      expect(splitShellCommands('echo > *.log')).toEqual([['echo']]);
+    });
+
+    test('drops glob redirect targets inside command substitutions', () => {
+      expect(splitShellCommands('echo $(echo > *.log)')).toEqual([['echo'], ['echo']]);
+    });
+
     test('keeps attached command substitutions in redirect targets analyzable', () => {
       expect(splitShellCommands('rm -rf /tmp/foo >file$(git reset --hard)')).toEqual([
         ['git', 'reset', '--hard'],
