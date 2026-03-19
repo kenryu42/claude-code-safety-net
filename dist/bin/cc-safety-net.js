@@ -1588,12 +1588,11 @@ function splitShellCommands(command) {
       i++;
       continue;
     }
-    if (typeof token !== "string") {
-      i++;
+    if (_isRedirectOp(token)) {
+      i += _getRedirectAdvance(tokens, i);
       continue;
     }
-    const nextToken = tokens[i + 1];
-    if (token === "$" && nextToken && isParenOpen(nextToken)) {
+    if (_isCommandSubstitutionStart(tokens, i)) {
       if (current.length > 0) {
         segments.push(current);
         current = [];
@@ -1603,6 +1602,10 @@ function splitShellCommands(command) {
         segments.push(seg);
       }
       i = endIndex + 1;
+      continue;
+    }
+    if (typeof token !== "string") {
+      i++;
       continue;
     }
     const backtickSegments = extractBacktickSubstitutions(token);
@@ -1671,6 +1674,22 @@ function extractCommandSubstitution(tokens, startIndex) {
         currentSegment = [];
       }
       i++;
+      continue;
+    }
+    if (depth === 1 && _isRedirectOp(token)) {
+      i += _getRedirectAdvance(tokens, i);
+      continue;
+    }
+    if (depth === 1 && _isCommandSubstitutionStart(tokens, i)) {
+      if (currentSegment.length > 0) {
+        innerSegments.push(currentSegment);
+        currentSegment = [];
+      }
+      const { innerSegments: nestedSegments, endIndex } = extractCommandSubstitution(tokens, i + 2);
+      for (const seg of nestedSegments) {
+        innerSegments.push(seg);
+      }
+      i = endIndex + 1;
       continue;
     }
     if (typeof token === "string") {
@@ -1904,6 +1923,19 @@ function getBasename(token) {
 }
 function isOperator(token) {
   return typeof token === "object" && token !== null && "op" in token && SHELL_OPERATORS.has(token.op);
+}
+var REDIRECT_OPS = new Set([">", ">>", "<", ">&", "<&", ">|"]);
+function _isRedirectOp(token) {
+  return typeof token === "object" && token !== null && "op" in token && REDIRECT_OPS.has(token.op);
+}
+function _isCommandSubstitutionStart(tokens, index) {
+  return tokens[index] === "$" && isParenOpen(tokens[index + 1]);
+}
+function _getRedirectAdvance(tokens, index) {
+  if (_isCommandSubstitutionStart(tokens, index + 1)) {
+    return 1;
+  }
+  return tokens[index + 1] === undefined ? 1 : 2;
 }
 
 // src/core/analyze/find.ts

@@ -30,14 +30,12 @@ export function splitShellCommands(command: string): string[][] {
       continue;
     }
 
-    if (typeof token !== 'string') {
-      i++;
+    if (_isRedirectOp(token)) {
+      i += _getRedirectAdvance(tokens, i);
       continue;
     }
 
-    // Handle string tokens
-    const nextToken = tokens[i + 1];
-    if (token === '$' && nextToken && isParenOpen(nextToken)) {
+    if (_isCommandSubstitutionStart(tokens, i)) {
       if (current.length > 0) {
         segments.push(current);
         current = [];
@@ -47,6 +45,11 @@ export function splitShellCommands(command: string): string[][] {
         segments.push(seg);
       }
       i = endIndex + 1;
+      continue;
+    }
+
+    if (typeof token !== 'string') {
+      i++;
       continue;
     }
 
@@ -130,6 +133,24 @@ function extractCommandSubstitution(
         currentSegment = [];
       }
       i++;
+      continue;
+    }
+
+    if (depth === 1 && _isRedirectOp(token)) {
+      i += _getRedirectAdvance(tokens, i);
+      continue;
+    }
+
+    if (depth === 1 && _isCommandSubstitutionStart(tokens, i)) {
+      if (currentSegment.length > 0) {
+        innerSegments.push(currentSegment);
+        currentSegment = [];
+      }
+      const { innerSegments: nestedSegments, endIndex } = extractCommandSubstitution(tokens, i + 2);
+      for (const seg of nestedSegments) {
+        innerSegments.push(seg);
+      }
+      i = endIndex + 1;
       continue;
     }
 
@@ -431,4 +452,27 @@ function isOperator(token: ParseEntry): boolean {
     'op' in token &&
     SHELL_OPERATORS.has(token.op as string)
   );
+}
+
+const REDIRECT_OPS = new Set(['>', '>>', '<', '>&', '<&', '>|']);
+
+function _isRedirectOp(token: ParseEntry | undefined): boolean {
+  return (
+    typeof token === 'object' &&
+    token !== null &&
+    'op' in token &&
+    REDIRECT_OPS.has(token.op as string)
+  );
+}
+
+function _isCommandSubstitutionStart(tokens: readonly ParseEntry[], index: number): boolean {
+  return tokens[index] === '$' && isParenOpen(tokens[index + 1]);
+}
+
+function _getRedirectAdvance(tokens: readonly ParseEntry[], index: number): number {
+  if (_isCommandSubstitutionStart(tokens, index + 1)) {
+    return 1;
+  }
+
+  return tokens[index + 1] === undefined ? 1 : 2;
 }
