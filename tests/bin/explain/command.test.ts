@@ -214,6 +214,50 @@ describe('explainCommand edge cases', () => {
       segments: [['rm', '-rf', '123']],
     });
   });
+
+  test('backticks inside arithmetic expansion remain blocked in explain trace', () => {
+    const result = explainCommand('echo $((`git reset --hard` + 1))');
+    expect(result.result).toBe('blocked');
+    expect(result.reason).toContain('git reset --hard');
+  });
+
+  test('process substitution remains blocked in explain trace', () => {
+    const result = explainCommand('echo <(git reset --hard)');
+    expect(result.result).toBe('blocked');
+    expect(result.reason).toContain('git reset --hard');
+    expect(result.trace.steps).toContainEqual({
+      type: 'parse',
+      input: 'echo <(git reset --hard)',
+      segments: [['echo'], ['git', 'reset', '--hard']],
+    });
+  });
+
+  test('quoted literal backticks in redirect target do not hide blocked args in explain trace', () => {
+    const result = explainCommand("git checkout >'file`name' -- foo");
+    expect(result.result).toBe('blocked');
+    expect(result.reason).toContain('git checkout --');
+    expect(result.trace.steps).toContainEqual({
+      type: 'parse',
+      input: "git checkout >'file`name' -- foo",
+      segments: [['git', 'checkout', '--', 'foo']],
+    });
+  });
+
+  test('single-quoted backticks in redirect targets stay literal in explain trace', () => {
+    const result = explainCommand("echo >'a`git reset --hard`b'");
+    expect(result.result).toBe('allowed');
+    expect(result.trace.steps).toContainEqual({
+      type: 'parse',
+      input: "echo >'a`git reset --hard`b'",
+      segments: [['echo']],
+    });
+  });
+
+  test('attached backtick substitutions outside redirect targets stay blocked in explain trace', () => {
+    const result = explainCommand('echo foo`git reset --hard`bar');
+    expect(result.result).toBe('blocked');
+    expect(result.reason).toContain('git reset --hard');
+  });
 });
 
 describe('explainCommand rm with home directory', () => {

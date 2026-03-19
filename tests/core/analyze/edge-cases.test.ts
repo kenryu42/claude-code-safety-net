@@ -247,6 +247,11 @@ describe('edge cases', () => {
       assertBlocked('echo $((1+$(rm -rf /)))', 'extremely dangerous');
     });
 
+    test('arithmetic expansion with backticks keeps nested git reset blocked', () => {
+      assertBlocked('echo $((`git reset --hard` + 1))', 'git reset --hard');
+      assertBlocked('echo $((foo`git reset --hard`bar))', 'git reset --hard');
+    });
+
     test('quoted arithmetic expressions that resemble guarded commands stay allowed', () => {
       assertAllowed('echo "$(( rm -rf /x ))"');
       assertAllowed('echo "$(( foo + bar ))"');
@@ -262,6 +267,26 @@ describe('edge cases', () => {
 
     test('bare backtick redirect target inside command substitution blocked', () => {
       assertBlocked('echo $(echo x >`git reset --hard`)', 'git reset --hard');
+    });
+
+    test('process substitution git reset hard blocked', () => {
+      assertBlocked('echo <(git reset --hard)', 'git reset --hard');
+      assertBlocked('cat >(git reset --hard)', 'git reset --hard');
+      assertBlocked('echo x > >(git reset --hard)', 'git reset --hard');
+      assertBlocked('echo foo < <(git reset --hard)', 'git reset --hard');
+    });
+
+    test('quoted literal backticks in redirect targets do not hide blocked args', () => {
+      assertBlocked("git checkout >'file`name' -- foo", 'git checkout --');
+      assertBlocked("rm -rf >'file`name' /", 'extremely dangerous');
+    });
+
+    test('single-quoted backticks in redirect targets stay literal', () => {
+      assertAllowed("echo >'a`git reset --hard`b'");
+    });
+
+    test('attached backtick substitutions outside redirect targets stay blocked', () => {
+      assertBlocked('echo foo`git reset --hard`bar', 'git reset --hard');
     });
   });
 

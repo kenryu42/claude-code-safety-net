@@ -104,7 +104,7 @@ describe('shell parsing helpers', () => {
     });
 
     test('extracts backtick substitution segments', () => {
-      expect(splitShellCommands('echo `date`')).toEqual([['date'], ['echo', '`date`']]);
+      expect(splitShellCommands('echo `date`')).toEqual([['echo'], ['date']]);
     });
 
     test('extracts $() substitution segments split on operators', () => {
@@ -116,7 +116,7 @@ describe('shell parsing helpers', () => {
     });
 
     test('extracts multiple backtick substitutions from one token', () => {
-      expect(splitShellCommands('echo `a`:`b`')).toEqual([['a'], ['b'], ['echo', '`a`:`b`']]);
+      expect(splitShellCommands('echo `a`:`b`')).toEqual([['echo'], ['a'], ['b'], [':']]);
     });
 
     test('handles nested $(...) with operators', () => {
@@ -220,6 +220,19 @@ describe('shell parsing helpers', () => {
       expect(rmResult).toContainEqual(['rm', '-rf', '/']);
     });
 
+    test('keeps backtick command substitutions visible inside arithmetic expansion', () => {
+      expect(splitShellCommands('echo $((`git reset --hard` + 1))')).toContainEqual([
+        'git',
+        'reset',
+        '--hard',
+      ]);
+      expect(splitShellCommands('echo $((foo`git reset --hard`bar))')).toContainEqual([
+        'git',
+        'reset',
+        '--hard',
+      ]);
+    });
+
     test('flushes arithmetic text before a spaced nested command substitution', () => {
       expect(splitShellCommands('echo $((1 + $(git status)))')).toEqual([
         ['echo'],
@@ -260,13 +273,13 @@ describe('shell parsing helpers', () => {
 
     test('keeps bare backtick redirect targets analyzable', () => {
       expect(splitShellCommands('rm -rf /tmp/foo >`git reset --hard`')).toEqual([
-        ['git', 'reset', '--hard'],
         ['rm', '-rf', '/tmp/foo'],
+        ['git', 'reset', '--hard'],
       ]);
       expect(splitShellCommands('echo $(rm -rf /tmp/foo >`git reset --hard`)')).toEqual([
         ['echo'],
-        ['git', 'reset', '--hard'],
         ['rm', '-rf', '/tmp/foo'],
+        ['git', 'reset', '--hard'],
       ]);
     });
 
@@ -279,6 +292,44 @@ describe('shell parsing helpers', () => {
 
     test('ignores missing redirect targets without creating empty segments', () => {
       expect(splitShellCommands('echo >')).toEqual([['echo']]);
+    });
+
+    test('keeps process substitutions analyzable as separate segments', () => {
+      expect(splitShellCommands('echo <(git reset --hard)')).toEqual([
+        ['echo'],
+        ['git', 'reset', '--hard'],
+      ]);
+      expect(splitShellCommands('cat >(git reset --hard)')).toEqual([
+        ['cat'],
+        ['git', 'reset', '--hard'],
+      ]);
+      expect(splitShellCommands('echo x > >(git reset --hard)')).toEqual([
+        ['echo', 'x'],
+        ['git', 'reset', '--hard'],
+      ]);
+      expect(splitShellCommands('echo foo < <(git reset --hard)')).toEqual([
+        ['echo', 'foo'],
+        ['git', 'reset', '--hard'],
+      ]);
+    });
+
+    test('keeps arguments after quoted backticks in redirect targets visible', () => {
+      expect(splitShellCommands("git checkout >'file`name' -- foo")).toEqual([
+        ['git', 'checkout', '--', 'foo'],
+      ]);
+      expect(splitShellCommands("rm -rf >'file`name' /")).toEqual([['rm', '-rf', '/']]);
+    });
+
+    test('does not treat single-quoted backticks in redirect targets as commands', () => {
+      expect(splitShellCommands("echo >'a`git reset --hard`b'")).toEqual([['echo']]);
+    });
+
+    test('keeps attached backtick substitutions analyzable outside redirect targets', () => {
+      expect(splitShellCommands('echo foo`git reset --hard`bar')).toContainEqual([
+        'git',
+        'reset',
+        '--hard',
+      ]);
     });
 
     test('does not treat escaped or quoted inline substitutions as executable commands', () => {
@@ -332,7 +383,10 @@ describe('shell parsing helpers', () => {
     });
 
     test('handles escaped backticks in redirect targets without hanging', () => {
-      expect(splitShellCommands('echo x >`a\\` b`')).toEqual([['a'], ['echo', 'x', 'b`']]);
+      expect(splitShellCommands('echo x >`a\\` b`')).toEqual([
+        ['echo', 'x'],
+        ['a`', 'b'],
+      ]);
     });
   });
 
