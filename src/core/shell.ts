@@ -13,7 +13,7 @@ export function splitShellCommands(command: string): string[][] {
   if (hasUnclosedQuotes(command)) {
     return [[command]];
   }
-  const normalizedCommand = command.replace(/\n/g, ' ; ');
+  const normalizedCommand = _stripAttachedIoNumbers(command.replace(/\n/g, ' ; '));
   const tokens = parse(normalizedCommand, ENV_PROXY);
   const segments: string[][] = [];
   let current: string[] = [];
@@ -189,6 +189,85 @@ function hasUnclosedQuotes(command: string): boolean {
   }
 
   return inSingle || inDouble;
+}
+
+function _stripAttachedIoNumbers(command: string): string {
+  let result = '';
+  let inSingle = false;
+  let inDouble = false;
+  let escaped = false;
+  let atTokenBoundary = true;
+
+  for (let i = 0; i < command.length; ) {
+    const char = command[i];
+    if (!char) {
+      break;
+    }
+
+    if (escaped) {
+      result += char;
+      escaped = false;
+      atTokenBoundary = false;
+      i++;
+      continue;
+    }
+
+    if (!inSingle && char === '\\') {
+      result += char;
+      escaped = true;
+      i++;
+      continue;
+    }
+
+    if (!inDouble && char === "'") {
+      result += char;
+      inSingle = !inSingle;
+      atTokenBoundary = false;
+      i++;
+      continue;
+    }
+
+    if (!inSingle && char === '"') {
+      result += char;
+      inDouble = !inDouble;
+      atTokenBoundary = false;
+      i++;
+      continue;
+    }
+
+    if (!inSingle && !inDouble) {
+      if (_isWhitespaceChar(char)) {
+        result += char;
+        atTokenBoundary = true;
+        i++;
+        continue;
+      }
+
+      if (atTokenBoundary && _isAsciiDigit(char)) {
+        let end = i + 1;
+        while (end < command.length) {
+          const nextChar = command[end];
+          if (!nextChar || !_isAsciiDigit(nextChar)) {
+            break;
+          }
+          end++;
+        }
+
+        const redirectOpLength = _getRawRedirectOpLength(command, end);
+        if (redirectOpLength > 0) {
+          i = end;
+          atTokenBoundary = true;
+          continue;
+        }
+      }
+    }
+
+    result += char;
+    atTokenBoundary = _isShellTokenBoundaryChar(char);
+    i++;
+  }
+
+  return result;
 }
 
 const ENV_ASSIGNMENT_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
@@ -455,6 +534,7 @@ function isOperator(token: ParseEntry): boolean {
 }
 
 const REDIRECT_OPS = new Set(['>', '>>', '<', '>&', '<&', '>|']);
+const RAW_REDIRECT_OPS = ['>>', '>&', '<&', '>|', '>', '<'];
 
 function _isRedirectOp(token: ParseEntry | undefined): boolean {
   return (
@@ -475,4 +555,26 @@ function _getRedirectAdvance(tokens: readonly ParseEntry[], index: number): numb
   }
 
   return tokens[index + 1] === undefined ? 1 : 2;
+}
+
+function _getRawRedirectOpLength(command: string, index: number): number {
+  for (const op of RAW_REDIRECT_OPS) {
+    if (command.startsWith(op, index)) {
+      return op.length;
+    }
+  }
+
+  return 0;
+}
+
+function _isWhitespaceChar(char: string): boolean {
+  return /\s/.test(char);
+}
+
+function _isAsciiDigit(char: string): boolean {
+  return char >= '0' && char <= '9';
+}
+
+function _isShellTokenBoundaryChar(char: string): boolean {
+  return _isWhitespaceChar(char) || ';|&()<>'.includes(char);
 }
