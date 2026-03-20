@@ -2,7 +2,7 @@
  * Type definitions for the doctor command.
  */
 /** Hook platform identifiers */
-export type HookPlatform = 'claude-code' | 'opencode' | 'gemini-cli';
+export type HookPlatform = 'claude-code' | 'opencode' | 'gemini-cli' | 'copilot-cli';
 /** Self-test case definition */
 export interface SelfTestCase {
     command: string;
@@ -33,6 +33,7 @@ export interface HookStatus {
     status: HookConfigStatus;
     method?: string;
     configPath?: string;
+    configPaths?: readonly string[];
     errors?: string[];
     selfTest?: SelfTestSummary;
 }
@@ -96,6 +97,8 @@ export interface SystemInfo {
     openCodeVersion: string | null;
     /** Gemini CLI version (from `gemini --version`) */
     geminiCliVersion: string | null;
+    /** Copilot CLI version (from `copilot --binary-version`, falling back to `copilot --version`) */
+    copilotCliVersion: string | null;
     /** Node.js version (from `node --version`) */
     nodeVersion: string | null;
     /** npm version (from `npm --version`) */

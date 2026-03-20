@@ -968,7 +968,8 @@ function colorizeToken(token, index, seed = 0) {
 var PLATFORM_NAMES = {
   "claude-code": "Claude Code",
   opencode: "OpenCode",
-  "gemini-cli": "Gemini CLI"
+  "gemini-cli": "Gemini CLI",
+  "copilot-cli": "Copilot CLI"
 };
 function formatHooksSection(hooks) {
   const lines = [];
@@ -1325,6 +1326,7 @@ function formatSystemInfoTable(system) {
     { label: "Claude Code", value: system.claudeCodeVersion },
     { label: "OpenCode", value: system.openCodeVersion },
     { label: "Gemini CLI", value: system.geminiCliVersion },
+    { label: "Copilot CLI", value: system.copilotCliVersion },
     { label: "Node.js", value: system.nodeVersion },
     { label: "npm", value: system.npmVersion },
     { label: "Bun", value: system.bunVersion },
@@ -1373,7 +1375,7 @@ All checks passed.`);
 }
 
 // src/bin/doctor/hooks.ts
-import { existsSync as existsSync4, readFileSync as readFileSync4 } from "node:fs";
+import { existsSync as existsSync4, readdirSync as readdirSync2, readFileSync as readFileSync4 } from "node:fs";
 import { homedir as homedir4, tmpdir as tmpdir3 } from "node:os";
 import { join as join3 } from "node:path";
 
@@ -3958,14 +3960,223 @@ function detectGeminiCLI(homeDir, cwd) {
     errors
   };
 }
+function _isSafetyNetCopilotCommand(command) {
+  if (!command?.includes("cc-safety-net"))
+    return false;
+  return /(^|\s)(--copilot-cli|-cp)(\s|$)/.test(command);
+}
+function _parseSemver(version) {
+  if (!version)
+    return null;
+  const match = version.match(/(\d+)\.(\d+)\.(\d+)/);
+  if (!match)
+    return null;
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+function _compareSemver(version, threshold) {
+  const parsed = _parseSemver(version);
+  if (!parsed)
+    return null;
+  for (let index = 0;index < threshold.length; index++) {
+    const left = parsed[index] ?? 0;
+    const right = threshold[index] ?? 0;
+    if (left > right)
+      return 1;
+    if (left < right)
+      return -1;
+  }
+  return 0;
+}
+function _supportsCopilotUserHookFiles(version) {
+  const comparison = _compareSemver(version, [0, 0, 422]);
+  if (comparison === null)
+    return null;
+  return comparison >= 0;
+}
+function _supportsCopilotInlineHooks(version) {
+  const comparison = _compareSemver(version, [1, 0, 8]);
+  if (comparison === null)
+    return null;
+  return comparison >= 0;
+}
+function _getCopilotConfigHome(homeDir) {
+  return process.env.COPILOT_HOME || join3(homeDir, ".copilot");
+}
+function _hasSafetyNetCopilotHook(config) {
+  const preToolUseHooks = config.hooks?.preToolUse ?? [];
+  return preToolUseHooks.some((hook) => {
+    if (hook.type !== "command")
+      return false;
+    return _isSafetyNetCopilotCommand(hook.command) || _isSafetyNetCopilotCommand(hook.bash) || _isSafetyNetCopilotCommand(hook.powershell);
+  });
+}
+function _readCopilotConfigFile(configPath, errors) {
+  try {
+    return JSON.parse(readFileSync4(configPath, "utf-8"));
+  } catch (e) {
+    errors?.push(`Failed to parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`);
+    return;
+  }
+}
+function _listJsonFiles(dirPath, errors) {
+  try {
+    return readdirSync2(dirPath).filter((name) => name.endsWith(".json")).sort((a, b) => a.localeCompare(b));
+  } catch (e) {
+    errors?.push(`Failed to read ${dirPath}: ${e instanceof Error ? e.message : String(e)}`);
+    return [];
+  }
+}
+function _collectSafetyNetCopilotHookFiles(dirPath, errors) {
+  if (!existsSync4(dirPath))
+    return [];
+  const matches = [];
+  for (const filename of _listJsonFiles(dirPath, errors)) {
+    const configPath = join3(dirPath, filename);
+    const config = _readCopilotConfigFile(configPath, errors);
+    if (config && _hasSafetyNetCopilotHook(config)) {
+      matches.push(configPath);
+    }
+  }
+  return matches;
+}
+function _collectCopilotInlineConfig(configPath, errors) {
+  if (!existsSync4(configPath))
+    return;
+  const config = _readCopilotConfigFile(configPath, errors);
+  if (!config)
+    return;
+  return { path: configPath, config };
+}
+function _warnOnUnsupportedCopilotSource(errors, version, sourceDescription, requiredVersion) {
+  if (version) {
+    errors.push(`Copilot CLI ${version} does not support ${sourceDescription}; requires ${requiredVersion}+`);
+    return;
+  }
+  errors.push(`Copilot CLI version unavailable; skipping ${sourceDescription} because it requires ${requiredVersion}+`);
+}
+function _resolveCopilotInlineDisableSource(inlineSources) {
+  const precedence = [
+    inlineSources.localSettings,
+    inlineSources.repoSettings,
+    inlineSources.userConfig
+  ];
+  for (const source of precedence) {
+    if (source?.config.disableAllHooks === true)
+      return source.path;
+    if (source?.config.disableAllHooks === false)
+      return;
+  }
+  return;
+}
+function _checkCopilotEnabled(homeDir, cwd, copilotCliVersion, errors) {
+  const configHome = _getCopilotConfigHome(homeDir);
+  const repoHookDir = join3(cwd, ".github", "hooks");
+  const userHookDir = join3(configHome, "hooks");
+  const repoConfigDir = join3(cwd, ".github", "copilot");
+  const inlineSupport = _supportsCopilotInlineHooks(copilotCliVersion);
+  const inlineErrors = inlineSupport === true ? errors : undefined;
+  const inlineSources = {
+    userConfig: _collectCopilotInlineConfig(join3(configHome, "config.json"), inlineErrors),
+    repoSettings: _collectCopilotInlineConfig(join3(repoConfigDir, "settings.json"), inlineErrors),
+    localSettings: _collectCopilotInlineConfig(join3(repoConfigDir, "settings.local.json"), inlineErrors)
+  };
+  if (inlineSupport !== false) {
+    const disableSource = _resolveCopilotInlineDisableSource(inlineSources);
+    if (disableSource) {
+      if (inlineSupport === null) {
+        errors.push(`Copilot CLI version unavailable; treating disableAllHooks in ${disableSource} as active`);
+      }
+      return { activeConfigPaths: [], disabledBy: disableSource };
+    }
+  }
+  const repoHookPaths = _collectSafetyNetCopilotHookFiles(repoHookDir, errors);
+  const userHookSupport = _supportsCopilotUserHookFiles(copilotCliVersion);
+  const userHookErrors = userHookSupport === true ? errors : undefined;
+  const userHookFiles = existsSync4(userHookDir) ? _listJsonFiles(userHookDir, userHookErrors) : [];
+  const userHookPaths = [];
+  for (const filename of userHookFiles) {
+    const configPath = join3(userHookDir, filename);
+    const config = _readCopilotConfigFile(configPath, userHookErrors);
+    if (config && _hasSafetyNetCopilotHook(config)) {
+      userHookPaths.push(configPath);
+    }
+  }
+  if (userHookSupport !== true && userHookPaths.length > 0) {
+    _warnOnUnsupportedCopilotSource(errors, copilotCliVersion, `user hook files in ${userHookDir}`, "0.0.422");
+    userHookPaths.length = 0;
+  }
+  const inlinePaths = [];
+  const inlineSourcesByPrecedence = [
+    inlineSources.localSettings,
+    inlineSources.repoSettings,
+    inlineSources.userConfig
+  ];
+  for (const source of inlineSourcesByPrecedence) {
+    if (!source)
+      continue;
+    if (!_hasSafetyNetCopilotHook(source.config))
+      continue;
+    if (inlineSupport === true) {
+      inlinePaths.push(source.path);
+      continue;
+    }
+    _warnOnUnsupportedCopilotSource(errors, copilotCliVersion, "inline hook definitions in Copilot config files", "1.0.8");
+    break;
+  }
+  return {
+    activeConfigPaths: [
+      ...inlinePaths.filter((path) => path.endsWith("settings.local.json")),
+      ...inlinePaths.filter((path) => path.endsWith("settings.json")),
+      ...repoHookPaths,
+      ...inlinePaths.filter((path) => path.endsWith("config.json")),
+      ...userHookPaths
+    ]
+  };
+}
 function detectAllHooks(cwd, options) {
   const homeDir = options?.homeDir ?? homedir4();
-  return [detectClaudeCode(homeDir), detectOpenCode(homeDir), detectGeminiCLI(homeDir, cwd)];
+  const detectCopilot = () => {
+    const errors = [];
+    const hooksCheck = _checkCopilotEnabled(homeDir, cwd, options?.copilotCliVersion, errors);
+    if (hooksCheck.disabledBy) {
+      return {
+        platform: "copilot-cli",
+        status: "disabled",
+        method: "hook config",
+        configPath: hooksCheck.disabledBy,
+        configPaths: [hooksCheck.disabledBy],
+        errors: errors.length > 0 ? errors : undefined
+      };
+    }
+    if (hooksCheck.activeConfigPaths.length > 0) {
+      return {
+        platform: "copilot-cli",
+        status: "configured",
+        method: "hook config",
+        configPath: hooksCheck.activeConfigPaths[0],
+        configPaths: hooksCheck.activeConfigPaths,
+        selfTest: runSelfTest(),
+        errors: errors.length > 0 ? errors : undefined
+      };
+    }
+    return {
+      platform: "copilot-cli",
+      status: "n/a",
+      errors: errors.length > 0 ? errors : undefined
+    };
+  };
+  return [
+    detectClaudeCode(homeDir),
+    detectOpenCode(homeDir),
+    detectGeminiCLI(homeDir, cwd),
+    detectCopilot()
+  ];
 }
 
 // src/bin/doctor/system-info.ts
 import { spawn } from "node:child_process";
 var CURRENT_VERSION = "0.7.1";
+var VERSION_FETCH_TIMEOUT_MS = 2000;
 function getPackageVersion() {
   return CURRENT_VERSION;
 }
@@ -3978,15 +4189,28 @@ var defaultVersionFetcher = async (args) => {
       const proc = spawn(cmd, rest, {
         stdio: ["ignore", "pipe", "pipe"]
       });
+      let isSettled = false;
       let output = "";
       proc.stdout.on("data", (data) => {
         output += data.toString();
       });
+      proc.stderr.on("data", () => {});
+      const finish = (value) => {
+        if (isSettled)
+          return;
+        isSettled = true;
+        clearTimeout(timeoutId);
+        resolve3(value);
+      };
+      const timeoutId = setTimeout(() => {
+        proc.kill();
+        finish(null);
+      }, VERSION_FETCH_TIMEOUT_MS);
       proc.on("close", (code) => {
-        resolve3(code === 0 ? output.trim() || null : null);
+        finish(code === 0 ? output.trim() || null : null);
       });
       proc.on("error", () => {
-        resolve3(null);
+        finish(null);
       });
     } catch {
       resolve3(null);
@@ -4007,10 +4231,20 @@ function parseVersion(output) {
   return firstLine || null;
 }
 async function getSystemInfo(fetcher = defaultVersionFetcher) {
-  const [claudeRaw, openCodeRaw, geminiRaw, nodeRaw, npmRaw, bunRaw] = await Promise.all([
+  const fetchCopilotVersion = async () => {
+    const binaryVersionPromise = fetcher(["copilot", "--binary-version"]);
+    const fallbackVersionPromise = fetcher(["copilot", "--version"]);
+    const binaryVersion = await binaryVersionPromise;
+    if (binaryVersion) {
+      return binaryVersion;
+    }
+    return fallbackVersionPromise;
+  };
+  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw] = await Promise.all([
     fetcher(["claude", "--version"]),
     fetcher(["opencode", "--version"]),
     fetcher(["gemini", "--version"]),
+    fetchCopilotVersion(),
     fetcher(["node", "--version"]),
     fetcher(["npm", "--version"]),
     fetcher(["bun", "--version"])
@@ -4020,6 +4254,7 @@ async function getSystemInfo(fetcher = defaultVersionFetcher) {
     claudeCodeVersion: parseVersion(claudeRaw),
     openCodeVersion: parseVersion(openCodeRaw),
     geminiCliVersion: parseVersion(geminiRaw),
+    copilotCliVersion: parseVersion(copilotRaw),
     nodeVersion: parseVersion(nodeRaw),
     npmVersion: parseVersion(npmRaw),
     bunVersion: parseVersion(bunRaw),
@@ -4087,7 +4322,8 @@ function parseDoctorFlags(args) {
 // src/bin/doctor/index.ts
 async function runDoctor(options = {}) {
   const cwd = options.cwd ?? process.cwd();
-  const hooks = detectAllHooks(cwd);
+  const system = await getSystemInfo();
+  const hooks = detectAllHooks(cwd, { copilotCliVersion: system.copilotCliVersion });
   const configInfo = getConfigInfo(cwd);
   const environment = getEnvironmentInfo();
   const activity = getActivitySummary(7);
@@ -4096,7 +4332,6 @@ async function runDoctor(options = {}) {
     latestVersion: null,
     updateAvailable: false
   } : await checkForUpdates();
-  const system = await getSystemInfo();
   const report = {
     hooks,
     userConfig: configInfo.userConfig,

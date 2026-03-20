@@ -210,7 +210,21 @@ gemini extensions install https://github.com/kenryu42/gemini-safety-net
 Safety Net supports GitHub Copilot CLI via its [hooks system](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-hooks).
 
 > [!NOTE]
-> Copilot CLI hooks must be installed at the **project level** (in each repository). User-level hooks (`~/.github/hooks/` or `~/.copilot/hooks/`) are not currently supported by Copilot CLI. See [copilot-cli#1067](https://github.com/github/copilot-cli/issues/1067) to track progress on user-level hook support.
+> Copilot CLI currently supports two hook configuration styles:
+>
+> - Hook files:
+>   - repository: `.github/hooks/*.json`
+>   - user: `~/.copilot/hooks/*.json` on Copilot CLI `0.0.422+`
+> - Inline `hooks` inside Copilot config files on Copilot CLI `1.0.8+`:
+>   - user: `~/.copilot/config.json`
+>   - repository: `.github/copilot/settings.json`
+>   - local override: `.github/copilot/settings.local.json`
+>
+> Copilot settings cascade from user -> repository -> local (later files override earlier ones, so local overrides repository overrides user). `disableAllHooks: true` disables both repo-level and user-level hooks. If you use `COPILOT_HOME`, replace `~/.copilot` with that directory.
+
+#### Option A: Hook Files
+
+This is the classic hook-file format. It still works, and it is the easiest shared setup for a repository.
 
 1. **Create the hooks directory** in your repository:
 
@@ -238,7 +252,50 @@ Safety Net supports GitHub Copilot CLI via its [hooks system](https://docs.githu
 
 3. **Restart Copilot CLI** — hooks are loaded at session start.
 
-The hook will intercept bash commands and block destructive operations before they execute.
+The hook will intercept shell commands and block destructive operations before they execute.
+
+To install the same hook globally for your user account on Copilot CLI `0.0.422+`, place the same JSON file in:
+
+- `~/.copilot/hooks/safety-net.json`
+
+#### Option B: Inline Hooks In Copilot Settings
+
+On Copilot CLI `1.0.8+`, you can define the same hook inline in Copilot settings files instead of a separate `.json` file under `.github/hooks` or `~/.copilot/hooks`.
+
+```json
+{
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "npx -y cc-safety-net --copilot-cli",
+        "cwd": ".",
+        "timeoutSec": 15
+      }
+    ]
+  }
+}
+```
+
+Use that schema in one of these files:
+
+- `~/.copilot/config.json`
+- `.github/copilot/settings.json`
+- `.github/copilot/settings.local.json`
+
+Recommended usage:
+
+- Use `~/.copilot/config.json` for your personal default across repositories.
+- Use `.github/copilot/settings.json` for a committed repository-wide setup.
+- Use `.github/copilot/settings.local.json` for personal repo-specific overrides, and add it to `.gitignore`.
+
+If you need to turn hooks off explicitly, set:
+
+```json
+{
+  "disableAllHooks": true
+}
+```
 
 ## Status Line Integration
 

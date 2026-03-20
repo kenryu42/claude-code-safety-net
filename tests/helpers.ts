@@ -66,6 +66,7 @@ export function withEnv<T>(env: Record<string, string>, fn: () => T): T {
 /**
  * Mock version fetcher for testing.
  * Returns predefined versions instantly without spawning processes.
+ * @internal Exported for testing
  */
 export const mockVersionFetcher: VersionFetcher = async (args: string[]) => {
   const cmd = args[0];
@@ -73,6 +74,7 @@ export const mockVersionFetcher: VersionFetcher = async (args: string[]) => {
     claude: '1.0.0',
     opencode: '0.1.0',
     gemini: '0.20.0',
+    copilot: 'Copilot binary version: 1.0.9',
     node: 'v22.0.0',
     npm: '10.0.0',
     bun: '1.0.0',

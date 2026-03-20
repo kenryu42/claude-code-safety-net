@@ -9,6 +9,7 @@ import type { SystemInfo } from '@/bin/doctor/types';
 declare const __PKG_VERSION__: string | undefined;
 
 const CURRENT_VERSION = typeof __PKG_VERSION__ !== 'undefined' ? __PKG_VERSION__ : 'dev';
+const VERSION_FETCH_TIMEOUT_MS = 2000;
 
 /**
  * Get the package version synchronously.
@@ -38,18 +39,32 @@ export const defaultVersionFetcher: VersionFetcher = async (args: string[]) => {
       const proc = spawn(cmd, rest, {
         stdio: ['ignore', 'pipe', 'pipe'],
       });
+      let isSettled = false;
 
       let output = '';
       proc.stdout.on('data', (data: Buffer) => {
         output += data.toString();
       });
+      proc.stderr.on('data', () => {});
+
+      const finish = (value: string | null): void => {
+        if (isSettled) return;
+        isSettled = true;
+        clearTimeout(timeoutId);
+        resolve(value);
+      };
+
+      const timeoutId = setTimeout(() => {
+        proc.kill();
+        finish(null);
+      }, VERSION_FETCH_TIMEOUT_MS);
 
       proc.on('close', (code) => {
-        resolve(code === 0 ? output.trim() || null : null);
+        finish(code === 0 ? output.trim() || null : null);
       });
 
       proc.on('error', () => {
-        resolve(null);
+        finish(null);
       });
     } catch {
       resolve(null);
@@ -84,21 +99,34 @@ function parseVersion(output: string | null): string | null {
 export async function getSystemInfo(
   fetcher: VersionFetcher = defaultVersionFetcher,
 ): Promise<SystemInfo> {
+  const fetchCopilotVersion = async (): Promise<string | null> => {
+    const binaryVersionPromise = fetcher(['copilot', '--binary-version']);
+    const fallbackVersionPromise = fetcher(['copilot', '--version']);
+    const binaryVersion = await binaryVersionPromise;
+    if (binaryVersion) {
+      return binaryVersion;
+    }
+    return fallbackVersionPromise;
+  };
+
   // Run all version fetches in parallel
-  const [claudeRaw, openCodeRaw, geminiRaw, nodeRaw, npmRaw, bunRaw] = await Promise.all([
-    fetcher(['claude', '--version']),
-    fetcher(['opencode', '--version']),
-    fetcher(['gemini', '--version']),
-    fetcher(['node', '--version']),
-    fetcher(['npm', '--version']),
-    fetcher(['bun', '--version']),
-  ]);
+  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw] =
+    await Promise.all([
+      fetcher(['claude', '--version']),
+      fetcher(['opencode', '--version']),
+      fetcher(['gemini', '--version']),
+      fetchCopilotVersion(),
+      fetcher(['node', '--version']),
+      fetcher(['npm', '--version']),
+      fetcher(['bun', '--version']),
+    ]);
 
   return {
     version: CURRENT_VERSION,
     claudeCodeVersion: parseVersion(claudeRaw),
     openCodeVersion: parseVersion(openCodeRaw),
     geminiCliVersion: parseVersion(geminiRaw),
+    copilotCliVersion: parseVersion(copilotRaw),
     nodeVersion: parseVersion(nodeRaw),
     npmVersion: parseVersion(npmRaw),
     bunVersion: parseVersion(bunRaw),

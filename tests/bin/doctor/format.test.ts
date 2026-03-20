@@ -109,6 +109,29 @@ describe('formatHooksSection', () => {
     expect(output).toContain('N/A');
   });
 
+  test('formats Copilot CLI hooks', () => {
+    const hooks: HookStatus[] = [{ platform: 'copilot-cli', status: 'configured' }];
+
+    const output = formatHooksSection(hooks);
+    expect(output).toContain('Copilot CLI');
+    expect(output).toContain('Configured');
+  });
+
+  test('does not show config source paths in text output', () => {
+    const hooks: HookStatus[] = [
+      {
+        platform: 'copilot-cli',
+        status: 'configured',
+        configPaths: ['/repo/.github/copilot/settings.json', '/repo/.github/hooks/safety-net.json'],
+      },
+    ];
+
+    const output = formatHooksSection(hooks);
+    expect(output).not.toContain('Sources (Copilot CLI):');
+    expect(output).not.toContain('/repo/.github/copilot/settings.json');
+    expect(output).not.toContain('/repo/.github/hooks/safety-net.json');
+  });
+
   test('shows error for failed detection', () => {
     const hooks: HookStatus[] = [{ platform: 'opencode', status: 'n/a', errors: ['Parse error'] }];
 
@@ -332,6 +355,7 @@ describe('formatSystemInfoSection', () => {
     expect(output).toContain('cc-safety-net');
     expect(output).toContain('Platform');
     expect(output).toContain('Bun');
+    expect(output).toContain('Copilot CLI');
     // Should have table borders
     expect(output).toContain('┌');
     expect(output).toContain('┘');
@@ -343,6 +367,7 @@ describe('formatSystemInfoSection', () => {
       claudeCodeVersion: null,
       openCodeVersion: null,
       geminiCliVersion: null,
+      copilotCliVersion: null,
       nodeVersion: '22.0.0',
       npmVersion: null,
       bunVersion: '1.0.0',
@@ -383,6 +408,7 @@ describe('formatConfigSection', () => {
         claudeCodeVersion: '1.0.0',
         openCodeVersion: '0.1.0',
         geminiCliVersion: null,
+        copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
@@ -433,6 +459,7 @@ describe('formatConfigSection', () => {
         claudeCodeVersion: '1.0.0',
         openCodeVersion: '0.1.0',
         geminiCliVersion: null,
+        copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
@@ -474,6 +501,7 @@ describe('formatConfigSection', () => {
         claudeCodeVersion: '1.0.0',
         openCodeVersion: '0.1.0',
         geminiCliVersion: null,
+        copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
@@ -503,6 +531,7 @@ describe('formatSummary', () => {
         claudeCodeVersion: null,
         openCodeVersion: null,
         geminiCliVersion: null,
+        copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
@@ -528,6 +557,7 @@ describe('formatSummary', () => {
         claudeCodeVersion: null,
         openCodeVersion: null,
         geminiCliVersion: null,
+        copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
@@ -553,6 +583,7 @@ describe('formatSummary', () => {
         claudeCodeVersion: null,
         openCodeVersion: null,
         geminiCliVersion: null,
+        copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',

@@ -5,6 +5,7 @@ import type { HookStatus } from '@/bin/doctor/types';
 import type { LoadConfigOptions } from '@/core/config';
 interface HookDetectOptions extends LoadConfigOptions {
     homeDir?: string;
+    copilotCliVersion?: string | null;
 }
 /**
  * Strip JSONC-style comments and trailing commas from a string.

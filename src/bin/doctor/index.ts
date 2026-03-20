@@ -26,7 +26,8 @@ export async function runDoctor(options: DoctorOptions = {}): Promise<number> {
   const cwd = options.cwd ?? process.cwd();
 
   // Collect all data
-  const hooks = detectAllHooks(cwd);
+  const system = await getSystemInfo();
+  const hooks = detectAllHooks(cwd, { copilotCliVersion: system.copilotCliVersion });
   const configInfo = getConfigInfo(cwd);
   const environment = getEnvironmentInfo();
   const activity = getActivitySummary(7);
@@ -37,7 +38,6 @@ export async function runDoctor(options: DoctorOptions = {}): Promise<number> {
         updateAvailable: false,
       }
     : await checkForUpdates();
-  const system = await getSystemInfo();
 
   const report: DoctorReport = {
     hooks,

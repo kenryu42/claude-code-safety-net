@@ -18,6 +18,7 @@ const PLATFORM_NAMES: Record<string, string> = {
   'claude-code': 'Claude Code',
   opencode: 'OpenCode',
   'gemini-cli': 'Gemini CLI',
+  'copilot-cli': 'Copilot CLI',
 };
 
 /**
@@ -521,6 +522,7 @@ function formatSystemInfoTable(system: SystemInfo): string {
     { label: 'Claude Code', value: system.claudeCodeVersion },
     { label: 'OpenCode', value: system.openCodeVersion },
     { label: 'Gemini CLI', value: system.geminiCliVersion },
+    { label: 'Copilot CLI', value: system.copilotCliVersion },
     { label: 'Node.js', value: system.nodeVersion },
     { label: 'npm', value: system.npmVersion },
     { label: 'Bun', value: system.bunVersion },
