@@ -100,6 +100,12 @@ describe('shell parsing helpers', () => {
         }),
       ).toEqual(new Set(['-C']));
     });
+
+    test('accepts readonly token arrays', () => {
+      const tokens: readonly string[] = ['git', '-v', 'switch', '-f'];
+
+      expect(extractShortOpts(tokens)).toEqual(new Set(['-v', '-f']));
+    });
   });
 
   describe('splitShellCommands', () => {

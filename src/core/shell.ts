@@ -791,7 +791,7 @@ function stripCommand(tokens: string[]): string[] {
 }
 
 export function extractShortOpts(
-  tokens: string[],
+  tokens: readonly string[],
   options?: { readonly shortOptsWithValue?: ReadonlySet<string> },
 ): Set<string> {
   const opts = new Set<string>();

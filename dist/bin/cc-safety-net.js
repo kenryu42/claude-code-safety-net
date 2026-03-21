@@ -2564,7 +2564,6 @@ var CHECKOUT_OPTS_WITH_VALUE = new Set([
 ]);
 var CHECKOUT_OPTS_WITH_OPTIONAL_VALUE = new Set(["--recurse-submodules", "--track", "-t"]);
 var CHECKOUT_SHORT_OPTS_WITH_VALUE = new Set(["b", "B", "U"]);
-var CHECKOUT_SHORT_OPTS_WITH_OPTIONAL_VALUE = new Set(["t"]);
 var SWITCH_SHORT_OPTS_WITH_VALUE = new Set(["-c", "-C"]);
 var CHECKOUT_KNOWN_OPTS_NO_VALUE = new Set([
   "-q",
@@ -2723,9 +2722,6 @@ function hasCheckoutForceFlag(tokens) {
       if (CHECKOUT_SHORT_OPTS_WITH_VALUE.has(char)) {
         break;
       }
-      if (CHECKOUT_SHORT_OPTS_WITH_OPTIONAL_VALUE.has(char) && i < chars.length - 1) {
-        break;
-      }
       if (char === "f") {
         return true;
       }
@@ -2738,7 +2734,7 @@ function analyzeGitSwitch(tokens) {
   if (before.includes("--discard-changes")) {
     return REASON_SWITCH_DISCARD_CHANGES;
   }
-  const shortOpts = extractShortOpts([...before], {
+  const shortOpts = extractShortOpts(before, {
     shortOptsWithValue: SWITCH_SHORT_OPTS_WITH_VALUE
   });
   if (before.includes("--force") || shortOpts.has("-f")) {

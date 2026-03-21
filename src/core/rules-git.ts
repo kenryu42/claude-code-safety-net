@@ -55,7 +55,6 @@ const CHECKOUT_OPTS_WITH_VALUE = new Set([
 
 const CHECKOUT_OPTS_WITH_OPTIONAL_VALUE = new Set(['--recurse-submodules', '--track', '-t']);
 const CHECKOUT_SHORT_OPTS_WITH_VALUE = new Set(['b', 'B', 'U']);
-const CHECKOUT_SHORT_OPTS_WITH_OPTIONAL_VALUE = new Set(['t']);
 const SWITCH_SHORT_OPTS_WITH_VALUE = new Set(['-c', '-C']);
 
 const CHECKOUT_KNOWN_OPTS_NO_VALUE = new Set([
@@ -242,9 +241,6 @@ function hasCheckoutForceFlag(tokens: readonly string[]): boolean {
       if (CHECKOUT_SHORT_OPTS_WITH_VALUE.has(char)) {
         break;
       }
-      if (CHECKOUT_SHORT_OPTS_WITH_OPTIONAL_VALUE.has(char) && i < chars.length - 1) {
-        break;
-      }
       if (char === 'f') {
         return true;
       }
@@ -261,7 +257,7 @@ function analyzeGitSwitch(tokens: readonly string[]): string | null {
     return REASON_SWITCH_DISCARD_CHANGES;
   }
 
-  const shortOpts = extractShortOpts([...before], {
+  const shortOpts = extractShortOpts(before, {
     shortOptsWithValue: SWITCH_SHORT_OPTS_WITH_VALUE,
   });
   if (before.includes('--force') || shortOpts.has('-f')) {

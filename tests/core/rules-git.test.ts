@@ -21,6 +21,10 @@ describe('git checkout', () => {
     assertBlocked('git checkout -qf main', 'git checkout --force');
   });
 
+  test('git checkout -tf blocked', () => {
+    assertBlocked('git checkout -tf main', 'git checkout --force');
+  });
+
   test('git checkout force wins over branch creation', () => {
     assertBlocked('git checkout -f -b new-branch', 'git checkout --force');
   });
