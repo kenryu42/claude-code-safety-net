@@ -1,19 +1,17 @@
 import { analyzeFind } from '@/core/analyze/find';
 import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { getReason } from '@/core/reasons';
 import { analyzeGit } from '@/core/rules-git';
 import { analyzeRm } from '@/core/rules-rm';
 import { getBasename, stripWrappers } from '@/core/shell';
 import { SHELL_WRAPPERS } from '@/types';
-
-const REASON_XARGS_RM =
-  'xargs rm -rf with dynamic input is dangerous. Use explicit file list instead.';
-const REASON_XARGS_SHELL = 'xargs with shell -c can execute arbitrary commands from dynamic input.';
 
 export interface XargsAnalyzeContext {
   cwd: string | undefined;
   originalCwd: string | undefined;
   paranoidRm: boolean | undefined;
   allowTmpdirVar: boolean;
+  reasons?: Record<string, string>;
 }
 
 export function analyzeXargs(
@@ -39,7 +37,7 @@ export function analyzeXargs(
   if (SHELL_WRAPPERS.has(head)) {
     // xargs bash -c is always dangerous - stdin feeds into the shell execution
     // Either no script arg (stdin IS the script) or script with dynamic input
-    return REASON_XARGS_SHELL;
+    return getReason('xargs_shell', context.reasons);
   }
 
   if (head === 'rm' && hasRecursiveForceFlags(childTokens)) {
@@ -48,24 +46,25 @@ export function analyzeXargs(
       originalCwd: context.originalCwd,
       paranoid: context.paranoidRm,
       allowTmpdirVar: context.allowTmpdirVar,
+      reasons: context.reasons,
     });
     if (rmResult) {
       return rmResult;
     }
     // Even if analyzeRm passes (e.g., temp paths), xargs rm -rf is still dangerous
     // because stdin provides dynamic input
-    return REASON_XARGS_RM;
+    return getReason('xargs_rm', context.reasons);
   }
 
   if (head === 'find') {
-    const findResult = analyzeFind(childTokens);
+    const findResult = analyzeFind(childTokens, context.reasons);
     if (findResult) {
       return findResult;
     }
   }
 
   if (head === 'git') {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, context.reasons);
     if (gitResult) {
       return gitResult;
     }

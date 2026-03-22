@@ -51,9 +51,11 @@ function loadSingleConfig(path: string): Config | null {
 
     // Ensure rules array exists (may be undefined if not in input)
     const cfg = parsed as Record<string, unknown>;
+    const reasons = cleanReasons(parsed);
     return {
       version: cfg.version as number,
       rules: (cfg.rules as Config['rules']) ?? [],
+      ...(reasons ? { reasons } : {}),
     };
   } catch {
     return null;
@@ -80,9 +82,14 @@ function mergeConfigs(userConfig: Config | null, projectConfig: Config | null): 
     ...projectConfig.rules,
   ];
 
+  const mergedReasons = {
+    ...(userConfig.reasons ?? {}),
+    ...(projectConfig.reasons ?? {}),
+  };
   return {
     version: 1,
     rules: mergedRules,
+    ...(Object.keys(mergedReasons).length > 0 ? { reasons: mergedReasons } : {}),
   };
 }
 
@@ -110,6 +117,23 @@ export function validateConfig(config: unknown): ValidationResult {
         const rule = cfg.rules[i] as unknown;
         const ruleErrors = validateRule(rule, i, ruleNames);
         errors.push(...ruleErrors);
+      }
+    }
+  }
+
+  if (cfg.reasons !== undefined) {
+    if (typeof cfg.reasons !== 'object' || cfg.reasons === null) {
+      errors.push('reasons must be an object');
+    } else {
+      const reasons = cfg.reasons as Record<string, unknown>;
+      for (const [key, value] of Object.entries(reasons)) {
+        if (typeof value !== 'string') {
+          errors.push(`reasons.${key}: must be a string`);
+        } else if (value === '') {
+          errors.push(`reasons.${key}: must not be empty`);
+        } else if (value.length > MAX_REASON_LENGTH) {
+          errors.push(`reasons.${key}: must be at most ${MAX_REASON_LENGTH} characters`);
+        }
       }
     }
   }
@@ -185,6 +209,21 @@ function validateRule(rule: unknown, index: number, ruleNames: Set<string>): str
   }
 
   return errors;
+}
+
+function cleanReasons(config: unknown): Record<string, string> | undefined {
+  if (!config || typeof config !== 'object') return undefined;
+  const cfg = config as Record<string, unknown>;
+  if (cfg.reasons === undefined) return undefined;
+  if (typeof cfg.reasons !== 'object' || cfg.reasons === null) return undefined;
+  const reasons = cfg.reasons as Record<string, unknown>;
+  const cleaned: Record<string, string> = {};
+  for (const [key, value] of Object.entries(reasons)) {
+    if (typeof value === 'string') {
+      cleaned[key] = value;
+    }
+  }
+  return Object.keys(cleaned).length > 0 ? cleaned : undefined;
 }
 
 export function validateConfigFile(path: string): ValidationResult {

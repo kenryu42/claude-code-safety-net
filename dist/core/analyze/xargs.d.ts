@@ -3,6 +3,7 @@ export interface XargsAnalyzeContext {
     originalCwd: string | undefined;
     paranoidRm: boolean | undefined;
     allowTmpdirVar: boolean;
+    reasons?: Record<string, string>;
 }
 export declare function analyzeXargs(tokens: readonly string[], context: XargsAnalyzeContext): string | null;
 interface XargsParseResult {

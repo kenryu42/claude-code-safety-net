@@ -3,6 +3,7 @@ import { homedir, tmpdir } from 'node:os';
 import { normalize, resolve, sep } from 'node:path';
 
 import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { getReason } from './reasons';
 
 const IS_WINDOWS = process.platform === 'win32';
 
@@ -32,17 +33,13 @@ function normalizePathForComparison(p: string): string {
   return normalized;
 }
 
-const REASON_RM_RF =
-  'rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.';
-const REASON_RM_RF_ROOT_HOME =
-  'rm -rf targeting root or home directory is extremely dangerous and always blocked.';
-
 export interface AnalyzeRmOptions {
   cwd?: string;
   originalCwd?: string;
   paranoid?: boolean;
   allowTmpdirVar?: boolean;
   tmpdirOverridden?: boolean;
+  reasons?: Record<string, string>;
 }
 
 interface RmContext {
@@ -67,6 +64,7 @@ export function analyzeRm(tokens: string[], options: AnalyzeRmOptions = {}): str
     paranoid = false,
     allowTmpdirVar = true,
     tmpdirOverridden = false,
+    reasons,
   } = options;
   const anchoredCwd = originalCwd ?? cwd ?? null;
   const resolvedCwd = cwd ?? null;
@@ -87,7 +85,7 @@ export function analyzeRm(tokens: string[], options: AnalyzeRmOptions = {}): str
 
   for (const target of targets) {
     const classification = classifyTarget(target, ctx);
-    const reason = reasonForClassification(classification, ctx);
+    const reason = reasonForClassification(classification, ctx, reasons);
     if (reason) {
       return reason;
     }
@@ -154,21 +152,22 @@ function classifyTarget(target: string, ctx: RmContext): TargetClassification {
 function reasonForClassification(
   classification: TargetClassification,
   ctx: RmContext,
+  reasons?: Record<string, string>,
 ): string | null {
   switch (classification.kind) {
     case 'root_or_home_target':
-      return REASON_RM_RF_ROOT_HOME;
+      return getReason('rm_rf_root_home', reasons);
     case 'cwd_self_target':
-      return REASON_RM_RF;
+      return getReason('rm_rf_blocked', reasons);
     case 'temp_target':
       return null;
     case 'within_anchored_cwd':
       if (ctx.paranoid) {
-        return `${REASON_RM_RF} (SAFETY_NET_PARANOID_RM enabled)`;
+        return `${getReason('rm_rf_blocked', reasons)} (SAFETY_NET_PARANOID_RM enabled)`;
       }
       return null;
     case 'outside_anchored_cwd':
-      return REASON_RM_RF;
+      return getReason('rm_rf_blocked', reasons);
   }
 }
 

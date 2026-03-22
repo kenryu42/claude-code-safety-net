@@ -1,13 +1,8 @@
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { analyzeSegment, segmentChangesCwd } from '@/core/analyze/segment';
+import { getReason } from '@/core/reasons';
 import { splitShellCommands } from '@/core/shell';
 import { type AnalyzeOptions, type AnalyzeResult, type Config, MAX_RECURSION_DEPTH } from '@/types';
-
-const REASON_STRICT_UNPARSEABLE =
-  'Command could not be safely analyzed (strict mode). Verify manually.';
-
-export const REASON_RECURSION_LIMIT =
-  'Command exceeds maximum recursion depth and cannot be safely analyzed.';
 
 export type InternalOptions = AnalyzeOptions & { config: Config };
 
@@ -17,7 +12,10 @@ export function analyzeCommandInternal(
   options: InternalOptions,
 ): AnalyzeResult | null {
   if (depth >= MAX_RECURSION_DEPTH) {
-    return { reason: REASON_RECURSION_LIMIT, segment: command };
+    return {
+      reason: getReason('recursion_limit', options.config.reasons),
+      segment: command,
+    };
   }
 
   const segments = splitShellCommands(command);
@@ -31,7 +29,10 @@ export function analyzeCommandInternal(
     segments[0][0] === command &&
     command.includes(' ')
   ) {
-    return { reason: REASON_STRICT_UNPARSEABLE, segment: command };
+    return {
+      reason: getReason('strict_unparseable', options.config.reasons),
+      segment: command,
+    };
   }
 
   const originalCwd = options.cwd;

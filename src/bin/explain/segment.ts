@@ -8,21 +8,18 @@ import {
   redactEnvAssignmentTokens,
   redactEnvVars,
 } from '@/bin/explain/redact';
-import { REASON_RECURSION_LIMIT } from '@/core/analyze/analyze-command';
+
 import { DISPLAY_COMMANDS } from '@/core/analyze/constants';
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { analyzeFind } from '@/core/analyze/find';
 import { containsDangerousCode, extractInterpreterCodeArg } from '@/core/analyze/interpreters';
 import { analyzeParallel } from '@/core/analyze/parallel';
 import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
-import {
-  REASON_INTERPRETER_BLOCKED,
-  REASON_INTERPRETER_DANGEROUS,
-  segmentChangesCwd,
-} from '@/core/analyze/segment';
+import { segmentChangesCwd } from '@/core/analyze/segment';
 import { extractDashCArg } from '@/core/analyze/shell-wrappers';
 import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
 import { analyzeXargs } from '@/core/analyze/xargs';
+import { getReason } from '@/core/reasons';
 import { checkCustomRules } from '@/core/rules-custom';
 import { analyzeGit } from '@/core/rules-git';
 import { analyzeRm, isHomeDirectory } from '@/core/rules-rm';
@@ -39,9 +36,6 @@ import {
   PARANOID_INTERPRETERS_SUFFIX,
   SHELL_WRAPPERS,
 } from '@/types';
-
-export const REASON_STRICT_UNPARSEABLE =
-  'Command could not be safely analyzed (strict mode). Verify manually.';
 
 export interface SegmentResult {
   reason: string;
@@ -67,9 +61,9 @@ function explainInnerSegments(
   if (depth + 1 >= MAX_RECURSION_DEPTH) {
     steps.push({
       type: 'error',
-      message: REASON_RECURSION_LIMIT,
+      message: getReason('recursion_limit', options.config?.reasons),
     });
-    return { reason: REASON_RECURSION_LIMIT };
+    return { reason: getReason('recursion_limit', options.config?.reasons) };
   }
 
   const innerSegments = splitShellCommands(innerCmd);
@@ -78,9 +72,9 @@ function explainInnerSegments(
     steps.push({
       type: 'strict-unparseable',
       rawCommand: redactEnvAssignmentsInString(innerCmd),
-      reason: REASON_STRICT_UNPARSEABLE,
+      reason: getReason('strict_unparseable', options.config?.reasons),
     });
-    return { reason: REASON_STRICT_UNPARSEABLE };
+    return { reason: getReason('strict_unparseable', options.config?.reasons) };
   }
 
   // Track effectiveCwd through nested segments (mirrors guard behavior)
@@ -143,9 +137,9 @@ export function explainSegment(
   if (depth >= MAX_RECURSION_DEPTH) {
     steps.push({
       type: 'error',
-      message: REASON_RECURSION_LIMIT,
+      message: getReason('recursion_limit', options.config?.reasons),
     });
-    return { reason: REASON_RECURSION_LIMIT };
+    return { reason: getReason('recursion_limit', options.config?.reasons) };
   }
 
   const envResult = stripEnvAssignmentsWithInfo(tokens);
@@ -215,7 +209,11 @@ export function explainSegment(
       });
 
       if (paranoidBlocked) {
-        return { reason: REASON_INTERPRETER_BLOCKED + PARANOID_INTERPRETERS_SUFFIX };
+        return {
+          reason:
+            getReason('interpreter_blocked', options.config?.reasons) +
+            PARANOID_INTERPRETERS_SUFFIX,
+        };
       }
 
       steps.push({
@@ -233,9 +231,9 @@ export function explainSegment(
           type: 'dangerous-text',
           token: redactedCodeArg,
           matched: true,
-          reason: REASON_INTERPRETER_DANGEROUS,
+          reason: getReason('interpreter_dangerous', options.config?.reasons),
         });
-        return { reason: REASON_INTERPRETER_DANGEROUS };
+        return { reason: getReason('interpreter_dangerous', options.config?.reasons) };
       }
       return null;
     }
@@ -290,7 +288,7 @@ export function explainSegment(
   }
 
   if (isGit) {
-    const reason = analyzeGit(strippedTokens);
+    const reason = analyzeGit(strippedTokens, options.config?.reasons);
     steps.push({
       type: 'rule-check',
       ruleModule: 'rules-git.ts',
@@ -317,6 +315,7 @@ export function explainSegment(
       cwd: effectiveCwd ?? undefined,
       paranoid: options.paranoidRm,
       allowTmpdirVar,
+      reasons: options.config?.reasons,
     });
     steps.push({
       type: 'rule-check',
@@ -329,7 +328,7 @@ export function explainSegment(
   }
 
   if (isFind) {
-    const reason = analyzeFind(strippedTokens);
+    const reason = analyzeFind(strippedTokens, options.config?.reasons);
     steps.push({
       type: 'rule-check',
       ruleModule: 'analyze/find.ts',
@@ -346,6 +345,7 @@ export function explainSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      reasons: options.config?.reasons,
     });
     steps.push({
       type: 'rule-check',
@@ -368,6 +368,7 @@ export function explainSegment(
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
       analyzeNested,
+      reasons: options.config?.reasons,
     });
     steps.push({
       type: 'rule-check',
@@ -399,17 +400,18 @@ export function explainSegment(
           originalCwd,
           paranoid: options.paranoidRm,
           allowTmpdirVar,
+          reasons: options.config?.reasons,
         });
       }
       if (!fallbackReason && cmd === 'git') {
         embeddedCommandFound = 'git';
         const gitTokens = ['git', ...strippedTokens.slice(i + 1)];
-        fallbackReason = analyzeGit(gitTokens);
+        fallbackReason = analyzeGit(gitTokens, options.config?.reasons);
       }
       if (!fallbackReason && cmd === 'find') {
         embeddedCommandFound = 'find';
         const findTokens = ['find', ...strippedTokens.slice(i + 1)];
-        fallbackReason = analyzeFind(findTokens);
+        fallbackReason = analyzeFind(findTokens, options.config?.reasons);
       }
     }
   }

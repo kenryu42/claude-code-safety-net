@@ -398,6 +398,59 @@ function hasRecursiveForceFlags(tokens) {
   return hasRecursive && hasForce;
 }
 
+// src/core/reasons.ts
+var DEFAULT_REASONS = {
+  checkout_double_dash: "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.",
+  checkout_force: "git checkout --force discards uncommitted changes. Use 'git stash' first.",
+  checkout_ref_path: "git checkout <ref> -- <path> overwrites working tree with ref version. Use 'git stash' first.",
+  checkout_pathspec_from_file: "git checkout --pathspec-from-file can overwrite multiple files. Use 'git stash' first.",
+  checkout_ambiguous: "git checkout with multiple positional args may overwrite files. Use 'git switch' for branches or 'git restore' for files.",
+  switch_discard_changes: "git switch --discard-changes discards uncommitted changes. Use 'git stash' first.",
+  switch_force: "git switch --force discards uncommitted changes. Use 'git stash' first.",
+  restore: "git restore discards uncommitted changes. Use 'git stash' first, or use --staged to only unstage.",
+  restore_worktree: "git restore --worktree explicitly discards working tree changes. Use 'git stash' first.",
+  reset_hard: "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.",
+  reset_merge: "git reset --merge can lose uncommitted changes. Use 'git stash' first.",
+  clean: "git clean -f removes untracked files permanently. Use 'git clean -n' to preview first.",
+  push_force: "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  branch_delete: "git branch -D force-deletes without merge check. Use -d for safe delete.",
+  stash_drop: "git stash drop permanently deletes stashed changes. Consider 'git stash list' first.",
+  stash_clear: "git stash clear deletes ALL stashed changes permanently.",
+  worktree_remove_force: "git worktree remove --force can delete uncommitted changes. Remove --force flag.",
+  rm_rf: "rm -rf",
+  git_reset_hard: "git reset --hard",
+  git_reset_merge: "git reset --merge",
+  git_clean_f: "git clean -f",
+  git_push_force: "git push --force (use --force-with-lease instead)",
+  git_branch_D: "git branch -D",
+  git_stash_drop_clear: "git stash drop/clear",
+  git_checkout_dashdash: "git checkout --",
+  git_restore_without_staged: "git restore (without --staged)",
+  find_delete: "find -delete",
+  rm_rf_blocked: "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.",
+  rm_rf_root_home: "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
+  find_delete_reason: "find -delete permanently removes files. Use -print first to preview.",
+  find_exec_rm_rf: "find -exec rm -rf is dangerous. Use explicit file list instead.",
+  xargs_rm: "xargs rm -rf with dynamic input is dangerous. Use explicit file list instead.",
+  xargs_shell: "xargs with shell -c can execute arbitrary commands from dynamic input.",
+  parallel_rm: "parallel rm -rf with dynamic input is dangerous. Use explicit file list instead.",
+  parallel_shell: "parallel with shell -c can execute arbitrary commands from dynamic input.",
+  interpreter_dangerous: "Detected potentially dangerous command in interpreter code.",
+  interpreter_blocked: "Interpreter one-liners are blocked in paranoid mode.",
+  rm_home_cwd: "rm -rf in home directory is dangerous. Change to a project directory first.",
+  strict_unparseable: "Command could not be safely analyzed (strict mode). Verify manually.",
+  recursion_limit: "Command exceeds maximum recursion depth and cannot be safely analyzed."
+};
+function getReason(key, configReasons) {
+  if (configReasons && key in configReasons) {
+    return configReasons[key];
+  }
+  if (key in DEFAULT_REASONS) {
+    return DEFAULT_REASONS[key];
+  }
+  return key;
+}
+
 // node_modules/shell-quote/index.js
 var $quote = require_quote();
 var $parse = require_parse();
@@ -1277,10 +1330,9 @@ function _isShellTokenBoundaryChar(char) {
 }
 
 // src/core/analyze/find.ts
-var REASON_FIND_DELETE = "find -delete permanently removes files. Use -print first to preview.";
-function analyzeFind(tokens) {
+function analyzeFind(tokens, reasons) {
   if (findHasDelete(tokens.slice(1))) {
-    return REASON_FIND_DELETE;
+    return getReason("find_delete", reasons);
   }
   for (let i = 0;i < tokens.length; i++) {
     const token = tokens[i];
@@ -1298,7 +1350,7 @@ function analyzeFind(tokens) {
           head = getBasename(execCommand[0] ?? "");
         }
         if (head === "rm" && hasRecursiveForceFlags(execCommand)) {
-          return "find -exec rm -rf is dangerous. Use explicit file list instead.";
+          return getReason("find_exec_rm_rf", reasons);
         }
       }
     }
@@ -1386,23 +1438,6 @@ function extractDashCArg(tokens) {
 }
 
 // src/core/rules-git.ts
-var REASON_CHECKOUT_DOUBLE_DASH = "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
-var REASON_CHECKOUT_FORCE = "git checkout --force discards uncommitted changes. Use 'git stash' first.";
-var REASON_CHECKOUT_REF_PATH = "git checkout <ref> -- <path> overwrites working tree with ref version. Use 'git stash' first.";
-var REASON_CHECKOUT_PATHSPEC_FROM_FILE = "git checkout --pathspec-from-file can overwrite multiple files. Use 'git stash' first.";
-var REASON_CHECKOUT_AMBIGUOUS = "git checkout with multiple positional args may overwrite files. Use 'git switch' for branches or 'git restore' for files.";
-var REASON_SWITCH_DISCARD_CHANGES = "git switch --discard-changes discards uncommitted changes. Use 'git stash' first.";
-var REASON_SWITCH_FORCE = "git switch --force discards uncommitted changes. Use 'git stash' first.";
-var REASON_RESTORE = "git restore discards uncommitted changes. Use 'git stash' first, or use --staged to only unstage.";
-var REASON_RESTORE_WORKTREE = "git restore --worktree explicitly discards working tree changes. Use 'git stash' first.";
-var REASON_RESET_HARD = "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.";
-var REASON_RESET_MERGE = "git reset --merge can lose uncommitted changes. Use 'git stash' first.";
-var REASON_CLEAN = "git clean -f removes untracked files permanently. Use 'git clean -n' to preview first.";
-var REASON_PUSH_FORCE = "git push --force destroys remote history. Use --force-with-lease for safer force push.";
-var REASON_BRANCH_DELETE = "git branch -D force-deletes without merge check. Use -d for safe delete.";
-var REASON_STASH_DROP = "git stash drop permanently deletes stashed changes. Consider 'git stash list' first.";
-var REASON_STASH_CLEAR = "git stash clear deletes ALL stashed changes permanently.";
-var REASON_WORKTREE_REMOVE_FORCE = "git worktree remove --force can delete uncommitted changes. Remove --force flag.";
 var GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
   "-c",
   "-C",
@@ -1470,30 +1505,30 @@ function splitAtDoubleDash(tokens) {
     after: tokens.slice(index + 1)
   };
 }
-function analyzeGit(tokens) {
+function analyzeGit(tokens, reasons) {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
   if (!subcommand) {
     return null;
   }
   switch (subcommand.toLowerCase()) {
     case "checkout":
-      return analyzeGitCheckout(rest);
+      return analyzeGitCheckout(rest, reasons);
     case "switch":
-      return analyzeGitSwitch(rest);
+      return analyzeGitSwitch(rest, reasons);
     case "restore":
-      return analyzeGitRestore(rest);
+      return analyzeGitRestore(rest, reasons);
     case "reset":
-      return analyzeGitReset(rest);
+      return analyzeGitReset(rest, reasons);
     case "clean":
-      return analyzeGitClean(rest);
+      return analyzeGitClean(rest, reasons);
     case "push":
-      return analyzeGitPush(rest);
+      return analyzeGitPush(rest, reasons);
     case "branch":
-      return analyzeGitBranch(rest);
+      return analyzeGitBranch(rest, reasons);
     case "stash":
-      return analyzeGitStash(rest);
+      return analyzeGitStash(rest, reasons);
     case "worktree":
-      return analyzeGitWorktree(rest);
+      return analyzeGitWorktree(rest, reasons);
     default:
       return null;
   }
@@ -1535,48 +1570,48 @@ function extractGitSubcommandAndRest(tokens) {
   }
   return { subcommand: null, rest: [] };
 }
-function analyzeGitCheckout(tokens) {
+function analyzeGitCheckout(tokens, reasons) {
   const { index: doubleDashIdx, before: beforeDash } = splitAtDoubleDash(tokens);
   const shortOpts = extractShortOpts(beforeDash, {
     shortOptsWithValue: CHECKOUT_SHORT_OPTS_WITH_VALUE
   });
   if (beforeDash.includes("--force") || shortOpts.has("-f")) {
-    return REASON_CHECKOUT_FORCE;
+    return getReason("checkout_force", reasons);
   }
   for (const token of tokens) {
     if (token === "-b" || token === "-B" || token === "--orphan") {
       return null;
     }
     if (token === "--pathspec-from-file") {
-      return REASON_CHECKOUT_PATHSPEC_FROM_FILE;
+      return getReason("checkout_pathspec_from_file", reasons);
     }
     if (token.startsWith("--pathspec-from-file=")) {
-      return REASON_CHECKOUT_PATHSPEC_FROM_FILE;
+      return getReason("checkout_pathspec_from_file", reasons);
     }
   }
   if (doubleDashIdx !== -1) {
     const hasRefBeforeDash = beforeDash.some((t) => !t.startsWith("-"));
     if (hasRefBeforeDash) {
-      return REASON_CHECKOUT_REF_PATH;
+      return getReason("checkout_ref_path", reasons);
     }
-    return REASON_CHECKOUT_DOUBLE_DASH;
+    return getReason("checkout_double_dash", reasons);
   }
   const positionalArgs = getCheckoutPositionalArgs(tokens);
   if (positionalArgs.length >= 2) {
-    return REASON_CHECKOUT_AMBIGUOUS;
+    return getReason("checkout_ambiguous", reasons);
   }
   return null;
 }
-function analyzeGitSwitch(tokens) {
+function analyzeGitSwitch(tokens, reasons) {
   const { before } = splitAtDoubleDash(tokens);
   if (before.includes("--discard-changes")) {
-    return REASON_SWITCH_DISCARD_CHANGES;
+    return getReason("switch_discard_changes", reasons);
   }
   const shortOpts = extractShortOpts(before, {
     shortOptsWithValue: SWITCH_SHORT_OPTS_WITH_VALUE
   });
   if (before.includes("--force") || shortOpts.has("-f")) {
-    return REASON_SWITCH_FORCE;
+    return getReason("switch_force", reasons);
   }
   return null;
 }
@@ -1619,33 +1654,33 @@ function getCheckoutPositionalArgs(tokens) {
   }
   return positional;
 }
-function analyzeGitRestore(tokens) {
+function analyzeGitRestore(tokens, reasons) {
   let hasStaged = false;
   for (const token of tokens) {
     if (token === "--help" || token === "--version") {
       return null;
     }
     if (token === "--worktree" || token === "-W") {
-      return REASON_RESTORE_WORKTREE;
+      return getReason("restore_worktree", reasons);
     }
     if (token === "--staged" || token === "-S") {
       hasStaged = true;
     }
   }
-  return hasStaged ? null : REASON_RESTORE;
+  return hasStaged ? null : getReason("restore", reasons);
 }
-function analyzeGitReset(tokens) {
+function analyzeGitReset(tokens, reasons) {
   for (const token of tokens) {
     if (token === "--hard") {
-      return REASON_RESET_HARD;
+      return getReason("reset_hard", reasons);
     }
     if (token === "--merge") {
-      return REASON_RESET_MERGE;
+      return getReason("reset_merge", reasons);
     }
   }
   return null;
 }
-function analyzeGitClean(tokens) {
+function analyzeGitClean(tokens, reasons) {
   for (const token of tokens) {
     if (token === "-n" || token === "--dry-run") {
       return null;
@@ -1653,11 +1688,11 @@ function analyzeGitClean(tokens) {
   }
   const shortOpts = extractShortOpts(tokens.filter((t) => t !== "--"));
   if (tokens.includes("--force") || shortOpts.has("-f")) {
-    return REASON_CLEAN;
+    return getReason("clean", reasons);
   }
   return null;
 }
-function analyzeGitPush(tokens) {
+function analyzeGitPush(tokens, reasons) {
   let hasForceWithLease = false;
   const shortOpts = extractShortOpts(tokens.filter((t) => t !== "--"));
   const hasForce = tokens.includes("--force") || shortOpts.has("-f");
@@ -1667,36 +1702,36 @@ function analyzeGitPush(tokens) {
     }
   }
   if (hasForce && !hasForceWithLease) {
-    return REASON_PUSH_FORCE;
+    return getReason("push_force", reasons);
   }
   return null;
 }
-function analyzeGitBranch(tokens) {
+function analyzeGitBranch(tokens, reasons) {
   const shortOpts = extractShortOpts(tokens.filter((t) => t !== "--"));
   if (shortOpts.has("-D")) {
-    return REASON_BRANCH_DELETE;
+    return getReason("branch_delete", reasons);
   }
   return null;
 }
-function analyzeGitStash(tokens) {
+function analyzeGitStash(tokens, reasons) {
   for (const token of tokens) {
     if (token === "drop") {
-      return REASON_STASH_DROP;
+      return getReason("stash_drop", reasons);
     }
     if (token === "clear") {
-      return REASON_STASH_CLEAR;
+      return getReason("stash_clear", reasons);
     }
   }
   return null;
 }
-function analyzeGitWorktree(tokens) {
+function analyzeGitWorktree(tokens, reasons) {
   const hasRemove = tokens.includes("remove");
   if (!hasRemove)
     return null;
   const { before } = splitAtDoubleDash(tokens);
   for (const token of before) {
     if (token === "--force" || token === "-f") {
-      return REASON_WORKTREE_REMOVE_FORCE;
+      return getReason("worktree_remove_force", reasons);
     }
   }
   return null;
@@ -1722,15 +1757,14 @@ function normalizePathForComparison(p) {
   }
   return normalized;
 }
-var REASON_RM_RF = "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.";
-var REASON_RM_RF_ROOT_HOME = "rm -rf targeting root or home directory is extremely dangerous and always blocked.";
 function analyzeRm(tokens, options = {}) {
   const {
     cwd,
     originalCwd,
     paranoid = false,
     allowTmpdirVar = true,
-    tmpdirOverridden = false
+    tmpdirOverridden = false,
+    reasons
   } = options;
   const anchoredCwd = originalCwd ?? cwd ?? null;
   const resolvedCwd = cwd ?? null;
@@ -1748,7 +1782,7 @@ function analyzeRm(tokens, options = {}) {
   const targets = extractTargets(tokens);
   for (const target of targets) {
     const classification = classifyTarget(target, ctx);
-    const reason = reasonForClassification(classification, ctx);
+    const reason = reasonForClassification(classification, ctx, reasons);
     if (reason) {
       return reason;
     }
@@ -1799,21 +1833,21 @@ function classifyTarget(target, ctx) {
   }
   return { kind: "outside_anchored_cwd" };
 }
-function reasonForClassification(classification, ctx) {
+function reasonForClassification(classification, ctx, reasons) {
   switch (classification.kind) {
     case "root_or_home_target":
-      return REASON_RM_RF_ROOT_HOME;
+      return getReason("rm_rf_root_home", reasons);
     case "cwd_self_target":
-      return REASON_RM_RF;
+      return getReason("rm_rf_blocked", reasons);
     case "temp_target":
       return null;
     case "within_anchored_cwd":
       if (ctx.paranoid) {
-        return `${REASON_RM_RF} (SAFETY_NET_PARANOID_RM enabled)`;
+        return `${getReason("rm_rf_blocked", reasons)} (SAFETY_NET_PARANOID_RM enabled)`;
       }
       return null;
     case "outside_anchored_cwd":
-      return REASON_RM_RF;
+      return getReason("rm_rf_blocked", reasons);
   }
 }
 function isDangerousRootOrHomeTarget(path) {
@@ -1938,8 +1972,6 @@ function isHomeDirectory(cwd) {
 }
 
 // src/core/analyze/parallel.ts
-var REASON_PARALLEL_RM = "parallel rm -rf with dynamic input is dangerous. Use explicit file list instead.";
-var REASON_PARALLEL_SHELL = "parallel with shell -c can execute arbitrary commands from dynamic input.";
 function analyzeParallel(tokens, context) {
   const parseResult = parseParallelCommand(tokens);
   if (!parseResult) {
@@ -1965,7 +1997,7 @@ function analyzeParallel(tokens, context) {
     const dashCArg = extractDashCArg(childTokens);
     if (dashCArg) {
       if (dashCArg === "{}" || dashCArg === "{1}") {
-        return REASON_PARALLEL_SHELL;
+        return getReason("parallel_shell", context.reasons);
       }
       if (dashCArg.includes("{}")) {
         if (args.length > 0) {
@@ -1989,15 +2021,15 @@ function analyzeParallel(tokens, context) {
         return reason;
       }
       if (hasPlaceholder) {
-        return REASON_PARALLEL_SHELL;
+        return getReason("parallel_shell", context.reasons);
       }
       return null;
     }
     if (args.length > 0) {
-      return REASON_PARALLEL_SHELL;
+      return getReason("parallel_shell", context.reasons);
     }
     if (hasPlaceholder) {
-      return REASON_PARALLEL_SHELL;
+      return getReason("parallel_shell", context.reasons);
     }
     return null;
   }
@@ -2009,7 +2041,8 @@ function analyzeParallel(tokens, context) {
           cwd: context.cwd,
           originalCwd: context.originalCwd,
           paranoid: context.paranoidRm,
-          allowTmpdirVar: context.allowTmpdirVar
+          allowTmpdirVar: context.allowTmpdirVar,
+          reasons: context.reasons
         });
         if (rmResult) {
           return rmResult;
@@ -2023,23 +2056,24 @@ function analyzeParallel(tokens, context) {
         cwd: context.cwd,
         originalCwd: context.originalCwd,
         paranoid: context.paranoidRm,
-        allowTmpdirVar: context.allowTmpdirVar
+        allowTmpdirVar: context.allowTmpdirVar,
+        reasons: context.reasons
       });
       if (rmResult) {
         return rmResult;
       }
       return null;
     }
-    return REASON_PARALLEL_RM;
+    return getReason("parallel_rm", context.reasons);
   }
   if (head === "find") {
-    const findResult = analyzeFind(childTokens);
+    const findResult = analyzeFind(childTokens, context.reasons);
     if (findResult) {
       return findResult;
     }
   }
   if (head === "git") {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, context.reasons);
     if (gitResult) {
       return gitResult;
     }
@@ -2161,8 +2195,6 @@ function isPathOrSubpath(path, basePath) {
 }
 
 // src/core/analyze/xargs.ts
-var REASON_XARGS_RM = "xargs rm -rf with dynamic input is dangerous. Use explicit file list instead.";
-var REASON_XARGS_SHELL = "xargs with shell -c can execute arbitrary commands from dynamic input.";
 function analyzeXargs(tokens, context) {
   const { childTokens: rawChildTokens } = extractXargsChildCommandWithInfo(tokens);
   let childTokens = stripWrappers(rawChildTokens);
@@ -2175,28 +2207,29 @@ function analyzeXargs(tokens, context) {
     head = getBasename(childTokens[0] ?? "").toLowerCase();
   }
   if (SHELL_WRAPPERS.has(head)) {
-    return REASON_XARGS_SHELL;
+    return getReason("xargs_shell", context.reasons);
   }
   if (head === "rm" && hasRecursiveForceFlags(childTokens)) {
     const rmResult = analyzeRm(childTokens, {
       cwd: context.cwd,
       originalCwd: context.originalCwd,
       paranoid: context.paranoidRm,
-      allowTmpdirVar: context.allowTmpdirVar
+      allowTmpdirVar: context.allowTmpdirVar,
+      reasons: context.reasons
     });
     if (rmResult) {
       return rmResult;
     }
-    return REASON_XARGS_RM;
+    return getReason("xargs_rm", context.reasons);
   }
   if (head === "find") {
-    const findResult = analyzeFind(childTokens);
+    const findResult = analyzeFind(childTokens, context.reasons);
     if (findResult) {
       return findResult;
     }
   }
   if (head === "git") {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, context.reasons);
     if (gitResult) {
       return gitResult;
     }
@@ -2354,9 +2387,6 @@ function matchesBlockArgs(tokens, blockArgs, shortOpts) {
 }
 
 // src/core/analyze/segment.ts
-var REASON_INTERPRETER_DANGEROUS = "Detected potentially dangerous command in interpreter code.";
-var REASON_INTERPRETER_BLOCKED = "Interpreter one-liners are blocked in paranoid mode.";
-var REASON_RM_HOME_CWD = "rm -rf in home directory is dangerous. Change to a project directory first.";
 function deriveCwdContext(options) {
   const cwdUnknown = options.effectiveCwd === null;
   const cwdForRm = cwdUnknown ? undefined : options.effectiveCwd ?? options.cwd;
@@ -2394,14 +2424,14 @@ function analyzeSegment(tokens, depth, options) {
     const codeArg = extractInterpreterCodeArg(stripped);
     if (codeArg) {
       if (options.paranoidInterpreters) {
-        return REASON_INTERPRETER_BLOCKED + PARANOID_INTERPRETERS_SUFFIX;
+        return getReason("interpreter_blocked", options.config.reasons) + PARANOID_INTERPRETERS_SUFFIX;
       }
       const innerReason = options.analyzeNested(codeArg);
       if (innerReason) {
         return innerReason;
       }
       if (containsDangerousCode(codeArg)) {
-        return REASON_INTERPRETER_DANGEROUS;
+        return getReason("interpreter_dangerous", options.config.reasons);
       }
     }
   }
@@ -2414,7 +2444,7 @@ function analyzeSegment(tokens, depth, options) {
   const isXargs = basename === "xargs";
   const isParallel = basename === "parallel";
   if (isGit) {
-    const gitResult = analyzeGit(stripped);
+    const gitResult = analyzeGit(stripped, options.config.reasons);
     if (gitResult) {
       return gitResult;
     }
@@ -2422,21 +2452,22 @@ function analyzeSegment(tokens, depth, options) {
   if (isRm) {
     if (cwdForRm && isHomeDirectory(cwdForRm)) {
       if (hasRecursiveForceFlags(stripped)) {
-        return REASON_RM_HOME_CWD;
+        return getReason("rm_home_cwd", options.config.reasons);
       }
     }
     const rmResult = analyzeRm(stripped, {
       cwd: cwdForRm,
       originalCwd,
       paranoid: options.paranoidRm,
-      allowTmpdirVar
+      allowTmpdirVar,
+      reasons: options.config.reasons
     });
     if (rmResult) {
       return rmResult;
     }
   }
   if (isFind) {
-    const findResult = analyzeFind(stripped);
+    const findResult = analyzeFind(stripped, options.config.reasons);
     if (findResult) {
       return findResult;
     }
@@ -2446,7 +2477,8 @@ function analyzeSegment(tokens, depth, options) {
       cwd: cwdForRm,
       originalCwd,
       paranoidRm: options.paranoidRm,
-      allowTmpdirVar
+      allowTmpdirVar,
+      reasons: options.config.reasons
     });
     if (xargsResult) {
       return xargsResult;
@@ -2458,7 +2490,8 @@ function analyzeSegment(tokens, depth, options) {
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
-      analyzeNested: options.analyzeNested
+      analyzeNested: options.analyzeNested,
+      reasons: options.config.reasons
     });
     if (parallelResult) {
       return parallelResult;
@@ -2478,7 +2511,8 @@ function analyzeSegment(tokens, depth, options) {
             cwd: cwdForRm,
             originalCwd,
             paranoid: options.paranoidRm,
-            allowTmpdirVar
+            allowTmpdirVar,
+            reasons: options.config.reasons
           });
           if (reason) {
             return reason;
@@ -2486,14 +2520,14 @@ function analyzeSegment(tokens, depth, options) {
         }
         if (cmd === "git") {
           const gitTokens = ["git", ...stripped.slice(i + 1)];
-          const reason = analyzeGit(gitTokens);
+          const reason = analyzeGit(gitTokens, options.config.reasons);
           if (reason) {
             return reason;
           }
         }
         if (cmd === "find") {
           const findTokens = ["find", ...stripped.slice(i + 1)];
-          const reason = analyzeFind(findTokens);
+          const reason = analyzeFind(findTokens, options.config.reasons);
           if (reason) {
             return reason;
           }
@@ -2541,15 +2575,19 @@ function stripLeadingGrouping(tokens) {
 }
 
 // src/core/analyze/analyze-command.ts
-var REASON_STRICT_UNPARSEABLE = "Command could not be safely analyzed (strict mode). Verify manually.";
-var REASON_RECURSION_LIMIT = "Command exceeds maximum recursion depth and cannot be safely analyzed.";
 function analyzeCommandInternal(command, depth, options) {
   if (depth >= MAX_RECURSION_DEPTH) {
-    return { reason: REASON_RECURSION_LIMIT, segment: command };
+    return {
+      reason: getReason("recursion_limit", options.config.reasons),
+      segment: command
+    };
   }
   const segments = splitShellCommands(command);
   if (options.strict && segments.length === 1 && segments[0]?.length === 1 && segments[0][0] === command && command.includes(" ")) {
-    return { reason: REASON_STRICT_UNPARSEABLE, segment: command };
+    return {
+      reason: getReason("strict_unparseable", options.config.reasons),
+      segment: command
+    };
   }
   const originalCwd = options.cwd;
   let effectiveCwd = options.effectiveCwd !== undefined ? options.effectiveCwd : options.cwd;
@@ -2615,9 +2653,11 @@ function loadSingleConfig(path) {
       return null;
     }
     const cfg = parsed;
+    const reasons = cleanReasons(parsed);
     return {
       version: cfg.version,
-      rules: cfg.rules ?? []
+      rules: cfg.rules ?? [],
+      ...reasons ? { reasons } : {}
     };
   } catch {
     return null;
@@ -2638,9 +2678,14 @@ function mergeConfigs(userConfig, projectConfig) {
     ...userConfig.rules.filter((r) => !projectRuleNames.has(r.name.toLowerCase())),
     ...projectConfig.rules
   ];
+  const mergedReasons = {
+    ...userConfig.reasons ?? {},
+    ...projectConfig.reasons ?? {}
+  };
   return {
     version: 1,
-    rules: mergedRules
+    rules: mergedRules,
+    ...Object.keys(mergedReasons).length > 0 ? { reasons: mergedReasons } : {}
   };
 }
 function validateConfig(config) {
@@ -2662,6 +2707,22 @@ function validateConfig(config) {
         const rule = cfg.rules[i];
         const ruleErrors = validateRule(rule, i, ruleNames);
         errors.push(...ruleErrors);
+      }
+    }
+  }
+  if (cfg.reasons !== undefined) {
+    if (typeof cfg.reasons !== "object" || cfg.reasons === null) {
+      errors.push("reasons must be an object");
+    } else {
+      const reasons = cfg.reasons;
+      for (const [key, value] of Object.entries(reasons)) {
+        if (typeof value !== "string") {
+          errors.push(`reasons.${key}: must be a string`);
+        } else if (value === "") {
+          errors.push(`reasons.${key}: must not be empty`);
+        } else if (value.length > MAX_REASON_LENGTH) {
+          errors.push(`reasons.${key}: must be at most ${MAX_REASON_LENGTH} characters`);
+        }
       }
     }
   }
@@ -2723,6 +2784,23 @@ function validateRule(rule, index, ruleNames) {
     errors.push(`${prefix}.reason: must be at most ${MAX_REASON_LENGTH} characters`);
   }
   return errors;
+}
+function cleanReasons(config) {
+  if (!config || typeof config !== "object")
+    return;
+  const cfg = config;
+  if (cfg.reasons === undefined)
+    return;
+  if (typeof cfg.reasons !== "object" || cfg.reasons === null)
+    return;
+  const reasons = cfg.reasons;
+  const cleaned = {};
+  for (const [key, value] of Object.entries(reasons)) {
+    if (typeof value === "string") {
+      cleaned[key] = value;
+    }
+  }
+  return Object.keys(cleaned).length > 0 ? cleaned : undefined;
 }
 function validateConfigFile(path) {
   const errors = [];

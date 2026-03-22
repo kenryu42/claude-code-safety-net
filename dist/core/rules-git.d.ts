@@ -1,4 +1,4 @@
-export declare function analyzeGit(tokens: readonly string[]): string | null;
+export declare function analyzeGit(tokens: readonly string[], reasons?: Record<string, string>): string | null;
 declare function extractGitSubcommandAndRest(tokens: readonly string[]): {
     subcommand: string | null;
     rest: string[];

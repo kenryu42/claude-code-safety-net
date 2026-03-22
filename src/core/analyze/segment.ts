@@ -6,6 +6,7 @@ import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
 import { extractDashCArg } from '@/core/analyze/shell-wrappers';
 import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
 import { analyzeXargs } from '@/core/analyze/xargs';
+import { getReason } from '@/core/reasons';
 import { checkCustomRules } from '@/core/rules-custom';
 import { analyzeGit } from '@/core/rules-git';
 import { analyzeRm, isHomeDirectory } from '@/core/rules-rm';
@@ -23,12 +24,6 @@ import {
   PARANOID_INTERPRETERS_SUFFIX,
   SHELL_WRAPPERS,
 } from '@/types';
-
-export const REASON_INTERPRETER_DANGEROUS =
-  'Detected potentially dangerous command in interpreter code.';
-export const REASON_INTERPRETER_BLOCKED = 'Interpreter one-liners are blocked in paranoid mode.';
-const REASON_RM_HOME_CWD =
-  'rm -rf in home directory is dangerous. Change to a project directory first.';
 
 export type InternalOptions = AnalyzeOptions & {
   config: Config;
@@ -91,7 +86,9 @@ export function analyzeSegment(
     const codeArg = extractInterpreterCodeArg(stripped);
     if (codeArg) {
       if (options.paranoidInterpreters) {
-        return REASON_INTERPRETER_BLOCKED + PARANOID_INTERPRETERS_SUFFIX;
+        return (
+          getReason('interpreter_blocked', options.config.reasons) + PARANOID_INTERPRETERS_SUFFIX
+        );
       }
 
       const innerReason = options.analyzeNested(codeArg);
@@ -100,7 +97,7 @@ export function analyzeSegment(
       }
 
       if (containsDangerousCode(codeArg)) {
-        return REASON_INTERPRETER_DANGEROUS;
+        return getReason('interpreter_dangerous', options.config.reasons);
       }
     }
   }
@@ -116,7 +113,7 @@ export function analyzeSegment(
   const isParallel = basename === 'parallel';
 
   if (isGit) {
-    const gitResult = analyzeGit(stripped);
+    const gitResult = analyzeGit(stripped, options.config.reasons);
     if (gitResult) {
       return gitResult;
     }
@@ -125,7 +122,7 @@ export function analyzeSegment(
   if (isRm) {
     if (cwdForRm && isHomeDirectory(cwdForRm)) {
       if (hasRecursiveForceFlags(stripped)) {
-        return REASON_RM_HOME_CWD;
+        return getReason('rm_home_cwd', options.config.reasons);
       }
     }
     const rmResult = analyzeRm(stripped, {
@@ -133,6 +130,7 @@ export function analyzeSegment(
       originalCwd,
       paranoid: options.paranoidRm,
       allowTmpdirVar,
+      reasons: options.config.reasons,
     });
     if (rmResult) {
       return rmResult;
@@ -140,7 +138,7 @@ export function analyzeSegment(
   }
 
   if (isFind) {
-    const findResult = analyzeFind(stripped);
+    const findResult = analyzeFind(stripped, options.config.reasons);
     if (findResult) {
       return findResult;
     }
@@ -152,6 +150,7 @@ export function analyzeSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      reasons: options.config.reasons,
     });
     if (xargsResult) {
       return xargsResult;
@@ -165,6 +164,7 @@ export function analyzeSegment(
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
       analyzeNested: options.analyzeNested,
+      reasons: options.config.reasons,
     });
     if (parallelResult) {
       return parallelResult;
@@ -191,6 +191,7 @@ export function analyzeSegment(
             originalCwd,
             paranoid: options.paranoidRm,
             allowTmpdirVar,
+            reasons: options.config.reasons,
           });
           if (reason) {
             return reason;
@@ -198,14 +199,14 @@ export function analyzeSegment(
         }
         if (cmd === 'git') {
           const gitTokens = ['git', ...stripped.slice(i + 1)];
-          const reason = analyzeGit(gitTokens);
+          const reason = analyzeGit(gitTokens, options.config.reasons);
           if (reason) {
             return reason;
           }
         }
         if (cmd === 'find') {
           const findTokens = ['find', ...stripped.slice(i + 1)];
-          const reason = analyzeFind(findTokens);
+          const reason = analyzeFind(findTokens, options.config.reasons);
           if (reason) {
             return reason;
           }

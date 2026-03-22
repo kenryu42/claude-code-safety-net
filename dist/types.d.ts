@@ -20,6 +20,8 @@ export interface Config {
     version: number;
     /** Custom blocking rules */
     rules: CustomRule[];
+    /** Optional custom reason strings */
+    reasons?: Record<string, string>;
 }
 /** Result of config validation */
 export interface ValidationResult {

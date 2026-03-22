@@ -1,12 +1,14 @@
 import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
+import { getReason } from '@/core/reasons';
 import { getBasename, stripWrappers } from '@/core/shell';
 
-const REASON_FIND_DELETE = 'find -delete permanently removes files. Use -print first to preview.';
-
-export function analyzeFind(tokens: readonly string[]): string | null {
+export function analyzeFind(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   // Check for -delete outside of -exec/-execdir blocks
   if (findHasDelete(tokens.slice(1))) {
-    return REASON_FIND_DELETE;
+    return getReason('find_delete', reasons);
   }
 
   // Check all -exec and -execdir blocks for dangerous commands
@@ -38,7 +40,7 @@ export function analyzeFind(tokens: readonly string[]): string | null {
           head = getBasename(execCommand[0] ?? '');
         }
         if (head === 'rm' && hasRecursiveForceFlags(execCommand)) {
-          return 'find -exec rm -rf is dangerous. Use explicit file list instead.';
+          return getReason('find_exec_rm_rf', reasons);
         }
       }
     }

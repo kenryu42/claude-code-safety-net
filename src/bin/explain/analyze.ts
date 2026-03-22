@@ -4,13 +4,10 @@
 
 import { buildAnalyzeOptions, getConfigSource } from '@/bin/explain/config';
 import { redactEnvAssignmentsInString, redactEnvAssignmentTokens } from '@/bin/explain/redact';
-import {
-  explainSegment,
-  isUnparseableCommand,
-  REASON_STRICT_UNPARSEABLE,
-} from '@/bin/explain/segment';
+import { explainSegment, isUnparseableCommand } from '@/bin/explain/segment';
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { segmentChangesCwd } from '@/core/analyze/segment';
+import { getReason } from '@/core/reasons';
 import { splitShellCommands } from '@/core/shell';
 import type { ExplainOptions, ExplainResult, ExplainTrace, TraceStep } from '@/types';
 
@@ -47,12 +44,12 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
     trace.steps.push({
       type: 'strict-unparseable',
       rawCommand: redactedInput,
-      reason: REASON_STRICT_UNPARSEABLE,
+      reason: getReason('strict_unparseable', analyzeOpts.config?.reasons),
     });
     return {
       trace,
       result: 'blocked',
-      reason: REASON_STRICT_UNPARSEABLE,
+      reason: getReason('strict_unparseable', analyzeOpts.config?.reasons),
       segment: redactEnvAssignmentsInString(command),
       configSource,
       configValid,

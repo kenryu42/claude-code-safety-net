@@ -1,37 +1,5 @@
 import { extractShortOpts, getBasename } from '@/core/shell';
-
-const REASON_CHECKOUT_DOUBLE_DASH =
-  "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
-const REASON_CHECKOUT_FORCE =
-  "git checkout --force discards uncommitted changes. Use 'git stash' first.";
-const REASON_CHECKOUT_REF_PATH =
-  "git checkout <ref> -- <path> overwrites working tree with ref version. Use 'git stash' first.";
-const REASON_CHECKOUT_PATHSPEC_FROM_FILE =
-  "git checkout --pathspec-from-file can overwrite multiple files. Use 'git stash' first.";
-const REASON_CHECKOUT_AMBIGUOUS =
-  "git checkout with multiple positional args may overwrite files. Use 'git switch' for branches or 'git restore' for files.";
-const REASON_SWITCH_DISCARD_CHANGES =
-  "git switch --discard-changes discards uncommitted changes. Use 'git stash' first.";
-const REASON_SWITCH_FORCE =
-  "git switch --force discards uncommitted changes. Use 'git stash' first.";
-const REASON_RESTORE =
-  "git restore discards uncommitted changes. Use 'git stash' first, or use --staged to only unstage.";
-const REASON_RESTORE_WORKTREE =
-  "git restore --worktree explicitly discards working tree changes. Use 'git stash' first.";
-const REASON_RESET_HARD =
-  "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.";
-const REASON_RESET_MERGE = "git reset --merge can lose uncommitted changes. Use 'git stash' first.";
-const REASON_CLEAN =
-  "git clean -f removes untracked files permanently. Use 'git clean -n' to preview first.";
-const REASON_PUSH_FORCE =
-  'git push --force destroys remote history. Use --force-with-lease for safer force push.';
-const REASON_BRANCH_DELETE =
-  'git branch -D force-deletes without merge check. Use -d for safe delete.';
-const REASON_STASH_DROP =
-  "git stash drop permanently deletes stashed changes. Consider 'git stash list' first.";
-const REASON_STASH_CLEAR = 'git stash clear deletes ALL stashed changes permanently.';
-const REASON_WORKTREE_REMOVE_FORCE =
-  'git worktree remove --force can delete uncommitted changes. Remove --force flag.';
+import { getReason } from './reasons';
 
 const GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
   '-c',
@@ -109,7 +77,10 @@ function splitAtDoubleDash(tokens: readonly string[]): {
   };
 }
 
-export function analyzeGit(tokens: readonly string[]): string | null {
+export function analyzeGit(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
 
   if (!subcommand) {
@@ -118,23 +89,23 @@ export function analyzeGit(tokens: readonly string[]): string | null {
 
   switch (subcommand.toLowerCase()) {
     case 'checkout':
-      return analyzeGitCheckout(rest);
+      return analyzeGitCheckout(rest, reasons);
     case 'switch':
-      return analyzeGitSwitch(rest);
+      return analyzeGitSwitch(rest, reasons);
     case 'restore':
-      return analyzeGitRestore(rest);
+      return analyzeGitRestore(rest, reasons);
     case 'reset':
-      return analyzeGitReset(rest);
+      return analyzeGitReset(rest, reasons);
     case 'clean':
-      return analyzeGitClean(rest);
+      return analyzeGitClean(rest, reasons);
     case 'push':
-      return analyzeGitPush(rest);
+      return analyzeGitPush(rest, reasons);
     case 'branch':
-      return analyzeGitBranch(rest);
+      return analyzeGitBranch(rest, reasons);
     case 'stash':
-      return analyzeGitStash(rest);
+      return analyzeGitStash(rest, reasons);
     case 'worktree':
-      return analyzeGitWorktree(rest);
+      return analyzeGitWorktree(rest, reasons);
     default:
       return null;
   }
@@ -186,14 +157,17 @@ function extractGitSubcommandAndRest(tokens: readonly string[]): {
   return { subcommand: null, rest: [] };
 }
 
-function analyzeGitCheckout(tokens: readonly string[]): string | null {
+function analyzeGitCheckout(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   const { index: doubleDashIdx, before: beforeDash } = splitAtDoubleDash(tokens);
   const shortOpts = extractShortOpts(beforeDash, {
     shortOptsWithValue: CHECKOUT_SHORT_OPTS_WITH_VALUE,
   });
 
   if (beforeDash.includes('--force') || shortOpts.has('-f')) {
-    return REASON_CHECKOUT_FORCE;
+    return getReason('checkout_force', reasons);
   }
 
   for (const token of tokens) {
@@ -201,10 +175,10 @@ function analyzeGitCheckout(tokens: readonly string[]): string | null {
       return null;
     }
     if (token === '--pathspec-from-file') {
-      return REASON_CHECKOUT_PATHSPEC_FROM_FILE;
+      return getReason('checkout_pathspec_from_file', reasons);
     }
     if (token.startsWith('--pathspec-from-file=')) {
-      return REASON_CHECKOUT_PATHSPEC_FROM_FILE;
+      return getReason('checkout_pathspec_from_file', reasons);
     }
   }
 
@@ -212,31 +186,34 @@ function analyzeGitCheckout(tokens: readonly string[]): string | null {
     const hasRefBeforeDash = beforeDash.some((t) => !t.startsWith('-'));
 
     if (hasRefBeforeDash) {
-      return REASON_CHECKOUT_REF_PATH;
+      return getReason('checkout_ref_path', reasons);
     }
-    return REASON_CHECKOUT_DOUBLE_DASH;
+    return getReason('checkout_double_dash', reasons);
   }
 
   const positionalArgs = getCheckoutPositionalArgs(tokens);
   if (positionalArgs.length >= 2) {
-    return REASON_CHECKOUT_AMBIGUOUS;
+    return getReason('checkout_ambiguous', reasons);
   }
 
   return null;
 }
 
-function analyzeGitSwitch(tokens: readonly string[]): string | null {
+function analyzeGitSwitch(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   const { before } = splitAtDoubleDash(tokens);
 
   if (before.includes('--discard-changes')) {
-    return REASON_SWITCH_DISCARD_CHANGES;
+    return getReason('switch_discard_changes', reasons);
   }
 
   const shortOpts = extractShortOpts(before, {
     shortOptsWithValue: SWITCH_SHORT_OPTS_WITH_VALUE,
   });
   if (before.includes('--force') || shortOpts.has('-f')) {
-    return REASON_SWITCH_FORCE;
+    return getReason('switch_force', reasons);
   }
 
   return null;
@@ -297,7 +274,10 @@ function getCheckoutPositionalArgs(tokens: readonly string[]): string[] {
   return positional;
 }
 
-function analyzeGitRestore(tokens: readonly string[]): string | null {
+function analyzeGitRestore(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   let hasStaged = false;
   for (const token of tokens) {
     if (token === '--help' || token === '--version') {
@@ -305,29 +285,35 @@ function analyzeGitRestore(tokens: readonly string[]): string | null {
     }
     // --worktree explicitly discards working tree changes, even with --staged
     if (token === '--worktree' || token === '-W') {
-      return REASON_RESTORE_WORKTREE;
+      return getReason('restore_worktree', reasons);
     }
     if (token === '--staged' || token === '-S') {
       hasStaged = true;
     }
   }
   // Only safe if --staged is present (and --worktree is not)
-  return hasStaged ? null : REASON_RESTORE;
+  return hasStaged ? null : getReason('restore', reasons);
 }
 
-function analyzeGitReset(tokens: readonly string[]): string | null {
+function analyzeGitReset(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   for (const token of tokens) {
     if (token === '--hard') {
-      return REASON_RESET_HARD;
+      return getReason('reset_hard', reasons);
     }
     if (token === '--merge') {
-      return REASON_RESET_MERGE;
+      return getReason('reset_merge', reasons);
     }
   }
   return null;
 }
 
-function analyzeGitClean(tokens: readonly string[]): string | null {
+function analyzeGitClean(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   for (const token of tokens) {
     if (token === '-n' || token === '--dry-run') {
       return null;
@@ -336,13 +322,16 @@ function analyzeGitClean(tokens: readonly string[]): string | null {
 
   const shortOpts = extractShortOpts(tokens.filter((t) => t !== '--'));
   if (tokens.includes('--force') || shortOpts.has('-f')) {
-    return REASON_CLEAN;
+    return getReason('clean', reasons);
   }
 
   return null;
 }
 
-function analyzeGitPush(tokens: readonly string[]): string | null {
+function analyzeGitPush(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   let hasForceWithLease = false;
   const shortOpts = extractShortOpts(tokens.filter((t) => t !== '--'));
   const hasForce = tokens.includes('--force') || shortOpts.has('-f');
@@ -354,40 +343,49 @@ function analyzeGitPush(tokens: readonly string[]): string | null {
   }
 
   if (hasForce && !hasForceWithLease) {
-    return REASON_PUSH_FORCE;
+    return getReason('push_force', reasons);
   }
 
   return null;
 }
 
-function analyzeGitBranch(tokens: readonly string[]): string | null {
+function analyzeGitBranch(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   const shortOpts = extractShortOpts(tokens.filter((t) => t !== '--'));
   if (shortOpts.has('-D')) {
-    return REASON_BRANCH_DELETE;
+    return getReason('branch_delete', reasons);
   }
   return null;
 }
 
-function analyzeGitStash(tokens: readonly string[]): string | null {
+function analyzeGitStash(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   for (const token of tokens) {
     if (token === 'drop') {
-      return REASON_STASH_DROP;
+      return getReason('stash_drop', reasons);
     }
     if (token === 'clear') {
-      return REASON_STASH_CLEAR;
+      return getReason('stash_clear', reasons);
     }
   }
   return null;
 }
 
-function analyzeGitWorktree(tokens: readonly string[]): string | null {
+function analyzeGitWorktree(
+  tokens: readonly string[],
+  reasons?: Record<string, string>,
+): string | null {
   const hasRemove = tokens.includes('remove');
   if (!hasRemove) return null;
 
   const { before } = splitAtDoubleDash(tokens);
   for (const token of before) {
     if (token === '--force' || token === '-f') {
-      return REASON_WORKTREE_REMOVE_FORCE;
+      return getReason('worktree_remove_force', reasons);
     }
   }
 

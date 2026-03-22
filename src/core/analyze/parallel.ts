@@ -1,15 +1,11 @@
 import { analyzeFind } from '@/core/analyze/find';
 import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
 import { extractDashCArg } from '@/core/analyze/shell-wrappers';
+import { getReason } from '@/core/reasons';
 import { analyzeGit } from '@/core/rules-git';
 import { analyzeRm } from '@/core/rules-rm';
 import { getBasename, stripWrappers } from '@/core/shell';
 import { SHELL_WRAPPERS } from '@/types';
-
-const REASON_PARALLEL_RM =
-  'parallel rm -rf with dynamic input is dangerous. Use explicit file list instead.';
-const REASON_PARALLEL_SHELL =
-  'parallel with shell -c can execute arbitrary commands from dynamic input.';
 
 export interface ParallelAnalyzeContext {
   cwd: string | undefined;
@@ -17,6 +13,7 @@ export interface ParallelAnalyzeContext {
   paranoidRm: boolean | undefined;
   allowTmpdirVar: boolean;
   analyzeNested: (command: string) => string | null;
+  reasons?: Record<string, string>;
 }
 
 export function analyzeParallel(
@@ -57,7 +54,7 @@ export function analyzeParallel(
     if (dashCArg) {
       // If script IS just the placeholder, stdin provides entire script - dangerous
       if (dashCArg === '{}' || dashCArg === '{1}') {
-        return REASON_PARALLEL_SHELL;
+        return getReason('parallel_shell', context.reasons);
       }
       // If script contains placeholder
       if (dashCArg.includes('{}')) {
@@ -88,7 +85,7 @@ export function analyzeParallel(
       // If there's a placeholder in the shell wrapper args (not script),
       // it's still dangerous
       if (hasPlaceholder) {
-        return REASON_PARALLEL_SHELL;
+        return getReason('parallel_shell', context.reasons);
       }
       return null;
     }
@@ -96,11 +93,11 @@ export function analyzeParallel(
     // If there are args from :::, those become the scripts - dangerous pattern
     if (args.length > 0) {
       // The pattern of passing scripts via ::: to bash -c is inherently dangerous
-      return REASON_PARALLEL_SHELL;
+      return getReason('parallel_shell', context.reasons);
     }
     // Stdin provides the script - dangerous
     if (hasPlaceholder) {
-      return REASON_PARALLEL_SHELL;
+      return getReason('parallel_shell', context.reasons);
     }
     return null;
   }
@@ -116,6 +113,7 @@ export function analyzeParallel(
           originalCwd: context.originalCwd,
           paranoid: context.paranoidRm,
           allowTmpdirVar: context.allowTmpdirVar,
+          reasons: context.reasons,
         });
         if (rmResult) {
           return rmResult;
@@ -132,24 +130,25 @@ export function analyzeParallel(
         originalCwd: context.originalCwd,
         paranoid: context.paranoidRm,
         allowTmpdirVar: context.allowTmpdirVar,
+        reasons: context.reasons,
       });
       if (rmResult) {
         return rmResult;
       }
       return null;
     }
-    return REASON_PARALLEL_RM;
+    return getReason('parallel_rm', context.reasons);
   }
 
   if (head === 'find') {
-    const findResult = analyzeFind(childTokens);
+    const findResult = analyzeFind(childTokens, context.reasons);
     if (findResult) {
       return findResult;
     }
   }
 
   if (head === 'git') {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, context.reasons);
     if (gitResult) {
       return gitResult;
     }
