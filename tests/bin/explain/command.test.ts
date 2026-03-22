@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { getConfigSource } from '@/bin/explain/config';
 import { explainCommand } from '@/bin/explain/index';
 import { explainSegment } from '@/bin/explain/segment';
-import { REASON_RECURSION_LIMIT } from '@/core/analyze/analyze-command';
+import { getReason } from '@/core/reasons';
 import type { TraceStep } from '@/types';
 import { MAX_RECURSION_DEPTH } from '@/types';
 
@@ -446,7 +446,9 @@ describe('explainCommand guard parity fixes', () => {
   });
 
   test('Fix #3: TMPDIR traversal override blocks rm', () => {
-    const result = explainCommand('TMPDIR=/tmp/../root rm -rf $TMPDIR/foo', { cwd: '/tmp' });
+    const result = explainCommand('TMPDIR=/tmp/../root rm -rf $TMPDIR/foo', {
+      cwd: '/tmp',
+    });
     expect(result.result).toBe('blocked');
     expect(result.reason).toContain('rm -rf');
   });
@@ -491,7 +493,12 @@ describe('explainCommand guard parity fixes', () => {
     const customConfig = {
       version: 1,
       rules: [
-        { name: 'block-git', command: 'git', block_args: ['status'], reason: 'custom git block' },
+        {
+          name: 'block-git',
+          command: 'git',
+          block_args: ['status'],
+          reason: 'custom git block',
+        },
       ],
     };
     const result = explainCommand('bash -c "git status"', { config: customConfig });
@@ -502,7 +509,12 @@ describe('explainCommand guard parity fixes', () => {
     const customConfig = {
       version: 1,
       rules: [
-        { name: 'block-echo', command: 'echo', block_args: ['hello'], reason: 'custom echo block' },
+        {
+          name: 'block-echo',
+          command: 'echo',
+          block_args: ['hello'],
+          reason: 'custom echo block',
+        },
       ],
     };
     const result = explainCommand('echo hello', { config: customConfig });
@@ -513,12 +525,16 @@ describe('explainCommand guard parity fixes', () => {
 
 describe('explainCommand CWD unknown parity with guard', () => {
   test('xargs rm blocked when CWD unknown after cd', () => {
-    const result = explainCommand('cd /somewhere && xargs rm -rf foo', { cwd: '/home/user' });
+    const result = explainCommand('cd /somewhere && xargs rm -rf foo', {
+      cwd: '/home/user',
+    });
     expect(result.result).toBe('blocked');
   });
 
   test('parallel rm blocked when CWD unknown after pushd', () => {
-    const result = explainCommand('pushd /x && parallel rm -rf ::: foo', { cwd: '/home/user' });
+    const result = explainCommand('pushd /x && parallel rm -rf ::: foo', {
+      cwd: '/home/user',
+    });
     expect(result.result).toBe('blocked');
   });
 
@@ -787,10 +803,10 @@ describe('explainSegment direct depth limit', () => {
   test('explainSegment called at MAX_RECURSION_DEPTH returns recursion limit error', () => {
     const steps: TraceStep[] = [];
     const result = explainSegment(['rm', '-rf', '/'], MAX_RECURSION_DEPTH, { cwd: '/tmp' }, steps);
-    expect(result?.reason).toBe(REASON_RECURSION_LIMIT);
+    expect(result?.reason).toBe(getReason('recursion_limit'));
     expect(steps[0]).toEqual({
       type: 'error',
-      message: REASON_RECURSION_LIMIT,
+      message: getReason('recursion_limit'),
     });
   });
 
@@ -802,7 +818,7 @@ describe('explainSegment direct depth limit', () => {
       { cwd: '/tmp' },
       steps,
     );
-    expect(result?.reason).toBe(REASON_RECURSION_LIMIT);
+    expect(result?.reason).toBe(getReason('recursion_limit'));
     expect(steps).toHaveLength(1);
   });
 });

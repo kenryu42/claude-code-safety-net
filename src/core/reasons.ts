@@ -83,10 +83,10 @@ const DEFAULT_REASONS: Record<string, string> = {
  */
 export function getReason(key: string, configReasons?: Record<string, string>): string {
   if (configReasons && key in configReasons) {
-    return configReasons[key]!;
+    return configReasons[key] as string;
   }
   if (key in DEFAULT_REASONS) {
-    return DEFAULT_REASONS[key]!;
+    return DEFAULT_REASONS[key] as string;
   }
   // Fallback: return key as reason (should not happen)
   return key;
