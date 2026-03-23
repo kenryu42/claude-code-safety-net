@@ -301,7 +301,7 @@ export function explainSegment(
 
   if (isRm) {
     if (effectiveCwd && isHomeDirectory(effectiveCwd) && hasRecursiveForceFlags(strippedTokens)) {
-      const reason = 'rm -rf in home directory is dangerous. Change to a project directory first.';
+      const reason = getReason('rm_home_cwd', options.config?.reasons);
       steps.push({
         type: 'rule-check',
         ruleModule: 'rules-rm.ts',
