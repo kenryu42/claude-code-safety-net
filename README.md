@@ -546,6 +546,46 @@ Create `.safety-net.json` in your project root:
 
 Now `git add -A`, `git add --all`, and `git add .` will be blocked with your custom message.
 
+### More Examples: Database Wipe Protection
+
+Prevent Claude from running destructive database commands that wipe data ([#37405](https://github.com/anthropics/claude-code/issues/37405), [#34729](https://github.com/anthropics/claude-code/issues/34729), [#37574](https://github.com/anthropics/claude-code/issues/37574)):
+
+```json
+{
+  "version": 1,
+  "rules": [
+    {
+      "name": "block-laravel-migrate-fresh",
+      "command": "php",
+      "subcommand": "artisan",
+      "block_args": ["migrate:fresh", "migrate:reset", "db:wipe"],
+      "reason": "Destructive migration blocked. Use 'migrate' for safe migrations."
+    },
+    {
+      "name": "block-prisma-reset",
+      "command": "npx",
+      "subcommand": "prisma",
+      "block_args": ["migrate reset"],
+      "reason": "prisma migrate reset wipes all data. Use 'migrate deploy' instead."
+    },
+    {
+      "name": "block-django-flush",
+      "command": "python",
+      "subcommand": "manage.py",
+      "block_args": ["flush", "sqlflush"],
+      "reason": "Django flush deletes all data. This is blocked for safety."
+    },
+    {
+      "name": "block-rails-db-drop",
+      "command": "rails",
+      "subcommand": "db:drop",
+      "block_args": [],
+      "reason": "rails db:drop is blocked. Use db:migrate for safe changes."
+    }
+  ]
+}
+```
+
 ### Config File Location
 
 Config files are loaded from two scopes and merged:
