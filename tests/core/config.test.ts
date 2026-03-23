@@ -389,6 +389,83 @@ describe('config validation', () => {
       });
       expect(config.rules).toEqual([]);
     });
+
+    describe('reasons validation', () => {
+      test('valid reasons object', () => {
+        const config = loadFromProject({
+          version: 1,
+          reasons: {
+            rm_rf_blocked: 'Custom rm -rf message',
+            checkout_force: 'Custom checkout force',
+          },
+        });
+        expect(config.reasons).toEqual({
+          rm_rf_blocked: 'Custom rm -rf message',
+          checkout_force: 'Custom checkout force',
+        });
+      });
+
+      test('reasons must be an object', () => {
+        const errors = validateConfig({
+          version: 1,
+          reasons: 'invalid',
+        }).errors;
+        expect(errors).toContain('reasons must be an object');
+      });
+
+      test('reasons values must be strings', () => {
+        const errors = validateConfig({
+          version: 1,
+          reasons: { key: 123 },
+        }).errors;
+        expect(errors).toContain('reasons.key: must be a string');
+      });
+
+      test('reasons values must not be empty', () => {
+        const errors = validateConfig({
+          version: 1,
+          reasons: { key: '' },
+        }).errors;
+        expect(errors).toContain('reasons.key: must not be empty');
+      });
+
+      test('reasons values max length', () => {
+        const errors = validateConfig({
+          version: 1,
+          reasons: { key: 'x'.repeat(257) },
+        }).errors;
+        expect(errors).toContain('reasons.key: must be at most 256 characters');
+      });
+
+      test('empty reasons object is omitted', () => {
+        const config = loadFromProject({
+          version: 1,
+          reasons: {},
+        });
+        expect(config.reasons).toBeUndefined();
+      });
+
+      test('invalid reasons cause config to be rejected', () => {
+        const config = loadFromProject({
+          version: 1,
+          reasons: { key: 123 },
+        });
+        // Because validation fails, loadConfig returns default config (no reasons)
+        expect(config.reasons).toBeUndefined();
+      });
+
+      test('reasons with non-string values are rejected', () => {
+        // When reasons have non-string values, validation fails
+        const errors = validateConfig({
+          version: 1,
+          reasons: {
+            valid: 'valid string',
+            invalid: 123,
+          },
+        }).errors;
+        expect(errors).toContain('reasons.invalid: must be a string');
+      });
+    });
   });
 });
 
