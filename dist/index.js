@@ -417,16 +417,6 @@ var DEFAULT_REASONS = {
   stash_drop: "git stash drop permanently deletes stashed changes. Consider 'git stash list' first.",
   stash_clear: "git stash clear deletes ALL stashed changes permanently.",
   worktree_remove_force: "git worktree remove --force can delete uncommitted changes. Remove --force flag.",
-  rm_rf: "rm -rf",
-  git_reset_hard: "git reset --hard",
-  git_reset_merge: "git reset --merge",
-  git_clean_f: "git clean -f",
-  git_push_force: "git push --force (use --force-with-lease instead)",
-  git_branch_D: "git branch -D",
-  git_stash_drop_clear: "git stash drop/clear",
-  git_checkout_dashdash: "git checkout --",
-  git_restore_without_staged: "git restore (without --staged)",
-  find_delete: "find -delete",
   rm_rf_blocked: "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.",
   rm_rf_root_home: "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
   find_delete_reason: "find -delete permanently removes files. Use -print first to preview.",
@@ -1332,7 +1322,7 @@ function _isShellTokenBoundaryChar(char) {
 // src/core/analyze/find.ts
 function analyzeFind(tokens, reasons) {
   if (findHasDelete(tokens.slice(1))) {
-    return getReason("find_delete", reasons);
+    return getReason("find_delete_reason", reasons);
   }
   for (let i = 0;i < tokens.length; i++) {
     const token = tokens[i];
@@ -2711,7 +2701,7 @@ function validateConfig(config) {
     }
   }
   if (cfg.reasons !== undefined) {
-    if (typeof cfg.reasons !== "object" || cfg.reasons === null) {
+    if (typeof cfg.reasons !== "object" || cfg.reasons === null || Array.isArray(cfg.reasons)) {
       errors.push("reasons must be an object");
     } else {
       const reasons = cfg.reasons;
@@ -2791,8 +2781,9 @@ function cleanReasons(config) {
   const cfg = config;
   if (cfg.reasons === undefined)
     return;
-  if (typeof cfg.reasons !== "object" || cfg.reasons === null)
+  if (typeof cfg.reasons !== "object" || cfg.reasons === null || Array.isArray(cfg.reasons)) {
     return;
+  }
   const reasons = cfg.reasons;
   const cleaned = {};
   for (const [key, value] of Object.entries(reasons)) {

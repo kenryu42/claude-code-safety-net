@@ -40,17 +40,6 @@ const DEFAULT_REASONS: Record<string, string> = {
   // Git worktree reasons
   worktree_remove_force:
     'git worktree remove --force can delete uncommitted changes. Remove --force flag.',
-  // Dangerous text patterns (reason strings from dangerous-text.ts)
-  rm_rf: 'rm -rf',
-  git_reset_hard: 'git reset --hard',
-  git_reset_merge: 'git reset --merge',
-  git_clean_f: 'git clean -f',
-  git_push_force: 'git push --force (use --force-with-lease instead)',
-  git_branch_D: 'git branch -D',
-  git_stash_drop_clear: 'git stash drop/clear',
-  git_checkout_dashdash: 'git checkout --',
-  git_restore_without_staged: 'git restore (without --staged)',
-  find_delete: 'find -delete',
   // rm reasons
   rm_rf_blocked:
     'rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.',

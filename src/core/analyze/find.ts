@@ -8,7 +8,7 @@ export function analyzeFind(
 ): string | null {
   // Check for -delete outside of -exec/-execdir blocks
   if (findHasDelete(tokens.slice(1))) {
-    return getReason('find_delete', reasons);
+    return getReason('find_delete_reason', reasons);
   }
 
   // Check all -exec and -execdir blocks for dangerous commands

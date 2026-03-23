@@ -122,7 +122,7 @@ export function validateConfig(config: unknown): ValidationResult {
   }
 
   if (cfg.reasons !== undefined) {
-    if (typeof cfg.reasons !== 'object' || cfg.reasons === null) {
+    if (typeof cfg.reasons !== 'object' || cfg.reasons === null || Array.isArray(cfg.reasons)) {
       errors.push('reasons must be an object');
     } else {
       const reasons = cfg.reasons as Record<string, unknown>;
@@ -215,7 +215,9 @@ function cleanReasons(config: unknown): Record<string, string> | undefined {
   if (!config || typeof config !== 'object') return undefined;
   const cfg = config as Record<string, unknown>;
   if (cfg.reasons === undefined) return undefined;
-  if (typeof cfg.reasons !== 'object' || cfg.reasons === null) return undefined;
+  if (typeof cfg.reasons !== 'object' || cfg.reasons === null || Array.isArray(cfg.reasons)) {
+    return undefined;
+  }
   const reasons = cfg.reasons as Record<string, unknown>;
   const cleaned: Record<string, string> = {};
   for (const [key, value] of Object.entries(reasons)) {
