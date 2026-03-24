@@ -69,6 +69,11 @@ export function withEnv<T>(env: Record<string, string>, fn: () => T): T {
  * @internal Exported for testing
  */
 export const mockVersionFetcher: VersionFetcher = async (args: string[]) => {
+  // Handle multi-word commands like `copilot plugin list`
+  if (args[0] === 'copilot' && args[1] === 'plugin') {
+    return 'Installed plugins:\n  • copilot-safety-net (v1.0.0)';
+  }
+
   const cmd = args[0];
   const mockVersions: Record<string, string> = {
     claude: '1.0.0',

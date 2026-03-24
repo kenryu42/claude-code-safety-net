@@ -18,7 +18,7 @@ A Claude Code / OpenCode plugin that blocks destructive git and filesystem comma
 | AST rules | `bun run sg:scan` |
 | Doctor | `bun src/bin/cc-safety-net.ts doctor` |
 
-**`bun run check`** runs: biome check → typecheck → knip → ast-grep scan → bun test
+**Always use `bun run check` to verify changes.** This runs typecheck, knip, biome lint, and tests together. Do not run these separately.
 
 ## Pre-commit Hooks
 
@@ -68,23 +68,6 @@ export const myInternalFn = () => { ... };
 - Print errors to stderr
 - Exit codes: `0` = success, `1` = error
 - Block commands: exit 0 with JSON `permissionDecision: "deny"`
-
-## Architecture
-
-```
-src/
-├── index.ts                   # OpenCode plugin export (main entry)
-├── types.ts                   # Shared types and constants
-├── bin/
-│   └── cc-safety-net.ts       # Claude Code CLI wrapper
-└── core/
-    ├── analyze.ts             # Main analysis logic
-    ├── config.ts              # Config loading (.safety-net.json)
-    ├── shell.ts               # Shell parsing (uses shell-quote)
-    ├── rules-git.ts           # Git subcommand analysis
-    ├── rules-rm.ts            # rm command analysis
-    └── rules-custom.ts        # Custom rule evaluation
-```
 
 ## Testing
 

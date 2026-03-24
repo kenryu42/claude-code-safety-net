@@ -19,6 +19,8 @@ A Claude Code and OpenCode plugin that blocks destructive git and filesystem com
 - **Build**: `bun run build`
 - **Doctor**: `bun src/bin/cc-safety-net.ts doctor` (diagnostics)
 
+**Always use `bun run check` to verify changes.** This runs typecheck, knip, biome lint, and tests together. Do not run these separately.
+
 ## Pre-commit Hooks
 
 Runs on commit: `knip` → `lint-staged` (biome check --write, ast-grep scan)

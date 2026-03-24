@@ -371,6 +371,7 @@ describe('formatSystemInfoSection', () => {
       nodeVersion: '22.0.0',
       npmVersion: null,
       bunVersion: '1.0.0',
+      copilotPluginInstalled: false,
       platform: 'darwin arm64',
     };
     const output = formatSystemInfoSection(sysInfo);
@@ -412,6 +413,7 @@ describe('formatConfigSection', () => {
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
+        copilotPluginInstalled: false,
         platform: 'darwin arm64',
       },
     };
@@ -463,6 +465,7 @@ describe('formatConfigSection', () => {
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
+        copilotPluginInstalled: false,
         platform: 'darwin arm64',
       },
     };
@@ -505,6 +508,7 @@ describe('formatConfigSection', () => {
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
+        copilotPluginInstalled: false,
         platform: 'darwin arm64',
       },
     };
@@ -535,6 +539,7 @@ describe('formatSummary', () => {
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
+        copilotPluginInstalled: false,
         platform: 'darwin',
       },
     };
@@ -561,6 +566,7 @@ describe('formatSummary', () => {
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
+        copilotPluginInstalled: false,
         platform: 'darwin',
       },
     };
@@ -587,6 +593,7 @@ describe('formatSummary', () => {
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
         bunVersion: '1.0.0',
+        copilotPluginInstalled: false,
         platform: 'darwin',
       },
     };

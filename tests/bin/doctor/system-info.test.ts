@@ -41,6 +41,7 @@ describe('getSystemInfo', () => {
     expect(sysInfo.nodeVersion === null || typeof sysInfo.nodeVersion === 'string').toBe(true);
     expect(sysInfo.npmVersion === null || typeof sysInfo.npmVersion === 'string').toBe(true);
     expect(sysInfo.bunVersion === null || typeof sysInfo.bunVersion === 'string').toBe(true);
+    expect(typeof sysInfo.copilotPluginInstalled).toBe('boolean');
   });
 
   test('detects Bun version with mock fetcher', async () => {
@@ -140,6 +141,7 @@ describe('getSystemInfo', () => {
     const result = await getSystemInfo(failingFetcher);
     expect(result.claudeCodeVersion).toBeNull();
     expect(result.copilotCliVersion).toBeNull();
+    expect(result.copilotPluginInstalled).toBe(false);
     expect(result.bunVersion).toBeNull();
     expect(result.nodeVersion).toBeNull();
   });
@@ -150,6 +152,55 @@ describe('getSystemInfo', () => {
     expect(result.claudeCodeVersion).toBeNull();
     expect(result.copilotCliVersion).toBeNull();
     expect(result.bunVersion).toBeNull();
+  });
+});
+
+describe('copilotPluginInstalled', () => {
+  test('returns true when copilot plugin list includes copilot-safety-net', async () => {
+    const fetcher = async (args: string[]) => {
+      if (args[0] === 'copilot' && args[1] === 'plugin') {
+        return 'Installed plugins:\n  • copilot-safety-net (v1.0.0)';
+      }
+      return null;
+    };
+
+    const sysInfo = await getSystemInfo(fetcher);
+
+    expect(sysInfo.copilotPluginInstalled).toBe(true);
+  });
+
+  test('returns false when plugin list does not include copilot-safety-net', async () => {
+    const fetcher = async (args: string[]) => {
+      if (args[0] === 'copilot' && args[1] === 'plugin') {
+        return 'Installed plugins:\n  • other-plugin (v1.0.0)';
+      }
+      return null;
+    };
+
+    const sysInfo = await getSystemInfo(fetcher);
+
+    expect(sysInfo.copilotPluginInstalled).toBe(false);
+  });
+
+  test('returns false for partial plugin id matches', async () => {
+    const fetcher = async (args: string[]) => {
+      if (args[0] === 'copilot' && args[1] === 'plugin') {
+        return 'Installed plugins:\n  • other-copilot-safety-net (v1.0.0)';
+      }
+      return null;
+    };
+
+    const sysInfo = await getSystemInfo(fetcher);
+
+    expect(sysInfo.copilotPluginInstalled).toBe(false);
+  });
+
+  test('returns false when copilot plugin list is unavailable', async () => {
+    const fetcher = async (_args: string[]) => null;
+
+    const sysInfo = await getSystemInfo(fetcher);
+
+    expect(sysInfo.copilotPluginInstalled).toBe(false);
   });
 });
 

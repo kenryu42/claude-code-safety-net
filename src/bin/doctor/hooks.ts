@@ -13,6 +13,7 @@ import type { Config } from '@/types';
 interface HookDetectOptions extends LoadConfigOptions {
   homeDir?: string;
   copilotCliVersion?: string | null;
+  copilotPluginInstalled?: boolean;
 }
 
 interface CopilotHookEntry {
@@ -38,6 +39,8 @@ interface CopilotDetectionState {
   activeConfigPaths: string[];
   disabledBy?: string;
 }
+
+const COPILOT_PLUGIN_CONFIG_PATH = 'copilot-plugin';
 
 /** Self-test cases for validating the analyzer */
 const SELF_TEST_CASES: SelfTestCase[] = [
@@ -684,13 +687,16 @@ export function detectAllHooks(cwd: string, options?: HookDetectOptions): HookSt
       };
     }
 
-    if (hooksCheck.activeConfigPaths.length > 0) {
+    if (options?.copilotPluginInstalled === true || hooksCheck.activeConfigPaths.length > 0) {
+      const viaPlugin = options?.copilotPluginInstalled === true;
+      const primaryConfigPath = hooksCheck.activeConfigPaths[0];
       return {
         platform: 'copilot-cli',
         status: 'configured',
-        method: 'hook config',
-        configPath: hooksCheck.activeConfigPaths[0],
-        configPaths: hooksCheck.activeConfigPaths,
+        method: viaPlugin ? 'plugin list' : 'hook config',
+        configPath: primaryConfigPath ?? (viaPlugin ? COPILOT_PLUGIN_CONFIG_PATH : undefined),
+        configPaths:
+          hooksCheck.activeConfigPaths.length > 0 ? hooksCheck.activeConfigPaths : undefined,
         selfTest: runSelfTest(),
         errors: errors.length > 0 ? errors : undefined,
       };
