@@ -13,6 +13,7 @@ import type { Config } from '@/types';
 interface HookDetectOptions extends LoadConfigOptions {
   homeDir?: string;
   copilotCliVersion?: string | null;
+  copilotPluginInstalled?: boolean;
 }
 
 interface CopilotHookEntry {
@@ -684,13 +685,15 @@ export function detectAllHooks(cwd: string, options?: HookDetectOptions): HookSt
       };
     }
 
-    if (hooksCheck.activeConfigPaths.length > 0) {
+    if (options?.copilotPluginInstalled === true || hooksCheck.activeConfigPaths.length > 0) {
+      const viaPlugin = options?.copilotPluginInstalled === true;
       return {
         platform: 'copilot-cli',
         status: 'configured',
-        method: 'hook config',
-        configPath: hooksCheck.activeConfigPaths[0],
-        configPaths: hooksCheck.activeConfigPaths,
+        method: viaPlugin ? 'plugin list' : 'hook config',
+        configPath: viaPlugin ? undefined : hooksCheck.activeConfigPaths[0],
+        configPaths:
+          hooksCheck.activeConfigPaths.length > 0 ? hooksCheck.activeConfigPaths : undefined,
         selfTest: runSelfTest(),
         errors: errors.length > 0 ? errors : undefined,
       };

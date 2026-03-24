@@ -25,6 +25,8 @@ export function getPackageVersion(): string {
  */
 export type VersionFetcher = (args: string[]) => Promise<string | null>;
 
+const COPILOT_PLUGIN_ID = 'copilot-safety-net';
+
 /**
  * Default version fetcher that runs shell commands.
  * Uses Node.js child_process.spawn for compatibility with both Node and Bun runtimes.
@@ -92,6 +94,14 @@ function parseVersion(output: string | null): string | null {
   return firstLine || null;
 }
 
+function hasCopilotSafetyNetPlugin(output: string | null): boolean {
+  if (!output) return false;
+
+  const pluginPattern = new RegExp(`(^|[^a-z0-9-])${COPILOT_PLUGIN_ID}([^a-z0-9-]|$)`, 'm');
+
+  return pluginPattern.test(output);
+}
+
 /**
  * Fetch system info with tool versions.
  * Runs all version checks in parallel for performance.
@@ -110,7 +120,7 @@ export async function getSystemInfo(
   };
 
   // Run all version fetches in parallel
-  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw] =
+  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw, pluginListRaw] =
     await Promise.all([
       fetcher(['claude', '--version']),
       fetcher(['opencode', '--version']),
@@ -119,6 +129,7 @@ export async function getSystemInfo(
       fetcher(['node', '--version']),
       fetcher(['npm', '--version']),
       fetcher(['bun', '--version']),
+      fetcher(['copilot', 'plugin', 'list']),
     ]);
 
   return {
@@ -130,6 +141,7 @@ export async function getSystemInfo(
     nodeVersion: parseVersion(nodeRaw),
     npmVersion: parseVersion(npmRaw),
     bunVersion: parseVersion(bunRaw),
+    copilotPluginInstalled: hasCopilotSafetyNetPlugin(pluginListRaw),
     platform: `${process.platform} ${process.arch}`,
   };
 }

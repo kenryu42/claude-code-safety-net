@@ -4178,13 +4178,14 @@ function detectAllHooks(cwd, options) {
         errors: errors.length > 0 ? errors : undefined
       };
     }
-    if (hooksCheck.activeConfigPaths.length > 0) {
+    if (options?.copilotPluginInstalled === true || hooksCheck.activeConfigPaths.length > 0) {
+      const viaPlugin = options?.copilotPluginInstalled === true;
       return {
         platform: "copilot-cli",
         status: "configured",
-        method: "hook config",
-        configPath: hooksCheck.activeConfigPaths[0],
-        configPaths: hooksCheck.activeConfigPaths,
+        method: viaPlugin ? "plugin list" : "hook config",
+        configPath: viaPlugin ? undefined : hooksCheck.activeConfigPaths[0],
+        configPaths: hooksCheck.activeConfigPaths.length > 0 ? hooksCheck.activeConfigPaths : undefined,
         selfTest: runSelfTest(),
         errors: errors.length > 0 ? errors : undefined
       };
@@ -4210,6 +4211,7 @@ var VERSION_FETCH_TIMEOUT_MS = 2000;
 function getPackageVersion() {
   return CURRENT_VERSION;
 }
+var COPILOT_PLUGIN_ID = "copilot-safety-net";
 var defaultVersionFetcher = async (args) => {
   const [cmd, ...rest] = args;
   if (!cmd)
@@ -4260,6 +4262,12 @@ function parseVersion(output) {
 `)[0]?.trim();
   return firstLine || null;
 }
+function hasCopilotSafetyNetPlugin(output) {
+  if (!output)
+    return false;
+  const pluginPattern = new RegExp(`(^|[^a-z0-9-])${COPILOT_PLUGIN_ID}([^a-z0-9-]|$)`, "m");
+  return pluginPattern.test(output);
+}
 async function getSystemInfo(fetcher = defaultVersionFetcher) {
   const fetchCopilotVersion = async () => {
     const binaryVersionPromise = fetcher(["copilot", "--binary-version"]);
@@ -4270,14 +4278,15 @@ async function getSystemInfo(fetcher = defaultVersionFetcher) {
     }
     return fallbackVersionPromise;
   };
-  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw] = await Promise.all([
+  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw, pluginListRaw] = await Promise.all([
     fetcher(["claude", "--version"]),
     fetcher(["opencode", "--version"]),
     fetcher(["gemini", "--version"]),
     fetchCopilotVersion(),
     fetcher(["node", "--version"]),
     fetcher(["npm", "--version"]),
-    fetcher(["bun", "--version"])
+    fetcher(["bun", "--version"]),
+    fetcher(["copilot", "plugin", "list"])
   ]);
   return {
     version: CURRENT_VERSION,
@@ -4288,6 +4297,7 @@ async function getSystemInfo(fetcher = defaultVersionFetcher) {
     nodeVersion: parseVersion(nodeRaw),
     npmVersion: parseVersion(npmRaw),
     bunVersion: parseVersion(bunRaw),
+    copilotPluginInstalled: hasCopilotSafetyNetPlugin(pluginListRaw),
     platform: `${process.platform} ${process.arch}`
   };
 }
@@ -4353,7 +4363,10 @@ function parseDoctorFlags(args) {
 async function runDoctor(options = {}) {
   const cwd = options.cwd ?? process.cwd();
   const system = await getSystemInfo();
-  const hooks = detectAllHooks(cwd, { copilotCliVersion: system.copilotCliVersion });
+  const hooks = detectAllHooks(cwd, {
+    copilotCliVersion: system.copilotCliVersion,
+    copilotPluginInstalled: system.copilotPluginInstalled
+  });
   const configInfo = getConfigInfo(cwd);
   const environment = getEnvironmentInfo();
   const activity = getActivitySummary(7);

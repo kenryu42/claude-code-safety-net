@@ -105,6 +105,8 @@ export interface SystemInfo {
     npmVersion: string | null;
     /** Bun version (from `bun --version`) */
     bunVersion: string | null;
+    /** Whether the copilot-safety-net plugin is installed (from `copilot plugin list`) */
+    copilotPluginInstalled: boolean;
     /** Platform (e.g., "darwin arm64") */
     platform: string;
 }

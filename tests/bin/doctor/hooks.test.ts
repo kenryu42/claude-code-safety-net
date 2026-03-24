@@ -441,6 +441,73 @@ describe('detectAllHooks', () => {
     }
   });
 
+  test('Copilot CLI: configured from installed plugin list without hook config', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir, copilotPluginInstalled: true });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('plugin list');
+      expect(copilot?.configPath).toBeUndefined();
+      expect(copilot?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Copilot CLI: installed plugin list overrides legacy hook config as configured signal', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const copilotDir = join(projectDir, '.github', 'hooks');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(copilotDir, { recursive: true });
+    _writeCopilotHook(join(copilotDir, 'safety-net.json'));
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir, copilotPluginInstalled: true });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('plugin list');
+      expect(copilot?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Copilot CLI: disableAllHooks still overrides installed plugin list', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const configDir = join(projectDir, '.github', 'copilot');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(configDir, { recursive: true });
+    writeFileSync(join(configDir, 'settings.json'), JSON.stringify({ disableAllHooks: true }));
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        copilotCliVersion: '1.0.9',
+        copilotPluginInstalled: true,
+      });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+
+      expect(copilot?.status).toBe('disabled');
+      expect(copilot?.configPath).toBe(join(configDir, 'settings.json'));
+      expect(copilot?.configPaths).toEqual([join(configDir, 'settings.json')]);
+      expect(copilot?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
   test('Copilot CLI: configured from global hook config', () => {
     const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');

@@ -27,7 +27,10 @@ export async function runDoctor(options: DoctorOptions = {}): Promise<number> {
 
   // Collect all data
   const system = await getSystemInfo();
-  const hooks = detectAllHooks(cwd, { copilotCliVersion: system.copilotCliVersion });
+  const hooks = detectAllHooks(cwd, {
+    copilotCliVersion: system.copilotCliVersion,
+    copilotPluginInstalled: system.copilotPluginInstalled,
+  });
   const configInfo = getConfigInfo(cwd);
   const environment = getEnvironmentInfo();
   const activity = getActivitySummary(7);
