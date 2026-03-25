@@ -36,6 +36,8 @@ const REASON_RM_RF =
   'rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.';
 const REASON_RM_RF_ROOT_HOME =
   'rm -rf targeting root or home directory is extremely dangerous and always blocked.';
+const REASON_RM_HOME_CWD =
+  'rm -rf in home directory is dangerous. Change to a project directory first.';
 
 export interface AnalyzeRmOptions {
   cwd?: string;
@@ -55,8 +57,9 @@ interface RmContext {
 
 type TargetClassification =
   | { kind: 'root_or_home_target' }
-  | { kind: 'cwd_self_target' }
   | { kind: 'temp_target' }
+  | { kind: 'home_cwd_target' }
+  | { kind: 'cwd_self_target' }
   | { kind: 'within_anchored_cwd' }
   | { kind: 'outside_anchored_cwd' };
 
@@ -127,20 +130,18 @@ function classifyTarget(target: string, ctx: RmContext): TargetClassification {
     return { kind: 'root_or_home_target' };
   }
 
-  const anchoredCwd = ctx.anchoredCwd;
-  if (anchoredCwd) {
-    if (isCwdSelfTarget(target, anchoredCwd)) {
-      return { kind: 'cwd_self_target' };
-    }
-  }
-
   if (isTempTarget(target, ctx.trustTmpdirVar)) {
     return { kind: 'temp_target' };
   }
 
+  const anchoredCwd = ctx.anchoredCwd;
   if (anchoredCwd) {
     if (isCwdHomeForRmPolicy(anchoredCwd, ctx.homeDir)) {
-      return { kind: 'root_or_home_target' };
+      return { kind: 'home_cwd_target' };
+    }
+
+    if (isCwdSelfTarget(target, anchoredCwd)) {
+      return { kind: 'cwd_self_target' };
     }
 
     if (isTargetWithinCwd(target, anchoredCwd, ctx.resolvedCwd ?? anchoredCwd)) {
@@ -158,10 +159,12 @@ function reasonForClassification(
   switch (classification.kind) {
     case 'root_or_home_target':
       return REASON_RM_RF_ROOT_HOME;
-    case 'cwd_self_target':
-      return REASON_RM_RF;
     case 'temp_target':
       return null;
+    case 'home_cwd_target':
+      return REASON_RM_HOME_CWD;
+    case 'cwd_self_target':
+      return REASON_RM_RF;
     case 'within_anchored_cwd':
       if (ctx.paranoid) {
         return `${REASON_RM_RF} (SAFETY_NET_PARANOID_RM enabled)`;
@@ -319,6 +322,7 @@ function isTargetWithinCwd(target: string, originalCwd: string, effectiveCwd?: s
   }
 }
 
+/** @internal Exported for testing */
 export function isHomeDirectory(cwd: string): boolean {
   const home = process.env.HOME ?? homedir();
   try {

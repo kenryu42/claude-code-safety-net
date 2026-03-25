@@ -282,11 +282,22 @@ describe('explainCommand rm with home directory', () => {
     const allSteps = result.trace.segments.flatMap((s) => s.steps);
     const ruleStep = allSteps.find(
       (s) =>
-        s.type === 'rule-check' &&
-        s.ruleModule === 'rules-rm.ts' &&
-        s.ruleFunction === 'isHomeDirectory',
+        s.type === 'rule-check' && s.ruleModule === 'rules-rm.ts' && s.ruleFunction === 'analyzeRm',
     );
     expect(ruleStep).toBeDefined();
+  });
+
+  test('temp-target rm in home directory cwd is allowed', () => {
+    const homeDir = process.env.HOME;
+    if (!homeDir) return;
+    const result = explainCommand('rm -rf /tmp/test-dir', { cwd: homeDir });
+    expect(result.result).toBe('allowed');
+    const allSteps = result.trace.segments.flatMap((s) => s.steps);
+    const analyzeRmStep = allSteps.find(
+      (s) =>
+        s.type === 'rule-check' && s.ruleModule === 'rules-rm.ts' && s.ruleFunction === 'analyzeRm',
+    );
+    expect(analyzeRmStep).toBeDefined();
   });
 });
 

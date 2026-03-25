@@ -2865,6 +2865,7 @@ function normalizePathForComparison(p) {
 }
 var REASON_RM_RF = "rm -rf outside cwd is blocked. Use explicit paths within the current directory, or delete manually.";
 var REASON_RM_RF_ROOT_HOME = "rm -rf targeting root or home directory is extremely dangerous and always blocked.";
+var REASON_RM_HOME_CWD = "rm -rf in home directory is dangerous. Change to a project directory first.";
 function analyzeRm(tokens, options = {}) {
   const {
     cwd,
@@ -2921,18 +2922,16 @@ function classifyTarget(target, ctx) {
   if (isDangerousRootOrHomeTarget(target)) {
     return { kind: "root_or_home_target" };
   }
-  const anchoredCwd = ctx.anchoredCwd;
-  if (anchoredCwd) {
-    if (isCwdSelfTarget(target, anchoredCwd)) {
-      return { kind: "cwd_self_target" };
-    }
-  }
   if (isTempTarget(target, ctx.trustTmpdirVar)) {
     return { kind: "temp_target" };
   }
+  const anchoredCwd = ctx.anchoredCwd;
   if (anchoredCwd) {
     if (isCwdHomeForRmPolicy(anchoredCwd, ctx.homeDir)) {
-      return { kind: "root_or_home_target" };
+      return { kind: "home_cwd_target" };
+    }
+    if (isCwdSelfTarget(target, anchoredCwd)) {
+      return { kind: "cwd_self_target" };
     }
     if (isTargetWithinCwd(target, anchoredCwd, ctx.resolvedCwd ?? anchoredCwd)) {
       return { kind: "within_anchored_cwd" };
@@ -2944,10 +2943,12 @@ function reasonForClassification(classification, ctx) {
   switch (classification.kind) {
     case "root_or_home_target":
       return REASON_RM_RF_ROOT_HOME;
-    case "cwd_self_target":
-      return REASON_RM_RF;
     case "temp_target":
       return null;
+    case "home_cwd_target":
+      return REASON_RM_HOME_CWD;
+    case "cwd_self_target":
+      return REASON_RM_RF;
     case "within_anchored_cwd":
       if (ctx.paranoid) {
         return `${REASON_RM_RF} (SAFETY_NET_PARANOID_RM enabled)`;
@@ -3065,14 +3066,6 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
     const normalizedResolved = normalizePathForComparison(resolved);
     const normalizedCwd = normalizePathForComparison(originalCwd);
     return normalizedResolved.startsWith(`${normalizedCwd}${sep}`) || normalizedResolved === normalizedCwd;
-  } catch {
-    return false;
-  }
-}
-function isHomeDirectory(cwd) {
-  const home = process.env.HOME ?? homedir3();
-  try {
-    return normalizePathForComparison(cwd) === normalizePathForComparison(home);
   } catch {
     return false;
   }
@@ -3497,7 +3490,6 @@ function matchesBlockArgs(tokens, blockArgs, shortOpts) {
 // src/core/analyze/segment.ts
 var REASON_INTERPRETER_DANGEROUS = "Detected potentially dangerous command in interpreter code.";
 var REASON_INTERPRETER_BLOCKED = "Interpreter one-liners are blocked in paranoid mode.";
-var REASON_RM_HOME_CWD = "rm -rf in home directory is dangerous. Change to a project directory first.";
 function deriveCwdContext(options) {
   const cwdUnknown = options.effectiveCwd === null;
   const cwdForRm = cwdUnknown ? undefined : options.effectiveCwd ?? options.cwd;
@@ -3561,11 +3553,6 @@ function analyzeSegment(tokens, depth, options) {
     }
   }
   if (isRm) {
-    if (cwdForRm && isHomeDirectory(cwdForRm)) {
-      if (hasRecursiveForceFlags(stripped)) {
-        return REASON_RM_HOME_CWD;
-      }
-    }
     const rmResult = analyzeRm(stripped, {
       cwd: cwdForRm,
       originalCwd,
@@ -4682,19 +4669,9 @@ function explainSegment(tokens, depth, options, steps) {
       return { reason };
   }
   if (isRm) {
-    if (effectiveCwd && isHomeDirectory(effectiveCwd) && hasRecursiveForceFlags(strippedTokens)) {
-      const reason2 = "rm -rf in home directory is dangerous. Change to a project directory first.";
-      steps.push({
-        type: "rule-check",
-        ruleModule: "rules-rm.ts",
-        ruleFunction: "isHomeDirectory",
-        matched: true,
-        reason: reason2
-      });
-      return { reason: reason2 };
-    }
     const reason = analyzeRm(strippedTokens, {
-      cwd: effectiveCwd ?? undefined,
+      cwd: cwdForRm,
+      originalCwd,
       paranoid: options.paranoidRm,
       allowTmpdirVar
     });

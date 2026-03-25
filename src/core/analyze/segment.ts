@@ -2,13 +2,12 @@ import { DISPLAY_COMMANDS } from '@/core/analyze/constants';
 import { analyzeFind } from '@/core/analyze/find';
 import { containsDangerousCode, extractInterpreterCodeArg } from '@/core/analyze/interpreters';
 import { analyzeParallel } from '@/core/analyze/parallel';
-import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
 import { extractDashCArg } from '@/core/analyze/shell-wrappers';
 import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
 import { analyzeXargs } from '@/core/analyze/xargs';
 import { checkCustomRules } from '@/core/rules-custom';
 import { analyzeGit } from '@/core/rules-git';
-import { analyzeRm, isHomeDirectory } from '@/core/rules-rm';
+import { analyzeRm } from '@/core/rules-rm';
 import {
   getBasename,
   normalizeCommandToken,
@@ -27,8 +26,6 @@ import {
 export const REASON_INTERPRETER_DANGEROUS =
   'Detected potentially dangerous command in interpreter code.';
 export const REASON_INTERPRETER_BLOCKED = 'Interpreter one-liners are blocked in paranoid mode.';
-const REASON_RM_HOME_CWD =
-  'rm -rf in home directory is dangerous. Change to a project directory first.';
 
 export type InternalOptions = AnalyzeOptions & {
   config: Config;
@@ -123,11 +120,6 @@ export function analyzeSegment(
   }
 
   if (isRm) {
-    if (cwdForRm && isHomeDirectory(cwdForRm)) {
-      if (hasRecursiveForceFlags(stripped)) {
-        return REASON_RM_HOME_CWD;
-      }
-    }
     const rmResult = analyzeRm(stripped, {
       cwd: cwdForRm,
       originalCwd,

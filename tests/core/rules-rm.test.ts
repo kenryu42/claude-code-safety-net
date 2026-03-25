@@ -169,6 +169,50 @@ describe('rm -rf cwd-aware', () => {
     }
   });
 
+  test('rm -rf /tmp target in home cwd allowed', () => {
+    setup();
+    try {
+      withEnv({ HOME: tmpDir }, () => {
+        assertAllowed('rm -rf /tmp/test-dir', tmpDir);
+      });
+    } finally {
+      cleanup();
+    }
+  });
+
+  test('rm -rf /var/tmp target in home cwd allowed', () => {
+    setup();
+    try {
+      withEnv({ HOME: tmpDir }, () => {
+        assertAllowed('rm -rf /var/tmp/test-dir', tmpDir);
+      });
+    } finally {
+      cleanup();
+    }
+  });
+
+  test('rm -rf $TMPDIR target in home cwd allowed', () => {
+    setup();
+    try {
+      withEnv({ HOME: tmpDir }, () => {
+        assertAllowed('rm -rf $TMPDIR/test-dir', tmpDir);
+      });
+    } finally {
+      cleanup();
+    }
+  });
+
+  test('rm -rf mixed temp and home-relative targets in home cwd blocked', () => {
+    setup();
+    try {
+      withEnv({ HOME: tmpDir }, () => {
+        assertBlocked('rm -rf /tmp/test-dir build', 'home directory', tmpDir);
+      });
+    } finally {
+      cleanup();
+    }
+  });
+
   test('rm -rf relative path in subdir of home allowed', () => {
     setup();
     try {
@@ -250,10 +294,10 @@ describe('rm -rf cwd-aware', () => {
     }
   });
 
-  test('rm -rf cwd itself blocked', () => {
+  test('rm -rf cwd itself by explicit temp path allowed', () => {
     setup();
     try {
-      assertBlocked(`rm -rf ${toShellPath(tmpDir)}`, 'rm -rf', tmpDir);
+      assertAllowed(`rm -rf ${toShellPath(tmpDir)}`, tmpDir);
     } finally {
       cleanup();
     }
@@ -535,7 +579,7 @@ describe('analyzeRm (unit)', () => {
 
   test('blocks rm -rf in home cwd via direct analyzeRm call', () => {
     const home = homedir();
-    expect(analyzeRm(['rm', '-rf', 'somefile'], { cwd: home })).toContain('extremely dangerous');
+    expect(analyzeRm(['rm', '-rf', 'somefile'], { cwd: home })).toContain('home directory');
   });
 
   test('handles paths with separators and bad cwd defensively', () => {

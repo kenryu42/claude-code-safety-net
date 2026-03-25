@@ -14,7 +14,6 @@ import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { analyzeFind } from '@/core/analyze/find';
 import { containsDangerousCode, extractInterpreterCodeArg } from '@/core/analyze/interpreters';
 import { analyzeParallel } from '@/core/analyze/parallel';
-import { hasRecursiveForceFlags } from '@/core/analyze/rm-flags';
 import {
   REASON_INTERPRETER_BLOCKED,
   REASON_INTERPRETER_DANGEROUS,
@@ -25,7 +24,7 @@ import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
 import { analyzeXargs } from '@/core/analyze/xargs';
 import { checkCustomRules } from '@/core/rules-custom';
 import { analyzeGit } from '@/core/rules-git';
-import { analyzeRm, isHomeDirectory } from '@/core/rules-rm';
+import { analyzeRm } from '@/core/rules-rm';
 import {
   normalizeCommandToken,
   splitShellCommands,
@@ -302,19 +301,9 @@ export function explainSegment(
   }
 
   if (isRm) {
-    if (effectiveCwd && isHomeDirectory(effectiveCwd) && hasRecursiveForceFlags(strippedTokens)) {
-      const reason = 'rm -rf in home directory is dangerous. Change to a project directory first.';
-      steps.push({
-        type: 'rule-check',
-        ruleModule: 'rules-rm.ts',
-        ruleFunction: 'isHomeDirectory',
-        matched: true,
-        reason,
-      });
-      return { reason };
-    }
     const reason = analyzeRm(strippedTokens, {
-      cwd: effectiveCwd ?? undefined,
+      cwd: cwdForRm,
+      originalCwd,
       paranoid: options.paranoidRm,
       allowTmpdirVar,
     });
