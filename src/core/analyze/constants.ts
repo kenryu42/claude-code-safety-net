@@ -12,6 +12,8 @@ export const DISPLAY_COMMANDS: ReadonlySet<string> = new Set([
   'ack',
   'sed',
   'awk',
+  'gh',
+  'curl',
   'cut',
   'tr',
   'sort',

@@ -815,6 +815,32 @@ describe('edge cases', () => {
     test('less with git push --force allowed', () => {
       assertAllowed('less git push --force');
     });
+
+    test('gh with unquoted body mentioning rm -rf allowed', () => {
+      assertAllowed('gh issue create --body rm -rf /tmp/x');
+    });
+
+    test('gh with unquoted body mentioning git reset --hard allowed', () => {
+      assertAllowed('gh issue create --body git reset --hard');
+    });
+
+    test('gh with unquoted body mentioning find -delete allowed', () => {
+      assertAllowed('gh issue create --body find . -delete');
+    });
+
+    test('gh with quoted body mentioning dangerous patterns allowed', () => {
+      assertAllowed('gh issue create --body "rm -rf /tmp/x"');
+      assertAllowed('gh pr create --body "git reset --hard"');
+      assertAllowed('gh issue create --body "find . -delete"');
+    });
+
+    test('curl with unquoted data mentioning rm -rf allowed', () => {
+      assertAllowed('curl -d rm -rf / https://example.com');
+    });
+
+    test('curl with quoted data mentioning dangerous patterns allowed', () => {
+      assertAllowed('curl -d "rm -rf /" https://example.com');
+    });
   });
 
   describe('recursion depth boundary', () => {
