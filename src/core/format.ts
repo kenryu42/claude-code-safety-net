@@ -6,14 +6,17 @@ export interface FormatBlockedMessageInput {
   segment?: string;
   maxLen?: number;
   redact?: RedactFn;
+  /** When true, formats the message as a confirmation prompt instead of a hard block. */
+  askMode?: boolean;
 }
 
 export function formatBlockedMessage(input: FormatBlockedMessageInput): string {
-  const { reason, command, segment } = input;
+  const { reason, command, segment, askMode } = input;
   const maxLen = input.maxLen ?? 200;
   const redact = input.redact ?? ((t: string) => t);
 
-  let message = `BLOCKED by Safety Net\n\nReason: ${reason}`;
+  const header = askMode ? 'FLAGGED by Safety Net' : 'BLOCKED by Safety Net';
+  let message = `${header}\n\nReason: ${reason}`;
 
   if (command) {
     const safeCommand = redact(command);
@@ -25,8 +28,12 @@ export function formatBlockedMessage(input: FormatBlockedMessageInput): string {
     message += `\n\nSegment: ${excerpt(safeSegment, maxLen)}`;
   }
 
-  message +=
-    '\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.';
+  if (askMode) {
+    message += '\n\nThis command may be destructive. Approve to proceed, or deny to cancel.';
+  } else {
+    message +=
+      '\n\nIf this operation is truly needed, ask the user for explicit permission and have them run the command manually.';
+  }
 
   return message;
 }

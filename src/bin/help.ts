@@ -109,6 +109,7 @@ export function printHelp(): void {
 
   // Environment variables
   lines.push('ENVIRONMENT VARIABLES:');
+  lines.push(`${INDENT}SAFETY_NET_ASK=1                  Prompt user instead of blocking`);
   lines.push(`${INDENT}SAFETY_NET_STRICT=1               Fail-closed on unparseable commands`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID=1             Enable all paranoid checks`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID_RM=1          Block non-temp rm -rf within cwd`);

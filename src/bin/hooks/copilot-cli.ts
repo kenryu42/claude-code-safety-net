@@ -4,16 +4,22 @@ import { envTruthy } from '@/core/env';
 import { formatBlockedMessage } from '@/core/format';
 import type { CopilotCliHookInput, CopilotCliHookOutput } from '@/types';
 
-function outputCopilotDeny(reason: string, command?: string, segment?: string): void {
+function outputCopilotDecision(
+  decision: 'deny' | 'ask',
+  reason: string,
+  command?: string,
+  segment?: string,
+): void {
   const message = formatBlockedMessage({
     reason,
     command,
     segment,
     redact: redactSecrets,
+    askMode: decision === 'ask',
   });
 
   const output: CopilotCliHookOutput = {
-    permissionDecision: 'deny',
+    permissionDecision: decision,
     permissionDecisionReason: message,
   };
 
@@ -38,7 +44,7 @@ export async function runCopilotCliHook(): Promise<void> {
     input = JSON.parse(inputText) as CopilotCliHookInput;
   } catch {
     if (envTruthy('SAFETY_NET_STRICT')) {
-      outputCopilotDeny('Failed to parse hook input JSON (strict mode)');
+      outputCopilotDecision('deny', 'Failed to parse hook input JSON (strict mode)');
     }
     return;
   }
@@ -54,7 +60,7 @@ export async function runCopilotCliHook(): Promise<void> {
     toolArgs = JSON.parse(input.toolArgs) as { command?: string };
   } catch {
     if (envTruthy('SAFETY_NET_STRICT')) {
-      outputCopilotDeny('Failed to parse toolArgs JSON (strict mode)');
+      outputCopilotDecision('deny', 'Failed to parse toolArgs JSON (strict mode)');
     }
     return;
   }
@@ -66,6 +72,7 @@ export async function runCopilotCliHook(): Promise<void> {
 
   const cwd = input.cwd ?? process.cwd();
   const strict = envTruthy('SAFETY_NET_STRICT');
+  const askMode = envTruthy('SAFETY_NET_ASK');
   const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
   const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
   const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
@@ -84,6 +91,6 @@ export async function runCopilotCliHook(): Promise<void> {
     // Generate a session ID from timestamp for audit logging
     const sessionId = `copilot-${input.timestamp ?? Date.now()}`;
     writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-    outputCopilotDeny(result.reason, command, result.segment);
+    outputCopilotDecision(askMode ? 'ask' : 'deny', result.reason, command, result.segment);
   }
 }

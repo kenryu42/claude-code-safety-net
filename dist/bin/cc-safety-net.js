@@ -853,6 +853,11 @@ function getConfigInfo(cwd, options) {
 // src/bin/doctor/environment.ts
 var ENV_VARS = [
   {
+    name: "SAFETY_NET_ASK",
+    description: "Prompt user instead of blocking",
+    defaultBehavior: "off"
+  },
+  {
     name: "SAFETY_NET_STRICT",
     description: "Fail-closed on unparseable commands",
     defaultBehavior: "permissive"
@@ -5330,6 +5335,7 @@ function printHelp() {
   lines.push(`${INDENT}${PROGRAM_NAME} <command> --help   Show help for a specific command`);
   lines.push("");
   lines.push("ENVIRONMENT VARIABLES:");
+  lines.push(`${INDENT}SAFETY_NET_ASK=1                  Prompt user instead of blocking`);
   lines.push(`${INDENT}SAFETY_NET_STRICT=1               Fail-closed on unparseable commands`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID=1             Enable all paranoid checks`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID_RM=1          Block non-temp rm -rf within cwd`);
@@ -5404,10 +5410,11 @@ function redactSecrets(text) {
 
 // src/core/format.ts
 function formatBlockedMessage(input) {
-  const { reason, command, segment } = input;
+  const { reason, command, segment, askMode } = input;
   const maxLen = input.maxLen ?? 200;
   const redact = input.redact ?? ((t) => t);
-  let message = `BLOCKED by Safety Net
+  const header = askMode ? "FLAGGED by Safety Net" : "BLOCKED by Safety Net";
+  let message = `${header}
 
 Reason: ${reason}`;
   if (command) {
@@ -5422,9 +5429,15 @@ Command: ${excerpt(safeCommand, maxLen)}`;
 
 Segment: ${excerpt(safeSegment, maxLen)}`;
   }
-  message += `
+  if (askMode) {
+    message += `
+
+This command may be destructive. Approve to proceed, or deny to cancel.`;
+  } else {
+    message += `
 
 If this operation is truly needed, ask the user for explicit permission and have them run the command manually.`;
+  }
   return message;
 }
 function excerpt(text, maxLen) {
@@ -5432,17 +5445,18 @@ function excerpt(text, maxLen) {
 }
 
 // src/bin/hooks/claude-code.ts
-function outputDeny(reason, command, segment) {
+function outputDecision(decision, reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
     command,
     segment,
-    redact: redactSecrets
+    redact: redactSecrets,
+    askMode: decision === "ask"
   });
   const output = {
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
-      permissionDecision: "deny",
+      permissionDecision: decision,
       permissionDecisionReason: message
     }
   };
@@ -5462,7 +5476,7 @@ async function runClaudeCodeHook() {
     input = JSON.parse(inputText);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputDeny("Failed to parse hook input JSON (strict mode)");
+      outputDecision("deny", "Failed to parse hook input JSON (strict mode)");
     }
     return;
   }
@@ -5475,6 +5489,7 @@ async function runClaudeCodeHook() {
   }
   const cwd = input.cwd ?? process.cwd();
   const strict = envTruthy("SAFETY_NET_STRICT");
+  const askMode = envTruthy("SAFETY_NET_ASK");
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
@@ -5491,20 +5506,21 @@ async function runClaudeCodeHook() {
     if (sessionId) {
       writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
     }
-    outputDeny(result.reason, command, result.segment);
+    outputDecision(askMode ? "ask" : "deny", result.reason, command, result.segment);
   }
 }
 
 // src/bin/hooks/copilot-cli.ts
-function outputCopilotDeny(reason, command, segment) {
+function outputCopilotDecision(decision, reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
     command,
     segment,
-    redact: redactSecrets
+    redact: redactSecrets,
+    askMode: decision === "ask"
   });
   const output = {
-    permissionDecision: "deny",
+    permissionDecision: decision,
     permissionDecisionReason: message
   };
   console.log(JSON.stringify(output));
@@ -5523,7 +5539,7 @@ async function runCopilotCliHook() {
     input = JSON.parse(inputText);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputCopilotDeny("Failed to parse hook input JSON (strict mode)");
+      outputCopilotDecision("deny", "Failed to parse hook input JSON (strict mode)");
     }
     return;
   }
@@ -5535,7 +5551,7 @@ async function runCopilotCliHook() {
     toolArgs = JSON.parse(input.toolArgs);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputCopilotDeny("Failed to parse toolArgs JSON (strict mode)");
+      outputCopilotDecision("deny", "Failed to parse toolArgs JSON (strict mode)");
     }
     return;
   }
@@ -5545,6 +5561,7 @@ async function runCopilotCliHook() {
   }
   const cwd = input.cwd ?? process.cwd();
   const strict = envTruthy("SAFETY_NET_STRICT");
+  const askMode = envTruthy("SAFETY_NET_ASK");
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
@@ -5559,7 +5576,7 @@ async function runCopilotCliHook() {
   if (result) {
     const sessionId = `copilot-${input.timestamp ?? Date.now()}`;
     writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-    outputCopilotDeny(result.reason, command, result.segment);
+    outputCopilotDecision(askMode ? "ask" : "deny", result.reason, command, result.segment);
   }
 }
 
@@ -5684,10 +5701,14 @@ async function printStatusline() {
     status = "\uD83D\uDEE1️ Safety Net ❌";
   } else {
     const strict = envTruthy("SAFETY_NET_STRICT");
+    const askMode = envTruthy("SAFETY_NET_ASK");
     const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
     const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
     const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
     let modeEmojis = "";
+    if (askMode) {
+      modeEmojis += "❓";
+    }
     if (strict) {
       modeEmojis += "\uD83D\uDD12";
     }

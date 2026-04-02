@@ -80,11 +80,17 @@ export async function printStatusline(): Promise<void> {
     status = '🛡️ Safety Net ❌';
   } else {
     const strict = envTruthy('SAFETY_NET_STRICT');
+    const askMode = envTruthy('SAFETY_NET_ASK');
     const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
     const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
     const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
 
     let modeEmojis = '';
+
+    // Ask mode: ❓
+    if (askMode) {
+      modeEmojis += '❓';
+    }
 
     // Strict mode: 🔒
     if (strict) {

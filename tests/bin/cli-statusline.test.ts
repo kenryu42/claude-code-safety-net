@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 function clearEnv(): void {
+  delete process.env.SAFETY_NET_ASK;
   delete process.env.SAFETY_NET_STRICT;
   delete process.env.SAFETY_NET_PARANOID;
   delete process.env.SAFETY_NET_PARANOID_RM;
@@ -47,6 +48,21 @@ describe('--statusline flag', () => {
     const exitCode = await proc.exited;
 
     expect(output.trim()).toBe('🛡️ Safety Net ✅');
+    expect(exitCode).toBe(0);
+  });
+
+  // Ask mode → ❓
+  test('shows ask mode emoji when SAFETY_NET_ASK=1', async () => {
+    const proc = Bun.spawn(['bun', 'src/bin/cc-safety-net.ts', '--statusline'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...process.env, CLAUDE_SETTINGS_PATH: enabledSettingsPath, SAFETY_NET_ASK: '1' },
+    });
+
+    const output = await new Response(proc.stdout).text();
+    const exitCode = await proc.exited;
+
+    expect(output.trim()).toBe('🛡️ Safety Net ❓');
     expect(exitCode).toBe(0);
   });
 

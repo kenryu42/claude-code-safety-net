@@ -89,6 +89,7 @@ When committing changes to files in `commands/`, `hooks/`, or `.opencode/`, use 
 
 ## Environment Variables
 
+- `SAFETY_NET_ASK=1`: Ask mode (prompt user for confirmation instead of blocking)
 - `SAFETY_NET_STRICT=1`: Strict mode (fail-closed on unparseable hook input/commands)
 - `SAFETY_NET_PARANOID=1`: Paranoid mode (enables all paranoid checks)
 - `SAFETY_NET_PARANOID_RM=1`: Paranoid rm (blocks non-temp `rm -rf` even within cwd)

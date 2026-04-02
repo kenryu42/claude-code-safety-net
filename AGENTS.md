@@ -104,6 +104,7 @@ describe('git rules', () => {
 
 | Variable | Effect |
 |----------|--------|
+| `SAFETY_NET_ASK=1` | Prompt user for confirmation instead of blocking |
 | `SAFETY_NET_STRICT=1` | Fail-closed on unparseable hook input/commands |
 | `SAFETY_NET_PARANOID=1` | Enable all paranoid checks (rm + interpreters) |
 | `SAFETY_NET_PARANOID_RM=1` | Block non-temp `rm -rf` even within cwd |

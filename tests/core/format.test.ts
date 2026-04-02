@@ -102,4 +102,18 @@ describe('formatBlockedMessage', () => {
     expect(result).toContain('Segment: echo ***');
     expect(result).not.toContain('password');
   });
+
+  test('ask mode uses FLAGGED header and confirmation footer', () => {
+    const result = formatBlockedMessage({ reason: 'test reason', askMode: true });
+    expect(result).toContain('FLAGGED by Safety Net');
+    expect(result).not.toContain('BLOCKED by Safety Net');
+    expect(result).toContain('Approve to proceed');
+  });
+
+  test('default mode uses BLOCKED header', () => {
+    const result = formatBlockedMessage({ reason: 'test reason' });
+    expect(result).toContain('BLOCKED by Safety Net');
+    expect(result).not.toContain('FLAGGED by Safety Net');
+    expect(result).toContain('ask the user');
+  });
 });

@@ -10,6 +10,11 @@ const ENV_VARS: Array<{
   defaultBehavior: string;
 }> = [
   {
+    name: 'SAFETY_NET_ASK',
+    description: 'Prompt user instead of blocking',
+    defaultBehavior: 'off',
+  },
+  {
     name: 'SAFETY_NET_STRICT',
     description: 'Fail-closed on unparseable commands',
     defaultBehavior: 'permissive',

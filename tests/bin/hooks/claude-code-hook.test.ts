@@ -24,6 +24,56 @@ describe('Claude Code hook', () => {
     });
   });
 
+  describe('ask mode', () => {
+    test('ask mode returns ask decision instead of deny', async () => {
+      const input = {
+        hook_event_name: 'PreToolUse',
+        tool_name: 'Bash',
+        tool_input: {
+          command: 'git reset --hard',
+        },
+      };
+
+      const { stdout, exitCode } = await runClaudeCodeHook(input, {
+        SAFETY_NET_ASK: '1',
+      });
+
+      const parsed = JSON.parse(stdout);
+      expect(exitCode).toBe(0);
+      expect(parsed.hookSpecificOutput.permissionDecision).toBe('ask');
+      expect(parsed.hookSpecificOutput.permissionDecisionReason).toContain('FLAGGED by Safety Net');
+    });
+
+    test('ask mode still allows safe commands', async () => {
+      const input = {
+        hook_event_name: 'PreToolUse',
+        tool_name: 'Bash',
+        tool_input: {
+          command: 'git status',
+        },
+      };
+
+      const { stdout, exitCode } = await runClaudeCodeHook(input, {
+        SAFETY_NET_ASK: '1',
+      });
+
+      expect(stdout).toBe('');
+      expect(exitCode).toBe(0);
+    });
+
+    test('strict parse failures still deny even in ask mode', async () => {
+      const { stdout, exitCode } = await runClaudeCodeHook('{invalid json', {
+        SAFETY_NET_ASK: '1',
+        SAFETY_NET_STRICT: '1',
+      });
+
+      expect(exitCode).toBe(0);
+      const parsed = JSON.parse(stdout);
+      expect(parsed.hookSpecificOutput.permissionDecision).toBe('deny');
+      expect(parsed.hookSpecificOutput.permissionDecisionReason).toContain('BLOCKED by Safety Net');
+    });
+  });
+
   describe('allowed commands', () => {
     test('allowed command produces no output', async () => {
       const input = {
