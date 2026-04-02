@@ -66,6 +66,26 @@ describe('--statusline flag', () => {
     expect(exitCode).toBe(0);
   });
 
+  // Ask + Strict → ❓🔒
+  test('shows ask + strict emojis when both set', async () => {
+    const proc = Bun.spawn(['bun', 'src/bin/cc-safety-net.ts', '--statusline'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: {
+        ...process.env,
+        CLAUDE_SETTINGS_PATH: enabledSettingsPath,
+        SAFETY_NET_ASK: '1',
+        SAFETY_NET_STRICT: '1',
+      },
+    });
+
+    const output = await new Response(proc.stdout).text();
+    const exitCode = await proc.exited;
+
+    expect(output.trim()).toBe('🛡️ Safety Net ❓🔒');
+    expect(exitCode).toBe(0);
+  });
+
   // 3. Enabled + Strict → 🔒 (replaces ✅)
   test('shows strict mode emoji when SAFETY_NET_STRICT=1', async () => {
     const proc = Bun.spawn(['bun', 'src/bin/cc-safety-net.ts', '--statusline'], {

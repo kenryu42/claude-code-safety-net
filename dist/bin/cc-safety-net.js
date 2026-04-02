@@ -5506,21 +5506,20 @@ async function runClaudeCodeHook() {
     if (sessionId) {
       writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
     }
-    outputDecision(askMode ? "ask" : "deny", result.reason, command, result.segment);
+    outputDecision(askMode && !strict ? "ask" : "deny", result.reason, command, result.segment);
   }
 }
 
 // src/bin/hooks/copilot-cli.ts
-function outputCopilotDecision(decision, reason, command, segment) {
+function outputCopilotDeny(reason, command, segment) {
   const message = formatBlockedMessage({
     reason,
     command,
     segment,
-    redact: redactSecrets,
-    askMode: decision === "ask"
+    redact: redactSecrets
   });
   const output = {
-    permissionDecision: decision,
+    permissionDecision: "deny",
     permissionDecisionReason: message
   };
   console.log(JSON.stringify(output));
@@ -5539,7 +5538,7 @@ async function runCopilotCliHook() {
     input = JSON.parse(inputText);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputCopilotDecision("deny", "Failed to parse hook input JSON (strict mode)");
+      outputCopilotDeny("Failed to parse hook input JSON (strict mode)");
     }
     return;
   }
@@ -5551,7 +5550,7 @@ async function runCopilotCliHook() {
     toolArgs = JSON.parse(input.toolArgs);
   } catch {
     if (envTruthy("SAFETY_NET_STRICT")) {
-      outputCopilotDecision("deny", "Failed to parse toolArgs JSON (strict mode)");
+      outputCopilotDeny("Failed to parse toolArgs JSON (strict mode)");
     }
     return;
   }
@@ -5561,7 +5560,6 @@ async function runCopilotCliHook() {
   }
   const cwd = input.cwd ?? process.cwd();
   const strict = envTruthy("SAFETY_NET_STRICT");
-  const askMode = envTruthy("SAFETY_NET_ASK");
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
@@ -5576,7 +5574,7 @@ async function runCopilotCliHook() {
   if (result) {
     const sessionId = `copilot-${input.timestamp ?? Date.now()}`;
     writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
-    outputCopilotDecision(askMode ? "ask" : "deny", result.reason, command, result.segment);
+    outputCopilotDeny(result.reason, command, result.segment);
   }
 }
 

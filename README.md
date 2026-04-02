@@ -616,9 +616,9 @@ export SAFETY_NET_ASK=1
 When a dangerous command is detected, the user sees the Safety Net warning and can choose
 to proceed or cancel. This is useful when you want awareness without hard blocks.
 
-> **Note:** Ask mode is supported in Claude Code and GitHub Copilot CLI. Gemini CLI and
-> OpenCode do not support interactive confirmation and will continue to block outright.
-> Strict mode parse failures (`SAFETY_NET_STRICT=1`) always hard-block regardless of ask mode.
+> **Note:** Ask mode is currently supported in Claude Code only. Gemini CLI, OpenCode,
+> and Copilot CLI do not support interactive confirmation and will continue to block outright.
+> Strict mode (`SAFETY_NET_STRICT=1`) overrides ask mode — all blocks are hard-denied when strict is active.
 
 ### Strict Mode
 

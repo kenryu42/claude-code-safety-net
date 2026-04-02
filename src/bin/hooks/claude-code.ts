@@ -83,6 +83,6 @@ export async function runClaudeCodeHook(): Promise<void> {
     if (sessionId) {
       writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
     }
-    outputDecision(askMode ? 'ask' : 'deny', result.reason, command, result.segment);
+    outputDecision(askMode && !strict ? 'ask' : 'deny', result.reason, command, result.segment);
   }
 }

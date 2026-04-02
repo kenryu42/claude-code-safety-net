@@ -20,8 +20,8 @@ describe('Copilot CLI hook', () => {
     });
   });
 
-  describe('ask mode', () => {
-    test('ask mode returns ask decision instead of deny', async () => {
+  describe('ask mode ignored', () => {
+    test('ask mode still denies on Copilot CLI (unsupported)', async () => {
       const input = {
         timestamp: Date.now(),
         cwd: process.cwd(),
@@ -35,25 +35,7 @@ describe('Copilot CLI hook', () => {
 
       expect(exitCode).toBe(0);
       const output = JSON.parse(stdout);
-      expect(output.permissionDecision).toBe('ask');
-      expect(output.permissionDecisionReason).toContain('FLAGGED by Safety Net');
-      expect(output.permissionDecisionReason).toContain('rm -rf');
-    });
-
-    test('ask mode still allows safe commands', async () => {
-      const input = {
-        timestamp: Date.now(),
-        cwd: process.cwd(),
-        toolName: 'bash',
-        toolArgs: JSON.stringify({ command: 'ls -la' }),
-      };
-
-      const { stdout, exitCode } = await runCopilotHook(input, {
-        SAFETY_NET_ASK: '1',
-      });
-
-      expect(exitCode).toBe(0);
-      expect(stdout).toBe('');
+      expect(output.permissionDecision).toBe('deny');
     });
   });
 
