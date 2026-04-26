@@ -113,7 +113,11 @@ export function analyzeSegment(
   const isParallel = basename === 'parallel';
 
   if (isGit) {
-    const gitResult = analyzeGit(stripped);
+    const gitResult = analyzeGit(stripped, {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -144,6 +148,8 @@ export function analyzeSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
     });
     if (xargsResult) {
       return xargsResult;
@@ -156,6 +162,8 @@ export function analyzeSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested: options.analyzeNested,
     });
     if (parallelResult) {
@@ -190,7 +198,11 @@ export function analyzeSegment(
         }
         if (cmd === 'git') {
           const gitTokens = ['git', ...stripped.slice(i + 1)];
-          const reason = analyzeGit(gitTokens);
+          const reason = analyzeGit(gitTokens, {
+            cwd: cwdForRm,
+            envAssignments,
+            worktreeMode: options.worktreeMode,
+          });
           if (reason) {
             return reason;
           }

@@ -16,6 +16,8 @@ export interface ParallelAnalyzeContext {
   originalCwd: string | undefined;
   paranoidRm: boolean | undefined;
   allowTmpdirVar: boolean;
+  envAssignments?: ReadonlyMap<string, string>;
+  worktreeMode?: boolean;
   analyzeNested: (command: string) => string | null;
 }
 
@@ -149,7 +151,11 @@ export function analyzeParallel(
   }
 
   if (head === 'git') {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, {
+      cwd: context.cwd,
+      envAssignments: context.envAssignments,
+      worktreeMode: context.worktreeMode,
+    });
     if (gitResult) {
       return gitResult;
     }

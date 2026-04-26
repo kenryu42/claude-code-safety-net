@@ -14,6 +14,8 @@ export interface XargsAnalyzeContext {
   originalCwd: string | undefined;
   paranoidRm: boolean | undefined;
   allowTmpdirVar: boolean;
+  envAssignments?: ReadonlyMap<string, string>;
+  worktreeMode?: boolean;
 }
 
 export function analyzeXargs(
@@ -65,7 +67,11 @@ export function analyzeXargs(
   }
 
   if (head === 'git') {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, {
+      cwd: context.cwd,
+      envAssignments: context.envAssignments,
+      worktreeMode: context.worktreeMode,
+    });
     if (gitResult) {
       return gitResult;
     }

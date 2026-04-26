@@ -1,4 +1,10 @@
 import { extractShortOpts, getBasename } from '@/core/shell';
+import {
+  GIT_GLOBAL_OPTS_WITH_VALUE,
+  getGitExecutionContext,
+  hasGitContextEnvOverride,
+  isLinkedWorktree,
+} from '@/core/worktree';
 
 const REASON_CHECKOUT_DOUBLE_DASH =
   "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
@@ -32,16 +38,6 @@ const REASON_STASH_DROP =
 const REASON_STASH_CLEAR = 'git stash clear deletes ALL stashed changes permanently.';
 const REASON_WORKTREE_REMOVE_FORCE =
   'git worktree remove --force can delete uncommitted changes. Remove --force flag.';
-
-const GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
-  '-c',
-  '-C',
-  '--git-dir',
-  '--work-tree',
-  '--namespace',
-  '--super-prefix',
-  '--config-env',
-]);
 
 const CHECKOUT_OPTS_WITH_VALUE = new Set([
   '-b',
@@ -109,7 +105,51 @@ function splitAtDoubleDash(tokens: readonly string[]): {
   };
 }
 
-export function analyzeGit(tokens: readonly string[]): string | null {
+export interface GitAnalyzeOptions {
+  cwd?: string;
+  envAssignments?: ReadonlyMap<string, string>;
+  worktreeMode?: boolean;
+}
+
+export interface GitWorktreeRelaxation {
+  originalReason: string;
+  gitCwd: string;
+}
+
+interface GitRuleMatch {
+  reason: string;
+  localDiscard: boolean;
+}
+
+export function analyzeGit(
+  tokens: readonly string[],
+  options: GitAnalyzeOptions = {},
+): string | null {
+  const match = analyzeGitRule(tokens);
+
+  if (!match) {
+    return null;
+  }
+
+  if (getGitWorktreeRelaxationForMatch(tokens, match, options)) {
+    return null;
+  }
+
+  return match.reason;
+}
+
+export function getGitWorktreeRelaxation(
+  tokens: readonly string[],
+  options: GitAnalyzeOptions = {},
+): GitWorktreeRelaxation | null {
+  const match = analyzeGitRule(tokens);
+  if (!match) {
+    return null;
+  }
+  return getGitWorktreeRelaxationForMatch(tokens, match, options);
+}
+
+function analyzeGitRule(tokens: readonly string[]): GitRuleMatch | null {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
 
   if (!subcommand) {
@@ -118,26 +158,62 @@ export function analyzeGit(tokens: readonly string[]): string | null {
 
   switch (subcommand.toLowerCase()) {
     case 'checkout':
-      return analyzeGitCheckout(rest);
+      return localDiscard(analyzeGitCheckout(rest));
     case 'switch':
-      return analyzeGitSwitch(rest);
+      return localDiscard(analyzeGitSwitch(rest));
     case 'restore':
-      return analyzeGitRestore(rest);
+      return localDiscard(analyzeGitRestore(rest));
     case 'reset':
-      return analyzeGitReset(rest);
+      return localDiscard(analyzeGitReset(rest));
     case 'clean':
-      return analyzeGitClean(rest);
+      return localDiscard(analyzeGitClean(rest));
     case 'push':
-      return analyzeGitPush(rest);
+      return sharedState(analyzeGitPush(rest));
     case 'branch':
-      return analyzeGitBranch(rest);
+      return sharedState(analyzeGitBranch(rest));
     case 'stash':
-      return analyzeGitStash(rest);
+      return sharedState(analyzeGitStash(rest));
     case 'worktree':
-      return analyzeGitWorktree(rest);
+      return sharedState(analyzeGitWorktree(rest));
     default:
       return null;
   }
+}
+
+function localDiscard(reason: string | null): GitRuleMatch | null {
+  return reason ? { reason, localDiscard: true } : null;
+}
+
+function sharedState(reason: string | null): GitRuleMatch | null {
+  return reason ? { reason, localDiscard: false } : null;
+}
+
+function getGitWorktreeRelaxationForMatch(
+  tokens: readonly string[],
+  match: GitRuleMatch,
+  options: GitAnalyzeOptions,
+): GitWorktreeRelaxation | null {
+  if (
+    !match.localDiscard ||
+    !options.worktreeMode ||
+    hasGitContextEnvOverride(options.envAssignments)
+  ) {
+    return null;
+  }
+
+  const context = getGitExecutionContext(tokens, options.cwd);
+  if (!context.gitCwd || context.hasExplicitGitContext) {
+    return null;
+  }
+
+  if (!isLinkedWorktree(context.gitCwd)) {
+    return null;
+  }
+
+  return {
+    originalReason: match.reason,
+    gitCwd: context.gitCwd,
+  };
 }
 
 function extractGitSubcommandAndRest(tokens: readonly string[]): {
