@@ -871,6 +871,11 @@ var ENV_VARS = [
     name: "SAFETY_NET_PARANOID_INTERPRETERS",
     description: "Block interpreter one-liners",
     defaultBehavior: "off"
+  },
+  {
+    name: "SAFETY_NET_WORKTREE",
+    description: "Allow local git discards in linked worktrees",
+    defaultBehavior: "off"
   }
 ];
 function getEnvironmentInfo() {
@@ -1375,9 +1380,9 @@ All checks passed.`);
 }
 
 // src/bin/doctor/hooks.ts
-import { existsSync as existsSync4, readdirSync as readdirSync2, readFileSync as readFileSync4 } from "node:fs";
+import { existsSync as existsSync5, readdirSync as readdirSync2, readFileSync as readFileSync5 } from "node:fs";
 import { homedir as homedir4, tmpdir as tmpdir3 } from "node:os";
-import { join as join3 } from "node:path";
+import { join as join4 } from "node:path";
 
 // src/core/analyze/dangerous-text.ts
 function dangerousInText(text) {
@@ -2526,6 +2531,145 @@ function extractDashCArg(tokens) {
   return null;
 }
 
+// src/core/worktree.ts
+import { existsSync as existsSync4, readFileSync as readFileSync4, realpathSync, statSync } from "node:fs";
+import { dirname, isAbsolute, join as join3, resolve as resolve2 } from "node:path";
+var GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
+  "-c",
+  "-C",
+  "--git-dir",
+  "--work-tree",
+  "--namespace",
+  "--super-prefix",
+  "--config-env"
+]);
+var GIT_CONTEXT_ENV_OVERRIDES = ["GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"];
+function hasGitContextEnvOverride(envAssignments) {
+  for (const name of GIT_CONTEXT_ENV_OVERRIDES) {
+    if (envAssignments?.has(name) || Object.hasOwn(process.env, name)) {
+      return true;
+    }
+  }
+  return false;
+}
+function getGitExecutionContext(tokens, cwd) {
+  if (!cwd) {
+    return { gitCwd: null, hasExplicitGitContext: false };
+  }
+  let gitCwd = resolve2(cwd);
+  if (!isDirectory(gitCwd)) {
+    return { gitCwd: null, hasExplicitGitContext: false };
+  }
+  let hasExplicitGitContext = false;
+  let i = 1;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token)
+      break;
+    if (token === "--") {
+      break;
+    }
+    if (!token.startsWith("-")) {
+      break;
+    }
+    if (token === "-C") {
+      const target = tokens[i + 1];
+      if (!target) {
+        return { gitCwd: null, hasExplicitGitContext };
+      }
+      const resolvedCwd = resolveGitCwd(gitCwd, target);
+      if (!resolvedCwd) {
+        return { gitCwd: null, hasExplicitGitContext };
+      }
+      gitCwd = resolvedCwd;
+      i += 2;
+      continue;
+    }
+    if (token.startsWith("-C") && token.length > 2) {
+      const resolvedCwd = resolveGitCwd(gitCwd, token.slice(2));
+      if (!resolvedCwd) {
+        return { gitCwd: null, hasExplicitGitContext };
+      }
+      gitCwd = resolvedCwd;
+      i++;
+      continue;
+    }
+    if (token === "--git-dir" || token === "--work-tree") {
+      hasExplicitGitContext = true;
+      i += 2;
+      continue;
+    }
+    if (token.startsWith("--git-dir=") || token.startsWith("--work-tree=")) {
+      hasExplicitGitContext = true;
+      i++;
+      continue;
+    }
+    if (GIT_GLOBAL_OPTS_WITH_VALUE.has(token)) {
+      i += 2;
+    } else if (token.startsWith("-c") && token.length > 2) {
+      i++;
+    } else {
+      i++;
+    }
+  }
+  return { gitCwd, hasExplicitGitContext };
+}
+function isLinkedWorktree(cwd) {
+  const dotGitPath = findDotGit(cwd);
+  if (!dotGitPath) {
+    return false;
+  }
+  try {
+    const stat = statSync(dotGitPath);
+    if (!stat.isFile()) {
+      return false;
+    }
+    const content = readFileSync4(dotGitPath, "utf-8");
+    const firstLine = content.split(/\r?\n/, 1)[0]?.trim() ?? "";
+    if (!firstLine.startsWith("gitdir:")) {
+      return false;
+    }
+    const rawGitDir = firstLine.slice("gitdir:".length).trim();
+    if (rawGitDir === "") {
+      return false;
+    }
+    const gitDir = isAbsolute(rawGitDir) ? rawGitDir : resolve2(dirname(dotGitPath), rawGitDir);
+    return existsSync4(join3(gitDir, "commondir"));
+  } catch {
+    return false;
+  }
+}
+function resolveGitCwd(baseCwd, target) {
+  const resolved = isAbsolute(target) ? target : resolve2(baseCwd, target);
+  return isDirectory(resolved) ? resolved : null;
+}
+function isDirectory(path) {
+  try {
+    return statSync(path).isDirectory();
+  } catch {
+    return false;
+  }
+}
+function findDotGit(cwd) {
+  let current;
+  try {
+    current = realpathSync(cwd);
+  } catch {
+    return null;
+  }
+  while (true) {
+    const dotGitPath = join3(current, ".git");
+    if (existsSync4(dotGitPath)) {
+      return dotGitPath;
+    }
+    const parent = dirname(current);
+    if (parent === current) {
+      return null;
+    }
+    current = parent;
+  }
+}
+
 // src/core/rules-git.ts
 var REASON_CHECKOUT_DOUBLE_DASH = "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
 var REASON_CHECKOUT_FORCE = "git checkout --force discards uncommitted changes. Use 'git stash' first.";
@@ -2544,15 +2688,6 @@ var REASON_BRANCH_DELETE = "git branch -D force-deletes without merge check. Use
 var REASON_STASH_DROP = "git stash drop permanently deletes stashed changes. Consider 'git stash list' first.";
 var REASON_STASH_CLEAR = "git stash clear deletes ALL stashed changes permanently.";
 var REASON_WORKTREE_REMOVE_FORCE = "git worktree remove --force can delete uncommitted changes. Remove --force flag.";
-var GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
-  "-c",
-  "-C",
-  "--git-dir",
-  "--work-tree",
-  "--namespace",
-  "--super-prefix",
-  "--config-env"
-]);
 var CHECKOUT_OPTS_WITH_VALUE = new Set([
   "-b",
   "-B",
@@ -2611,33 +2746,72 @@ function splitAtDoubleDash(tokens) {
     after: tokens.slice(index + 1)
   };
 }
-function analyzeGit(tokens) {
+function analyzeGit(tokens, options = {}) {
+  const match = analyzeGitRule(tokens);
+  if (!match) {
+    return null;
+  }
+  if (getGitWorktreeRelaxationForMatch(tokens, match, options)) {
+    return null;
+  }
+  return match.reason;
+}
+function getGitWorktreeRelaxation(tokens, options = {}) {
+  const match = analyzeGitRule(tokens);
+  if (!match) {
+    return null;
+  }
+  return getGitWorktreeRelaxationForMatch(tokens, match, options);
+}
+function analyzeGitRule(tokens) {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
   if (!subcommand) {
     return null;
   }
   switch (subcommand.toLowerCase()) {
     case "checkout":
-      return analyzeGitCheckout(rest);
+      return localDiscard(analyzeGitCheckout(rest));
     case "switch":
-      return analyzeGitSwitch(rest);
+      return localDiscard(analyzeGitSwitch(rest));
     case "restore":
-      return analyzeGitRestore(rest);
+      return localDiscard(analyzeGitRestore(rest));
     case "reset":
-      return analyzeGitReset(rest);
+      return localDiscard(analyzeGitReset(rest));
     case "clean":
-      return analyzeGitClean(rest);
+      return localDiscard(analyzeGitClean(rest));
     case "push":
-      return analyzeGitPush(rest);
+      return sharedState(analyzeGitPush(rest));
     case "branch":
-      return analyzeGitBranch(rest);
+      return sharedState(analyzeGitBranch(rest));
     case "stash":
-      return analyzeGitStash(rest);
+      return sharedState(analyzeGitStash(rest));
     case "worktree":
-      return analyzeGitWorktree(rest);
+      return sharedState(analyzeGitWorktree(rest));
     default:
       return null;
   }
+}
+function localDiscard(reason) {
+  return reason ? { reason, localDiscard: true } : null;
+}
+function sharedState(reason) {
+  return reason ? { reason, localDiscard: false } : null;
+}
+function getGitWorktreeRelaxationForMatch(tokens, match, options) {
+  if (!match.localDiscard || !options.worktreeMode || hasGitContextEnvOverride(options.envAssignments)) {
+    return null;
+  }
+  const context = getGitExecutionContext(tokens, options.cwd);
+  if (!context.gitCwd || context.hasExplicitGitContext) {
+    return null;
+  }
+  if (!isLinkedWorktree(context.gitCwd)) {
+    return null;
+  }
+  return {
+    originalReason: match.reason,
+    gitCwd: context.gitCwd
+  };
 }
 function extractGitSubcommandAndRest(tokens) {
   if (tokens.length === 0) {
@@ -2844,9 +3018,9 @@ function analyzeGitWorktree(tokens) {
 }
 
 // src/core/rules-rm.ts
-import { realpathSync } from "node:fs";
+import { realpathSync as realpathSync2 } from "node:fs";
 import { homedir as homedir3, tmpdir } from "node:os";
-import { normalize, resolve as resolve2, sep } from "node:path";
+import { normalize, resolve as resolve3, sep } from "node:path";
 var IS_WINDOWS = process.platform === "win32";
 function normalizePathForComparison(p) {
   let normalized = normalize(p);
@@ -3018,13 +3192,13 @@ function isCwdSelfTarget(target, cwd) {
     return true;
   }
   try {
-    const resolved = resolve2(cwd, target);
-    const realCwd = realpathSync(cwd);
-    const realResolved = realpathSync(resolved);
+    const resolved = resolve3(cwd, target);
+    const realCwd = realpathSync2(cwd);
+    const realResolved = realpathSync2(resolved);
     return normalizePathForComparison(realResolved) === normalizePathForComparison(realCwd);
   } catch {
     try {
-      const resolved = resolve2(cwd, target);
+      const resolved = resolve3(cwd, target);
       return normalizePathForComparison(resolved) === normalizePathForComparison(cwd);
     } catch {
       return false;
@@ -3050,7 +3224,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
   }
   if (target.startsWith("./") || target.startsWith(".\\") || !target.includes("/") && !target.includes("\\")) {
     try {
-      const resolved = resolve2(resolveCwd, target);
+      const resolved = resolve3(resolveCwd, target);
       const normalizedResolved = normalizePathForComparison(resolved);
       const normalizedOriginalCwd = normalizePathForComparison(originalCwd);
       return normalizedResolved.startsWith(`${normalizedOriginalCwd}${sep}`) || normalizedResolved === normalizedOriginalCwd;
@@ -3062,7 +3236,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
     return false;
   }
   try {
-    const resolved = resolve2(resolveCwd, target);
+    const resolved = resolve3(resolveCwd, target);
     const normalizedResolved = normalizePathForComparison(resolved);
     const normalizedCwd = normalizePathForComparison(originalCwd);
     return normalizedResolved.startsWith(`${normalizedCwd}${sep}`) || normalizedResolved === normalizedCwd;
@@ -3173,7 +3347,11 @@ function analyzeParallel(tokens, context) {
     }
   }
   if (head === "git") {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, {
+      cwd: context.cwd,
+      envAssignments: context.envAssignments,
+      worktreeMode: context.worktreeMode
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -3330,7 +3508,11 @@ function analyzeXargs(tokens, context) {
     }
   }
   if (head === "git") {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, {
+      cwd: context.cwd,
+      envAssignments: context.envAssignments,
+      worktreeMode: context.worktreeMode
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -3547,7 +3729,11 @@ function analyzeSegment(tokens, depth, options) {
   const isXargs = basename === "xargs";
   const isParallel = basename === "parallel";
   if (isGit) {
-    const gitResult = analyzeGit(stripped);
+    const gitResult = analyzeGit(stripped, {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -3574,7 +3760,9 @@ function analyzeSegment(tokens, depth, options) {
       cwd: cwdForRm,
       originalCwd,
       paranoidRm: options.paranoidRm,
-      allowTmpdirVar
+      allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode
     });
     if (xargsResult) {
       return xargsResult;
@@ -3586,6 +3774,8 @@ function analyzeSegment(tokens, depth, options) {
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested: options.analyzeNested
     });
     if (parallelResult) {
@@ -3614,7 +3804,11 @@ function analyzeSegment(tokens, depth, options) {
         }
         if (cmd === "git") {
           const gitTokens = ["git", ...stripped.slice(i + 1)];
-          const reason = analyzeGit(gitTokens);
+          const reason = analyzeGit(gitTokens, {
+            cwd: cwdForRm,
+            envAssignments,
+            worktreeMode: options.worktreeMode
+          });
           if (reason) {
             return reason;
           }
@@ -3726,7 +3920,7 @@ var SELF_TEST_CASES = [
 ];
 var SELF_TEST_CONFIG = { version: 1, rules: [] };
 function runSelfTest() {
-  const selfTestCwd = join3(tmpdir3(), "cc-safety-net-self-test");
+  const selfTestCwd = join4(tmpdir3(), "cc-safety-net-self-test");
   const results = SELF_TEST_CASES.map((tc) => {
     const result = analyzeCommand(tc.command, {
       cwd: selfTestCwd,
@@ -3836,11 +4030,11 @@ function stripJsonComments(content) {
 }
 function detectClaudeCode(homeDir) {
   const errors = [];
-  const settingsPath = join3(homeDir, ".claude", "settings.json");
+  const settingsPath = join4(homeDir, ".claude", "settings.json");
   const pluginKey = "safety-net@cc-marketplace";
-  if (existsSync4(settingsPath)) {
+  if (existsSync5(settingsPath)) {
     try {
-      const settings = JSON.parse(readFileSync4(settingsPath, "utf-8"));
+      const settings = JSON.parse(readFileSync5(settingsPath, "utf-8"));
       const pluginValue = settings.enabledPlugins?.[pluginKey];
       if (pluginValue === true) {
         return {
@@ -3871,13 +4065,13 @@ function detectClaudeCode(homeDir) {
 }
 function detectOpenCode(homeDir) {
   const errors = [];
-  const configDir = join3(homeDir, ".config", "opencode");
+  const configDir = join4(homeDir, ".config", "opencode");
   const candidates = ["opencode.json", "opencode.jsonc"];
   for (const filename of candidates) {
-    const configPath = join3(configDir, filename);
-    if (existsSync4(configPath)) {
+    const configPath = join4(configDir, filename);
+    if (existsSync5(configPath)) {
       try {
-        const content = readFileSync4(configPath, "utf-8");
+        const content = readFileSync5(configPath, "utf-8");
         const json = stripJsonComments(content);
         const config = JSON.parse(json);
         const plugins = config.plugin ?? [];
@@ -3905,13 +4099,13 @@ function detectOpenCode(homeDir) {
 }
 function checkGeminiHooksEnabled(homeDir, cwd, errors) {
   const candidates = [
-    join3(homeDir, ".gemini", "settings.json"),
-    join3(cwd, ".gemini", "settings.json")
+    join4(homeDir, ".gemini", "settings.json"),
+    join4(cwd, ".gemini", "settings.json")
   ];
   for (const settingsPath of candidates) {
-    if (existsSync4(settingsPath)) {
+    if (existsSync5(settingsPath)) {
       try {
-        const settings = JSON.parse(readFileSync4(settingsPath, "utf-8"));
+        const settings = JSON.parse(readFileSync5(settingsPath, "utf-8"));
         if (settings.tools?.enableHooks === true) {
           return { enabled: true, configPath: settingsPath };
         }
@@ -3924,14 +4118,14 @@ function checkGeminiHooksEnabled(homeDir, cwd, errors) {
 }
 function detectGeminiCLI(homeDir, cwd) {
   const errors = [];
-  const extensionPath = join3(homeDir, ".gemini", "extensions", "extension-enablement.json");
-  if (!existsSync4(extensionPath)) {
+  const extensionPath = join4(homeDir, ".gemini", "extensions", "extension-enablement.json");
+  if (!existsSync5(extensionPath)) {
     return { platform: "gemini-cli", status: "n/a" };
   }
   let isInstalled = false;
   let isEnabled = false;
   try {
-    const extensionConfig = JSON.parse(readFileSync4(extensionPath, "utf-8"));
+    const extensionConfig = JSON.parse(readFileSync5(extensionPath, "utf-8"));
     const pluginConfig = extensionConfig["gemini-safety-net"];
     if (pluginConfig) {
       isInstalled = true;
@@ -4018,7 +4212,7 @@ function _supportsCopilotInlineHooks(version) {
   return comparison >= 0;
 }
 function _getCopilotConfigHome(homeDir) {
-  return process.env.COPILOT_HOME || join3(homeDir, ".copilot");
+  return process.env.COPILOT_HOME || join4(homeDir, ".copilot");
 }
 function _hasSafetyNetCopilotHook(config) {
   const preToolUseHooks = config.hooks?.preToolUse ?? [];
@@ -4030,7 +4224,7 @@ function _hasSafetyNetCopilotHook(config) {
 }
 function _readCopilotConfigFile(configPath, errors) {
   try {
-    return JSON.parse(readFileSync4(configPath, "utf-8"));
+    return JSON.parse(readFileSync5(configPath, "utf-8"));
   } catch (e) {
     errors?.push(`Failed to parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`);
     return;
@@ -4045,11 +4239,11 @@ function _listJsonFiles(dirPath, errors) {
   }
 }
 function _collectSafetyNetCopilotHookFiles(dirPath, errors) {
-  if (!existsSync4(dirPath))
+  if (!existsSync5(dirPath))
     return [];
   const matches = [];
   for (const filename of _listJsonFiles(dirPath, errors)) {
-    const configPath = join3(dirPath, filename);
+    const configPath = join4(dirPath, filename);
     const config = _readCopilotConfigFile(configPath, errors);
     if (config && _hasSafetyNetCopilotHook(config)) {
       matches.push(configPath);
@@ -4058,7 +4252,7 @@ function _collectSafetyNetCopilotHookFiles(dirPath, errors) {
   return matches;
 }
 function _collectCopilotInlineConfig(configPath, errors) {
-  if (!existsSync4(configPath))
+  if (!existsSync5(configPath))
     return;
   const config = _readCopilotConfigFile(configPath, errors);
   if (!config)
@@ -4088,15 +4282,15 @@ function _resolveCopilotInlineDisableSource(inlineSources) {
 }
 function _checkCopilotEnabled(homeDir, cwd, copilotCliVersion, errors) {
   const configHome = _getCopilotConfigHome(homeDir);
-  const repoHookDir = join3(cwd, ".github", "hooks");
-  const userHookDir = join3(configHome, "hooks");
-  const repoConfigDir = join3(cwd, ".github", "copilot");
+  const repoHookDir = join4(cwd, ".github", "hooks");
+  const userHookDir = join4(configHome, "hooks");
+  const repoConfigDir = join4(cwd, ".github", "copilot");
   const inlineSupport = _supportsCopilotInlineHooks(copilotCliVersion);
   const inlineErrors = inlineSupport === true ? errors : undefined;
   const inlineSources = {
-    userConfig: _collectCopilotInlineConfig(join3(configHome, "config.json"), inlineErrors),
-    repoSettings: _collectCopilotInlineConfig(join3(repoConfigDir, "settings.json"), inlineErrors),
-    localSettings: _collectCopilotInlineConfig(join3(repoConfigDir, "settings.local.json"), inlineErrors)
+    userConfig: _collectCopilotInlineConfig(join4(configHome, "config.json"), inlineErrors),
+    repoSettings: _collectCopilotInlineConfig(join4(repoConfigDir, "settings.json"), inlineErrors),
+    localSettings: _collectCopilotInlineConfig(join4(repoConfigDir, "settings.local.json"), inlineErrors)
   };
   if (inlineSupport !== false) {
     const disableSource = _resolveCopilotInlineDisableSource(inlineSources);
@@ -4110,10 +4304,10 @@ function _checkCopilotEnabled(homeDir, cwd, copilotCliVersion, errors) {
   const repoHookPaths = _collectSafetyNetCopilotHookFiles(repoHookDir, errors);
   const userHookSupport = _supportsCopilotUserHookFiles(copilotCliVersion);
   const userHookErrors = userHookSupport === true ? errors : undefined;
-  const userHookFiles = existsSync4(userHookDir) ? _listJsonFiles(userHookDir, userHookErrors) : [];
+  const userHookFiles = existsSync5(userHookDir) ? _listJsonFiles(userHookDir, userHookErrors) : [];
   const userHookPaths = [];
   for (const filename of userHookFiles) {
-    const configPath = join3(userHookDir, filename);
+    const configPath = join4(userHookDir, filename);
     const config = _readCopilotConfigFile(configPath, userHookErrors);
     if (config && _hasSafetyNetCopilotHook(config)) {
       userHookPaths.push(configPath);
@@ -4205,7 +4399,7 @@ var defaultVersionFetcher = async (args) => {
   const [cmd, ...rest] = args;
   if (!cmd)
     return null;
-  return new Promise((resolve3) => {
+  return new Promise((resolve4) => {
     try {
       const proc = spawn(cmd, rest, {
         stdio: ["ignore", "pipe", "pipe"]
@@ -4221,7 +4415,7 @@ var defaultVersionFetcher = async (args) => {
           return;
         isSettled = true;
         clearTimeout(timeoutId);
-        resolve3(value);
+        resolve4(value);
       };
       const timeoutId = setTimeout(() => {
         proc.kill();
@@ -4234,7 +4428,7 @@ var defaultVersionFetcher = async (args) => {
         finish(null);
       });
     } catch {
-      resolve3(null);
+      resolve4(null);
     }
   });
 };
@@ -4400,8 +4594,8 @@ function printReport(report) {
 }
 
 // src/bin/explain/config.ts
-import { existsSync as existsSync5 } from "node:fs";
-import { resolve as resolve3 } from "node:path";
+import { existsSync as existsSync6 } from "node:fs";
+import { resolve as resolve4 } from "node:path";
 
 // src/core/env.ts
 function envTruthy(name) {
@@ -4413,7 +4607,7 @@ function envTruthy(name) {
 function getConfigSource(options) {
   const projectPath = getProjectConfigPath(options?.cwd);
   let invalidProjectPath = null;
-  if (existsSync5(projectPath)) {
+  if (existsSync6(projectPath)) {
     const validation = validateConfigFile(projectPath);
     if (validation.errors.length === 0) {
       return { configSource: projectPath, configValid: true };
@@ -4421,7 +4615,7 @@ function getConfigSource(options) {
     invalidProjectPath = projectPath;
   }
   const userPath = options?.userConfigPath ?? getUserConfigPath();
-  if (existsSync5(userPath)) {
+  if (existsSync6(userPath)) {
     const validation = validateConfigFile(userPath);
     return { configSource: userPath, configValid: validation.errors.length === 0 };
   }
@@ -4431,7 +4625,7 @@ function getConfigSource(options) {
   return { configSource: null, configValid: true };
 }
 function buildAnalyzeOptions(explainOptions) {
-  const cwd = resolve3(explainOptions?.cwd ?? process.cwd());
+  const cwd = resolve4(explainOptions?.cwd ?? process.cwd());
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   return {
     cwd,
@@ -4439,7 +4633,8 @@ function buildAnalyzeOptions(explainOptions) {
     config: explainOptions?.config ?? loadConfig(cwd),
     strict: explainOptions?.strict ?? envTruthy("SAFETY_NET_STRICT"),
     paranoidRm: paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM"),
-    paranoidInterpreters: paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS")
+    paranoidInterpreters: paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS"),
+    worktreeMode: envTruthy("SAFETY_NET_WORKTREE")
   };
 }
 
@@ -4657,14 +4852,27 @@ function explainSegment(tokens, depth, options, steps) {
     });
   }
   if (isGit) {
-    const reason = analyzeGit(strippedTokens);
+    const gitOptions = {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode
+    };
+    const relaxation = getGitWorktreeRelaxation(strippedTokens, gitOptions);
+    const reason = analyzeGit(strippedTokens, gitOptions);
     steps.push({
       type: "rule-check",
       ruleModule: "rules-git.ts",
       ruleFunction: "analyzeGit",
-      matched: !!reason,
-      reason: reason ?? undefined
+      matched: !!reason || !!relaxation,
+      reason: reason ?? relaxation?.originalReason
     });
+    if (relaxation) {
+      steps.push({
+        type: "worktree-relaxation",
+        originalReason: relaxation.originalReason,
+        gitCwd: relaxation.gitCwd
+      });
+    }
     if (reason)
       return { reason };
   }
@@ -4702,7 +4910,9 @@ function explainSegment(tokens, depth, options, steps) {
       cwd: cwdForRm,
       originalCwd,
       paranoidRm: options.paranoidRm,
-      allowTmpdirVar
+      allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode
     });
     steps.push({
       type: "rule-check",
@@ -4724,6 +4934,8 @@ function explainSegment(tokens, depth, options, steps) {
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested
     });
     steps.push({
@@ -4739,6 +4951,7 @@ function explainSegment(tokens, depth, options, steps) {
   const matchedKnown = isGit || isRm || isFind || isXargs || isParallel;
   const tokensScanned = [];
   let fallbackReason = null;
+  let fallbackRelaxation = null;
   let embeddedCommandFound;
   if (!matchedKnown && !DISPLAY_COMMANDS.has(normalizeCommandToken(head))) {
     for (let i = 1;i < strippedTokens.length && !fallbackReason; i++) {
@@ -4760,7 +4973,13 @@ function explainSegment(tokens, depth, options, steps) {
       if (!fallbackReason && cmd === "git") {
         embeddedCommandFound = "git";
         const gitTokens = ["git", ...strippedTokens.slice(i + 1)];
-        fallbackReason = analyzeGit(gitTokens);
+        const gitOptions = {
+          cwd: cwdForRm,
+          envAssignments,
+          worktreeMode: options.worktreeMode
+        };
+        fallbackRelaxation = getGitWorktreeRelaxation(gitTokens, gitOptions);
+        fallbackReason = analyzeGit(gitTokens, gitOptions);
       }
       if (!fallbackReason && cmd === "find") {
         embeddedCommandFound = "find";
@@ -4774,6 +4993,13 @@ function explainSegment(tokens, depth, options, steps) {
     tokensScanned,
     embeddedCommandFound
   });
+  if (fallbackRelaxation) {
+    steps.push({
+      type: "worktree-relaxation",
+      originalReason: fallbackRelaxation.originalReason,
+      gitCwd: fallbackRelaxation.gitCwd
+    });
+  }
   if (fallbackReason)
     return { reason: fallbackReason };
   const shouldCheckCustomRules = depth === 0 || !matchedKnown;
@@ -5077,6 +5303,14 @@ function formatStepStyleD(step, stepNum, box) {
       }
       return { lines, incrementStep: true };
     }
+    case "worktree-relaxation": {
+      lines.push("");
+      lines.push(`STEP ${stepNum} ${box.h} Worktree relaxation`);
+      lines.push(`  Mode:   SAFETY_NET_WORKTREE`);
+      lines.push(`  Git cwd: ${step.gitCwd}`);
+      lines.push(`  Result: Allowed local discard in linked worktree`);
+      return { lines, incrementStep: true };
+    }
     case "tmpdir-check":
       return null;
     case "fallback-scan": {
@@ -5334,6 +5568,7 @@ function printHelp() {
   lines.push(`${INDENT}SAFETY_NET_PARANOID=1             Enable all paranoid checks`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID_RM=1          Block non-temp rm -rf within cwd`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID_INTERPRETERS=1  Block interpreter one-liners`);
+  lines.push(`${INDENT}SAFETY_NET_WORKTREE=1             Allow local git discards in linked worktrees`);
   lines.push("");
   lines.push("CONFIG FILES:");
   lines.push(`${INDENT}~/.cc-safety-net/config.json      User-scope config`);
@@ -5354,9 +5589,9 @@ function showCommandHelp(commandName) {
 }
 
 // src/core/audit.ts
-import { appendFileSync, existsSync as existsSync6, mkdirSync } from "node:fs";
+import { appendFileSync, existsSync as existsSync7, mkdirSync } from "node:fs";
 import { homedir as homedir5 } from "node:os";
-import { join as join4 } from "node:path";
+import { join as join5 } from "node:path";
 function sanitizeSessionIdForFilename(sessionId) {
   const raw = sessionId.trim();
   if (!raw) {
@@ -5375,12 +5610,12 @@ function writeAuditLog(sessionId, command, segment, reason, cwd, options = {}) {
     return;
   }
   const home = options.homeDir ?? homedir5();
-  const logsDir = join4(home, ".cc-safety-net", "logs");
+  const logsDir = join5(home, ".cc-safety-net", "logs");
   try {
-    if (!existsSync6(logsDir)) {
+    if (!existsSync7(logsDir)) {
       mkdirSync(logsDir, { recursive: true });
     }
-    const logFile = join4(logsDir, `${safeSessionId}.jsonl`);
+    const logFile = join5(logsDir, `${safeSessionId}.jsonl`);
     const entry = {
       ts: new Date().toISOString(),
       command: redactSecrets(command).slice(0, 300),
@@ -5478,13 +5713,15 @@ async function runClaudeCodeHook() {
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+  const worktreeMode = envTruthy("SAFETY_NET_WORKTREE");
   const config = loadConfig(cwd);
   const result = analyzeCommand(command, {
     cwd,
     config,
     strict,
     paranoidRm,
-    paranoidInterpreters
+    paranoidInterpreters,
+    worktreeMode
   });
   if (result) {
     const sessionId = input.session_id;
@@ -5548,13 +5785,15 @@ async function runCopilotCliHook() {
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+  const worktreeMode = envTruthy("SAFETY_NET_WORKTREE");
   const config = loadConfig(cwd);
   const result = analyzeCommand(command, {
     cwd,
     config,
     strict,
     paranoidRm,
-    paranoidInterpreters
+    paranoidInterpreters,
+    worktreeMode
   });
   if (result) {
     const sessionId = `copilot-${input.timestamp ?? Date.now()}`;
@@ -5611,13 +5850,15 @@ async function runGeminiCLIHook() {
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+  const worktreeMode = envTruthy("SAFETY_NET_WORKTREE");
   const config = loadConfig(cwd);
   const result = analyzeCommand(command, {
     cwd,
     config,
     strict,
     paranoidRm,
-    paranoidInterpreters
+    paranoidInterpreters,
+    worktreeMode
   });
   if (result) {
     const sessionId = input.session_id;
@@ -5629,14 +5870,14 @@ async function runGeminiCLIHook() {
 }
 
 // src/bin/statusline.ts
-import { existsSync as existsSync7, readFileSync as readFileSync5 } from "node:fs";
+import { existsSync as existsSync8, readFileSync as readFileSync6 } from "node:fs";
 import { homedir as homedir6 } from "node:os";
-import { join as join5 } from "node:path";
+import { join as join6 } from "node:path";
 async function readStdinAsync() {
   if (process.stdin.isTTY) {
     return null;
   }
-  return new Promise((resolve4) => {
+  return new Promise((resolve5) => {
     let data = "";
     process.stdin.setEncoding("utf-8");
     process.stdin.on("data", (chunk) => {
@@ -5644,10 +5885,10 @@ async function readStdinAsync() {
     });
     process.stdin.on("end", () => {
       const trimmed = data.trim();
-      resolve4(trimmed || null);
+      resolve5(trimmed || null);
     });
     process.stdin.on("error", () => {
-      resolve4(null);
+      resolve5(null);
     });
   });
 }
@@ -5655,15 +5896,15 @@ function getSettingsPath() {
   if (process.env.CLAUDE_SETTINGS_PATH) {
     return process.env.CLAUDE_SETTINGS_PATH;
   }
-  return join5(homedir6(), ".claude", "settings.json");
+  return join6(homedir6(), ".claude", "settings.json");
 }
 function isPluginEnabled() {
   const settingsPath = getSettingsPath();
-  if (!existsSync7(settingsPath)) {
+  if (!existsSync8(settingsPath)) {
     return false;
   }
   try {
-    const content = readFileSync5(settingsPath, "utf-8");
+    const content = readFileSync6(settingsPath, "utf-8");
     const settings = JSON.parse(content);
     if (!settings.enabledPlugins) {
       return false;
@@ -5687,6 +5928,7 @@ async function printStatusline() {
     const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
     const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
     const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+    const worktreeMode = envTruthy("SAFETY_NET_WORKTREE");
     let modeEmojis = "";
     if (strict) {
       modeEmojis += "\uD83D\uDD12";
@@ -5697,6 +5939,9 @@ async function printStatusline() {
       modeEmojis += "\uD83D\uDDD1️";
     } else if (paranoidInterpreters) {
       modeEmojis += "\uD83D\uDC1A";
+    }
+    if (worktreeMode) {
+      modeEmojis += "\uD83C\uDF33";
     }
     const statusEmoji = modeEmojis || "✅";
     status = `\uD83D\uDEE1️ Safety Net ${statusEmoji}`;
@@ -5710,8 +5955,8 @@ async function printStatusline() {
 }
 
 // src/bin/verify-config.ts
-import { existsSync as existsSync8, readFileSync as readFileSync6, writeFileSync } from "node:fs";
-import { resolve as resolve4 } from "node:path";
+import { existsSync as existsSync9, readFileSync as readFileSync7, writeFileSync } from "node:fs";
+import { resolve as resolve5 } from "node:path";
 var HEADER = "Safety Net Config";
 var SEPARATOR = "═".repeat(HEADER.length);
 var SCHEMA_URL = "https://raw.githubusercontent.com/kenryu42/claude-code-safety-net/main/assets/cc-safety-net.schema.json";
@@ -5747,7 +5992,7 @@ function printInvalidConfig(scope, path, errors) {
 }
 function addSchemaIfMissing(path) {
   try {
-    const content = readFileSync6(path, "utf-8");
+    const content = readFileSync7(path, "utf-8");
     const parsed = JSON.parse(content);
     if (parsed.$schema) {
       return false;
@@ -5765,18 +6010,18 @@ function verifyConfig(options = {}) {
   let hasErrors = false;
   const configsChecked = [];
   printHeader();
-  if (existsSync8(userConfig)) {
+  if (existsSync9(userConfig)) {
     const result = validateConfigFile(userConfig);
     configsChecked.push({ scope: "User", path: userConfig, result });
     if (result.errors.length > 0) {
       hasErrors = true;
     }
   }
-  if (existsSync8(projectConfig)) {
+  if (existsSync9(projectConfig)) {
     const result = validateConfigFile(projectConfig);
     configsChecked.push({
       scope: "Project",
-      path: resolve4(projectConfig),
+      path: resolve5(projectConfig),
       result
     });
     if (result.errors.length > 0) {

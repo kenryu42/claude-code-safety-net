@@ -3,6 +3,8 @@ export interface ParallelAnalyzeContext {
     originalCwd: string | undefined;
     paranoidRm: boolean | undefined;
     allowTmpdirVar: boolean;
+    envAssignments?: ReadonlyMap<string, string>;
+    worktreeMode?: boolean;
     analyzeNested: (command: string) => string | null;
 }
 export declare function analyzeParallel(tokens: readonly string[], context: ParallelAnalyzeContext): string | null;

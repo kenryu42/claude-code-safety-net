@@ -1385,6 +1385,145 @@ function extractDashCArg(tokens) {
   return null;
 }
 
+// src/core/worktree.ts
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { dirname, isAbsolute, join, resolve } from "node:path";
+var GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
+  "-c",
+  "-C",
+  "--git-dir",
+  "--work-tree",
+  "--namespace",
+  "--super-prefix",
+  "--config-env"
+]);
+var GIT_CONTEXT_ENV_OVERRIDES = ["GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"];
+function hasGitContextEnvOverride(envAssignments) {
+  for (const name of GIT_CONTEXT_ENV_OVERRIDES) {
+    if (envAssignments?.has(name) || Object.hasOwn(process.env, name)) {
+      return true;
+    }
+  }
+  return false;
+}
+function getGitExecutionContext(tokens, cwd) {
+  if (!cwd) {
+    return { gitCwd: null, hasExplicitGitContext: false };
+  }
+  let gitCwd = resolve(cwd);
+  if (!isDirectory(gitCwd)) {
+    return { gitCwd: null, hasExplicitGitContext: false };
+  }
+  let hasExplicitGitContext = false;
+  let i = 1;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token)
+      break;
+    if (token === "--") {
+      break;
+    }
+    if (!token.startsWith("-")) {
+      break;
+    }
+    if (token === "-C") {
+      const target = tokens[i + 1];
+      if (!target) {
+        return { gitCwd: null, hasExplicitGitContext };
+      }
+      const resolvedCwd = resolveGitCwd(gitCwd, target);
+      if (!resolvedCwd) {
+        return { gitCwd: null, hasExplicitGitContext };
+      }
+      gitCwd = resolvedCwd;
+      i += 2;
+      continue;
+    }
+    if (token.startsWith("-C") && token.length > 2) {
+      const resolvedCwd = resolveGitCwd(gitCwd, token.slice(2));
+      if (!resolvedCwd) {
+        return { gitCwd: null, hasExplicitGitContext };
+      }
+      gitCwd = resolvedCwd;
+      i++;
+      continue;
+    }
+    if (token === "--git-dir" || token === "--work-tree") {
+      hasExplicitGitContext = true;
+      i += 2;
+      continue;
+    }
+    if (token.startsWith("--git-dir=") || token.startsWith("--work-tree=")) {
+      hasExplicitGitContext = true;
+      i++;
+      continue;
+    }
+    if (GIT_GLOBAL_OPTS_WITH_VALUE.has(token)) {
+      i += 2;
+    } else if (token.startsWith("-c") && token.length > 2) {
+      i++;
+    } else {
+      i++;
+    }
+  }
+  return { gitCwd, hasExplicitGitContext };
+}
+function isLinkedWorktree(cwd) {
+  const dotGitPath = findDotGit(cwd);
+  if (!dotGitPath) {
+    return false;
+  }
+  try {
+    const stat = statSync(dotGitPath);
+    if (!stat.isFile()) {
+      return false;
+    }
+    const content = readFileSync(dotGitPath, "utf-8");
+    const firstLine = content.split(/\r?\n/, 1)[0]?.trim() ?? "";
+    if (!firstLine.startsWith("gitdir:")) {
+      return false;
+    }
+    const rawGitDir = firstLine.slice("gitdir:".length).trim();
+    if (rawGitDir === "") {
+      return false;
+    }
+    const gitDir = isAbsolute(rawGitDir) ? rawGitDir : resolve(dirname(dotGitPath), rawGitDir);
+    return existsSync(join(gitDir, "commondir"));
+  } catch {
+    return false;
+  }
+}
+function resolveGitCwd(baseCwd, target) {
+  const resolved = isAbsolute(target) ? target : resolve(baseCwd, target);
+  return isDirectory(resolved) ? resolved : null;
+}
+function isDirectory(path) {
+  try {
+    return statSync(path).isDirectory();
+  } catch {
+    return false;
+  }
+}
+function findDotGit(cwd) {
+  let current;
+  try {
+    current = realpathSync(cwd);
+  } catch {
+    return null;
+  }
+  while (true) {
+    const dotGitPath = join(current, ".git");
+    if (existsSync(dotGitPath)) {
+      return dotGitPath;
+    }
+    const parent = dirname(current);
+    if (parent === current) {
+      return null;
+    }
+    current = parent;
+  }
+}
+
 // src/core/rules-git.ts
 var REASON_CHECKOUT_DOUBLE_DASH = "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
 var REASON_CHECKOUT_FORCE = "git checkout --force discards uncommitted changes. Use 'git stash' first.";
@@ -1403,15 +1542,6 @@ var REASON_BRANCH_DELETE = "git branch -D force-deletes without merge check. Use
 var REASON_STASH_DROP = "git stash drop permanently deletes stashed changes. Consider 'git stash list' first.";
 var REASON_STASH_CLEAR = "git stash clear deletes ALL stashed changes permanently.";
 var REASON_WORKTREE_REMOVE_FORCE = "git worktree remove --force can delete uncommitted changes. Remove --force flag.";
-var GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
-  "-c",
-  "-C",
-  "--git-dir",
-  "--work-tree",
-  "--namespace",
-  "--super-prefix",
-  "--config-env"
-]);
 var CHECKOUT_OPTS_WITH_VALUE = new Set([
   "-b",
   "-B",
@@ -1470,33 +1600,72 @@ function splitAtDoubleDash(tokens) {
     after: tokens.slice(index + 1)
   };
 }
-function analyzeGit(tokens) {
+function analyzeGit(tokens, options = {}) {
+  const match = analyzeGitRule(tokens);
+  if (!match) {
+    return null;
+  }
+  if (getGitWorktreeRelaxationForMatch(tokens, match, options)) {
+    return null;
+  }
+  return match.reason;
+}
+function getGitWorktreeRelaxation(tokens, options = {}) {
+  const match = analyzeGitRule(tokens);
+  if (!match) {
+    return null;
+  }
+  return getGitWorktreeRelaxationForMatch(tokens, match, options);
+}
+function analyzeGitRule(tokens) {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
   if (!subcommand) {
     return null;
   }
   switch (subcommand.toLowerCase()) {
     case "checkout":
-      return analyzeGitCheckout(rest);
+      return localDiscard(analyzeGitCheckout(rest));
     case "switch":
-      return analyzeGitSwitch(rest);
+      return localDiscard(analyzeGitSwitch(rest));
     case "restore":
-      return analyzeGitRestore(rest);
+      return localDiscard(analyzeGitRestore(rest));
     case "reset":
-      return analyzeGitReset(rest);
+      return localDiscard(analyzeGitReset(rest));
     case "clean":
-      return analyzeGitClean(rest);
+      return localDiscard(analyzeGitClean(rest));
     case "push":
-      return analyzeGitPush(rest);
+      return sharedState(analyzeGitPush(rest));
     case "branch":
-      return analyzeGitBranch(rest);
+      return sharedState(analyzeGitBranch(rest));
     case "stash":
-      return analyzeGitStash(rest);
+      return sharedState(analyzeGitStash(rest));
     case "worktree":
-      return analyzeGitWorktree(rest);
+      return sharedState(analyzeGitWorktree(rest));
     default:
       return null;
   }
+}
+function localDiscard(reason) {
+  return reason ? { reason, localDiscard: true } : null;
+}
+function sharedState(reason) {
+  return reason ? { reason, localDiscard: false } : null;
+}
+function getGitWorktreeRelaxationForMatch(tokens, match, options) {
+  if (!match.localDiscard || !options.worktreeMode || hasGitContextEnvOverride(options.envAssignments)) {
+    return null;
+  }
+  const context = getGitExecutionContext(tokens, options.cwd);
+  if (!context.gitCwd || context.hasExplicitGitContext) {
+    return null;
+  }
+  if (!isLinkedWorktree(context.gitCwd)) {
+    return null;
+  }
+  return {
+    originalReason: match.reason,
+    gitCwd: context.gitCwd
+  };
 }
 function extractGitSubcommandAndRest(tokens) {
   if (tokens.length === 0) {
@@ -1703,9 +1872,9 @@ function analyzeGitWorktree(tokens) {
 }
 
 // src/core/rules-rm.ts
-import { realpathSync } from "node:fs";
+import { realpathSync as realpathSync2 } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { normalize, resolve, sep } from "node:path";
+import { normalize, resolve as resolve2, sep } from "node:path";
 var IS_WINDOWS = process.platform === "win32";
 function normalizePathForComparison(p) {
   let normalized = normalize(p);
@@ -1877,13 +2046,13 @@ function isCwdSelfTarget(target, cwd) {
     return true;
   }
   try {
-    const resolved = resolve(cwd, target);
-    const realCwd = realpathSync(cwd);
-    const realResolved = realpathSync(resolved);
+    const resolved = resolve2(cwd, target);
+    const realCwd = realpathSync2(cwd);
+    const realResolved = realpathSync2(resolved);
     return normalizePathForComparison(realResolved) === normalizePathForComparison(realCwd);
   } catch {
     try {
-      const resolved = resolve(cwd, target);
+      const resolved = resolve2(cwd, target);
       return normalizePathForComparison(resolved) === normalizePathForComparison(cwd);
     } catch {
       return false;
@@ -1909,7 +2078,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
   }
   if (target.startsWith("./") || target.startsWith(".\\") || !target.includes("/") && !target.includes("\\")) {
     try {
-      const resolved = resolve(resolveCwd, target);
+      const resolved = resolve2(resolveCwd, target);
       const normalizedResolved = normalizePathForComparison(resolved);
       const normalizedOriginalCwd = normalizePathForComparison(originalCwd);
       return normalizedResolved.startsWith(`${normalizedOriginalCwd}${sep}`) || normalizedResolved === normalizedOriginalCwd;
@@ -1921,7 +2090,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
     return false;
   }
   try {
-    const resolved = resolve(resolveCwd, target);
+    const resolved = resolve2(resolveCwd, target);
     const normalizedResolved = normalizePathForComparison(resolved);
     const normalizedCwd = normalizePathForComparison(originalCwd);
     return normalizedResolved.startsWith(`${normalizedCwd}${sep}`) || normalizedResolved === normalizedCwd;
@@ -2032,7 +2201,11 @@ function analyzeParallel(tokens, context) {
     }
   }
   if (head === "git") {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, {
+      cwd: context.cwd,
+      envAssignments: context.envAssignments,
+      worktreeMode: context.worktreeMode
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -2189,7 +2362,11 @@ function analyzeXargs(tokens, context) {
     }
   }
   if (head === "git") {
-    const gitResult = analyzeGit(childTokens);
+    const gitResult = analyzeGit(childTokens, {
+      cwd: context.cwd,
+      envAssignments: context.envAssignments,
+      worktreeMode: context.worktreeMode
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -2406,7 +2583,11 @@ function analyzeSegment(tokens, depth, options) {
   const isXargs = basename === "xargs";
   const isParallel = basename === "parallel";
   if (isGit) {
-    const gitResult = analyzeGit(stripped);
+    const gitResult = analyzeGit(stripped, {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -2433,7 +2614,9 @@ function analyzeSegment(tokens, depth, options) {
       cwd: cwdForRm,
       originalCwd,
       paranoidRm: options.paranoidRm,
-      allowTmpdirVar
+      allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode
     });
     if (xargsResult) {
       return xargsResult;
@@ -2445,6 +2628,8 @@ function analyzeSegment(tokens, depth, options) {
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested: options.analyzeNested
     });
     if (parallelResult) {
@@ -2473,7 +2658,11 @@ function analyzeSegment(tokens, depth, options) {
         }
         if (cmd === "git") {
           const gitTokens = ["git", ...stripped.slice(i + 1)];
-          const reason = analyzeGit(gitTokens);
+          const reason = analyzeGit(gitTokens, {
+            cwd: cwdForRm,
+            envAssignments,
+            worktreeMode: options.worktreeMode
+          });
           if (reason) {
             return reason;
           }
@@ -2571,28 +2760,28 @@ function analyzeCommandInternal(command, depth, options) {
 }
 
 // src/core/config.ts
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync as existsSync2, readFileSync as readFileSync2 } from "node:fs";
 import { homedir as homedir2 } from "node:os";
-import { join, resolve as resolve2 } from "node:path";
+import { join as join2, resolve as resolve3 } from "node:path";
 var DEFAULT_CONFIG = {
   version: 1,
   rules: []
 };
 function loadConfig(cwd, options) {
   const safeCwd = typeof cwd === "string" ? cwd : process.cwd();
-  const userConfigDir = options?.userConfigDir ?? join(homedir2(), ".cc-safety-net");
-  const userConfigPath = join(userConfigDir, "config.json");
-  const projectConfigPath = join(safeCwd, ".safety-net.json");
+  const userConfigDir = options?.userConfigDir ?? join2(homedir2(), ".cc-safety-net");
+  const userConfigPath = join2(userConfigDir, "config.json");
+  const projectConfigPath = join2(safeCwd, ".safety-net.json");
   const userConfig = loadSingleConfig(userConfigPath);
   const projectConfig = loadSingleConfig(projectConfigPath);
   return mergeConfigs(userConfig, projectConfig);
 }
 function loadSingleConfig(path) {
-  if (!existsSync(path)) {
+  if (!existsSync2(path)) {
     return null;
   }
   try {
-    const content = readFileSync(path, "utf-8");
+    const content = readFileSync2(path, "utf-8");
     if (!content.trim()) {
       return null;
     }
@@ -2714,12 +2903,12 @@ function validateRule(rule, index, ruleNames) {
 function validateConfigFile(path) {
   const errors = [];
   const ruleNames = new Set;
-  if (!existsSync(path)) {
+  if (!existsSync2(path)) {
     errors.push(`File not found: ${path}`);
     return { errors, ruleNames };
   }
   try {
-    const content = readFileSync(path, "utf-8");
+    const content = readFileSync2(path, "utf-8");
     if (!content.trim()) {
       errors.push("Config file is empty");
       return { errors, ruleNames };
@@ -2732,10 +2921,10 @@ function validateConfigFile(path) {
   }
 }
 function getUserConfigPath() {
-  return join(homedir2(), ".cc-safety-net", "config.json");
+  return join2(homedir2(), ".cc-safety-net", "config.json");
 }
 function getProjectConfigPath(cwd) {
-  return resolve2(cwd ?? process.cwd(), ".safety-net.json");
+  return resolve3(cwd ?? process.cwd(), ".safety-net.json");
 }
 
 // src/core/analyze.ts
@@ -2890,6 +3079,7 @@ var SafetyNetPlugin = async ({ directory }) => {
   const paranoidAll = envTruthy("SAFETY_NET_PARANOID");
   const paranoidRm = paranoidAll || envTruthy("SAFETY_NET_PARANOID_RM");
   const paranoidInterpreters = paranoidAll || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
+  const worktreeMode = envTruthy("SAFETY_NET_WORKTREE");
   return {
     config: async (opencodeConfig) => {
       const builtinCommands = loadBuiltinCommands();
@@ -2907,7 +3097,8 @@ var SafetyNetPlugin = async ({ directory }) => {
           config: safetyNetConfig,
           strict,
           paranoidRm,
-          paranoidInterpreters
+          paranoidInterpreters,
+          worktreeMode
         });
         if (result) {
           const message = formatBlockedMessage({
