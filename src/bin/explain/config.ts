@@ -67,5 +67,6 @@ export function buildAnalyzeOptions(explainOptions?: ExplainOptions): AnalyzeOpt
     strict: explainOptions?.strict ?? envTruthy('SAFETY_NET_STRICT'),
     paranoidRm: paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM'),
     paranoidInterpreters: paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS'),
+    worktreeMode: envTruthy('SAFETY_NET_WORKTREE'),
   };
 }

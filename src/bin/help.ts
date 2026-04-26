@@ -113,6 +113,9 @@ export function printHelp(): void {
   lines.push(`${INDENT}SAFETY_NET_PARANOID=1             Enable all paranoid checks`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID_RM=1          Block non-temp rm -rf within cwd`);
   lines.push(`${INDENT}SAFETY_NET_PARANOID_INTERPRETERS=1  Block interpreter one-liners`);
+  lines.push(
+    `${INDENT}SAFETY_NET_WORKTREE=1             Allow local git discards in linked worktrees`,
+  );
   lines.push('');
 
   // Config files

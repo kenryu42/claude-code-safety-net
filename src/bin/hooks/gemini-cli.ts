@@ -63,6 +63,7 @@ export async function runGeminiCLIHook(): Promise<void> {
   const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
   const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
   const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
+  const worktreeMode = envTruthy('SAFETY_NET_WORKTREE');
 
   const config = loadConfig(cwd);
 
@@ -72,6 +73,7 @@ export async function runGeminiCLIHook(): Promise<void> {
     strict,
     paranoidRm,
     paranoidInterpreters,
+    worktreeMode,
   });
 
   if (result) {

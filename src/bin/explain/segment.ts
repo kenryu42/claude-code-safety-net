@@ -23,7 +23,7 @@ import { extractDashCArg } from '@/core/analyze/shell-wrappers';
 import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
 import { analyzeXargs } from '@/core/analyze/xargs';
 import { checkCustomRules } from '@/core/rules-custom';
-import { analyzeGit } from '@/core/rules-git';
+import { analyzeGit, getGitWorktreeRelaxation } from '@/core/rules-git';
 import { analyzeRm } from '@/core/rules-rm';
 import {
   normalizeCommandToken,
@@ -289,14 +289,27 @@ export function explainSegment(
   }
 
   if (isGit) {
-    const reason = analyzeGit(strippedTokens);
+    const gitOptions = {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
+    };
+    const relaxation = getGitWorktreeRelaxation(strippedTokens, gitOptions);
+    const reason = analyzeGit(strippedTokens, gitOptions);
     steps.push({
       type: 'rule-check',
       ruleModule: 'rules-git.ts',
       ruleFunction: 'analyzeGit',
-      matched: !!reason,
-      reason: reason ?? undefined,
+      matched: !!reason || !!relaxation,
+      reason: reason ?? relaxation?.originalReason,
     });
+    if (relaxation) {
+      steps.push({
+        type: 'worktree-relaxation',
+        originalReason: relaxation.originalReason,
+        gitCwd: relaxation.gitCwd,
+      });
+    }
     if (reason) return { reason };
   }
 
@@ -335,6 +348,8 @@ export function explainSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
     });
     steps.push({
       type: 'rule-check',
@@ -356,6 +371,8 @@ export function explainSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested,
     });
     steps.push({
@@ -371,6 +388,7 @@ export function explainSegment(
   const matchedKnown = isGit || isRm || isFind || isXargs || isParallel;
   const tokensScanned: string[] = [];
   let fallbackReason: string | null = null;
+  let fallbackRelaxation: ReturnType<typeof getGitWorktreeRelaxation> = null;
   let embeddedCommandFound: string | undefined;
 
   if (!matchedKnown && !DISPLAY_COMMANDS.has(normalizeCommandToken(head))) {
@@ -393,7 +411,13 @@ export function explainSegment(
       if (!fallbackReason && cmd === 'git') {
         embeddedCommandFound = 'git';
         const gitTokens = ['git', ...strippedTokens.slice(i + 1)];
-        fallbackReason = analyzeGit(gitTokens);
+        const gitOptions = {
+          cwd: cwdForRm,
+          envAssignments,
+          worktreeMode: options.worktreeMode,
+        };
+        fallbackRelaxation = getGitWorktreeRelaxation(gitTokens, gitOptions);
+        fallbackReason = analyzeGit(gitTokens, gitOptions);
       }
       if (!fallbackReason && cmd === 'find') {
         embeddedCommandFound = 'find';
@@ -407,6 +431,13 @@ export function explainSegment(
     tokensScanned,
     embeddedCommandFound,
   });
+  if (fallbackRelaxation) {
+    steps.push({
+      type: 'worktree-relaxation',
+      originalReason: fallbackRelaxation.originalReason,
+      gitCwd: fallbackRelaxation.gitCwd,
+    });
+  }
   if (fallbackReason) return { reason: fallbackReason };
 
   const shouldCheckCustomRules = depth === 0 || !matchedKnown;
