@@ -36,7 +36,7 @@ export function analyzeParallel(
   if (template.length === 0) {
     // parallel ::: 'cmd1' 'cmd2' - commands mode
     // Analyze each arg as a command
-    const nestedOverrides = runsRemotely ? { worktreeMode: false } : undefined;
+    const nestedOverrides = buildCommandsModeOverrides(context, runsRemotely);
     for (const arg of args) {
       const reason = context.analyzeNested(arg, nestedOverrides);
       if (reason) {
@@ -164,13 +164,17 @@ export function analyzeParallel(
   }
 
   if (head === 'git') {
-    const gitResult = analyzeGit(childTokens, {
-      cwd: childCwd,
-      envAssignments: childEnvAssignments,
-      worktreeMode: runsRemotely ? false : context.worktreeMode,
-    });
-    if (gitResult) {
-      return gitResult;
+    const gitTokenSets =
+      !hasPlaceholder && args.length > 0 ? args.map((arg) => [...childTokens, arg]) : [childTokens];
+    for (const gitTokens of gitTokenSets) {
+      const gitResult = analyzeGit(gitTokens, {
+        cwd: childCwd,
+        envAssignments: childEnvAssignments,
+        worktreeMode: runsRemotely ? false : context.worktreeMode,
+      });
+      if (gitResult) {
+        return gitResult;
+      }
     }
   }
 
@@ -190,6 +194,23 @@ function buildNestedOverrides(
     overrides.worktreeMode = false;
   }
   return overrides;
+}
+
+function buildCommandsModeOverrides(
+  context: ParallelAnalyzeContext,
+  runsRemotely: boolean,
+): AnalyzeNestedOverrides | undefined {
+  const overrides: AnalyzeNestedOverrides = {};
+  if (context.envAssignments) {
+    overrides.envAssignments = context.envAssignments;
+  }
+  if (context.cwd !== undefined) {
+    overrides.effectiveCwd = context.cwd;
+  }
+  if (runsRemotely) {
+    overrides.worktreeMode = false;
+  }
+  return Object.keys(overrides).length > 0 ? overrides : undefined;
 }
 
 interface ParallelParseResult {

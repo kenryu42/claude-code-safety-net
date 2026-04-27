@@ -103,7 +103,10 @@ export function analyzeSegment(
         return REASON_INTERPRETER_BLOCKED + PARANOID_INTERPRETERS_SUFFIX;
       }
 
-      const innerReason = options.analyzeNested(codeArg);
+      const innerReason = options.analyzeNested(codeArg, {
+        effectiveCwd: nestedEffectiveCwd,
+        envAssignments,
+      });
       if (innerReason) {
         return innerReason;
       }
@@ -115,7 +118,11 @@ export function analyzeSegment(
   }
 
   if (normalizedHead === 'busybox' && stripped.length > 1) {
-    return analyzeSegment(stripped.slice(1), depth, options);
+    return analyzeSegment(stripped.slice(1), depth, {
+      ...options,
+      effectiveCwd: nestedEffectiveCwd,
+      envAssignments,
+    });
   }
 
   const isGit = basename.toLowerCase() === 'git';
