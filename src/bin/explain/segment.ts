@@ -157,7 +157,13 @@ export function explainSegment(
     });
   }
 
-  const wrapperResult = stripWrappersWithInfo(envResult.tokens);
+  // Preserve null (unknown CWD after cd/pushd) - only fall back to cwd when undefined
+  const effectiveCwd = options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
+  const cwdUnknown = effectiveCwd === null;
+  const baseCwdForRm = cwdUnknown ? undefined : (effectiveCwd ?? options.cwd);
+  const originalCwd = cwdUnknown ? undefined : options.cwd;
+
+  const wrapperResult = stripWrappersWithInfo(envResult.tokens, baseCwdForRm);
   const removed = envResult.tokens.slice(0, envResult.tokens.length - wrapperResult.tokens.length);
   if (removed.length > 0) {
     steps.push({
@@ -263,13 +269,7 @@ export function explainSegment(
   const allowTmpdirVar = !isTmpdirOverriddenToNonTemp(envAssignments);
   // Use command-scoped TMPDIR if set, otherwise fall back to process.env
   const tmpdirValue = envAssignments.get('TMPDIR') ?? process.env.TMPDIR ?? null;
-  // Preserve null (unknown CWD after cd/pushd) - only fall back to cwd when undefined
-  const effectiveCwd = options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
-
-  // Derive CWD context matching guard behavior: when CWD is unknown, both become undefined
-  const cwdUnknown = effectiveCwd === null;
-  const cwdForRm = cwdUnknown ? undefined : (effectiveCwd ?? options.cwd);
-  const originalCwd = cwdUnknown ? undefined : options.cwd;
+  const cwdForRm = wrapperResult.cwd === null ? undefined : (wrapperResult.cwd ?? baseCwdForRm);
 
   // git uses case-insensitive matching (matches guard: basename.toLowerCase() === 'git')
   // rm/find/xargs/parallel use case-sensitive matching (matches guard)
@@ -414,7 +414,7 @@ export function explainSegment(
         const gitOptions = {
           cwd: cwdForRm,
           envAssignments,
-          worktreeMode: options.worktreeMode,
+          worktreeMode: false,
         };
         fallbackRelaxation = getGitWorktreeRelaxation(gitTokens, gitOptions);
         fallbackReason = analyzeGit(gitTokens, gitOptions);
