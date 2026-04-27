@@ -1,7 +1,13 @@
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { analyzeSegment, segmentChangesCwd } from '@/core/analyze/segment';
 import { splitShellCommands } from '@/core/shell';
-import { type AnalyzeOptions, type AnalyzeResult, type Config, MAX_RECURSION_DEPTH } from '@/types';
+import {
+  type AnalyzeNestedOverrides,
+  type AnalyzeOptions,
+  type AnalyzeResult,
+  type Config,
+  MAX_RECURSION_DEPTH,
+} from '@/types';
 
 const REASON_STRICT_UNPARSEABLE =
   'Command could not be safely analyzed (strict mode). Verify manually.';
@@ -58,11 +64,19 @@ export function analyzeCommandInternal(
       ...options,
       cwd: originalCwd,
       effectiveCwd,
-      analyzeNested: (nestedCommand: string): string | null => {
+      analyzeNested: (nestedCommand: string, overrides?: AnalyzeNestedOverrides): string | null => {
         // Pass current effectiveCwd so nested analysis sees CWD changes from prior segments
+        const nestedEffectiveCwd =
+          overrides && Object.hasOwn(overrides, 'effectiveCwd')
+            ? overrides.effectiveCwd
+            : effectiveCwd;
         return (
-          analyzeCommandInternal(nestedCommand, depth + 1, { ...options, effectiveCwd })?.reason ??
-          null
+          analyzeCommandInternal(nestedCommand, depth + 1, {
+            ...options,
+            effectiveCwd: nestedEffectiveCwd,
+            envAssignments: overrides?.envAssignments ?? options.envAssignments,
+            worktreeMode: overrides?.worktreeMode ?? options.worktreeMode,
+          })?.reason ?? null
         );
       },
     });
