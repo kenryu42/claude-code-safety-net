@@ -1,3 +1,4 @@
+import { type AnalyzeNestedOverrides } from '@/types';
 export interface ParallelAnalyzeContext {
     cwd: string | undefined;
     originalCwd: string | undefined;
@@ -5,7 +6,7 @@ export interface ParallelAnalyzeContext {
     allowTmpdirVar: boolean;
     envAssignments?: ReadonlyMap<string, string>;
     worktreeMode?: boolean;
-    analyzeNested: (command: string) => string | null;
+    analyzeNested: (command: string, overrides?: AnalyzeNestedOverrides) => string | null;
 }
 export declare function analyzeParallel(tokens: readonly string[], context: ParallelAnalyzeContext): string | null;
 export declare function extractParallelChildCommand(tokens: readonly string[]): string[];

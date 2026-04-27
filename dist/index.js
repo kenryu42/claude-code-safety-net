@@ -398,6 +398,9 @@ function hasRecursiveForceFlags(tokens) {
   return hasRecursive && hasForce;
 }
 
+// src/core/shell.ts
+import { isAbsolute, resolve } from "node:path";
+
 // node_modules/shell-quote/index.js
 var $quote = require_quote();
 var $parse = require_parse();
@@ -915,12 +918,13 @@ function stripEnvAssignmentsWithInfo(tokens) {
   }
   return { tokens: tokens.slice(i), envAssignments };
 }
-function stripWrappers(tokens) {
-  return stripWrappersWithInfo(tokens).tokens;
+function stripWrappers(tokens, cwd) {
+  return stripWrappersWithInfo(tokens, cwd).tokens;
 }
-function stripWrappersWithInfo(tokens) {
+function stripWrappersWithInfo(tokens, cwd) {
   let result = [...tokens];
   const allEnvAssignments = new Map;
+  let currentCwd = cwd;
   for (let iteration = 0;iteration < MAX_STRIP_ITERATIONS; iteration++) {
     const before = result.join(" ");
     const { tokens: strippedTokens, envAssignments } = stripEnvAssignmentsWithInfo(result);
@@ -943,8 +947,11 @@ function stripWrappersWithInfo(tokens) {
       result = stripSudo(result);
     }
     if (head === "env") {
-      const envResult = stripEnvWithInfo(result);
+      const envResult = stripEnvWithInfo(result, currentCwd);
       result = envResult.tokens;
+      if (envResult.cwd !== undefined) {
+        currentCwd = envResult.cwd;
+      }
       for (const [k, v] of envResult.envAssignments) {
         allEnvAssignments.set(k, v);
       }
@@ -959,7 +966,7 @@ function stripWrappersWithInfo(tokens) {
   for (const [k, v] of finalAssignments) {
     allEnvAssignments.set(k, v);
   }
-  return { tokens: finalTokens, envAssignments: allEnvAssignments };
+  return { tokens: finalTokens, envAssignments: allEnvAssignments, cwd: currentCwd };
 }
 var SUDO_OPTS_WITH_VALUE = new Set(["-u", "-g", "-C", "-D", "-h", "-p", "-r", "-t", "-T", "-U"]);
 function stripSudo(tokens) {
@@ -992,8 +999,9 @@ var ENV_OPTS_WITH_VALUE = new Set([
   "--split-string",
   "-P"
 ]);
-function stripEnvWithInfo(tokens) {
+function stripEnvWithInfo(tokens, cwd) {
   const envAssignments = new Map;
+  let currentCwd = cwd;
   let i = 1;
   while (i < tokens.length) {
     const token = tokens[i];
@@ -1007,6 +1015,10 @@ function stripEnvWithInfo(tokens) {
       continue;
     }
     if (ENV_OPTS_WITH_VALUE.has(token)) {
+      if (token === "-C" || token === "--chdir") {
+        const target = tokens[i + 1];
+        currentCwd = target ? resolveWrapperCwd(currentCwd, target) : null;
+      }
       i += 2;
       continue;
     }
@@ -1015,6 +1027,8 @@ function stripEnvWithInfo(tokens) {
       continue;
     }
     if (token.startsWith("-C=") || token.startsWith("--chdir=")) {
+      const target = token.startsWith("-C=") ? token.slice("-C=".length) : token.slice("--chdir=".length);
+      currentCwd = resolveWrapperCwd(currentCwd, target);
       i++;
       continue;
     }
@@ -1033,7 +1047,19 @@ function stripEnvWithInfo(tokens) {
     envAssignments.set(assignment.name, assignment.value);
     i++;
   }
-  return { tokens: tokens.slice(i), envAssignments };
+  return { tokens: tokens.slice(i), envAssignments, cwd: currentCwd };
+}
+function resolveWrapperCwd(cwd, target) {
+  if (target === "") {
+    return null;
+  }
+  if (isAbsolute(target)) {
+    return resolve(target);
+  }
+  if (!cwd) {
+    return null;
+  }
+  return resolve(cwd, target);
 }
 function stripCommand(tokens) {
   let i = 1;
@@ -1387,7 +1413,7 @@ function extractDashCArg(tokens) {
 
 // src/core/worktree.ts
 import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
-import { dirname, isAbsolute, join, resolve } from "node:path";
+import { dirname, isAbsolute as isAbsolute2, join, resolve as resolve2 } from "node:path";
 var GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
   "-c",
   "-C",
@@ -1410,7 +1436,7 @@ function getGitExecutionContext(tokens, cwd) {
   if (!cwd) {
     return { gitCwd: null, hasExplicitGitContext: false };
   }
-  let gitCwd = resolve(cwd);
+  let gitCwd = resolve2(cwd);
   if (!isDirectory(gitCwd)) {
     return { gitCwd: null, hasExplicitGitContext: false };
   }
@@ -1487,14 +1513,14 @@ function isLinkedWorktree(cwd) {
     if (rawGitDir === "") {
       return false;
     }
-    const gitDir = isAbsolute(rawGitDir) ? rawGitDir : resolve(dirname(dotGitPath), rawGitDir);
+    const gitDir = isAbsolute2(rawGitDir) ? rawGitDir : resolve2(dirname(dotGitPath), rawGitDir);
     return existsSync(join(gitDir, "commondir"));
   } catch {
     return false;
   }
 }
 function resolveGitCwd(baseCwd, target) {
-  const resolved = isAbsolute(target) ? target : resolve(baseCwd, target);
+  const resolved = isAbsolute2(target) ? target : resolve2(baseCwd, target);
   return isDirectory(resolved) ? resolved : null;
 }
 function isDirectory(path) {
@@ -1630,7 +1656,7 @@ function analyzeGitRule(tokens) {
     case "restore":
       return localDiscard(analyzeGitRestore(rest));
     case "reset":
-      return localDiscard(analyzeGitReset(rest));
+      return analyzeGitReset(rest);
     case "clean":
       return localDiscard(analyzeGitClean(rest));
     case "push":
@@ -1804,15 +1830,32 @@ function analyzeGitRestore(tokens) {
   return hasStaged ? null : REASON_RESTORE;
 }
 function analyzeGitReset(tokens) {
+  let reason = null;
   for (const token of tokens) {
     if (token === "--hard") {
-      return REASON_RESET_HARD;
+      reason = REASON_RESET_HARD;
+      break;
     }
     if (token === "--merge") {
-      return REASON_RESET_MERGE;
+      reason = REASON_RESET_MERGE;
+      break;
     }
   }
-  return null;
+  if (!reason) {
+    return null;
+  }
+  return resetHasRef(tokens) ? sharedState(reason) : localDiscard(reason);
+}
+function resetHasRef(tokens) {
+  for (const token of tokens) {
+    if (token === "--") {
+      return false;
+    }
+    if (!token.startsWith("-")) {
+      return true;
+    }
+  }
+  return false;
 }
 function analyzeGitClean(tokens) {
   for (const token of tokens) {
@@ -1874,7 +1917,7 @@ function analyzeGitWorktree(tokens) {
 // src/core/rules-rm.ts
 import { realpathSync as realpathSync2 } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { normalize, resolve as resolve2, sep } from "node:path";
+import { normalize, resolve as resolve3, sep } from "node:path";
 var IS_WINDOWS = process.platform === "win32";
 function normalizePathForComparison(p) {
   let normalized = normalize(p);
@@ -2046,13 +2089,13 @@ function isCwdSelfTarget(target, cwd) {
     return true;
   }
   try {
-    const resolved = resolve2(cwd, target);
+    const resolved = resolve3(cwd, target);
     const realCwd = realpathSync2(cwd);
     const realResolved = realpathSync2(resolved);
     return normalizePathForComparison(realResolved) === normalizePathForComparison(realCwd);
   } catch {
     try {
-      const resolved = resolve2(cwd, target);
+      const resolved = resolve3(cwd, target);
       return normalizePathForComparison(resolved) === normalizePathForComparison(cwd);
     } catch {
       return false;
@@ -2078,7 +2121,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
   }
   if (target.startsWith("./") || target.startsWith(".\\") || !target.includes("/") && !target.includes("\\")) {
     try {
-      const resolved = resolve2(resolveCwd, target);
+      const resolved = resolve3(resolveCwd, target);
       const normalizedResolved = normalizePathForComparison(resolved);
       const normalizedOriginalCwd = normalizePathForComparison(originalCwd);
       return normalizedResolved.startsWith(`${normalizedOriginalCwd}${sep}`) || normalizedResolved === normalizedOriginalCwd;
@@ -2090,7 +2133,7 @@ function isTargetWithinCwd(target, originalCwd, effectiveCwd) {
     return false;
   }
   try {
-    const resolved = resolve2(resolveCwd, target);
+    const resolved = resolve3(resolveCwd, target);
     const normalizedResolved = normalizePathForComparison(resolved);
     const normalizedCwd = normalizePathForComparison(originalCwd);
     return normalizedResolved.startsWith(`${normalizedCwd}${sep}`) || normalizedResolved === normalizedCwd;
@@ -2107,17 +2150,25 @@ function analyzeParallel(tokens, context) {
   if (!parseResult) {
     return null;
   }
-  const { template, args, hasPlaceholder } = parseResult;
+  const { template, args, hasPlaceholder, runsRemotely } = parseResult;
   if (template.length === 0) {
+    const nestedOverrides2 = runsRemotely ? { worktreeMode: false } : undefined;
     for (const arg of args) {
-      const reason = context.analyzeNested(arg);
+      const reason = context.analyzeNested(arg, nestedOverrides2);
       if (reason) {
         return reason;
       }
     }
     return null;
   }
-  let childTokens = stripWrappers([...template]);
+  const childWrapperInfo = stripWrappersWithInfo([...template], context.cwd);
+  let childTokens = childWrapperInfo.tokens;
+  const childEnvAssignments = new Map(context.envAssignments ?? []);
+  for (const [k, v] of childWrapperInfo.envAssignments) {
+    childEnvAssignments.set(k, v);
+  }
+  const childCwd = childWrapperInfo.cwd === null ? undefined : childWrapperInfo.cwd ?? context.cwd;
+  const nestedOverrides = buildNestedOverrides(childEnvAssignments, childWrapperInfo.cwd, runsRemotely);
   let head = getBasename(childTokens[0] ?? "").toLowerCase();
   if (head === "busybox" && childTokens.length > 1) {
     childTokens = childTokens.slice(1);
@@ -2133,20 +2184,20 @@ function analyzeParallel(tokens, context) {
         if (args.length > 0) {
           for (const arg of args) {
             const expandedScript = dashCArg.replace(/{}/g, arg);
-            const reason3 = context.analyzeNested(expandedScript);
+            const reason3 = context.analyzeNested(expandedScript, nestedOverrides);
             if (reason3) {
               return reason3;
             }
           }
           return null;
         }
-        const reason2 = context.analyzeNested(dashCArg);
+        const reason2 = context.analyzeNested(dashCArg, nestedOverrides);
         if (reason2) {
           return reason2;
         }
         return null;
       }
-      const reason = context.analyzeNested(dashCArg);
+      const reason = context.analyzeNested(dashCArg, nestedOverrides);
       if (reason) {
         return reason;
       }
@@ -2202,15 +2253,25 @@ function analyzeParallel(tokens, context) {
   }
   if (head === "git") {
     const gitResult = analyzeGit(childTokens, {
-      cwd: context.cwd,
-      envAssignments: context.envAssignments,
-      worktreeMode: context.worktreeMode
+      cwd: childCwd,
+      envAssignments: childEnvAssignments,
+      worktreeMode: runsRemotely ? false : context.worktreeMode
     });
     if (gitResult) {
       return gitResult;
     }
   }
   return null;
+}
+function buildNestedOverrides(envAssignments, cwd, runsRemotely) {
+  const overrides = { envAssignments };
+  if (cwd !== undefined) {
+    overrides.effectiveCwd = cwd;
+  }
+  if (runsRemotely) {
+    overrides.worktreeMode = false;
+  }
+  return overrides;
 }
 function parseParallelCommand(tokens) {
   const parallelOptsWithValue = new Set([
@@ -2230,6 +2291,7 @@ function parseParallelCommand(tokens) {
   let i = 1;
   const templateTokens = [];
   let markerIndex = -1;
+  let runsRemotely = false;
   while (i < tokens.length) {
     const token = tokens[i];
     if (!token)
@@ -2253,6 +2315,21 @@ function parseParallelCommand(tokens) {
       break;
     }
     if (token.startsWith("-")) {
+      if (token === "-S" || token === "--sshlogin" || token === "--slf" || token === "--sshloginfile") {
+        runsRemotely = true;
+        i += 2;
+        continue;
+      }
+      if (token.startsWith("-S") && token.length > 2) {
+        runsRemotely = true;
+        i++;
+        continue;
+      }
+      if (token.startsWith("--sshlogin=") || token.startsWith("--slf=") || token.startsWith("--sshloginfile=")) {
+        runsRemotely = true;
+        i++;
+        continue;
+      }
       if (token.startsWith("-j") && token.length > 2 && /^\d+$/.test(token.slice(2))) {
         i++;
         continue;
@@ -2297,7 +2374,7 @@ function parseParallelCommand(tokens) {
   if (templateTokens.length === 0 && markerIndex === -1) {
     return null;
   }
-  return { template: templateTokens, args, hasPlaceholder };
+  return { template: templateTokens, args, hasPlaceholder, runsRemotely };
 }
 
 // src/core/analyze/tmpdir.ts
@@ -2331,7 +2408,13 @@ var REASON_XARGS_RM = "xargs rm -rf with dynamic input is dangerous. Use explici
 var REASON_XARGS_SHELL = "xargs with shell -c can execute arbitrary commands from dynamic input.";
 function analyzeXargs(tokens, context) {
   const { childTokens: rawChildTokens } = extractXargsChildCommandWithInfo(tokens);
-  let childTokens = stripWrappers(rawChildTokens);
+  const childWrapperInfo = stripWrappersWithInfo(rawChildTokens, context.cwd);
+  let childTokens = childWrapperInfo.tokens;
+  const childEnvAssignments = new Map(context.envAssignments ?? []);
+  for (const [k, v] of childWrapperInfo.envAssignments) {
+    childEnvAssignments.set(k, v);
+  }
+  const childCwd = childWrapperInfo.cwd === null ? undefined : childWrapperInfo.cwd ?? context.cwd;
   if (childTokens.length === 0) {
     return null;
   }
@@ -2363,8 +2446,8 @@ function analyzeXargs(tokens, context) {
   }
   if (head === "git") {
     const gitResult = analyzeGit(childTokens, {
-      cwd: context.cwd,
-      envAssignments: context.envAssignments,
+      cwd: childCwd,
+      envAssignments: childEnvAssignments,
       worktreeMode: context.worktreeMode
     });
     if (gitResult) {
@@ -2536,9 +2619,17 @@ function analyzeSegment(tokens, depth, options) {
   if (tokens.length === 0) {
     return null;
   }
+  const { cwdForRm: baseCwdForRm, originalCwd } = deriveCwdContext(options);
   const { tokens: strippedEnv, envAssignments: leadingEnvAssignments } = stripEnvAssignmentsWithInfo(tokens);
-  const { tokens: stripped, envAssignments: wrapperEnvAssignments } = stripWrappersWithInfo(strippedEnv);
-  const envAssignments = new Map(leadingEnvAssignments);
+  const {
+    tokens: stripped,
+    envAssignments: wrapperEnvAssignments,
+    cwd: wrapperCwd
+  } = stripWrappersWithInfo(strippedEnv, baseCwdForRm);
+  const envAssignments = new Map(options.envAssignments ?? []);
+  for (const [k, v] of leadingEnvAssignments) {
+    envAssignments.set(k, v);
+  }
   for (const [k, v] of wrapperEnvAssignments) {
     envAssignments.set(k, v);
   }
@@ -2551,12 +2642,16 @@ function analyzeSegment(tokens, depth, options) {
   }
   const normalizedHead = normalizeCommandToken(head);
   const basename = getBasename(head);
-  const { cwdForRm, originalCwd } = deriveCwdContext(options);
+  const cwdForRm = wrapperCwd === null ? undefined : wrapperCwd ?? baseCwdForRm;
+  const nestedEffectiveCwd = wrapperCwd === undefined ? options.effectiveCwd : wrapperCwd;
   const allowTmpdirVar = !isTmpdirOverriddenToNonTemp(envAssignments);
   if (SHELL_WRAPPERS.has(normalizedHead)) {
     const dashCArg = extractDashCArg(stripped);
     if (dashCArg) {
-      return options.analyzeNested(dashCArg);
+      return options.analyzeNested(dashCArg, {
+        effectiveCwd: nestedEffectiveCwd,
+        envAssignments
+      });
     }
   }
   if (INTERPRETERS.has(normalizedHead)) {
@@ -2661,7 +2756,7 @@ function analyzeSegment(tokens, depth, options) {
           const reason = analyzeGit(gitTokens, {
             cwd: cwdForRm,
             envAssignments,
-            worktreeMode: options.worktreeMode
+            worktreeMode: false
           });
           if (reason) {
             return reason;
@@ -2745,8 +2840,14 @@ function analyzeCommandInternal(command, depth, options) {
       ...options,
       cwd: originalCwd,
       effectiveCwd,
-      analyzeNested: (nestedCommand) => {
-        return analyzeCommandInternal(nestedCommand, depth + 1, { ...options, effectiveCwd })?.reason ?? null;
+      analyzeNested: (nestedCommand, overrides) => {
+        const nestedEffectiveCwd = overrides && Object.hasOwn(overrides, "effectiveCwd") ? overrides.effectiveCwd : effectiveCwd;
+        return analyzeCommandInternal(nestedCommand, depth + 1, {
+          ...options,
+          effectiveCwd: nestedEffectiveCwd,
+          envAssignments: overrides?.envAssignments ?? options.envAssignments,
+          worktreeMode: overrides?.worktreeMode ?? options.worktreeMode
+        })?.reason ?? null;
       }
     });
     if (reason) {
@@ -2762,7 +2863,7 @@ function analyzeCommandInternal(command, depth, options) {
 // src/core/config.ts
 import { existsSync as existsSync2, readFileSync as readFileSync2 } from "node:fs";
 import { homedir as homedir2 } from "node:os";
-import { join as join2, resolve as resolve3 } from "node:path";
+import { join as join2, resolve as resolve4 } from "node:path";
 var DEFAULT_CONFIG = {
   version: 1,
   rules: []
@@ -2924,7 +3025,7 @@ function getUserConfigPath() {
   return join2(homedir2(), ".cc-safety-net", "config.json");
 }
 function getProjectConfigPath(cwd) {
-  return resolve3(cwd ?? process.cwd(), ".safety-net.json");
+  return resolve4(cwd ?? process.cwd(), ".safety-net.json");
 }
 
 // src/core/analyze.ts

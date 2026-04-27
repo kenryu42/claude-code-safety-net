@@ -97,6 +97,8 @@ export interface AnalyzeOptions {
     cwd?: string;
     /** Effective cwd after cd commands (null = unknown, undefined = use cwd) */
     effectiveCwd?: string | null;
+    /** Environment assignments inherited by nested command analysis */
+    envAssignments?: ReadonlyMap<string, string>;
     /** Loaded configuration */
     config?: Config;
     /** Fail-closed on unparseable commands */
@@ -109,6 +111,11 @@ export interface AnalyzeOptions {
     worktreeMode?: boolean;
     /** Allow $TMPDIR paths (false when TMPDIR is overridden to non-temp) */
     allowTmpdirVar?: boolean;
+}
+export interface AnalyzeNestedOverrides {
+    effectiveCwd?: string | null;
+    envAssignments?: ReadonlyMap<string, string>;
+    worktreeMode?: boolean;
 }
 /** Audit log entry */
 export interface AuditLogEntry {
