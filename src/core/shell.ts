@@ -1,3 +1,4 @@
+import { isAbsolute, resolve } from 'node:path';
 import { type ParseEntry, parse } from 'shell-quote';
 import { MAX_STRIP_ITERATIONS, SHELL_OPERATORS } from '@/types';
 
@@ -582,6 +583,7 @@ function parseEnvAssignment(token: string): { name: string; value: string } | nu
 export interface EnvStrippingResult {
   tokens: string[];
   envAssignments: Map<string, string>;
+  cwd?: string | null;
 }
 
 export function stripEnvAssignmentsWithInfo(tokens: string[]): EnvStrippingResult {
@@ -605,15 +607,20 @@ export function stripEnvAssignmentsWithInfo(tokens: string[]): EnvStrippingResul
 export interface WrapperStrippingResult {
   tokens: string[];
   envAssignments: Map<string, string>;
+  cwd?: string | null;
 }
 
-export function stripWrappers(tokens: string[]): string[] {
-  return stripWrappersWithInfo(tokens).tokens;
+export function stripWrappers(tokens: string[], cwd?: string | null): string[] {
+  return stripWrappersWithInfo(tokens, cwd).tokens;
 }
 
-export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult {
+export function stripWrappersWithInfo(
+  tokens: string[],
+  cwd?: string | null,
+): WrapperStrippingResult {
   let result = [...tokens];
   const allEnvAssignments = new Map<string, string>();
+  let currentCwd = cwd;
 
   for (let iteration = 0; iteration < MAX_STRIP_ITERATIONS; iteration++) {
     const before = result.join(' ');
@@ -648,8 +655,11 @@ export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult 
       result = stripSudo(result);
     }
     if (head === 'env') {
-      const envResult = stripEnvWithInfo(result);
+      const envResult = stripEnvWithInfo(result, currentCwd);
       result = envResult.tokens;
+      if (envResult.cwd !== undefined) {
+        currentCwd = envResult.cwd;
+      }
       for (const [k, v] of envResult.envAssignments) {
         allEnvAssignments.set(k, v);
       }
@@ -667,7 +677,7 @@ export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult 
     allEnvAssignments.set(k, v);
   }
 
-  return { tokens: finalTokens, envAssignments: allEnvAssignments };
+  return { tokens: finalTokens, envAssignments: allEnvAssignments, cwd: currentCwd };
 }
 
 const SUDO_OPTS_WITH_VALUE = new Set(['-u', '-g', '-C', '-D', '-h', '-p', '-r', '-t', '-T', '-U']);
@@ -708,8 +718,9 @@ const ENV_OPTS_WITH_VALUE = new Set([
   '-P',
 ]);
 
-function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
+function stripEnvWithInfo(tokens: string[], cwd?: string | null): EnvStrippingResult {
   const envAssignments = new Map<string, string>();
+  let currentCwd = cwd;
   let i = 1;
   while (i < tokens.length) {
     const token = tokens[i];
@@ -725,6 +736,10 @@ function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
     }
 
     if (ENV_OPTS_WITH_VALUE.has(token)) {
+      if (token === '-C' || token === '--chdir') {
+        const target = tokens[i + 1];
+        currentCwd = target ? resolveWrapperCwd(currentCwd, target) : null;
+      }
       i += 2;
       continue;
     }
@@ -735,6 +750,10 @@ function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
     }
 
     if (token.startsWith('-C=') || token.startsWith('--chdir=')) {
+      const target = token.startsWith('-C=')
+        ? token.slice('-C='.length)
+        : token.slice('--chdir='.length);
+      currentCwd = resolveWrapperCwd(currentCwd, target);
       i++;
       continue;
     }
@@ -757,7 +776,20 @@ function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
     envAssignments.set(assignment.name, assignment.value);
     i++;
   }
-  return { tokens: tokens.slice(i), envAssignments };
+  return { tokens: tokens.slice(i), envAssignments, cwd: currentCwd };
+}
+
+function resolveWrapperCwd(cwd: string | null | undefined, target: string): string | null {
+  if (target === '') {
+    return null;
+  }
+  if (isAbsolute(target)) {
+    return resolve(target);
+  }
+  if (!cwd) {
+    return null;
+  }
+  return resolve(cwd, target);
 }
 
 function stripCommand(tokens: string[]): string[] {
