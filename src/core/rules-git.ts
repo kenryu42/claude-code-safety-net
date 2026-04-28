@@ -196,7 +196,8 @@ function getGitWorktreeRelaxationForMatch(
   if (
     !match.localDiscard ||
     !options.worktreeMode ||
-    hasGitContextEnvOverride(options.envAssignments)
+    hasGitContextEnvOverride(options.envAssignments) ||
+    isNonRelaxableLocalDiscard(tokens)
   ) {
     return null;
   }
@@ -437,6 +438,43 @@ function analyzeGitClean(tokens: readonly string[]): string | null {
   }
 
   return null;
+}
+
+function isNonRelaxableLocalDiscard(tokens: readonly string[]): boolean {
+  const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
+  const normalizedSubcommand = subcommand?.toLowerCase();
+
+  if (hasRecurseSubmodulesOption(rest)) {
+    return true;
+  }
+
+  return normalizedSubcommand === 'clean' && countCleanForceFlags(rest) > 1;
+}
+
+function hasRecurseSubmodulesOption(tokens: readonly string[]): boolean {
+  return tokens.some(
+    (token) => token === '--recurse-submodules' || token.startsWith('--recurse-submodules='),
+  );
+}
+
+function countCleanForceFlags(tokens: readonly string[]): number {
+  let count = 0;
+
+  for (const token of tokens) {
+    if (token === '--force') {
+      count++;
+      continue;
+    }
+    if (token.startsWith('-') && !token.startsWith('--')) {
+      for (const opt of token.slice(1)) {
+        if (opt === 'f') {
+          count++;
+        }
+      }
+    }
+  }
+
+  return count;
 }
 
 function analyzeGitPush(tokens: readonly string[]): string | null {
