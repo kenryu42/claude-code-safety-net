@@ -4,5 +4,11 @@ export type InternalOptions = AnalyzeOptions & {
     config: Config;
 };
 export declare function analyzeCommandInternal(command: string, depth: number, options: InternalOptions): AnalyzeResult | null;
-export declare function getShellGitContextEnvAssignments(tokens: readonly string[]): Map<string, string>;
-export declare function getExportedGitContextEnvAssignments(tokens: readonly string[], shellGitContextAssignments: ReadonlyMap<string, string>): Map<string, string>;
+export interface ShellGitContextEnvState {
+    effectiveEnvAssignments?: ReadonlyMap<string, string>;
+    shellAssignments: Map<string, string>;
+    exportedNames: Set<string>;
+    allexport: boolean;
+}
+export declare function createShellGitContextEnvState(effectiveEnvAssignments?: ReadonlyMap<string, string>): ShellGitContextEnvState;
+export declare function applyShellGitContextEnvSegment(tokens: readonly string[], state: ShellGitContextEnvState): void;

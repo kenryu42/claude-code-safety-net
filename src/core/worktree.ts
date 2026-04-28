@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, realpathSync, statSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 
 export const GIT_GLOBAL_OPTS_WITH_VALUE: ReadonlySet<string> = new Set([
@@ -11,7 +11,12 @@ export const GIT_GLOBAL_OPTS_WITH_VALUE: ReadonlySet<string> = new Set([
   '--config-env',
 ]);
 
-export const GIT_CONTEXT_ENV_OVERRIDES = ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_COMMON_DIR'] as const;
+export const GIT_CONTEXT_ENV_OVERRIDES = [
+  'GIT_DIR',
+  'GIT_WORK_TREE',
+  'GIT_COMMON_DIR',
+  'GIT_INDEX_FILE',
+] as const;
 
 export interface GitExecutionContext {
   gitCwd: string | null;
@@ -131,7 +136,31 @@ export function isLinkedWorktree(cwd: string): boolean {
       return false;
     }
 
+    if (!worktreeGitdirBacklinkMatches(gitDir, dotGitPath)) {
+      return false;
+    }
+
     return worktreeConfigMatchesRoot(gitDir, dirname(dotGitPath));
+  } catch {
+    return false;
+  }
+}
+
+function worktreeGitdirBacklinkMatches(gitDir: string, dotGitPath: string): boolean {
+  const backlinkPath = join(gitDir, 'gitdir');
+  if (!existsSync(backlinkPath)) {
+    return false;
+  }
+
+  const rawBacklink = readFileSync(backlinkPath, 'utf-8').split(/\r?\n/, 1)[0]?.trim() ?? '';
+  if (rawBacklink === '') {
+    return false;
+  }
+
+  const linkedDotGitPath = isAbsolute(rawBacklink) ? rawBacklink : resolve(gitDir, rawBacklink);
+
+  try {
+    return realpathSync(linkedDotGitPath) === realpathSync(dotGitPath);
   } catch {
     return false;
   }
@@ -162,6 +191,7 @@ function worktreeConfigMatchesRoot(gitDir: string, worktreeRoot: string): boolea
 function readCoreWorktree(configPath: string): string | null {
   const content = readFileSync(configPath, 'utf-8');
   let inCore = false;
+  let configuredWorktree: string | null = null;
 
   for (const line of content.split(/\r?\n/)) {
     const trimmed = line.trim();
@@ -178,11 +208,11 @@ function readCoreWorktree(configPath: string): string | null {
 
     const match = trimmed.match(/^worktree\s*=\s*(.*)$/i);
     if (match) {
-      return unquoteGitConfigValue(match[1] ?? '');
+      configuredWorktree = unquoteGitConfigValue(match[1] ?? '');
     }
   }
 
-  return null;
+  return configuredWorktree;
 }
 
 function unquoteGitConfigValue(value: string): string {
@@ -197,8 +227,33 @@ function unquoteGitConfigValue(value: string): string {
 }
 
 function resolveGitCwd(baseCwd: string, target: string): string | null {
-  const resolved = isAbsolute(target) ? target : resolve(baseCwd, target);
-  return isDirectory(resolved) ? resolved : null;
+  try {
+    const resolved = resolveChdirTarget(baseCwd, target);
+    return isDirectory(resolved) ? resolved : null;
+  } catch {
+    return null;
+  }
+}
+
+function resolveChdirTarget(baseCwd: string, target: string): string {
+  let current = isAbsolute(target) ? '/' : baseCwd;
+  for (const component of target.split('/')) {
+    if (component === '' || component === '.') {
+      continue;
+    }
+    if (component === '..') {
+      current = dirname(current);
+      continue;
+    }
+
+    const candidate = appendPathWithoutNormalizing(current, component);
+    current = lstatSync(candidate).isSymbolicLink() ? realpathSync(candidate) : candidate;
+  }
+  return current;
+}
+
+function appendPathWithoutNormalizing(base: string, target: string): string {
+  return base.endsWith('/') ? `${base}${target}` : `${base}/${target}`;
 }
 
 function isDirectory(path: string): boolean {

@@ -1,7 +1,15 @@
 import { describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 import {
   getGitExecutionContext,
   hasGitContextEnvOverride,
@@ -12,6 +20,13 @@ import {
   createSubmoduleLikeGitFileFixture,
   withEnv,
 } from '../helpers.ts';
+
+function getLinkedGitDir(worktree: string): string {
+  const dotGitPath = join(worktree, '.git');
+  const firstLine = readFileSync(dotGitPath, 'utf-8').split(/\r?\n/, 1)[0] ?? '';
+  const rawGitDir = firstLine.slice('gitdir:'.length).trim();
+  return isAbsolute(rawGitDir) ? rawGitDir : resolve(dirname(dotGitPath), rawGitDir);
+}
 
 describe('worktree git execution context', () => {
   test('handles missing and invalid cwd', () => {
@@ -34,7 +49,7 @@ describe('worktree git execution context', () => {
           fixture.rootDir,
         ),
       ).toEqual({
-        gitCwd: fixture.linkedWorktree,
+        gitCwd: realpathSync(fixture.linkedWorktree),
         hasExplicitGitContext: false,
       });
 
@@ -44,7 +59,25 @@ describe('worktree git execution context', () => {
           fixture.rootDir,
         ),
       ).toEqual({
-        gitCwd: fixture.linkedWorktree,
+        gitCwd: realpathSync(fixture.linkedWorktree),
+        hasExplicitGitContext: false,
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('resolves git -C targets with physical chdir semantics', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const mainSubdir = join(fixture.mainWorktree, 'subdir');
+    const symlinkedMainSubdir = join(fixture.linkedWorktree, 'link');
+    mkdirSync(mainSubdir);
+    symlinkSync(mainSubdir, symlinkedMainSubdir, 'dir');
+    try {
+      expect(
+        getGitExecutionContext(['git', '-C', 'link/..', 'status'], fixture.linkedWorktree),
+      ).toEqual({
+        gitCwd: realpathSync(fixture.mainWorktree),
         hasExplicitGitContext: false,
       });
     } finally {
@@ -154,6 +187,32 @@ describe('linked worktree detection', () => {
       expect(isLinkedWorktree(emptyGitdir)).toBe(false);
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  test('rejects copied gitdir files whose backlink points at another worktree', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const copiedRoot = join(fixture.rootDir, 'copied-root');
+    mkdirSync(copiedRoot);
+    writeFileSync(join(copiedRoot, '.git'), readFileSync(join(fixture.linkedWorktree, '.git')));
+    try {
+      expect(isLinkedWorktree(copiedRoot)).toBe(false);
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('uses the last core.worktree value from worktree config', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const gitDir = getLinkedGitDir(fixture.linkedWorktree);
+    writeFileSync(
+      join(gitDir, 'config.worktree'),
+      `[core]\n\tworktree = ${fixture.linkedWorktree}\n\tworktree = ${fixture.mainWorktree}\n`,
+    );
+    try {
+      expect(isLinkedWorktree(fixture.linkedWorktree)).toBe(false);
+    } finally {
+      fixture.cleanup();
     }
   });
 });
