@@ -679,6 +679,11 @@ describe('git linked worktree mode', () => {
           'git reset --hard',
           fixture.linkedWorktree,
         );
+        assertBlocked(
+          `sudo --chdir=${toShellPath(fixture.mainWorktree)} git reset --hard`,
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
       });
     } finally {
       fixture.cleanup();
@@ -764,6 +769,21 @@ describe('git linked worktree mode', () => {
           'git reset --hard',
           fixture.linkedWorktree,
         );
+        assertBlocked(
+          `GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; export GIT_WORK_TREE; git reset --hard`,
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+        assertBlocked(
+          `export -- GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+        assertBlocked(
+          `typeset -x GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
       });
     } finally {
       fixture.cleanup();
@@ -837,6 +857,73 @@ describe('git linked worktree mode', () => {
           'git reset --hard',
           fixture.linkedWorktree,
         );
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE does not relax git context append assignments', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked(
+          `GIT_WORK_TREE+=${toShellPath(fixture.mainWorktree)} git reset --hard`,
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE keeps recursive submodule discards blocked', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked(
+          'git reset --hard --recurse-submodules',
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+        assertBlocked(
+          'git checkout --force --recurse-submodules main',
+          'git checkout --force',
+          fixture.linkedWorktree,
+        );
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE keeps double-force clean blocked', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked('git clean -ffdx', 'git clean -f', fixture.linkedWorktree);
+        assertBlocked('git clean -f --force', 'git clean -f', fixture.linkedWorktree);
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE verifies worktree config before relaxing', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      execFileSync('git', ['config', 'extensions.worktreeConfig', 'true'], {
+        cwd: fixture.mainWorktree,
+        stdio: 'ignore',
+      });
+      execFileSync('git', ['config', '--worktree', 'core.worktree', fixture.mainWorktree], {
+        cwd: fixture.linkedWorktree,
+        stdio: 'ignore',
+      });
+
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked('git reset --hard', 'git reset --hard', fixture.linkedWorktree);
       });
     } finally {
       fixture.cleanup();

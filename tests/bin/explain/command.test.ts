@@ -603,6 +603,73 @@ describe('explainCommand worktree parity', () => {
     }
   });
 
+  test('carries exported git context overrides into later segments', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `export GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('passes wrapper cwd into recursive explain analysis', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `env -C ${toShellPath(fixture.mainWorktree)} sh -c "git reset --hard"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('passes stripped env into recursive explain analysis', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)} sh -c "git reset --hard"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('honors parallel nested overrides when explaining remote commands', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand('parallel -S host sh -c "git reset --hard" ::: x', {
+          cwd: fixture.linkedWorktree,
+        });
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
   test('does not report worktree relaxation for fallback embedded git', () => {
     const fixture = createLinkedWorktreeFixture();
     try {
