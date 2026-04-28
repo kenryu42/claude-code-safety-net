@@ -127,10 +127,73 @@ export function isLinkedWorktree(cwd: string): boolean {
     }
 
     const gitDir = isAbsolute(rawGitDir) ? rawGitDir : resolve(dirname(dotGitPath), rawGitDir);
-    return existsSync(join(gitDir, 'commondir'));
+    if (!existsSync(join(gitDir, 'commondir'))) {
+      return false;
+    }
+
+    return worktreeConfigMatchesRoot(gitDir, dirname(dotGitPath));
   } catch {
     return false;
   }
+}
+
+function worktreeConfigMatchesRoot(gitDir: string, worktreeRoot: string): boolean {
+  const configWorktreePath = join(gitDir, 'config.worktree');
+  if (!existsSync(configWorktreePath)) {
+    return true;
+  }
+
+  const configuredWorktree = readCoreWorktree(configWorktreePath);
+  if (configuredWorktree === null) {
+    return true;
+  }
+
+  const resolvedConfiguredWorktree = isAbsolute(configuredWorktree)
+    ? configuredWorktree
+    : resolve(gitDir, configuredWorktree);
+
+  try {
+    return realpathSync(resolvedConfiguredWorktree) === realpathSync(worktreeRoot);
+  } catch {
+    return false;
+  }
+}
+
+function readCoreWorktree(configPath: string): string | null {
+  const content = readFileSync(configPath, 'utf-8');
+  let inCore = false;
+
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith(';')) {
+      continue;
+    }
+    if (trimmed.startsWith('[')) {
+      inCore = /^\[core\]$/i.test(trimmed);
+      continue;
+    }
+    if (!inCore) {
+      continue;
+    }
+
+    const match = trimmed.match(/^worktree\s*=\s*(.*)$/i);
+    if (match) {
+      return unquoteGitConfigValue(match[1] ?? '');
+    }
+  }
+
+  return null;
+}
+
+function unquoteGitConfigValue(value: string): string {
+  const trimmed = value.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
 }
 
 function resolveGitCwd(baseCwd: string, target: string): string | null {

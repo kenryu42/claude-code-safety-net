@@ -4,3 +4,5 @@ export type InternalOptions = AnalyzeOptions & {
     config: Config;
 };
 export declare function analyzeCommandInternal(command: string, depth: number, options: InternalOptions): AnalyzeResult | null;
+export declare function getShellGitContextEnvAssignments(tokens: readonly string[]): Map<string, string>;
+export declare function getExportedGitContextEnvAssignments(tokens: readonly string[], shellGitContextAssignments: ReadonlyMap<string, string>): Map<string, string>;
