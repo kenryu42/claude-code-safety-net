@@ -9,6 +9,10 @@ import {
   isUnparseableCommand,
   REASON_STRICT_UNPARSEABLE,
 } from '@/bin/explain/segment';
+import {
+  getExportedGitContextEnvAssignments,
+  getShellGitContextEnvAssignments,
+} from '@/core/analyze/analyze-command';
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { segmentChangesCwd } from '@/core/analyze/segment';
 import { splitShellCommands } from '@/core/shell';
@@ -63,6 +67,8 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
   let blockReason: string | undefined;
   let blockSegment: string | undefined;
   let effectiveCwd: string | null | undefined = analyzeOpts.effectiveCwd;
+  let effectiveEnvAssignments = analyzeOpts.envAssignments;
+  const shellGitContextAssignments = new Map<string, string>();
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
@@ -113,7 +119,12 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
       continue;
     }
 
-    const result = explainSegment(segment, 0, { ...analyzeOpts, effectiveCwd }, segmentSteps);
+    const result = explainSegment(
+      segment,
+      0,
+      { ...analyzeOpts, effectiveCwd, envAssignments: effectiveEnvAssignments },
+      segmentSteps,
+    );
 
     if (result) {
       blocked = true;
@@ -128,6 +139,23 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
         effectiveCwdNowUnknown: true,
       });
       effectiveCwd = null;
+    }
+
+    const shellAssignments = getShellGitContextEnvAssignments(segment);
+    for (const [k, v] of shellAssignments) {
+      shellGitContextAssignments.set(k, v);
+    }
+
+    const exportedEnvAssignments = getExportedGitContextEnvAssignments(
+      segment,
+      shellGitContextAssignments,
+    );
+    if (exportedEnvAssignments.size > 0) {
+      const nextEnvAssignments = new Map(effectiveEnvAssignments ?? []);
+      for (const [k, v] of exportedEnvAssignments) {
+        nextEnvAssignments.set(k, v);
+      }
+      effectiveEnvAssignments = nextEnvAssignments;
     }
 
     trace.segments.push({ index: i, steps: segmentSteps });

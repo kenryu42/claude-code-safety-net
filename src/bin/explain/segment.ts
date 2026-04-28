@@ -31,7 +31,7 @@ import {
   stripEnvAssignmentsWithInfo,
   stripWrappersWithInfo,
 } from '@/core/shell';
-import type { AnalyzeOptions, TraceStep } from '@/types';
+import type { AnalyzeNestedOverrides, AnalyzeOptions, TraceStep } from '@/types';
 import {
   INTERPRETERS,
   MAX_RECURSION_DEPTH,
@@ -175,6 +175,22 @@ export function explainSegment(
   }
 
   const strippedTokens = wrapperResult.tokens;
+  const envAssignments = new Map(options.envAssignments ?? []);
+  for (const [k, v] of envResult.envAssignments) {
+    envAssignments.set(k, v);
+  }
+  for (const [k, v] of wrapperResult.envAssignments) {
+    envAssignments.set(k, v);
+  }
+  const cwdForRm = wrapperResult.cwd === null ? undefined : (wrapperResult.cwd ?? baseCwdForRm);
+  const nestedEffectiveCwd =
+    wrapperResult.cwd === undefined ? options.effectiveCwd : wrapperResult.cwd;
+  const nestedOptions = {
+    ...options,
+    effectiveCwd: nestedEffectiveCwd,
+    envAssignments,
+  };
+
   if (strippedTokens.length === 0) {
     return null;
   }
@@ -203,7 +219,7 @@ export function explainSegment(
         depth: depth + 1,
       });
 
-      return explainInnerSegments(innerCmd, depth, options, steps);
+      return explainInnerSegments(innerCmd, depth, nestedOptions, steps);
     }
   }
 
@@ -230,7 +246,7 @@ export function explainSegment(
         depth: depth + 1,
       });
 
-      const nestedResult = explainInnerSegments(codeArg, depth, options, steps);
+      const nestedResult = explainInnerSegments(codeArg, depth, nestedOptions, steps);
       if (nestedResult) return nestedResult;
 
       if (containsDangerousCode(codeArg)) {
@@ -259,17 +275,12 @@ export function explainSegment(
       innerCommand: redactEnvAssignmentsInString(busyboxInnerCmd),
       depth: depth + 1,
     });
-    return explainSegment(strippedTokens.slice(1), depth + 1, options, steps);
+    return explainSegment(strippedTokens.slice(1), depth + 1, nestedOptions, steps);
   }
 
-  const envAssignments = new Map(envResult.envAssignments);
-  for (const [k, v] of wrapperResult.envAssignments) {
-    envAssignments.set(k, v);
-  }
   const allowTmpdirVar = !isTmpdirOverriddenToNonTemp(envAssignments);
   // Use command-scoped TMPDIR if set, otherwise fall back to process.env
   const tmpdirValue = envAssignments.get('TMPDIR') ?? process.env.TMPDIR ?? null;
-  const cwdForRm = wrapperResult.cwd === null ? undefined : (wrapperResult.cwd ?? baseCwdForRm);
 
   // git uses case-insensitive matching (matches guard: basename.toLowerCase() === 'git')
   // rm/find/xargs/parallel use case-sensitive matching (matches guard)
@@ -362,8 +373,17 @@ export function explainSegment(
   }
 
   if (isParallel) {
-    const analyzeNested = (cmd: string): string | null => {
-      const result = explainInnerSegments(cmd, depth, options, steps);
+    const analyzeNested = (cmd: string, overrides?: AnalyzeNestedOverrides): string | null => {
+      const overriddenOptions = {
+        ...nestedOptions,
+        effectiveCwd:
+          overrides && Object.hasOwn(overrides, 'effectiveCwd')
+            ? overrides.effectiveCwd
+            : nestedOptions.effectiveCwd,
+        envAssignments: overrides?.envAssignments ?? nestedOptions.envAssignments,
+        worktreeMode: overrides?.worktreeMode ?? nestedOptions.worktreeMode,
+      };
+      const result = explainInnerSegments(cmd, depth, overriddenOptions, steps);
       return result?.reason ?? null;
     };
     const reason = analyzeParallel(strippedTokens, {
