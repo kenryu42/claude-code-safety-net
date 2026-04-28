@@ -9,6 +9,7 @@ export interface ShellGitContextEnvState {
     shellAssignments: Map<string, string>;
     exportedNames: Set<string>;
     allexport: boolean;
+    keywordExport: boolean;
 }
 export declare function createShellGitContextEnvState(effectiveEnvAssignments?: ReadonlyMap<string, string>): ShellGitContextEnvState;
 export declare function applyShellGitContextEnvSegment(tokens: readonly string[], state: ShellGitContextEnvState): void;

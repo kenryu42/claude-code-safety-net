@@ -52,7 +52,7 @@ export function analyzeCommandInternal(
 
   for (const segment of segments) {
     const segmentStr = segment.join(' ');
-    const segmentEnvAssignments = shellGitContextState.effectiveEnvAssignments;
+    const segmentEnvAssignments = getSegmentGitContextEnvAssignments(segment, shellGitContextState);
 
     if (segment.length === 1 && segment[0]?.includes(' ')) {
       const textReason = dangerousInText(segment[0]);
@@ -105,6 +105,7 @@ export interface ShellGitContextEnvState {
   shellAssignments: Map<string, string>;
   exportedNames: Set<string>;
   allexport: boolean;
+  keywordExport: boolean;
 }
 
 export function createShellGitContextEnvState(
@@ -115,6 +116,7 @@ export function createShellGitContextEnvState(
     shellAssignments: new Map(),
     exportedNames: new Set(),
     allexport: false,
+    keywordExport: false,
   };
 }
 
@@ -136,14 +138,22 @@ export function applyShellGitContextEnvSegment(
   }
 
   if (command === 'set') {
-    const allexport = getAllexportChange(tokens, commandIndex);
-    if (allexport !== null) {
-      state.allexport = allexport;
+    const changes = getSetOptionChanges(tokens, commandIndex);
+    if (changes.allexport !== null) {
+      state.allexport = changes.allexport;
+    }
+    if (changes.keywordExport !== null) {
+      state.keywordExport = changes.keywordExport;
     }
     return;
   }
 
-  if (command !== 'export' && command !== 'typeset' && command !== 'declare') {
+  if (
+    command !== 'export' &&
+    command !== 'typeset' &&
+    command !== 'declare' &&
+    command !== 'readonly'
+  ) {
     return;
   }
 
@@ -169,6 +179,27 @@ export function applyShellGitContextEnvSegment(
   for (const token of tokens.slice(operandsInfo.operandsStart)) {
     addTypesetGitContextEnvAssignment(state, token, operandsInfo.exports);
   }
+}
+
+function getSegmentGitContextEnvAssignments(
+  tokens: readonly string[],
+  state: ShellGitContextEnvState,
+): ReadonlyMap<string, string> | undefined {
+  if (!state.keywordExport) {
+    return state.effectiveEnvAssignments;
+  }
+
+  let nextEnvAssignments: Map<string, string> | null = null;
+  for (const token of tokens) {
+    const assignment = parseGitContextEnvAssignment(token);
+    if (!assignment) {
+      continue;
+    }
+    nextEnvAssignments ??= new Map(state.effectiveEnvAssignments ?? []);
+    nextEnvAssignments.set(assignment.name, assignment.value);
+  }
+
+  return nextEnvAssignments ?? state.effectiveEnvAssignments;
 }
 
 interface GitContextAssignment {
@@ -207,15 +238,51 @@ function getShellCommandInfo(tokens: readonly string[]): ShellCommandInfo | null
 
   let commandIndex = i;
   let command = tokens[commandIndex] ?? null;
-  if (command === 'builtin' || command === 'command') {
+  if (command === 'builtin') {
     commandIndex++;
     command = tokens[commandIndex] ?? null;
+  }
+  if (command === 'command') {
+    const commandBuiltinInfo = getCommandBuiltinTarget(tokens, commandIndex);
+    if (!commandBuiltinInfo) {
+      return null;
+    }
+    commandIndex = commandBuiltinInfo.commandIndex;
+    command = commandBuiltinInfo.command;
   }
   if (command === null) {
     return null;
   }
 
   return { command, commandIndex, leadingAssignments };
+}
+
+function getCommandBuiltinTarget(
+  tokens: readonly string[],
+  commandIndex: number,
+): { command: string; commandIndex: number } | null {
+  let i = commandIndex + 1;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token) {
+      return null;
+    }
+    if (token === '--') {
+      i++;
+      break;
+    }
+    if (token === '-p') {
+      i++;
+      continue;
+    }
+    if (token === '-v' || token === '-V') {
+      return null;
+    }
+    break;
+  }
+
+  const command = tokens[i];
+  return command ? { command, commandIndex: i } : null;
 }
 
 function parseShellAssignment(token: string): GitContextAssignment | null {
@@ -304,17 +371,25 @@ function addTypesetGitContextEnvAssignment(
 }
 
 function getExportOperandsStart(tokens: readonly string[], commandIndex: number): number | null {
-  const firstOperand = tokens[commandIndex + 1];
-  if (firstOperand === undefined) {
-    return commandIndex + 1;
+  let i = commandIndex + 1;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token) {
+      return null;
+    }
+    if (token === '--') {
+      return i + 1;
+    }
+    if (token === '-p') {
+      i++;
+      continue;
+    }
+    if (token.startsWith('-')) {
+      return null;
+    }
+    return i;
   }
-  if (firstOperand === '--') {
-    return commandIndex + 2;
-  }
-  if (firstOperand.startsWith('-')) {
-    return null;
-  }
-  return commandIndex + 1;
+  return i;
 }
 
 interface TypesetOperandsInfo {
@@ -337,39 +412,73 @@ function getTypesetOperandsInfo(
       return { operandsStart: i + 1, exports: hasExportFlag };
     }
     if (token.startsWith('-')) {
-      hasExportFlag = hasExportFlag || token.slice(1).includes('x');
+      if (token.slice(1).includes('x')) {
+        hasExportFlag = true;
+      }
       i++;
       continue;
     }
     if (token.startsWith('+')) {
-      return null;
+      if (token.slice(1).includes('x')) {
+        hasExportFlag = false;
+      }
+      i++;
+      continue;
     }
     return { operandsStart: i, exports: hasExportFlag };
   }
   return { operandsStart: i, exports: hasExportFlag };
 }
 
-function getAllexportChange(tokens: readonly string[], commandIndex: number): boolean | null {
+interface SetOptionChanges {
+  allexport: boolean | null;
+  keywordExport: boolean | null;
+}
+
+function getSetOptionChanges(tokens: readonly string[], commandIndex: number): SetOptionChanges {
+  const changes: SetOptionChanges = { allexport: null, keywordExport: null };
   let i = commandIndex + 1;
   while (i < tokens.length) {
     const token = tokens[i];
     if (!token) {
-      return null;
+      return changes;
+    }
+    if (token === '--') {
+      return changes;
     }
     if (token === '-o' || token === '+o') {
       if (tokens[i + 1] === 'allexport') {
-        return token === '-o';
+        changes.allexport = token === '-o';
+      }
+      if (tokens[i + 1] === 'keyword') {
+        changes.keywordExport = token === '-o';
       }
       i += 2;
       continue;
     }
-    if (token.startsWith('-') && token.slice(1).includes('a')) {
-      return true;
+    if (token.startsWith('-') && token.length > 1) {
+      const flags = token.slice(1);
+      if (flags.includes('a')) {
+        changes.allexport = true;
+      }
+      if (flags.includes('k')) {
+        changes.keywordExport = true;
+      }
+      i++;
+      continue;
     }
-    if (token.startsWith('+') && token.slice(1).includes('a')) {
-      return false;
+    if (token.startsWith('+') && token.length > 1) {
+      const flags = token.slice(1);
+      if (flags.includes('a')) {
+        changes.allexport = false;
+      }
+      if (flags.includes('k')) {
+        changes.keywordExport = false;
+      }
+      i++;
+      continue;
     }
-    i++;
+    return changes;
   }
-  return null;
+  return changes;
 }
