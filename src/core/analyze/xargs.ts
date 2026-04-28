@@ -81,7 +81,7 @@ export function analyzeXargs(
     const gitResult = analyzeGit(gitTokens, {
       cwd: childCwd,
       envAssignments: childEnvAssignments,
-      worktreeMode: context.worktreeMode,
+      worktreeMode: replacementToken === null ? false : context.worktreeMode,
     });
     if (gitResult) {
       return gitResult;

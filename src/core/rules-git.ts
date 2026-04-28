@@ -444,11 +444,117 @@ function isNonRelaxableLocalDiscard(tokens: readonly string[]): boolean {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
   const normalizedSubcommand = subcommand?.toLowerCase();
 
-  if (hasRecurseSubmodulesOption(rest)) {
+  if (
+    hasRecursiveSubmoduleConfig(tokens) ||
+    hasRecurseSubmodulesOption(rest) ||
+    isForcedBranchReset(normalizedSubcommand, rest)
+  ) {
     return true;
   }
 
   return normalizedSubcommand === 'clean' && countCleanForceFlags(rest) > 1;
+}
+
+function hasRecursiveSubmoduleConfig(tokens: readonly string[]): boolean {
+  let i = 1;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token || token === '--') {
+      return false;
+    }
+    if (!token.startsWith('-')) {
+      return false;
+    }
+
+    if (token === '-c') {
+      if (configEnablesRecursiveSubmodules(tokens[i + 1])) {
+        return true;
+      }
+      i += 2;
+      continue;
+    }
+
+    if (token.startsWith('-c') && token.length > 2) {
+      if (configEnablesRecursiveSubmodules(token.slice(2))) {
+        return true;
+      }
+      i++;
+      continue;
+    }
+
+    if (token === '--config-env') {
+      if (configEnvTargetsRecursiveSubmodules(tokens[i + 1])) {
+        return true;
+      }
+      i += 2;
+      continue;
+    }
+
+    if (token.startsWith('--config-env=')) {
+      if (configEnvTargetsRecursiveSubmodules(token.slice('--config-env='.length))) {
+        return true;
+      }
+      i++;
+      continue;
+    }
+
+    if (GIT_GLOBAL_OPTS_WITH_VALUE.has(token)) {
+      i += 2;
+    } else {
+      i++;
+    }
+  }
+  return false;
+}
+
+function configEnablesRecursiveSubmodules(config: string | undefined): boolean {
+  if (!config) {
+    return false;
+  }
+  const eqIdx = config.indexOf('=');
+  const key = (eqIdx === -1 ? config : config.slice(0, eqIdx)).toLowerCase();
+  if (key !== 'submodule.recurse') {
+    return false;
+  }
+  const value = eqIdx === -1 ? 'true' : config.slice(eqIdx + 1).toLowerCase();
+  return value !== 'false' && value !== 'no' && value !== 'off' && value !== '0';
+}
+
+function configEnvTargetsRecursiveSubmodules(configEnv: string | undefined): boolean {
+  const eqIdx = configEnv?.indexOf('=') ?? -1;
+  if (!configEnv || eqIdx === -1) {
+    return false;
+  }
+  return configEnv.slice(0, eqIdx).toLowerCase() === 'submodule.recurse';
+}
+
+function isForcedBranchReset(subcommand: string | undefined, rest: readonly string[]): boolean {
+  if (subcommand === 'checkout') {
+    const { before } = splitAtDoubleDash(rest);
+    const shortOpts = extractShortOpts(before, {
+      shortOptsWithValue: CHECKOUT_SHORT_OPTS_WITH_VALUE,
+    });
+    const hasForce = before.includes('--force') || shortOpts.has('-f');
+    return hasForce && before.some((token) => token === '-B' || token.startsWith('-B'));
+  }
+
+  if (subcommand === 'switch') {
+    const { before } = splitAtDoubleDash(rest);
+    const shortOpts = extractShortOpts(before, {
+      shortOptsWithValue: SWITCH_SHORT_OPTS_WITH_VALUE,
+    });
+    const hasForce = before.includes('--force') || shortOpts.has('-f');
+    const hasForceCreate = before.some(
+      (token) =>
+        token === '-C' ||
+        token.startsWith('-C') ||
+        token === '--force-create' ||
+        token.startsWith('--force-create='),
+    );
+    return hasForce && hasForceCreate;
+  }
+
+  return false;
 }
 
 function hasRecurseSubmodulesOption(tokens: readonly string[]): boolean {

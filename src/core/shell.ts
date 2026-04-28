@@ -1,4 +1,5 @@
-import { isAbsolute, resolve } from 'node:path';
+import { lstatSync, realpathSync } from 'node:fs';
+import { dirname, isAbsolute } from 'node:path';
 import { type ParseEntry, parse } from 'shell-quote';
 import { MAX_STRIP_ITERATIONS, SHELL_OPERATORS } from '@/types';
 import { GIT_CONTEXT_ENV_OVERRIDES } from './worktree';
@@ -734,6 +735,18 @@ function stripSudoWithInfo(
       continue;
     }
 
+    if (token.startsWith('-D') && token.length > 2) {
+      currentCwd = resolveWrapperCwd(currentCwd, token.slice(2));
+      i++;
+      continue;
+    }
+
+    if (token === '-i' || token === '--login') {
+      currentCwd = null;
+      i++;
+      continue;
+    }
+
     if (SUDO_OPTS_WITH_VALUE.has(token)) {
       i += 2;
       continue;
@@ -886,13 +899,35 @@ function resolveWrapperCwd(cwd: string | null | undefined, target: string): stri
   if (target === '') {
     return null;
   }
-  if (isAbsolute(target)) {
-    return resolve(target);
-  }
-  if (!cwd) {
+  try {
+    if (!cwd && !isAbsolute(target)) {
+      return null;
+    }
+    return resolveChdirTarget(cwd ?? '/', target);
+  } catch {
     return null;
   }
-  return resolve(cwd, target);
+}
+
+function resolveChdirTarget(baseCwd: string, target: string): string {
+  let current = isAbsolute(target) ? '/' : baseCwd;
+  for (const component of target.split('/')) {
+    if (component === '' || component === '.') {
+      continue;
+    }
+    if (component === '..') {
+      current = dirname(current);
+      continue;
+    }
+
+    const candidate = appendPathWithoutNormalizing(current, component);
+    current = lstatSync(candidate).isSymbolicLink() ? realpathSync(candidate) : candidate;
+  }
+  return current;
+}
+
+function appendPathWithoutNormalizing(base: string, target: string): string {
+  return base.endsWith('/') ? `${base}${target}` : `${base}/${target}`;
 }
 
 function stripCommand(tokens: string[]): string[] {

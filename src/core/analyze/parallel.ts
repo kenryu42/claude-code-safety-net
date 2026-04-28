@@ -31,7 +31,7 @@ export function analyzeParallel(
     return null;
   }
 
-  const { template, args, hasPlaceholder, runsRemotely } = parseResult;
+  const { template, args, hasPlaceholder, runsRemotely, usesStdin } = parseResult;
 
   if (template.length === 0) {
     // parallel ::: 'cmd1' 'cmd2' - commands mode
@@ -165,12 +165,17 @@ export function analyzeParallel(
 
   if (head === 'git') {
     const gitTokenSets =
-      !hasPlaceholder && args.length > 0 ? args.map((arg) => [...childTokens, arg]) : [childTokens];
+      hasPlaceholder && args.length > 0
+        ? args.map((arg) => childTokens.map((token) => replaceParallelPlaceholder(token, arg)))
+        : !hasPlaceholder && args.length > 0
+          ? args.map((arg) => [...childTokens, arg])
+          : [childTokens];
+    const dynamicGitArgs = usesStdin || (hasPlaceholder && args.length === 0);
     for (const gitTokens of gitTokenSets) {
       const gitResult = analyzeGit(gitTokens, {
         cwd: childCwd,
         envAssignments: childEnvAssignments,
-        worktreeMode: runsRemotely ? false : context.worktreeMode,
+        worktreeMode: runsRemotely || dynamicGitArgs ? false : context.worktreeMode,
       });
       if (gitResult) {
         return gitResult;
@@ -218,6 +223,14 @@ interface ParallelParseResult {
   args: string[];
   hasPlaceholder: boolean;
   runsRemotely: boolean;
+  usesStdin: boolean;
+}
+
+function replaceParallelPlaceholder(token: string, arg: string): string {
+  return token
+    .replace(/\{\}/g, arg)
+    .replace(/\{1\}/g, arg)
+    .replace(/\{\.\}/g, arg);
 }
 
 function parseParallelCommand(tokens: readonly string[]): ParallelParseResult | null {
@@ -357,7 +370,13 @@ function parseParallelCommand(tokens: readonly string[]): ParallelParseResult | 
     return null;
   }
 
-  return { template: templateTokens, args, hasPlaceholder, runsRemotely };
+  return {
+    template: templateTokens,
+    args,
+    hasPlaceholder,
+    runsRemotely,
+    usesStdin: markerIndex === -1,
+  };
 }
 
 export function extractParallelChildCommand(tokens: readonly string[]): string[] {
