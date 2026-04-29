@@ -14,6 +14,7 @@ const ENV_PROXY = new Proxy(
 
 const ARITHMETIC_SENTINEL = '__CC_SAFETY_NET_ARITH_SENTINEL__';
 const BACKTICK_ATTACHED_SUFFIX_SENTINEL = '__CC_SAFETY_NET_BACKTICK_SUFFIX__';
+const DYNAMIC_SUBSTITUTION_TOKEN = '$__CC_SAFETY_NET_DYNAMIC_SUBSTITUTION__';
 
 export function splitShellCommands(command: string): string[][] {
   if (hasUnclosedQuotes(command)) {
@@ -64,9 +65,14 @@ export function splitShellCommands(command: string): string[][] {
       const shouldKeepCurrent =
         attachedSuffix !== null && !_isRedirectOp(tokens[i - 1]) && !isOperatorToken(tokens[i - 1]);
 
-      if (!shouldKeepCurrent && current.length > 0) {
-        segments.push(current);
-        current = [];
+      if (current.length > 0) {
+        if (_containsGitCommandToken(current)) {
+          current.push(DYNAMIC_SUBSTITUTION_TOKEN);
+        }
+        if (!shouldKeepCurrent) {
+          segments.push(current);
+          current = [];
+        }
       }
       for (const seg of innerSegments) {
         segments.push(seg);
@@ -85,6 +91,9 @@ export function splitShellCommands(command: string): string[][] {
         if (prefix) {
           current.push(prefix);
         }
+      }
+      if (_containsGitCommandToken(current)) {
+        current.push(DYNAMIC_SUBSTITUTION_TOKEN);
       }
       const { innerSegments, endIndex } = extractCommandSubstitution(tokens, i + 2);
       for (const seg of innerSegments) {
@@ -195,6 +204,10 @@ function _getCommandTokenText(token: ParseEntry | undefined): string | null {
   }
 
   return null;
+}
+
+function _containsGitCommandToken(tokens: readonly string[]): boolean {
+  return tokens.some((token) => (token.split('/').pop() ?? token).toLowerCase() === 'git');
 }
 
 function extractCommandSubstitution(
@@ -903,7 +916,8 @@ function resolveWrapperCwd(cwd: string | null | undefined, target: string): stri
     if (!cwd && !isAbsolute(target)) {
       return null;
     }
-    return resolveChdirTarget(cwd ?? '/', target);
+    const baseCwd = isAbsolute(target) ? '/' : realpathSync(cwd ?? '/');
+    return resolveChdirTarget(baseCwd, target);
   } catch {
     return null;
   }

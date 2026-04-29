@@ -40,7 +40,12 @@ export function getGitExecutionContext(
     return { gitCwd: null, hasExplicitGitContext: false };
   }
 
-  let gitCwd = resolve(cwd);
+  let gitCwd: string;
+  try {
+    gitCwd = realpathSync(resolve(cwd));
+  } catch {
+    return { gitCwd: null, hasExplicitGitContext: false };
+  }
   if (!isDirectory(gitCwd)) {
     return { gitCwd: null, hasExplicitGitContext: false };
   }
@@ -115,8 +120,8 @@ export function isLinkedWorktree(cwd: string): boolean {
   }
 
   try {
-    const stat = statSync(dotGitPath);
-    if (!stat.isFile()) {
+    const stat = lstatSync(dotGitPath);
+    if (stat.isSymbolicLink() || !stat.isFile()) {
       return false;
     }
 

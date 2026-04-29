@@ -85,6 +85,22 @@ describe('worktree git execution context', () => {
     }
   });
 
+  test('resolves git -C targets from a physical starting cwd', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const mainSubdir = join(fixture.mainWorktree, 'subdir');
+    const symlinkedMainSubdir = join(fixture.linkedWorktree, 'main-subdir-link');
+    mkdirSync(mainSubdir);
+    symlinkSync(mainSubdir, symlinkedMainSubdir, 'dir');
+    try {
+      expect(getGitExecutionContext(['git', '-C', '..', 'status'], symlinkedMainSubdir)).toEqual({
+        gitCwd: realpathSync(fixture.mainWorktree),
+        hasExplicitGitContext: false,
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
   test('fails closed for missing or unresolved git -C targets', () => {
     const fixture = createLinkedWorktreeFixture();
     try {
@@ -123,7 +139,7 @@ describe('worktree git execution context', () => {
           fixture.linkedWorktree,
         ),
       ).toEqual({
-        gitCwd: fixture.linkedWorktree,
+        gitCwd: realpathSync(fixture.linkedWorktree),
         hasExplicitGitContext: false,
       });
     } finally {
@@ -197,6 +213,18 @@ describe('linked worktree detection', () => {
     writeFileSync(join(copiedRoot, '.git'), readFileSync(join(fixture.linkedWorktree, '.git')));
     try {
       expect(isLinkedWorktree(copiedRoot)).toBe(false);
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('rejects symlinked gitdir files', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const symlinkedRoot = join(fixture.rootDir, 'symlinked-root');
+    mkdirSync(symlinkedRoot);
+    symlinkSync(join(fixture.linkedWorktree, '.git'), join(symlinkedRoot, '.git'));
+    try {
+      expect(isLinkedWorktree(symlinkedRoot)).toBe(false);
     } finally {
       fixture.cleanup();
     }
