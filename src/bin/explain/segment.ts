@@ -11,6 +11,7 @@ import {
 import {
   applyShellGitContextEnvSegment,
   createShellGitContextEnvState,
+  getSegmentGitContextEnvAssignments,
   REASON_RECURSION_LIMIT,
 } from '@/core/analyze/analyze-command';
 import { DISPLAY_COMMANDS } from '@/core/analyze/constants';
@@ -128,7 +129,7 @@ function explainInnerSegments(
       {
         ...options,
         effectiveCwd,
-        envAssignments: shellGitContextState.effectiveEnvAssignments,
+        envAssignments: getSegmentGitContextEnvAssignments(segment, shellGitContextState),
       },
       steps,
     );

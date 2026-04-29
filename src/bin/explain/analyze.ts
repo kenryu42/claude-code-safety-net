@@ -12,6 +12,7 @@ import {
 import {
   applyShellGitContextEnvSegment,
   createShellGitContextEnvState,
+  getSegmentGitContextEnvAssignments,
 } from '@/core/analyze/analyze-command';
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { segmentChangesCwd } from '@/core/analyze/segment';
@@ -124,7 +125,7 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
       {
         ...analyzeOpts,
         effectiveCwd,
-        envAssignments: shellGitContextState.effectiveEnvAssignments,
+        envAssignments: getSegmentGitContextEnvAssignments(segment, shellGitContextState),
       },
       segmentSteps,
     );

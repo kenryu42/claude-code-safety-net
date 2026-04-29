@@ -671,6 +671,40 @@ describe('explainCommand worktree parity', () => {
     }
   });
 
+  test('includes keyword-export git context overrides in current segment', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `set -k; git restore file.txt GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git restore');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('includes nested keyword-export git context overrides in current segment', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `sh -c "set -k; git restore file.txt GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git restore');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
   test('honors parallel nested overrides when explaining remote commands', () => {
     const fixture = createLinkedWorktreeFixture();
     try {
