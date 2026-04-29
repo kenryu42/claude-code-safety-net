@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, symlinkSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { analyzeGit } from '@/core/rules-git';
 import {
@@ -524,6 +524,22 @@ describe('git linked worktree mode', () => {
     }
   });
 
+  test('SAFETY_NET_WORKTREE uses physical cwd for wrapper chdir targets', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const mainSubdir = join(fixture.mainWorktree, 'subdir');
+    const symlinkedMainSubdir = join(fixture.linkedWorktree, 'main-subdir-link');
+    mkdirSync(mainSubdir);
+    symlinkSync(mainSubdir, symlinkedMainSubdir, 'dir');
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked('env -C .. git reset --hard', 'git reset --hard', symlinkedMainSubdir);
+        assertBlocked('sudo -D .. git reset --hard', 'git reset --hard', symlinkedMainSubdir);
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
   test('SAFETY_NET_WORKTREE allows nested linked worktrees', () => {
     const fixture = createLinkedWorktreeFixture();
     const nestedWorktree = join(fixture.linkedWorktree, 'inner-worktree');
@@ -1033,6 +1049,11 @@ describe('git linked worktree mode', () => {
           'git checkout --force',
           fixture.linkedWorktree,
         );
+        assertBlocked(
+          'git reset --hard --recurse-submodule',
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
       });
     } finally {
       fixture.cleanup();
@@ -1041,7 +1062,42 @@ describe('git linked worktree mode', () => {
 
   test('SAFETY_NET_WORKTREE keeps recursive submodule config discards blocked', () => {
     const fixture = createLinkedWorktreeFixture();
+    const safeHome = join(fixture.rootDir, 'safe-home');
+    const safeXdg = join(fixture.rootDir, 'safe-xdg');
+    const recurseHome = join(fixture.rootDir, 'recurse-home');
+    const recurseConfig = join(fixture.rootDir, 'recurse.conf');
+    mkdirSync(safeHome);
+    mkdirSync(safeXdg);
+    mkdirSync(recurseHome);
+    writeFileSync(join(recurseHome, '.gitconfig'), '[submodule]\n\trecurse = true\n');
+    writeFileSync(recurseConfig, '[submodule]\n\trecurse = true\n');
     try {
+      withEnv(
+        {
+          SAFETY_NET_WORKTREE: '1',
+          GIT_CONFIG_NOSYSTEM: '1',
+          HOME: safeHome,
+          XDG_CONFIG_HOME: safeXdg,
+        },
+        () => {
+          assertBlocked(
+            `git -c include.path=${toShellPath(recurseConfig)} reset --hard`,
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+          assertBlocked(
+            `HOME=${toShellPath(recurseHome)} git reset --hard`,
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+          assertBlocked(
+            `GIT_CONFIG_PARAMETERS="'submodule.recurse=true'" git reset --hard`,
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+        },
+      );
+
       withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
         assertBlocked(
           'git -c submodule.recurse=true reset --hard',
@@ -1071,6 +1127,11 @@ describe('git linked worktree mode', () => {
         assertBlocked(
           'git switch -f -C feature HEAD~1',
           'git switch --force',
+          fixture.linkedWorktree,
+        );
+        assertBlocked(
+          'git switch --discard-changes --force-creat feature HEAD~1',
+          'git switch --discard-changes',
           fixture.linkedWorktree,
         );
       });
@@ -1106,6 +1167,18 @@ describe('git linked worktree mode', () => {
             reason: 'git clean -f',
           },
           {
+            command: 'git clean -f *',
+            reason: 'git clean -f',
+          },
+          {
+            command: 'git reset --hard $(printf HEAD~1)',
+            reason: 'git reset --hard',
+          },
+          {
+            command: 'git clean -f `printf -- -ffdx`',
+            reason: 'git clean -f',
+          },
+          {
             command: "printf -- '-ffdx\\n' | parallel sh -c 'git clean -f {}'",
             reason: 'git clean -f',
           },
@@ -1115,7 +1188,24 @@ describe('git linked worktree mode', () => {
             reason: 'git reset --hard',
           },
           {
+            command:
+              'export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=submodule.recurse GIT_CONFIG_VALUE_0=true; git reset --hard',
+            reason: 'git reset --hard',
+          },
+          {
+            command: `GIT_WORK_TREE=${mainWorktree} readonly GIT_WORK_TREE; git reset --hard`,
+            reason: 'git reset --hard',
+          },
+          {
             command: `export -p GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            reason: 'git reset --hard',
+          },
+          {
+            command: `builtin -- export GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            reason: 'git reset --hard',
+          },
+          {
+            command: `read GIT_WORK_TREE <<< ${mainWorktree}; export GIT_WORK_TREE; git reset --hard`,
             reason: 'git reset --hard',
           },
           {
@@ -1171,6 +1261,44 @@ describe('git linked worktree mode', () => {
 
         expect(failures).toEqual([]);
       });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE disables relaxation for numbered parallel placeholders', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked(
+          "parallel sh -c 'git clean -f {2}' ::: x ::: -ffdx",
+          'git clean -f',
+          fixture.linkedWorktree,
+        );
+        assertBlocked(
+          'parallel git clean -f {2} ::: x ::: -ffdx',
+          'git clean -f',
+          fixture.linkedWorktree,
+        );
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE does not execute git from PATH while checking config', () => {
+    const fixture = createLinkedWorktreeFixture();
+    const fakeBin = join(fixture.rootDir, 'fake-bin');
+    const fakeGit = join(fakeBin, 'git');
+    const marker = join(fixture.rootDir, 'fake-git-executed');
+    mkdirSync(fakeBin);
+    writeFileSync(fakeGit, `#!/bin/sh\nprintf executed > "${marker}"\nexit 1\n`);
+    chmodSync(fakeGit, 0o755);
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1', PATH: fakeBin }, () => {
+        runGuard('git reset --hard', fixture.linkedWorktree);
+      });
+      expect(existsSync(marker)).toBe(false);
     } finally {
       fixture.cleanup();
     }
