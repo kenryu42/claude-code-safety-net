@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assertAllowed, assertBlocked, runGuard, withEnv } from '../../helpers.ts';
@@ -419,6 +419,19 @@ describe('edge cases', () => {
       assertAllowed('echo ok | xargs rm -- -rf', tempDir);
     });
 
+    test('xargs rm uses wrapper cwd when checking relative targets', () => {
+      const projectDir = join(tempDir, 'project');
+      const otherDir = join(tempDir, 'other');
+      mkdirSync(projectDir);
+      mkdirSync(otherDir);
+
+      assertBlocked(
+        `echo ok | xargs env -C ${otherDir} rm -rf build`,
+        'rm -rf outside cwd',
+        projectDir,
+      );
+    });
+
     test('xargs bash c dynamic denied', () => {
       assertBlocked("echo 'rm -rf /' | xargs bash -c", 'xargs');
     });
@@ -523,6 +536,19 @@ describe('edge cases', () => {
 
     test('parallel rm rf with safe replacement allowed', () => {
       assertAllowed('parallel rm -rf {} ::: build', tempDir);
+    });
+
+    test('parallel rm uses wrapper cwd when checking relative replacements', () => {
+      const projectDir = join(tempDir, 'project');
+      const otherDir = join(tempDir, 'other');
+      mkdirSync(projectDir);
+      mkdirSync(otherDir);
+
+      assertBlocked(
+        `parallel env -C ${otherDir} rm -rf {} ::: build`,
+        'rm -rf outside cwd',
+        projectDir,
+      );
     });
 
     test('parallel bash c rm rf with safe replacement allowed', () => {

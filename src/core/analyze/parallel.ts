@@ -129,7 +129,7 @@ export function analyzeParallel(
       for (const arg of args) {
         const expandedTokens = childTokens.map((t) => t.replace(/{}/g, arg));
         const rmResult = analyzeRm(expandedTokens, {
-          cwd: context.cwd,
+          cwd: childCwd,
           originalCwd: context.originalCwd,
           paranoid: context.paranoidRm,
           allowTmpdirVar: context.allowTmpdirVar,
@@ -145,7 +145,7 @@ export function analyzeParallel(
     if (args.length > 0) {
       const expandedTokens = [...childTokens, args[0] ?? ''];
       const rmResult = analyzeRm(expandedTokens, {
-        cwd: context.cwd,
+        cwd: childCwd,
         originalCwd: context.originalCwd,
         paranoid: context.paranoidRm,
         allowTmpdirVar: context.allowTmpdirVar,

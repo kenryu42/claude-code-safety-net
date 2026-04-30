@@ -55,7 +55,7 @@ export function analyzeXargs(
 
   if (head === 'rm' && hasRecursiveForceFlags(childTokens)) {
     const rmResult = analyzeRm(childTokens, {
-      cwd: context.cwd,
+      cwd: childCwd,
       originalCwd: context.originalCwd,
       paranoid: context.paranoidRm,
       allowTmpdirVar: context.allowTmpdirVar,
