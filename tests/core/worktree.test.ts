@@ -126,12 +126,18 @@ describe('worktree git execution context', () => {
 
   test('fails closed for missing or unresolved git -C targets', () => {
     const fixture = createLinkedWorktreeFixture();
+    const fileTarget = join(fixture.rootDir, 'not-a-directory');
+    writeFileSync(fileTarget, '');
     try {
       expect(getGitExecutionContext(['git', '-C'], fixture.rootDir).gitCwd).toBeNull();
       expect(
         getGitExecutionContext(['git', `-C${join(fixture.rootDir, 'missing')}`], fixture.rootDir)
           .gitCwd,
       ).toBeNull();
+      expect(getGitExecutionContext(['git', '-C', fileTarget, 'status'], fixture.rootDir)).toEqual({
+        gitCwd: null,
+        hasExplicitGitContext: false,
+      });
     } finally {
       fixture.cleanup();
     }
