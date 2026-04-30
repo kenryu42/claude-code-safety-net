@@ -209,14 +209,17 @@ function sameFilesystemPath(left: string, right: string): boolean {
     // Fall through to realpath comparison for platforms where stat identity is unavailable.
   }
 
-  return (
-    normalizePathForComparison(realpathSync(left)) ===
-    normalizePathForComparison(realpathSync(right))
-  );
+  return getCanonicalPathForComparison(left) === getCanonicalPathForComparison(right);
 }
 
-function normalizePathForComparison(path: string): string {
-  let normalized = path.replace(/\\/g, '/');
+function getCanonicalPathForComparison(path: string): string {
+  return normalizePathForComparison(realpathSync.native(path));
+}
+
+/** @internal Exported for testing */
+export function normalizePathForComparison(path: string): string {
+  let normalized = path.replace(/^\\\\\?\\UNC\\/i, '//').replace(/^\\\\\?\\/i, '');
+  normalized = normalized.replace(/\\/g, '/');
   if (normalized.length > 1 && normalized.endsWith('/')) {
     normalized = normalized.slice(0, -1);
   }

@@ -7,3 +7,5 @@ export interface GitExecutionContext {
 export declare function hasGitContextEnvOverride(envAssignments?: ReadonlyMap<string, string>): boolean;
 export declare function getGitExecutionContext(tokens: readonly string[], cwd: string | undefined): GitExecutionContext;
 export declare function isLinkedWorktree(cwd: string): boolean;
+/** @internal Exported for testing */
+export declare function normalizePathForComparison(path: string): string;

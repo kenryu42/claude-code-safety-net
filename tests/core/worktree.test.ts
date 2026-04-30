@@ -14,6 +14,7 @@ import {
   getGitExecutionContext,
   hasGitContextEnvOverride,
   isLinkedWorktree,
+  normalizePathForComparison,
 } from '@/core/worktree';
 import {
   createLinkedWorktreeFixture,
@@ -180,6 +181,15 @@ describe('worktree env context overrides', () => {
 });
 
 describe('linked worktree detection', () => {
+  test('normalizes Windows native realpath prefixes for comparison', () => {
+    expect(normalizePathForComparison('\\\\?\\C:\\Temp\\Linked\\.git\\')).toBe(
+      process.platform === 'win32' ? 'c:/temp/linked/.git' : 'C:/Temp/Linked/.git',
+    );
+    expect(normalizePathForComparison('\\\\?\\UNC\\server\\share\\linked\\.git')).toBe(
+      '//server/share/linked/.git',
+    );
+  });
+
   test('detects linked worktrees and symlinked directories inside them', () => {
     const fixture = createLinkedWorktreeFixture();
     const nested = join(fixture.linkedWorktree, 'nested');

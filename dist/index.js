@@ -594,10 +594,14 @@ function sameFilesystemPath(left, right) {
       return true;
     }
   } catch {}
-  return normalizePathForComparison(realpathSync(left)) === normalizePathForComparison(realpathSync(right));
+  return getCanonicalPathForComparison(left) === getCanonicalPathForComparison(right);
+}
+function getCanonicalPathForComparison(path) {
+  return normalizePathForComparison(realpathSync.native(path));
 }
 function normalizePathForComparison(path) {
-  let normalized = path.replace(/\\/g, "/");
+  let normalized = path.replace(/^\\\\\?\\UNC\\/i, "//").replace(/^\\\\\?\\/i, "");
+  normalized = normalized.replace(/\\/g, "/");
   if (normalized.length > 1 && normalized.endsWith("/")) {
     normalized = normalized.slice(0, -1);
   }
