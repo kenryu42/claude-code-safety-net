@@ -2,7 +2,11 @@ import { describe, expect, test } from 'bun:test';
 import { execFileSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, symlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { _TRUSTED_GIT_BINARIES, analyzeGit } from '@/core/rules-git';
+import {
+  _effectiveGitConfigEnablesRecursiveSubmodules,
+  _TRUSTED_GIT_BINARIES,
+  analyzeGit,
+} from '@/core/rules-git';
 import {
   assertAllowed,
   assertBlocked,
@@ -22,6 +26,8 @@ describe('analyzeGit direct', () => {
     expect(_TRUSTED_GIT_BINARIES).toContain('/usr/bin/git');
     expect(_TRUSTED_GIT_BINARIES).toContain('/usr/local/bin/git');
     expect(_TRUSTED_GIT_BINARIES).toContain('/opt/homebrew/bin/git');
+    expect(_TRUSTED_GIT_BINARIES).toContain('C:\\Program Files\\Git\\cmd\\git.exe');
+    expect(_TRUSTED_GIT_BINARIES).toContain('C:\\Program Files\\Git\\bin\\git.exe');
   });
 });
 
@@ -1320,6 +1326,17 @@ describe('git linked worktree mode', () => {
         expect(runGuard('git reset --hard', fixture.linkedWorktree)).toBeNull();
       });
       expect(existsSync(marker)).toBe(false);
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE treats missing trusted git binary as recursive submodule config', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      expect(_effectiveGitConfigEnablesRecursiveSubmodules(fixture.linkedWorktree, null)).toBe(
+        true,
+      );
     } finally {
       fixture.cleanup();
     }

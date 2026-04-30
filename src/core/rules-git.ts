@@ -608,15 +608,17 @@ function getEnvConfigValue(
   return envAssignments?.get(name) ?? process.env[name];
 }
 
-function effectiveGitConfigEnablesRecursiveSubmodules(cwd: string): boolean {
+function effectiveGitConfigEnablesRecursiveSubmodules(
+  cwd: string,
+  gitBinary: string | null = getTrustedGitBinary(),
+): boolean {
   const localConfigResult = localGitConfigEnablesRecursiveSubmodules(cwd);
   if (localConfigResult === null || localConfigResult) {
     return true;
   }
 
-  const gitBinary = getTrustedGitBinary();
   if (gitBinary === null) {
-    return false;
+    return true;
   }
 
   try {
@@ -958,6 +960,7 @@ function analyzeGitWorktree(tokens: readonly string[]): string | null {
 
 /** @internal Exported for testing */
 export {
+  effectiveGitConfigEnablesRecursiveSubmodules as _effectiveGitConfigEnablesRecursiveSubmodules,
   extractGitSubcommandAndRest as _extractGitSubcommandAndRest,
   getCheckoutPositionalArgs as _getCheckoutPositionalArgs,
   TRUSTED_GIT_BINARIES as _TRUSTED_GIT_BINARIES,
