@@ -2,7 +2,14 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { assertAllowed, assertBlocked, runGuard, toShellPath, withEnv } from '../../helpers.ts';
+import {
+  assertAllowed,
+  assertBlocked,
+  createLinkedWorktreeFixture,
+  runGuard,
+  toShellPath,
+  withEnv,
+} from '../../helpers.ts';
 
 describe('edge cases', () => {
   let tempDir: string;
@@ -569,6 +576,55 @@ describe('edge cases', () => {
 
     test('parallel busybox rm rf args after marker without placeholder blocked', () => {
       assertBlocked('parallel busybox rm -rf ::: /', 'root or home');
+    });
+
+    test('parallel attached sshlogin disables worktree relaxation', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          assertBlocked(
+            'parallel -Shost git reset --hard ::: x',
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('parallel long remote options disable worktree relaxation', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          const commands = [
+            'parallel --sshlogin=host git clean -f ::: .',
+            'parallel --slf=hosts.txt git clean -f ::: .',
+            'parallel --sshloginfile=hosts.txt git clean -f ::: .',
+          ];
+
+          for (const command of commands) {
+            assertBlocked(command, 'git clean -f', fixture.linkedWorktree);
+          }
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('parallel placeholder git arguments disable worktree relaxation', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          assertBlocked(
+            'parallel git reset --hard {} ::: HEAD~1',
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+        });
+      } finally {
+        fixture.cleanup();
+      }
     });
   });
 
