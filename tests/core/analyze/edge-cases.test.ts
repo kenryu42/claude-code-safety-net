@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { assertAllowed, assertBlocked, runGuard, withEnv } from '../../helpers.ts';
+import { assertAllowed, assertBlocked, runGuard, toShellPath, withEnv } from '../../helpers.ts';
 
 describe('edge cases', () => {
   let tempDir: string;
@@ -426,7 +426,7 @@ describe('edge cases', () => {
       mkdirSync(otherDir);
 
       assertBlocked(
-        `echo ok | xargs env -C ${otherDir} rm -rf build`,
+        `echo ok | xargs env -C ${toShellPath(otherDir)} rm -rf build`,
         'rm -rf outside cwd',
         projectDir,
       );
@@ -545,7 +545,7 @@ describe('edge cases', () => {
       mkdirSync(otherDir);
 
       assertBlocked(
-        `parallel env -C ${otherDir} rm -rf {} ::: build`,
+        `parallel env -C ${toShellPath(otherDir)} rm -rf {} ::: build`,
         'rm -rf outside cwd',
         projectDir,
       );
