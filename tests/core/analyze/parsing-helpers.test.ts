@@ -212,6 +212,13 @@ describe('shell parsing helpers', () => {
       ]);
     });
 
+    test('marks attached command substitution after git as dynamic', () => {
+      expect(splitShellCommands('git reset --hard$(printf HEAD~1)')).toEqual([
+        ['printf', 'HEAD~1'],
+        ['git', 'reset', '--hard', '$__CC_SAFETY_NET_DYNAMIC_SUBSTITUTION__'],
+      ]);
+    });
+
     test('drops glob redirect targets instead of treating them as args', () => {
       expect(splitShellCommands('echo > *.log')).toEqual([['echo']]);
     });
@@ -472,6 +479,24 @@ describe('shell parsing helpers', () => {
     test('strips env -C=...', () => {
       const result = stripWrappersWithInfo(['env', '-C=/tmp', 'rm', '-rf']);
       expect(result.tokens).toEqual(['rm', '-rf']);
+    });
+
+    test('invalid env -S split string makes cwd unknown', () => {
+      const result = stripWrappersWithInfo(['env', '-S', '"unterminated', 'git', 'status'], '/tmp');
+      expect(result.tokens).toEqual(['git', 'status']);
+      expect(result.cwd).toBeNull();
+    });
+
+    test('empty env chdir target makes cwd unknown', () => {
+      const result = stripWrappersWithInfo(['env', '-C', '', 'git', 'status'], '/tmp');
+      expect(result.tokens).toEqual(['git', 'status']);
+      expect(result.cwd).toBeNull();
+    });
+
+    test('relative env chdir target with unknown cwd remains unknown', () => {
+      const result = stripWrappersWithInfo(['env', '-C', 'relative', 'git', 'status'], null);
+      expect(result.tokens).toEqual(['git', 'status']);
+      expect(result.cwd).toBeNull();
     });
 
     test.skipIf(process.platform !== 'win32')(
