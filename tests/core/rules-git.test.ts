@@ -4,6 +4,7 @@ import { chmodSync, existsSync, mkdirSync, symlinkSync, writeFileSync } from 'no
 import { join } from 'node:path';
 import {
   _effectiveGitConfigEnablesRecursiveSubmodules,
+  _extractGitSubcommandAndRest,
   _TRUSTED_GIT_BINARIES,
   analyzeGit,
 } from '@/core/rules-git';
@@ -28,6 +29,21 @@ describe('analyzeGit direct', () => {
     expect(_TRUSTED_GIT_BINARIES).toContain('/opt/homebrew/bin/git');
     expect(_TRUSTED_GIT_BINARIES).toContain('C:\\Program Files\\Git\\cmd\\git.exe');
     expect(_TRUSTED_GIT_BINARIES).toContain('C:\\Program Files\\Git\\bin\\git.exe');
+  });
+
+  test('extracts subcommand after global config-env option', () => {
+    expect(
+      _extractGitSubcommandAndRest([
+        'git',
+        '--config-env',
+        'submodule.recurse=RECURSE_SUBMODULES',
+        'reset',
+        '--hard',
+      ]),
+    ).toEqual({
+      subcommand: 'reset',
+      rest: ['--hard'],
+    });
   });
 });
 
@@ -1134,6 +1150,68 @@ describe('git linked worktree mode', () => {
         assertBlocked(
           'git -csubmodule.recurse=true checkout --force main',
           'git checkout --force',
+          fixture.linkedWorktree,
+        );
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE honors recursive submodule config-env values', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1', RECURSE_SUBMODULES: 'true' }, () => {
+        assertBlocked(
+          'git --config-env submodule.recurse=RECURSE_SUBMODULES reset --hard',
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+      });
+
+      withEnv({ SAFETY_NET_WORKTREE: '1', RECURSE_SUBMODULES: '1' }, () => {
+        assertBlocked(
+          'git --config-env=submodule.recurse=RECURSE_SUBMODULES reset --hard',
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+      });
+
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        assertBlocked(
+          'git --config-env submodule.recurse=MISSING_RECURSE_SUBMODULES reset --hard',
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+      });
+
+      for (const value of ['false', 'no', 'off', '0']) {
+        withEnv({ SAFETY_NET_WORKTREE: '1', RECURSE_SUBMODULES: value }, () => {
+          expect(
+            runGuard(
+              'git --config-env submodule.recurse=RECURSE_SUBMODULES reset --hard',
+              fixture.linkedWorktree,
+            ),
+          ).toBeNull();
+        });
+      }
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('SAFETY_NET_WORKTREE fails closed on include config-env values', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1', INCLUDE_PATH: '.gitconfig-extra' }, () => {
+        assertBlocked(
+          'git --config-env include.path=INCLUDE_PATH reset --hard',
+          'git reset --hard',
+          fixture.linkedWorktree,
+        );
+        assertBlocked(
+          'git --config-env=includeIf.gitdir:./.path=INCLUDE_PATH reset --hard',
+          'git reset --hard',
           fixture.linkedWorktree,
         );
       });
