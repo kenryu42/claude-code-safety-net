@@ -1,7 +1,7 @@
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { analyzeSegment, segmentChangesCwd } from '@/core/analyze/segment';
 import { parseEnvAssignment, splitShellCommands } from '@/core/shell';
-import { GIT_CONTEXT_ENV_OVERRIDES } from '@/core/worktree';
+import { GIT_CONFIG_AFFECTING_ENV_NAMES, GIT_CONTEXT_ENV_OVERRIDES } from '@/core/worktree';
 import {
   type AnalyzeNestedOverrides,
   type AnalyzeOptions,
@@ -16,13 +16,6 @@ const REASON_STRICT_UNPARSEABLE =
 export const REASON_RECURSION_LIMIT =
   'Command exceeds maximum recursion depth and cannot be safely analyzed.';
 const GIT_CONTEXT_ENV_OVERRIDE_NAMES: ReadonlySet<string> = new Set(GIT_CONTEXT_ENV_OVERRIDES);
-const GIT_CONFIG_AFFECTING_ENV_NAMES: ReadonlySet<string> = new Set([
-  'GIT_CONFIG_GLOBAL',
-  'GIT_CONFIG_NOSYSTEM',
-  'GIT_CONFIG_SYSTEM',
-  'HOME',
-  'XDG_CONFIG_HOME',
-]);
 const GIT_CONTEXT_APPEND_ASSIGNMENT_RE = /^([A-Za-z_][A-Za-z0-9_]*)\+=/;
 
 export type InternalOptions = AnalyzeOptions & { config: Config };

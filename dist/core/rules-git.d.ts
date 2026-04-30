@@ -1,3 +1,4 @@
+declare const TRUSTED_GIT_BINARIES: readonly ["/usr/bin/git", "/usr/local/bin/git", "/opt/homebrew/bin/git"];
 export interface GitAnalyzeOptions {
     cwd?: string;
     envAssignments?: ReadonlyMap<string, string>;
@@ -15,4 +16,4 @@ declare function extractGitSubcommandAndRest(tokens: readonly string[]): {
 };
 declare function getCheckoutPositionalArgs(tokens: readonly string[]): string[];
 /** @internal Exported for testing */
-export { extractGitSubcommandAndRest as _extractGitSubcommandAndRest, getCheckoutPositionalArgs as _getCheckoutPositionalArgs, };
+export { extractGitSubcommandAndRest as _extractGitSubcommandAndRest, getCheckoutPositionalArgs as _getCheckoutPositionalArgs, TRUSTED_GIT_BINARIES as _TRUSTED_GIT_BINARIES, };

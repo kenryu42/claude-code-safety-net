@@ -1,8 +1,9 @@
-import { lstatSync, realpathSync } from 'node:fs';
-import { dirname, isAbsolute, parse as parsePath, sep } from 'node:path';
+import { realpathSync } from 'node:fs';
+import { isAbsolute, parse as parsePath } from 'node:path';
 import { type ParseEntry, parse } from 'shell-quote';
+import { resolveChdirTarget } from '@/core/path';
 import { MAX_STRIP_ITERATIONS, SHELL_OPERATORS } from '@/types';
-import { GIT_CONTEXT_ENV_OVERRIDES } from './worktree';
+import { GIT_CONFIG_AFFECTING_ENV_NAMES, GIT_CONTEXT_ENV_OVERRIDES } from './worktree';
 
 // Proxy that preserves variable references as $VAR strings instead of expanding them
 const ENV_PROXY = new Proxy(
@@ -588,14 +589,6 @@ function _stripAttachedIoNumbers(command: string): string {
 const ENV_ASSIGNMENT_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
 const ENV_APPEND_ASSIGNMENT_RE = /^([A-Za-z_][A-Za-z0-9_]*)\+=/;
 const GIT_CONTEXT_ENV_OVERRIDE_NAMES: ReadonlySet<string> = new Set(GIT_CONTEXT_ENV_OVERRIDES);
-const GIT_CONFIG_AFFECTING_ENV_NAMES: ReadonlySet<string> = new Set([
-  'GIT_CONFIG_GLOBAL',
-  'GIT_CONFIG_NOSYSTEM',
-  'GIT_CONFIG_SYSTEM',
-  'HOME',
-  'XDG_CONFIG_HOME',
-]);
-
 export function parseEnvAssignment(token: string): { name: string; value: string } | null {
   if (!ENV_ASSIGNMENT_RE.test(token)) {
     return null;
@@ -946,35 +939,8 @@ function resolveWrapperCwd(cwd: string | null | undefined, target: string): stri
   }
 }
 
-function resolveChdirTarget(baseCwd: string, target: string): string {
-  const root = isAbsolute(target) ? getPathRoot(target) : '';
-  let current = root || baseCwd;
-  for (const component of getPathComponents(root ? target.slice(root.length) : target)) {
-    if (component === '' || component === '.') {
-      continue;
-    }
-    if (component === '..') {
-      current = dirname(current);
-      continue;
-    }
-
-    const candidate = appendPathWithoutNormalizing(current, component);
-    current = lstatSync(candidate).isSymbolicLink() ? realpathSync(candidate) : candidate;
-  }
-  return current;
-}
-
-function appendPathWithoutNormalizing(base: string, target: string): string {
-  return base.endsWith('/') || base.endsWith('\\') ? `${base}${target}` : `${base}${sep}${target}`;
-}
-
 function getPathRoot(target: string): string {
   return parsePath(target).root;
-}
-
-function getPathComponents(target: string): string[] {
-  const separator = process.platform === 'win32' ? /[\\/]+/ : /\/+/;
-  return target.split(separator);
 }
 
 function stripCommand(tokens: string[]): string[] {
