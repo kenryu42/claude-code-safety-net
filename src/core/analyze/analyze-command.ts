@@ -121,7 +121,7 @@ export function createShellGitContextEnvState(
   return {
     effectiveEnvAssignments,
     shellAssignments: new Map(),
-    exportedNames: new Set(),
+    exportedNames: getInitiallyExportedGitContextNames(effectiveEnvAssignments),
     allexport: false,
     keywordExport: false,
   };
@@ -315,7 +315,7 @@ function parseGitContextEnvAssignment(token: string): GitContextAssignment | nul
 function parseGitContextAppendEnvAssignment(token: string): GitContextAssignment | null {
   const match = token.match(GIT_CONTEXT_APPEND_ASSIGNMENT_RE);
   const name = match?.[1];
-  if (!name || !GIT_CONTEXT_ENV_OVERRIDE_NAMES.has(name)) {
+  if (!name || !isTrackedGitEnvName(name)) {
     return null;
   }
   const eqIdx = token.indexOf('=');
@@ -336,6 +336,23 @@ function isGitConfigEnvName(name: string): boolean {
     name === 'GIT_CONFIG_PARAMETERS' ||
     /^GIT_CONFIG_(KEY|VALUE)_\d+$/.test(name)
   );
+}
+
+function getInitiallyExportedGitContextNames(
+  effectiveEnvAssignments?: ReadonlyMap<string, string>,
+): Set<string> {
+  const exportedNames = new Set<string>();
+  for (const name of Object.keys(process.env)) {
+    if (isTrackedGitEnvName(name)) {
+      exportedNames.add(name);
+    }
+  }
+  for (const name of effectiveEnvAssignments?.keys() ?? []) {
+    if (isTrackedGitEnvName(name)) {
+      exportedNames.add(name);
+    }
+  }
+  return exportedNames;
 }
 
 function setShellGitContextAssignment(
