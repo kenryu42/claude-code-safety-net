@@ -10,6 +10,7 @@ export const SafetyNetPlugin: Plugin = async ({ directory }) => {
   const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
   const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
   const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
+  const worktreeMode = envTruthy('SAFETY_NET_WORKTREE');
 
   return {
     config: async (opencodeConfig: Record<string, unknown>) => {
@@ -31,6 +32,7 @@ export const SafetyNetPlugin: Plugin = async ({ directory }) => {
           strict,
           paranoidRm,
           paranoidInterpreters,
+          worktreeMode,
         });
         if (result) {
           const message = formatBlockedMessage({

@@ -152,6 +152,28 @@ describe('formatTraceHuman step formatting', () => {
     expect(output).toContain('MATCHED');
   });
 
+  test('formats worktree relaxation step', () => {
+    const worktreeStep: TraceStep = {
+      type: 'worktree-relaxation',
+      originalReason: 'git reset --hard destroys uncommitted changes',
+      gitCwd: '/tmp/linked-worktree',
+    };
+    const mockResult: ExplainResult = {
+      trace: {
+        steps: [
+          { type: 'parse', input: 'git reset --hard', segments: [['git', 'reset', '--hard']] },
+        ],
+        segments: [{ index: 0, steps: [worktreeStep] }],
+      },
+      result: 'allowed',
+      configSource: null,
+      configValid: true,
+    };
+    const output = formatTraceHuman(mockResult);
+    expect(output).toContain('Worktree relaxation');
+    expect(output).toContain('SAFETY_NET_WORKTREE');
+  });
+
   test('tmpdir-check is an internal detail not shown in human output', () => {
     const result = explainCommand('rm -rf /tmp/test');
     const allSteps = result.trace.segments.flatMap((s) => s.steps);

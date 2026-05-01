@@ -1,8 +1,15 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { assertAllowed, assertBlocked, runGuard, withEnv } from '../../helpers.ts';
+import {
+  assertAllowed,
+  assertBlocked,
+  createLinkedWorktreeFixture,
+  runGuard,
+  toShellPath,
+  withEnv,
+} from '../../helpers.ts';
 
 describe('edge cases', () => {
   let tempDir: string;
@@ -419,6 +426,19 @@ describe('edge cases', () => {
       assertAllowed('echo ok | xargs rm -- -rf', tempDir);
     });
 
+    test('xargs rm uses wrapper cwd when checking relative targets', () => {
+      const projectDir = join(tempDir, 'project');
+      const otherDir = join(tempDir, 'other');
+      mkdirSync(projectDir);
+      mkdirSync(otherDir);
+
+      assertBlocked(
+        `echo ok | xargs env -C ${toShellPath(otherDir)} rm -rf build`,
+        'rm -rf outside cwd',
+        projectDir,
+      );
+    });
+
     test('xargs bash c dynamic denied', () => {
       assertBlocked("echo 'rm -rf /' | xargs bash -c", 'xargs');
     });
@@ -525,6 +545,19 @@ describe('edge cases', () => {
       assertAllowed('parallel rm -rf {} ::: build', tempDir);
     });
 
+    test('parallel rm uses wrapper cwd when checking relative replacements', () => {
+      const projectDir = join(tempDir, 'project');
+      const otherDir = join(tempDir, 'other');
+      mkdirSync(projectDir);
+      mkdirSync(otherDir);
+
+      assertBlocked(
+        `parallel env -C ${toShellPath(otherDir)} rm -rf {} ::: build`,
+        'rm -rf outside cwd',
+        projectDir,
+      );
+    });
+
     test('parallel bash c rm rf with safe replacement allowed', () => {
       assertAllowed("parallel bash -c 'rm -rf {}' ::: build", tempDir);
     });
@@ -543,6 +576,55 @@ describe('edge cases', () => {
 
     test('parallel busybox rm rf args after marker without placeholder blocked', () => {
       assertBlocked('parallel busybox rm -rf ::: /', 'root or home');
+    });
+
+    test('parallel attached sshlogin disables worktree relaxation', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          assertBlocked(
+            'parallel -Shost git reset --hard ::: x',
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('parallel long remote options disable worktree relaxation', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          const commands = [
+            'parallel --sshlogin=host git clean -f ::: .',
+            'parallel --slf=hosts.txt git clean -f ::: .',
+            'parallel --sshloginfile=hosts.txt git clean -f ::: .',
+          ];
+
+          for (const command of commands) {
+            assertBlocked(command, 'git clean -f', fixture.linkedWorktree);
+          }
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('parallel placeholder git arguments disable worktree relaxation', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          assertBlocked(
+            'parallel git reset --hard {} ::: HEAD~1',
+            'git reset --hard',
+            fixture.linkedWorktree,
+          );
+        });
+      } finally {
+        fixture.cleanup();
+      }
     });
   });
 

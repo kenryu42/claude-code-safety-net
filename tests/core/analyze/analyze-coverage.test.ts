@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { homedir } from 'node:os';
 import { analyzeCommand } from '@/core/analyze';
 import type { Config } from '@/types';
+import { createLinkedWorktreeFixture, toShellPath, withEnv } from '../../helpers.ts';
 
 const EMPTY_CONFIG: Config = { version: 1, rules: [] };
 
@@ -159,6 +160,175 @@ describe('analyzeCommand (coverage)', () => {
         config: EMPTY_CONFIG,
       }),
     ).toBeNull();
+  });
+
+  describe('shell git context env state branches', () => {
+    test('command -- export target is tracked across segments', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          const result = analyzeCommand(
+            `command -- export GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+            {
+              cwd: fixture.linkedWorktree,
+              config: EMPTY_CONFIG,
+              worktreeMode: true,
+            },
+          );
+          expect(result?.reason).toContain('git reset --hard');
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('command inspection with no executable target leaves later git context unchanged', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          expect(
+            analyzeCommand(
+              `command -v export; GIT_WORK_TREE=${toShellPath(
+                fixture.mainWorktree,
+              )}; git reset --hard`,
+              {
+                cwd: fixture.linkedWorktree,
+                config: EMPTY_CONFIG,
+                worktreeMode: true,
+              },
+            ),
+          ).toBeNull();
+          expect(
+            analyzeCommand('command; git reset --hard', {
+              cwd: fixture.linkedWorktree,
+              config: EMPTY_CONFIG,
+              worktreeMode: true,
+            }),
+          ).toBeNull();
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('export option parsing tracks only valid export operands', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          expect(
+            analyzeCommand(
+              `export -z GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+              {
+                cwd: fixture.linkedWorktree,
+                config: EMPTY_CONFIG,
+                worktreeMode: true,
+              },
+            ),
+          ).toBeNull();
+
+          const result = analyzeCommand(
+            `export -- GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+            {
+              cwd: fixture.linkedWorktree,
+              config: EMPTY_CONFIG,
+              worktreeMode: true,
+            },
+          );
+          expect(result?.reason).toContain('git reset --hard');
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('exporting an unset tracked name uses an empty effective value', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          const result = analyzeCommand('export GIT_WORK_TREE; git reset --hard', {
+            cwd: fixture.linkedWorktree,
+            config: EMPTY_CONFIG,
+            worktreeMode: true,
+          });
+          expect(result?.reason).toContain('git reset --hard');
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('typeset and readonly forms update tracked env state only when exported', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          const mainWorktree = toShellPath(fixture.mainWorktree);
+          const blockedCommands = [
+            `typeset -x GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            `declare -x GIT_WORK_TREE; GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            `export GIT_WORK_TREE; typeset GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            `GIT_WORK_TREE=${mainWorktree} readonly GIT_WORK_TREE; git reset --hard`,
+          ];
+
+          for (const command of blockedCommands) {
+            const result = analyzeCommand(command, {
+              cwd: fixture.linkedWorktree,
+              config: EMPTY_CONFIG,
+              worktreeMode: true,
+            });
+            expect(result?.reason).toContain('git reset --hard');
+          }
+
+          for (const command of [
+            `typeset -- -x GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            `declare -x; GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+          ]) {
+            expect(
+              analyzeCommand(command, {
+                cwd: fixture.linkedWorktree,
+                config: EMPTY_CONFIG,
+                worktreeMode: true,
+              }),
+            ).toBeNull();
+          }
+
+          expect(
+            analyzeCommand(`typeset +x GIT_WORK_TREE=${mainWorktree}; git reset --hard`, {
+              cwd: fixture.linkedWorktree,
+              config: EMPTY_CONFIG,
+              worktreeMode: true,
+            }),
+          ).toBeNull();
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
+
+    test('set option parsing toggles exported assignment behavior', () => {
+      const fixture = createLinkedWorktreeFixture();
+      try {
+        withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+          const mainWorktree = toShellPath(fixture.mainWorktree);
+          const allowedCommands = [
+            `set -k; set +k; git restore file.txt GIT_WORK_TREE=${mainWorktree}`,
+            `set positional; GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+            `set --; GIT_WORK_TREE=${mainWorktree}; git reset --hard`,
+          ];
+
+          for (const command of allowedCommands) {
+            expect(
+              analyzeCommand(command, {
+                cwd: fixture.linkedWorktree,
+                config: EMPTY_CONFIG,
+                worktreeMode: true,
+              }),
+            ).toBeNull();
+          }
+        });
+      } finally {
+        fixture.cleanup();
+      }
+    });
   });
 
   describe('parallel parsing/analysis branches', () => {

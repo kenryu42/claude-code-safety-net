@@ -1,5 +1,9 @@
+import { realpathSync } from 'node:fs';
+import { isAbsolute, parse as parsePath } from 'node:path';
 import { type ParseEntry, parse } from 'shell-quote';
+import { resolveChdirTarget } from '@/core/path';
 import { MAX_STRIP_ITERATIONS, SHELL_OPERATORS } from '@/types';
+import { GIT_CONFIG_AFFECTING_ENV_NAMES, GIT_CONTEXT_ENV_OVERRIDES } from './worktree';
 
 // Proxy that preserves variable references as $VAR strings instead of expanding them
 const ENV_PROXY = new Proxy(
@@ -11,6 +15,7 @@ const ENV_PROXY = new Proxy(
 
 const ARITHMETIC_SENTINEL = '__CC_SAFETY_NET_ARITH_SENTINEL__';
 const BACKTICK_ATTACHED_SUFFIX_SENTINEL = '__CC_SAFETY_NET_BACKTICK_SUFFIX__';
+const DYNAMIC_SUBSTITUTION_TOKEN = '$__CC_SAFETY_NET_DYNAMIC_SUBSTITUTION__';
 
 export function splitShellCommands(command: string): string[][] {
   if (hasUnclosedQuotes(command)) {
@@ -61,9 +66,14 @@ export function splitShellCommands(command: string): string[][] {
       const shouldKeepCurrent =
         attachedSuffix !== null && !_isRedirectOp(tokens[i - 1]) && !isOperatorToken(tokens[i - 1]);
 
-      if (!shouldKeepCurrent && current.length > 0) {
-        segments.push(current);
-        current = [];
+      if (current.length > 0) {
+        if (_containsGitCommandToken(current)) {
+          current.push(DYNAMIC_SUBSTITUTION_TOKEN);
+        }
+        if (!shouldKeepCurrent) {
+          segments.push(current);
+          current = [];
+        }
       }
       for (const seg of innerSegments) {
         segments.push(seg);
@@ -82,6 +92,9 @@ export function splitShellCommands(command: string): string[][] {
         if (prefix) {
           current.push(prefix);
         }
+      }
+      if (_containsGitCommandToken(current)) {
+        current.push(DYNAMIC_SUBSTITUTION_TOKEN);
       }
       const { innerSegments, endIndex } = extractCommandSubstitution(tokens, i + 2);
       for (const seg of innerSegments) {
@@ -192,6 +205,10 @@ function _getCommandTokenText(token: ParseEntry | undefined): string | null {
   }
 
   return null;
+}
+
+function _containsGitCommandToken(tokens: readonly string[]): boolean {
+  return tokens.some((token) => (token.split('/').pop() ?? token).toLowerCase() === 'git');
 }
 
 function extractCommandSubstitution(
@@ -570,8 +587,9 @@ function _stripAttachedIoNumbers(command: string): string {
 }
 
 const ENV_ASSIGNMENT_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
-
-function parseEnvAssignment(token: string): { name: string; value: string } | null {
+const ENV_APPEND_ASSIGNMENT_RE = /^([A-Za-z_][A-Za-z0-9_]*)\+=/;
+const GIT_CONTEXT_ENV_OVERRIDE_NAMES: ReadonlySet<string> = new Set(GIT_CONTEXT_ENV_OVERRIDES);
+export function parseEnvAssignment(token: string): { name: string; value: string } | null {
   if (!ENV_ASSIGNMENT_RE.test(token)) {
     return null;
   }
@@ -579,9 +597,36 @@ function parseEnvAssignment(token: string): { name: string; value: string } | nu
   return { name: token.slice(0, eqIdx), value: token.slice(eqIdx + 1) };
 }
 
+function parseGitContextAppendEnvAssignment(token: string): { name: string; value: string } | null {
+  const match = token.match(ENV_APPEND_ASSIGNMENT_RE);
+  const name = match?.[1];
+  if (!name || !isTrackedGitEnvName(name)) {
+    return null;
+  }
+  const eqIdx = token.indexOf('=');
+  return { name, value: token.slice(eqIdx + 1) };
+}
+
+function isTrackedGitEnvName(name: string): boolean {
+  return (
+    GIT_CONTEXT_ENV_OVERRIDE_NAMES.has(name) ||
+    GIT_CONFIG_AFFECTING_ENV_NAMES.has(name) ||
+    isGitConfigEnvName(name)
+  );
+}
+
+function isGitConfigEnvName(name: string): boolean {
+  return (
+    name === 'GIT_CONFIG_COUNT' ||
+    name === 'GIT_CONFIG_PARAMETERS' ||
+    /^GIT_CONFIG_(KEY|VALUE)_\d+$/.test(name)
+  );
+}
+
 export interface EnvStrippingResult {
   tokens: string[];
   envAssignments: Map<string, string>;
+  cwd?: string | null;
 }
 
 export function stripEnvAssignmentsWithInfo(tokens: string[]): EnvStrippingResult {
@@ -605,15 +650,20 @@ export function stripEnvAssignmentsWithInfo(tokens: string[]): EnvStrippingResul
 export interface WrapperStrippingResult {
   tokens: string[];
   envAssignments: Map<string, string>;
+  cwd?: string | null;
 }
 
-export function stripWrappers(tokens: string[]): string[] {
-  return stripWrappersWithInfo(tokens).tokens;
+export function stripWrappers(tokens: string[], cwd?: string | null): string[] {
+  return stripWrappersWithInfo(tokens, cwd).tokens;
 }
 
-export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult {
+export function stripWrappersWithInfo(
+  tokens: string[],
+  cwd?: string | null,
+): WrapperStrippingResult {
   let result = [...tokens];
   const allEnvAssignments = new Map<string, string>();
+  let currentCwd = cwd;
 
   for (let iteration = 0; iteration < MAX_STRIP_ITERATIONS; iteration++) {
     const before = result.join(' ');
@@ -630,9 +680,12 @@ export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult 
       result[0]?.includes('=') &&
       !ENV_ASSIGNMENT_RE.test(result[0] ?? '')
     ) {
-      // Conservative parsing: only strict NAME=value is treated as an env assignment.
-      // Other leading tokens that contain '=' (e.g. NAME+=value) are dropped to reach
-      // the actual executable token.
+      const appendAssignment = parseGitContextAppendEnvAssignment(result[0] ?? '');
+      if (appendAssignment) {
+        allEnvAssignments.set(appendAssignment.name, appendAssignment.value);
+      }
+      // Other non-strict leading assignments are dropped to reach the executable token.
+      // Git context append assignments are preserved above so worktree relaxation fails closed.
       result = result.slice(1);
     }
     if (result.length === 0) break;
@@ -645,11 +698,18 @@ export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult 
     }
 
     if (head === 'sudo') {
-      result = stripSudo(result);
+      const sudoResult = stripSudoWithInfo(result, currentCwd);
+      result = sudoResult.tokens;
+      if (sudoResult.cwd !== undefined) {
+        currentCwd = sudoResult.cwd;
+      }
     }
     if (head === 'env') {
-      const envResult = stripEnvWithInfo(result);
+      const envResult = stripEnvWithInfo(result, currentCwd);
       result = envResult.tokens;
+      if (envResult.cwd !== undefined) {
+        currentCwd = envResult.cwd;
+      }
       for (const [k, v] of envResult.envAssignments) {
         allEnvAssignments.set(k, v);
       }
@@ -667,24 +727,53 @@ export function stripWrappersWithInfo(tokens: string[]): WrapperStrippingResult 
     allEnvAssignments.set(k, v);
   }
 
-  return { tokens: finalTokens, envAssignments: allEnvAssignments };
+  return { tokens: finalTokens, envAssignments: allEnvAssignments, cwd: currentCwd };
 }
 
 const SUDO_OPTS_WITH_VALUE = new Set(['-u', '-g', '-C', '-D', '-h', '-p', '-r', '-t', '-T', '-U']);
 
-function stripSudo(tokens: string[]): string[] {
+function stripSudoWithInfo(
+  tokens: string[],
+  cwd?: string | null,
+): { tokens: string[]; cwd?: string | null } {
   let i = 1;
+  let currentCwd = cwd;
   while (i < tokens.length) {
     const token = tokens[i];
     if (!token) break;
 
     if (token === '--') {
-      return tokens.slice(i + 1);
+      return { tokens: tokens.slice(i + 1), cwd: currentCwd };
     }
 
     // Guard: not an option, exit loop
     if (!token.startsWith('-')) {
       break;
+    }
+
+    if (token === '-D' || token === '--chdir') {
+      const target = tokens[i + 1];
+      currentCwd = target ? resolveWrapperCwd(currentCwd, target) : null;
+      i += 2;
+      continue;
+    }
+
+    if (token.startsWith('--chdir=')) {
+      currentCwd = resolveWrapperCwd(currentCwd, token.slice('--chdir='.length));
+      i++;
+      continue;
+    }
+
+    if (token.startsWith('-D') && token.length > 2) {
+      currentCwd = resolveWrapperCwd(currentCwd, token.slice(2));
+      i++;
+      continue;
+    }
+
+    if (token === '-i' || token === '--login') {
+      currentCwd = null;
+      i++;
+      continue;
     }
 
     if (SUDO_OPTS_WITH_VALUE.has(token)) {
@@ -694,7 +783,7 @@ function stripSudo(tokens: string[]): string[] {
 
     i++;
   }
-  return tokens.slice(i);
+  return { tokens: tokens.slice(i), cwd: currentCwd };
 }
 
 const ENV_OPTS_NO_VALUE = new Set(['-i', '-0', '--null']);
@@ -708,15 +797,17 @@ const ENV_OPTS_WITH_VALUE = new Set([
   '-P',
 ]);
 
-function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
+function stripEnvWithInfo(tokens: string[], cwd?: string | null): EnvStrippingResult {
   const envAssignments = new Map<string, string>();
+  let currentCwd = cwd;
+  let expandedTokens = tokens;
   let i = 1;
-  while (i < tokens.length) {
-    const token = tokens[i];
+  while (i < expandedTokens.length) {
+    const token = expandedTokens[i];
     if (!token) break;
 
     if (token === '--') {
-      return { tokens: tokens.slice(i + 1), envAssignments };
+      return { tokens: expandedTokens.slice(i + 1), envAssignments, cwd: currentCwd };
     }
 
     if (ENV_OPTS_NO_VALUE.has(token)) {
@@ -724,7 +815,57 @@ function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
       continue;
     }
 
+    if (token === '-S' || token === '--split-string') {
+      const splitValue = expandedTokens[i + 1];
+      const splitTokens = splitValue !== undefined ? parseEnvSplitString(splitValue) : null;
+      if (!splitTokens) {
+        currentCwd = null;
+        i += 2;
+        continue;
+      }
+      expandedTokens = [
+        ...expandedTokens.slice(0, i),
+        ...splitTokens,
+        ...expandedTokens.slice(i + 2),
+      ];
+      continue;
+    }
+
+    if (token.startsWith('-S') && token.length > 2) {
+      const splitTokens = parseEnvSplitString(token.slice('-S'.length));
+      if (!splitTokens) {
+        currentCwd = null;
+        i++;
+        continue;
+      }
+      expandedTokens = [
+        ...expandedTokens.slice(0, i),
+        ...splitTokens,
+        ...expandedTokens.slice(i + 1),
+      ];
+      continue;
+    }
+
+    if (token.startsWith('--split-string=')) {
+      const splitTokens = parseEnvSplitString(token.slice('--split-string='.length));
+      if (!splitTokens) {
+        currentCwd = null;
+        i++;
+        continue;
+      }
+      expandedTokens = [
+        ...expandedTokens.slice(0, i),
+        ...splitTokens,
+        ...expandedTokens.slice(i + 1),
+      ];
+      continue;
+    }
+
     if (ENV_OPTS_WITH_VALUE.has(token)) {
+      if (token === '-C' || token === '--chdir') {
+        const target = expandedTokens[i + 1];
+        currentCwd = target ? resolveWrapperCwd(currentCwd, target) : null;
+      }
       i += 2;
       continue;
     }
@@ -734,7 +875,13 @@ function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
       continue;
     }
 
-    if (token.startsWith('-C=') || token.startsWith('--chdir=')) {
+    if ((token.startsWith('-C') && token.length > 2) || token.startsWith('--chdir=')) {
+      const target = token.startsWith('--chdir=')
+        ? token.slice('--chdir='.length)
+        : token.startsWith('-C=')
+          ? token.slice('-C='.length)
+          : token.slice('-C'.length);
+      currentCwd = resolveWrapperCwd(currentCwd, target);
       i++;
       continue;
     }
@@ -757,7 +904,43 @@ function stripEnvWithInfo(tokens: string[]): EnvStrippingResult {
     envAssignments.set(assignment.name, assignment.value);
     i++;
   }
-  return { tokens: tokens.slice(i), envAssignments };
+  return { tokens: expandedTokens.slice(i), envAssignments, cwd: currentCwd };
+}
+
+function parseEnvSplitString(value: string): string[] | null {
+  if (hasUnclosedQuotes(value)) {
+    return null;
+  }
+
+  const parsed = parse(value, ENV_PROXY);
+  const result: string[] = [];
+  for (const entry of parsed) {
+    const token = _getCommandTokenText(entry as ParseEntry);
+    if (token === null) {
+      return null;
+    }
+    result.push(token);
+  }
+  return result;
+}
+
+function resolveWrapperCwd(cwd: string | null | undefined, target: string): string | null {
+  if (target === '') {
+    return null;
+  }
+  try {
+    if (!cwd && !isAbsolute(target)) {
+      return null;
+    }
+    const baseCwd = isAbsolute(target) ? getPathRoot(target) : realpathSync(cwd ?? '/');
+    return resolveChdirTarget(baseCwd, target);
+  } catch {
+    return null;
+  }
+}
+
+function getPathRoot(target: string): string {
+  return parsePath(target).root;
 }
 
 function stripCommand(tokens: string[]): string[] {

@@ -82,6 +82,15 @@ describe('TraceStep discriminated union', () => {
     expect(step.type).toBe('rule-check');
   });
 
+  test('worktree-relaxation step type compiles', () => {
+    const step: TraceStep = {
+      type: 'worktree-relaxation',
+      originalReason: 'git reset --hard destroys uncommitted changes',
+      gitCwd: '/tmp/repo-linked-worktree',
+    };
+    expect(step.type).toBe('worktree-relaxation');
+  });
+
   test('tmpdir-check step type compiles', () => {
     const step: TraceStep = {
       type: 'tmpdir-check',

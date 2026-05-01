@@ -3,6 +3,8 @@ export interface XargsAnalyzeContext {
     originalCwd: string | undefined;
     paranoidRm: boolean | undefined;
     allowTmpdirVar: boolean;
+    envAssignments?: ReadonlyMap<string, string>;
+    worktreeMode?: boolean;
 }
 export declare function analyzeXargs(tokens: readonly string[], context: XargsAnalyzeContext): string | null;
 interface XargsParseResult {

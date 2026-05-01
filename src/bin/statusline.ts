@@ -83,6 +83,7 @@ export async function printStatusline(): Promise<void> {
     const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
     const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
     const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
+    const worktreeMode = envTruthy('SAFETY_NET_WORKTREE');
 
     let modeEmojis = '';
 
@@ -99,6 +100,10 @@ export async function printStatusline(): Promise<void> {
       modeEmojis += '🗑️';
     } else if (paranoidInterpreters) {
       modeEmojis += '🐚';
+    }
+
+    if (worktreeMode) {
+      modeEmojis += '🌳';
     }
 
     // If no mode flags, show ✅

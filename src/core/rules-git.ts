@@ -1,4 +1,14 @@
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { extractShortOpts, getBasename } from '@/core/shell';
+import {
+  GIT_CONFIG_AFFECTING_ENV_NAMES,
+  GIT_GLOBAL_OPTS_WITH_VALUE,
+  getGitExecutionContext,
+  hasGitContextEnvOverride,
+  isLinkedWorktree,
+} from '@/core/worktree';
 
 const REASON_CHECKOUT_DOUBLE_DASH =
   "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
@@ -33,16 +43,6 @@ const REASON_STASH_CLEAR = 'git stash clear deletes ALL stashed changes permanen
 const REASON_WORKTREE_REMOVE_FORCE =
   'git worktree remove --force can delete uncommitted changes. Remove --force flag.';
 
-const GIT_GLOBAL_OPTS_WITH_VALUE = new Set([
-  '-c',
-  '-C',
-  '--git-dir',
-  '--work-tree',
-  '--namespace',
-  '--super-prefix',
-  '--config-env',
-]);
-
 const CHECKOUT_OPTS_WITH_VALUE = new Set([
   '-b',
   '-B',
@@ -56,6 +56,13 @@ const CHECKOUT_OPTS_WITH_VALUE = new Set([
 const CHECKOUT_OPTS_WITH_OPTIONAL_VALUE = new Set(['--recurse-submodules', '--track', '-t']);
 const CHECKOUT_SHORT_OPTS_WITH_VALUE = new Set(['-b', '-B', '-U']);
 const SWITCH_SHORT_OPTS_WITH_VALUE = new Set(['-c', '-C']);
+const TRUSTED_GIT_BINARIES = [
+  '/usr/bin/git',
+  '/usr/local/bin/git',
+  '/opt/homebrew/bin/git',
+  'C:\\Program Files\\Git\\cmd\\git.exe',
+  'C:\\Program Files\\Git\\bin\\git.exe',
+] as const;
 
 const CHECKOUT_KNOWN_OPTS_NO_VALUE = new Set([
   '-q',
@@ -109,7 +116,51 @@ function splitAtDoubleDash(tokens: readonly string[]): {
   };
 }
 
-export function analyzeGit(tokens: readonly string[]): string | null {
+export interface GitAnalyzeOptions {
+  cwd?: string;
+  envAssignments?: ReadonlyMap<string, string>;
+  worktreeMode?: boolean;
+}
+
+export interface GitWorktreeRelaxation {
+  originalReason: string;
+  gitCwd: string;
+}
+
+interface GitRuleMatch {
+  reason: string;
+  localDiscard: boolean;
+}
+
+export function analyzeGit(
+  tokens: readonly string[],
+  options: GitAnalyzeOptions = {},
+): string | null {
+  const match = analyzeGitRule(tokens);
+
+  if (!match) {
+    return null;
+  }
+
+  if (getGitWorktreeRelaxationForMatch(tokens, match, options)) {
+    return null;
+  }
+
+  return match.reason;
+}
+
+export function getGitWorktreeRelaxation(
+  tokens: readonly string[],
+  options: GitAnalyzeOptions = {},
+): GitWorktreeRelaxation | null {
+  const match = analyzeGitRule(tokens);
+  if (!match) {
+    return null;
+  }
+  return getGitWorktreeRelaxationForMatch(tokens, match, options);
+}
+
+function analyzeGitRule(tokens: readonly string[]): GitRuleMatch | null {
   const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
 
   if (!subcommand) {
@@ -118,26 +169,66 @@ export function analyzeGit(tokens: readonly string[]): string | null {
 
   switch (subcommand.toLowerCase()) {
     case 'checkout':
-      return analyzeGitCheckout(rest);
+      return localDiscard(analyzeGitCheckout(rest));
     case 'switch':
-      return analyzeGitSwitch(rest);
+      return localDiscard(analyzeGitSwitch(rest));
     case 'restore':
-      return analyzeGitRestore(rest);
+      return localDiscard(analyzeGitRestore(rest));
     case 'reset':
       return analyzeGitReset(rest);
     case 'clean':
-      return analyzeGitClean(rest);
+      return localDiscard(analyzeGitClean(rest));
     case 'push':
-      return analyzeGitPush(rest);
+      return sharedState(analyzeGitPush(rest));
     case 'branch':
-      return analyzeGitBranch(rest);
+      return sharedState(analyzeGitBranch(rest));
     case 'stash':
-      return analyzeGitStash(rest);
+      return sharedState(analyzeGitStash(rest));
     case 'worktree':
-      return analyzeGitWorktree(rest);
+      return sharedState(analyzeGitWorktree(rest));
     default:
       return null;
   }
+}
+
+function localDiscard(reason: string | null): GitRuleMatch | null {
+  return reason ? { reason, localDiscard: true } : null;
+}
+
+function sharedState(reason: string | null): GitRuleMatch | null {
+  return reason ? { reason, localDiscard: false } : null;
+}
+
+function getGitWorktreeRelaxationForMatch(
+  tokens: readonly string[],
+  match: GitRuleMatch,
+  options: GitAnalyzeOptions,
+): GitWorktreeRelaxation | null {
+  if (
+    !match.localDiscard ||
+    !options.worktreeMode ||
+    hasGitContextEnvOverride(options.envAssignments)
+  ) {
+    return null;
+  }
+
+  const context = getGitExecutionContext(tokens, options.cwd);
+  if (!context.gitCwd || context.hasExplicitGitContext) {
+    return null;
+  }
+
+  if (!isLinkedWorktree(context.gitCwd)) {
+    return null;
+  }
+
+  if (isNonRelaxableLocalDiscard(tokens, options, context.gitCwd)) {
+    return null;
+  }
+
+  return {
+    originalReason: match.reason,
+    gitCwd: context.gitCwd,
+  };
 }
 
 function extractGitSubcommandAndRest(tokens: readonly string[]): {
@@ -315,16 +406,37 @@ function analyzeGitRestore(tokens: readonly string[]): string | null {
   return hasStaged ? null : REASON_RESTORE;
 }
 
-function analyzeGitReset(tokens: readonly string[]): string | null {
+function analyzeGitReset(tokens: readonly string[]): GitRuleMatch | null {
+  let reason: string | null = null;
+
   for (const token of tokens) {
     if (token === '--hard') {
-      return REASON_RESET_HARD;
+      reason = REASON_RESET_HARD;
+      break;
     }
     if (token === '--merge') {
-      return REASON_RESET_MERGE;
+      reason = REASON_RESET_MERGE;
+      break;
     }
   }
-  return null;
+
+  if (!reason) {
+    return null;
+  }
+
+  return resetHasRef(tokens) ? sharedState(reason) : localDiscard(reason);
+}
+
+function resetHasRef(tokens: readonly string[]): boolean {
+  for (const token of tokens) {
+    if (token === '--') {
+      return false;
+    }
+    if (!token.startsWith('-')) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function analyzeGitClean(tokens: readonly string[]): string | null {
@@ -340,6 +452,458 @@ function analyzeGitClean(tokens: readonly string[]): string | null {
   }
 
   return null;
+}
+
+function isNonRelaxableLocalDiscard(
+  tokens: readonly string[],
+  options: GitAnalyzeOptions,
+  gitCwd: string,
+): boolean {
+  const { subcommand, rest } = extractGitSubcommandAndRest(tokens);
+  const normalizedSubcommand = subcommand?.toLowerCase();
+
+  if (
+    hasDynamicGitArgument(rest) ||
+    hasRecursiveSubmoduleConfig(tokens, options, gitCwd) ||
+    hasRecurseSubmodulesOption(rest) ||
+    isForcedBranchReset(normalizedSubcommand, rest)
+  ) {
+    return true;
+  }
+
+  return normalizedSubcommand === 'clean' && countCleanForceFlags(rest) > 1;
+}
+
+function hasDynamicGitArgument(tokens: readonly string[]): boolean {
+  return tokens.some((token) => /[$*?[]/.test(token));
+}
+
+function hasRecursiveSubmoduleConfig(
+  tokens: readonly string[],
+  options: GitAnalyzeOptions,
+  gitCwd: string,
+): boolean {
+  const commandLineConfig = commandLineRecursiveSubmoduleConfig(tokens, options.envAssignments);
+  if (commandLineConfig !== null) {
+    return commandLineConfig;
+  }
+  const envConfig = envRecursiveSubmoduleConfig(options.envAssignments);
+  if (envConfig !== null) {
+    return envConfig;
+  }
+  if (hasConfigAffectingEnvAssignment(options.envAssignments)) {
+    return true;
+  }
+  return effectiveGitConfigEnablesRecursiveSubmodules(gitCwd);
+}
+
+function commandLineRecursiveSubmoduleConfig(
+  tokens: readonly string[],
+  envAssignments?: ReadonlyMap<string, string>,
+): boolean | null {
+  let recursiveSubmoduleConfig: boolean | null = null;
+  let i = 1;
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (!token || token === '--') {
+      return recursiveSubmoduleConfig;
+    }
+    if (!token.startsWith('-')) {
+      return recursiveSubmoduleConfig;
+    }
+
+    if (token === '-c') {
+      const configValue = recursiveSubmoduleConfigValue(tokens[i + 1]);
+      if (configValue !== null) {
+        recursiveSubmoduleConfig = configValue;
+      }
+      i += 2;
+      continue;
+    }
+
+    if (token.startsWith('-c') && token.length > 2) {
+      const configValue = recursiveSubmoduleConfigValue(token.slice(2));
+      if (configValue !== null) {
+        recursiveSubmoduleConfig = configValue;
+      }
+      i++;
+      continue;
+    }
+
+    if (token === '--config-env') {
+      const configValue = recursiveSubmoduleConfigEnvValue(tokens[i + 1], envAssignments);
+      if (configValue !== null) {
+        recursiveSubmoduleConfig = configValue;
+      }
+      i += 2;
+      continue;
+    }
+
+    if (token.startsWith('--config-env=')) {
+      const configValue = recursiveSubmoduleConfigEnvValue(
+        token.slice('--config-env='.length),
+        envAssignments,
+      );
+      if (configValue !== null) {
+        recursiveSubmoduleConfig = configValue;
+      }
+      i++;
+      continue;
+    }
+
+    if (GIT_GLOBAL_OPTS_WITH_VALUE.has(token)) {
+      i += 2;
+    } else {
+      i++;
+    }
+  }
+  return recursiveSubmoduleConfig;
+}
+
+function envRecursiveSubmoduleConfig(envAssignments?: ReadonlyMap<string, string>): boolean | null {
+  if (getEnvConfigValue('GIT_CONFIG_PARAMETERS', envAssignments) !== undefined) {
+    return true;
+  }
+
+  const countValue = getEnvConfigValue('GIT_CONFIG_COUNT', envAssignments);
+  if (countValue === undefined) {
+    return null;
+  }
+
+  const count = Number.parseInt(countValue, 10);
+  if (!Number.isInteger(count) || count < 0) {
+    return true;
+  }
+
+  let recursiveSubmoduleConfig: boolean | null = null;
+  for (let i = 0; i < count; i++) {
+    const key = getEnvConfigValue(`GIT_CONFIG_KEY_${i}`, envAssignments);
+    if (key?.toLowerCase() !== 'submodule.recurse') {
+      continue;
+    }
+    const value = getEnvConfigValue(`GIT_CONFIG_VALUE_${i}`, envAssignments);
+    recursiveSubmoduleConfig =
+      value === undefined || gitConfigValueEnablesRecursiveSubmodules(value);
+  }
+
+  return recursiveSubmoduleConfig;
+}
+
+function hasConfigAffectingEnvAssignment(envAssignments?: ReadonlyMap<string, string>): boolean {
+  if (!envAssignments) {
+    return false;
+  }
+  for (const key of envAssignments.keys()) {
+    if (GIT_CONFIG_AFFECTING_ENV_NAMES.has(key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getEnvConfigValue(
+  name: string,
+  envAssignments?: ReadonlyMap<string, string>,
+): string | undefined {
+  return envAssignments?.get(name) ?? process.env[name];
+}
+
+function effectiveGitConfigEnablesRecursiveSubmodules(
+  cwd: string,
+  gitBinary: string | null = getTrustedGitBinary(),
+): boolean {
+  const localConfigResult = localGitConfigEnablesRecursiveSubmodules(cwd);
+  if (localConfigResult === null || localConfigResult) {
+    return true;
+  }
+
+  if (gitBinary === null) {
+    return true;
+  }
+
+  try {
+    const value = execFileSync(gitBinary, ['config', '--get', 'submodule.recurse'], {
+      cwd,
+      encoding: 'utf8',
+      env: withoutGitConfigEnv(process.env),
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return gitConfigValueEnablesRecursiveSubmodules(value);
+  } catch (error) {
+    return !isGitConfigUnsetError(error);
+  }
+}
+
+function localGitConfigEnablesRecursiveSubmodules(cwd: string): boolean | null {
+  const configPaths = getLocalGitConfigPaths(cwd);
+  if (configPaths === null) {
+    return null;
+  }
+
+  for (const configPath of configPaths) {
+    if (!existsSync(configPath)) {
+      continue;
+    }
+    const result = gitConfigFileEnablesRecursiveSubmodules(configPath);
+    if (result) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function getTrustedGitBinary(): string | null {
+  for (const gitBinary of TRUSTED_GIT_BINARIES) {
+    if (existsSync(gitBinary)) {
+      return gitBinary;
+    }
+  }
+  return null;
+}
+
+function withoutGitConfigEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const nextEnv = { ...env };
+  for (const key of Object.keys(nextEnv)) {
+    if (
+      key === 'GIT_CONFIG_COUNT' ||
+      key === 'GIT_CONFIG_PARAMETERS' ||
+      /^GIT_CONFIG_(KEY|VALUE)_\d+$/.test(key)
+    ) {
+      delete nextEnv[key];
+    }
+  }
+  return nextEnv;
+}
+
+function isGitConfigUnsetError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'status' in error &&
+    (error as { status?: unknown }).status === 1
+  );
+}
+
+function getLocalGitConfigPaths(cwd: string): string[] | null {
+  const dotGitPath = findDotGitPath(cwd);
+  if (dotGitPath === null) {
+    return null;
+  }
+
+  const gitDir = resolveGitDirFromDotGit(dotGitPath);
+  if (gitDir === null) {
+    return null;
+  }
+
+  const commonDir = resolveCommonGitDir(gitDir);
+  if (commonDir === null) {
+    return null;
+  }
+
+  return [join(commonDir, 'config'), join(gitDir, 'config.worktree')];
+}
+
+function findDotGitPath(cwd: string): string | null {
+  let current = cwd;
+  while (true) {
+    const dotGitPath = join(current, '.git');
+    if (existsSync(dotGitPath)) {
+      return dotGitPath;
+    }
+
+    const parent = dirname(current);
+    if (parent === current) {
+      return null;
+    }
+    current = parent;
+  }
+}
+
+function resolveGitDirFromDotGit(dotGitPath: string): string | null {
+  try {
+    const content = readFileSync(dotGitPath, 'utf-8');
+    const firstLine = content.split(/\r?\n/, 1)[0]?.trim() ?? '';
+    if (!firstLine.startsWith('gitdir:')) {
+      return dotGitPath;
+    }
+
+    const rawGitDir = firstLine.slice('gitdir:'.length).trim();
+    if (rawGitDir === '') {
+      return null;
+    }
+    return isAbsolute(rawGitDir) ? rawGitDir : resolve(dirname(dotGitPath), rawGitDir);
+  } catch {
+    return null;
+  }
+}
+
+function resolveCommonGitDir(gitDir: string): string | null {
+  const commonDirPath = join(gitDir, 'commondir');
+  if (!existsSync(commonDirPath)) {
+    return gitDir;
+  }
+
+  try {
+    const rawCommonDir = readFileSync(commonDirPath, 'utf-8').split(/\r?\n/, 1)[0]?.trim() ?? '';
+    if (rawCommonDir === '') {
+      return null;
+    }
+    return isAbsolute(rawCommonDir) ? rawCommonDir : resolve(gitDir, rawCommonDir);
+  } catch {
+    return null;
+  }
+}
+
+function gitConfigFileEnablesRecursiveSubmodules(configPath: string): boolean {
+  let content: string;
+  try {
+    content = readFileSync(configPath, 'utf-8');
+  } catch {
+    return true;
+  }
+
+  let section = '';
+  let recursiveSubmoduleConfig = false;
+
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (trimmed === '' || trimmed.startsWith('#') || trimmed.startsWith(';')) {
+      continue;
+    }
+
+    const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
+    if (sectionMatch) {
+      section = sectionMatch[1]?.trim().toLowerCase() ?? '';
+      continue;
+    }
+
+    const eqIdx = trimmed.indexOf('=');
+    const key = (eqIdx === -1 ? trimmed : trimmed.slice(0, eqIdx)).trim().toLowerCase();
+    const value = eqIdx === -1 ? 'true' : trimmed.slice(eqIdx + 1).trim();
+    if (isIncludeConfigSection(section) && key === 'path') {
+      return true;
+    }
+    if (section === 'submodule' && key === 'recurse') {
+      recursiveSubmoduleConfig = gitConfigValueEnablesRecursiveSubmodules(value);
+    }
+  }
+
+  return recursiveSubmoduleConfig;
+}
+
+function isIncludeConfigSection(section: string): boolean {
+  return section === 'include' || section.startsWith('includeif ');
+}
+
+function recursiveSubmoduleConfigValue(config: string | undefined): boolean | null {
+  if (!config) {
+    return null;
+  }
+  const eqIdx = config.indexOf('=');
+  const key = (eqIdx === -1 ? config : config.slice(0, eqIdx)).toLowerCase();
+  if (isIncludeConfigKey(key)) {
+    return true;
+  }
+  if (key !== 'submodule.recurse') {
+    return null;
+  }
+  const value = eqIdx === -1 ? 'true' : config.slice(eqIdx + 1).toLowerCase();
+  return gitConfigValueEnablesRecursiveSubmodules(value);
+}
+
+function gitConfigValueEnablesRecursiveSubmodules(value: string): boolean {
+  const normalizedValue = value.toLowerCase();
+  return (
+    normalizedValue !== 'false' &&
+    normalizedValue !== 'no' &&
+    normalizedValue !== 'off' &&
+    normalizedValue !== '0'
+  );
+}
+
+function recursiveSubmoduleConfigEnvValue(
+  configEnv: string | undefined,
+  envAssignments?: ReadonlyMap<string, string>,
+): boolean | null {
+  const eqIdx = configEnv?.indexOf('=') ?? -1;
+  if (!configEnv || eqIdx === -1) {
+    return null;
+  }
+  const key = configEnv.slice(0, eqIdx).toLowerCase();
+  if (isIncludeConfigKey(key)) {
+    return true;
+  }
+  if (key !== 'submodule.recurse') {
+    return null;
+  }
+  const value = getEnvConfigValue(configEnv.slice(eqIdx + 1), envAssignments);
+  return value === undefined || gitConfigValueEnablesRecursiveSubmodules(value);
+}
+
+function isIncludeConfigKey(key: string): boolean {
+  return key === 'include.path' || (key.startsWith('includeif.') && key.endsWith('.path'));
+}
+
+function isForcedBranchReset(subcommand: string | undefined, rest: readonly string[]): boolean {
+  if (subcommand === 'checkout') {
+    const { before } = splitAtDoubleDash(rest);
+    const shortOpts = extractShortOpts(before, {
+      shortOptsWithValue: CHECKOUT_SHORT_OPTS_WITH_VALUE,
+    });
+    const hasForce = before.includes('--force') || shortOpts.has('-f');
+    const hasBranchReset =
+      shortOpts.has('-B') || before.some((token) => token === '-B' || token.startsWith('-B'));
+    return hasForce && hasBranchReset;
+  }
+
+  if (subcommand === 'switch') {
+    const { before } = splitAtDoubleDash(rest);
+    const shortOpts = extractShortOpts(before, {
+      shortOptsWithValue: SWITCH_SHORT_OPTS_WITH_VALUE,
+    });
+    const hasForce =
+      before.includes('--force') || before.includes('--discard-changes') || shortOpts.has('-f');
+    const hasForceCreate =
+      before.some(
+        (token) => token === '-C' || token.startsWith('-C') || isForceCreateOption(token),
+      ) || shortOpts.has('-C');
+    return hasForce && hasForceCreate;
+  }
+
+  return false;
+}
+
+function isForceCreateOption(token: string): boolean {
+  const optionName = token.split('=', 1)[0] ?? token;
+  return (
+    optionName === '--force-create' ||
+    (optionName.length >= '--force-c'.length && '--force-create'.startsWith(optionName))
+  );
+}
+
+function hasRecurseSubmodulesOption(tokens: readonly string[]): boolean {
+  return tokens.some((token) => token.startsWith('--recurse-sub'));
+}
+
+function countCleanForceFlags(tokens: readonly string[]): number {
+  let count = 0;
+
+  for (const token of tokens) {
+    if (token === '--force') {
+      count++;
+      continue;
+    }
+    if (token.startsWith('-') && !token.startsWith('--')) {
+      for (const opt of token.slice(1)) {
+        if (opt === 'f') {
+          count++;
+        }
+      }
+    }
+  }
+
+  return count;
 }
 
 function analyzeGitPush(tokens: readonly string[]): string | null {
@@ -396,6 +960,8 @@ function analyzeGitWorktree(tokens: readonly string[]): string | null {
 
 /** @internal Exported for testing */
 export {
+  effectiveGitConfigEnablesRecursiveSubmodules as _effectiveGitConfigEnablesRecursiveSubmodules,
   extractGitSubcommandAndRest as _extractGitSubcommandAndRest,
   getCheckoutPositionalArgs as _getCheckoutPositionalArgs,
+  TRUSTED_GIT_BINARIES as _TRUSTED_GIT_BINARIES,
 };

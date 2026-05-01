@@ -63,6 +63,7 @@ describe('help output', () => {
       expect(output).toContain('ENVIRONMENT VARIABLES:');
       expect(output).toContain('SAFETY_NET_STRICT');
       expect(output).toContain('SAFETY_NET_PARANOID');
+      expect(output).toContain('SAFETY_NET_WORKTREE');
     });
 
     test('contains CONFIG FILES section', () => {

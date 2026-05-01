@@ -16,6 +16,7 @@ import {
   stripWrappersWithInfo,
 } from '@/core/shell';
 import {
+  type AnalyzeNestedOverrides,
   type AnalyzeOptions,
   type Config,
   INTERPRETERS,
@@ -30,7 +31,7 @@ export const REASON_INTERPRETER_BLOCKED = 'Interpreter one-liners are blocked in
 export type InternalOptions = AnalyzeOptions & {
   config: Config;
   effectiveCwd: string | null | undefined;
-  analyzeNested: (command: string) => string | null;
+  analyzeNested: (command: string, overrides?: AnalyzeNestedOverrides) => string | null;
 };
 
 function deriveCwdContext(options: Pick<InternalOptions, 'cwd' | 'effectiveCwd'>): {
@@ -53,12 +54,19 @@ export function analyzeSegment(
     return null;
   }
 
+  const { cwdForRm: baseCwdForRm, originalCwd } = deriveCwdContext(options);
   const { tokens: strippedEnv, envAssignments: leadingEnvAssignments } =
     stripEnvAssignmentsWithInfo(tokens);
-  const { tokens: stripped, envAssignments: wrapperEnvAssignments } =
-    stripWrappersWithInfo(strippedEnv);
+  const {
+    tokens: stripped,
+    envAssignments: wrapperEnvAssignments,
+    cwd: wrapperCwd,
+  } = stripWrappersWithInfo(strippedEnv, baseCwdForRm);
 
-  const envAssignments = new Map(leadingEnvAssignments);
+  const envAssignments = new Map(options.envAssignments ?? []);
+  for (const [k, v] of leadingEnvAssignments) {
+    envAssignments.set(k, v);
+  }
   for (const [k, v] of wrapperEnvAssignments) {
     envAssignments.set(k, v);
   }
@@ -74,13 +82,17 @@ export function analyzeSegment(
 
   const normalizedHead = normalizeCommandToken(head);
   const basename = getBasename(head);
-  const { cwdForRm, originalCwd } = deriveCwdContext(options);
+  const cwdForRm = wrapperCwd === null ? undefined : (wrapperCwd ?? baseCwdForRm);
+  const nestedEffectiveCwd = wrapperCwd === undefined ? options.effectiveCwd : wrapperCwd;
   const allowTmpdirVar = !isTmpdirOverriddenToNonTemp(envAssignments);
 
   if (SHELL_WRAPPERS.has(normalizedHead)) {
     const dashCArg = extractDashCArg(stripped);
     if (dashCArg) {
-      return options.analyzeNested(dashCArg);
+      return options.analyzeNested(dashCArg, {
+        effectiveCwd: nestedEffectiveCwd,
+        envAssignments,
+      });
     }
   }
 
@@ -91,7 +103,10 @@ export function analyzeSegment(
         return REASON_INTERPRETER_BLOCKED + PARANOID_INTERPRETERS_SUFFIX;
       }
 
-      const innerReason = options.analyzeNested(codeArg);
+      const innerReason = options.analyzeNested(codeArg, {
+        effectiveCwd: nestedEffectiveCwd,
+        envAssignments,
+      });
       if (innerReason) {
         return innerReason;
       }
@@ -103,7 +118,11 @@ export function analyzeSegment(
   }
 
   if (normalizedHead === 'busybox' && stripped.length > 1) {
-    return analyzeSegment(stripped.slice(1), depth, options);
+    return analyzeSegment(stripped.slice(1), depth, {
+      ...options,
+      effectiveCwd: nestedEffectiveCwd,
+      envAssignments,
+    });
   }
 
   const isGit = basename.toLowerCase() === 'git';
@@ -113,7 +132,11 @@ export function analyzeSegment(
   const isParallel = basename === 'parallel';
 
   if (isGit) {
-    const gitResult = analyzeGit(stripped);
+    const gitResult = analyzeGit(stripped, {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
+    });
     if (gitResult) {
       return gitResult;
     }
@@ -144,6 +167,8 @@ export function analyzeSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
     });
     if (xargsResult) {
       return xargsResult;
@@ -156,6 +181,8 @@ export function analyzeSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested: options.analyzeNested,
     });
     if (parallelResult) {
@@ -190,7 +217,11 @@ export function analyzeSegment(
         }
         if (cmd === 'git') {
           const gitTokens = ['git', ...stripped.slice(i + 1)];
-          const reason = analyzeGit(gitTokens);
+          const reason = analyzeGit(gitTokens, {
+            cwd: cwdForRm,
+            envAssignments,
+            worktreeMode: false,
+          });
           if (reason) {
             return reason;
           }

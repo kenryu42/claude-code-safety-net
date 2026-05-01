@@ -180,6 +180,15 @@ export function formatStepStyleD(
       return { lines, incrementStep: true };
     }
 
+    case 'worktree-relaxation': {
+      lines.push('');
+      lines.push(`STEP ${stepNum} ${box.h} Worktree relaxation`);
+      lines.push(`  Mode:   SAFETY_NET_WORKTREE`);
+      lines.push(`  Git cwd: ${step.gitCwd}`);
+      lines.push(`  Result: Allowed local discard in linked worktree`);
+      return { lines, incrementStep: true };
+    }
+
     case 'tmpdir-check':
       // This is internal detail, skip in Style D output
       return null;

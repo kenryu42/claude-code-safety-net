@@ -14,6 +14,7 @@ describe('getEnvironmentInfo', () => {
     expect(names).toContain('SAFETY_NET_PARANOID');
     expect(names).toContain('SAFETY_NET_PARANOID_RM');
     expect(names).toContain('SAFETY_NET_PARANOID_INTERPRETERS');
+    expect(names).toContain('SAFETY_NET_WORKTREE');
   });
 
   test('each env var has required fields', () => {

@@ -6,6 +6,7 @@
  */
 
 import { describe, expect, test } from 'bun:test';
+import { realpathSync } from 'node:fs';
 import {
   _extractParallelChildCommand,
   _extractXargsChildCommand,
@@ -17,6 +18,7 @@ import { extractDashCArg } from '@/core/analyze/shell-wrappers';
 import { _extractGitSubcommandAndRest, _getCheckoutPositionalArgs } from '@/core/rules-git';
 import { extractShortOpts, splitShellCommands, stripWrappersWithInfo } from '@/core/shell';
 import { MAX_STRIP_ITERATIONS } from '@/types';
+import { createLinkedWorktreeFixture } from '../../helpers.ts';
 
 describe('shell parsing helpers', () => {
   describe('extractDashCArg', () => {
@@ -207,6 +209,13 @@ describe('shell parsing helpers', () => {
       expect(splitShellCommands('echo x >$(git reset --hard)')).toEqual([
         ['echo', 'x'],
         ['git', 'reset', '--hard'],
+      ]);
+    });
+
+    test('marks attached command substitution after git as dynamic', () => {
+      expect(splitShellCommands('git reset --hard$(printf HEAD~1)')).toEqual([
+        ['printf', 'HEAD~1'],
+        ['git', 'reset', '--hard', '$__CC_SAFETY_NET_DYNAMIC_SUBSTITUTION__'],
       ]);
     });
 
@@ -471,6 +480,41 @@ describe('shell parsing helpers', () => {
       const result = stripWrappersWithInfo(['env', '-C=/tmp', 'rm', '-rf']);
       expect(result.tokens).toEqual(['rm', '-rf']);
     });
+
+    test('invalid env -S split string makes cwd unknown', () => {
+      const result = stripWrappersWithInfo(['env', '-S', '"unterminated', 'git', 'status'], '/tmp');
+      expect(result.tokens).toEqual(['git', 'status']);
+      expect(result.cwd).toBeNull();
+    });
+
+    test('empty env chdir target makes cwd unknown', () => {
+      const result = stripWrappersWithInfo(['env', '-C', '', 'git', 'status'], '/tmp');
+      expect(result.tokens).toEqual(['git', 'status']);
+      expect(result.cwd).toBeNull();
+    });
+
+    test('relative env chdir target with unknown cwd remains unknown', () => {
+      const result = stripWrappersWithInfo(['env', '-C', 'relative', 'git', 'status'], null);
+      expect(result.tokens).toEqual(['git', 'status']);
+      expect(result.cwd).toBeNull();
+    });
+
+    test.skipIf(process.platform !== 'win32')(
+      'resolves wrapper cwd with Windows separators',
+      () => {
+        const fixture = createLinkedWorktreeFixture();
+        try {
+          const result = stripWrappersWithInfo(
+            ['env', '-C', fixture.mainWorktree, '-C', '..\\linked', 'git', 'status'],
+            fixture.rootDir,
+          );
+          expect(result.tokens).toEqual(['git', 'status']);
+          expect(result.cwd).toBe(realpathSync(fixture.linkedWorktree));
+        } finally {
+          fixture.cleanup();
+        }
+      },
+    );
 
     test('strips command -pv and -- separator', () => {
       const result = stripWrappersWithInfo(['command', '-pv', '--', 'git', 'status']);

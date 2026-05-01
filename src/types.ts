@@ -108,6 +108,8 @@ export interface AnalyzeOptions {
   cwd?: string;
   /** Effective cwd after cd commands (null = unknown, undefined = use cwd) */
   effectiveCwd?: string | null;
+  /** Environment assignments inherited by nested command analysis */
+  envAssignments?: ReadonlyMap<string, string>;
   /** Loaded configuration */
   config?: Config;
   /** Fail-closed on unparseable commands */
@@ -116,8 +118,16 @@ export interface AnalyzeOptions {
   paranoidRm?: boolean;
   /** Block interpreter one-liners */
   paranoidInterpreters?: boolean;
+  /** Allow local Git discard commands in linked worktrees */
+  worktreeMode?: boolean;
   /** Allow $TMPDIR paths (false when TMPDIR is overridden to non-temp) */
   allowTmpdirVar?: boolean;
+}
+
+export interface AnalyzeNestedOverrides {
+  effectiveCwd?: string | null;
+  envAssignments?: ReadonlyMap<string, string>;
+  worktreeMode?: boolean;
 }
 
 /** Audit log entry */
@@ -182,6 +192,7 @@ export type TraceStep =
       matched: boolean;
       reason?: string;
     }
+  | { type: 'worktree-relaxation'; originalReason: string; gitCwd: string }
   | {
       type: 'tmpdir-check';
       tmpdirValue: string | null;

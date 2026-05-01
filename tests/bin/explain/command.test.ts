@@ -11,6 +11,7 @@ import { explainSegment } from '@/bin/explain/segment';
 import { REASON_RECURSION_LIMIT } from '@/core/analyze/analyze-command';
 import type { TraceStep } from '@/types';
 import { MAX_RECURSION_DEPTH } from '@/types';
+import { createLinkedWorktreeFixture, toShellPath, withEnv } from '../../helpers.ts';
 
 describe('explainCommand', () => {
   test('git status returns allowed', () => {
@@ -581,6 +582,161 @@ describe('explainCommand fallback scan with find', () => {
     const allSteps = result.trace.segments.flatMap((s) => s.steps);
     const fallbackStep = allSteps.find((s) => s.type === 'fallback-scan');
     expect(fallbackStep).toBeDefined();
+  });
+});
+
+describe('explainCommand worktree parity', () => {
+  test('uses wrapper cwd when explaining worktree relaxation', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `env -C ${toShellPath(fixture.mainWorktree)} git reset --hard`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('carries exported git context overrides into later segments', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `export GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('passes wrapper cwd into recursive explain analysis', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `env -C ${toShellPath(fixture.mainWorktree)} sh -c "git reset --hard"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('passes stripped env into recursive explain analysis', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)} sh -c "git reset --hard"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('carries nested exported git context overrides across inner segments', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `sh -c "export GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}; git reset --hard"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('includes keyword-export git context overrides in current segment', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `set -k; git restore file.txt GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git restore');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('includes nested keyword-export git context overrides in current segment', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand(
+          `sh -c "set -k; git restore file.txt GIT_WORK_TREE=${toShellPath(fixture.mainWorktree)}"`,
+          { cwd: fixture.linkedWorktree },
+        );
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git restore');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('honors parallel nested overrides when explaining remote commands', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand('parallel -S host sh -c "git reset --hard" ::: x', {
+          cwd: fixture.linkedWorktree,
+        });
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git reset --hard');
+      });
+    } finally {
+      fixture.cleanup();
+    }
+  });
+
+  test('does not report worktree relaxation for fallback embedded git', () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      withEnv({ SAFETY_NET_WORKTREE: '1' }, () => {
+        const result = explainCommand('ssh host git clean -f', { cwd: fixture.linkedWorktree });
+        const worktreeStep = result.trace.segments
+          .flatMap((segment) => segment.steps)
+          .find((step) => step.type === 'worktree-relaxation');
+
+        expect(result.result).toBe('blocked');
+        expect(result.reason).toContain('git clean -f');
+        expect(worktreeStep).toBeUndefined();
+      });
+    } finally {
+      fixture.cleanup();
+    }
   });
 });
 

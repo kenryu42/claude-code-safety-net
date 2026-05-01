@@ -9,6 +9,11 @@ import {
   isUnparseableCommand,
   REASON_STRICT_UNPARSEABLE,
 } from '@/bin/explain/segment';
+import {
+  applyShellGitContextEnvSegment,
+  createShellGitContextEnvState,
+  getSegmentGitContextEnvAssignments,
+} from '@/core/analyze/analyze-command';
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { segmentChangesCwd } from '@/core/analyze/segment';
 import { splitShellCommands } from '@/core/shell';
@@ -63,6 +68,7 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
   let blockReason: string | undefined;
   let blockSegment: string | undefined;
   let effectiveCwd: string | null | undefined = analyzeOpts.effectiveCwd;
+  const shellGitContextState = createShellGitContextEnvState(analyzeOpts.envAssignments);
 
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
@@ -113,7 +119,16 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
       continue;
     }
 
-    const result = explainSegment(segment, 0, { ...analyzeOpts, effectiveCwd }, segmentSteps);
+    const result = explainSegment(
+      segment,
+      0,
+      {
+        ...analyzeOpts,
+        effectiveCwd,
+        envAssignments: getSegmentGitContextEnvAssignments(segment, shellGitContextState),
+      },
+      segmentSteps,
+    );
 
     if (result) {
       blocked = true;
@@ -129,6 +144,8 @@ export function explainCommand(command: string, options?: ExplainOptions): Expla
       });
       effectiveCwd = null;
     }
+
+    applyShellGitContextEnvSegment(segment, shellGitContextState);
 
     trace.segments.push({ index: i, steps: segmentSteps });
   }

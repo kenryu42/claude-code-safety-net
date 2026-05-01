@@ -1,13 +1,13 @@
 import { expect } from 'bun:test';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { VersionFetcher } from '@/bin/doctor/system-info';
 import { analyzeCommand } from '@/core/analyze';
 import { loadConfig } from '@/core/config';
+import { envTruthy } from '@/core/env';
 import type { AnalyzeOptions, Config } from '@/types';
-
-function envTruthy(name: string): boolean {
-  const val = process.env[name];
-  return val === '1' || val === 'true' || val === 'yes';
-}
 
 // Default empty config for tests that don't specify a cwd
 // This prevents loading the project's .safety-net.json
@@ -23,6 +23,7 @@ function getOptionsFromEnv(cwd?: string, config?: Config): AnalyzeOptions {
     paranoidRm: envTruthy('SAFETY_NET_PARANOID') || envTruthy('SAFETY_NET_PARANOID_RM'),
     paranoidInterpreters:
       envTruthy('SAFETY_NET_PARANOID') || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS'),
+    worktreeMode: envTruthy('SAFETY_NET_WORKTREE'),
   };
 }
 
@@ -94,4 +95,63 @@ export const mockVersionFetcher: VersionFetcher = async (args: string[]) => {
  */
 export function toShellPath(p: string): string {
   return p.replace(/\\/g, '/');
+}
+
+export interface LinkedWorktreeFixture {
+  rootDir: string;
+  mainWorktree: string;
+  linkedWorktree: string;
+  cleanup: () => void;
+}
+
+function runGit(args: readonly string[], cwd: string): void {
+  execFileSync('git', [...args], { cwd, stdio: 'ignore' });
+}
+
+export function createLinkedWorktreeFixture(): LinkedWorktreeFixture {
+  const rootDir = mkdtempSync(join(tmpdir(), 'safety-net-worktree-'));
+  const mainWorktree = join(rootDir, 'main');
+  const linkedWorktree = join(rootDir, 'linked');
+
+  mkdirSync(mainWorktree);
+  runGit(['init'], mainWorktree);
+  runGit(['config', 'user.email', 'safety-net@example.test'], mainWorktree);
+  runGit(['config', 'user.name', 'Safety Net Test'], mainWorktree);
+  writeFileSync(join(mainWorktree, 'file.txt'), 'initial\n');
+  runGit(['add', 'file.txt'], mainWorktree);
+  runGit(['commit', '-m', 'initial'], mainWorktree);
+  runGit(['worktree', 'add', '-b', 'feature/worktree-test', linkedWorktree], mainWorktree);
+
+  return {
+    rootDir,
+    mainWorktree,
+    linkedWorktree,
+    cleanup: () => {
+      rmSync(rootDir, { recursive: true, force: true });
+    },
+  };
+}
+
+export interface FakeGitFileFixture {
+  rootDir: string;
+  cwd: string;
+  cleanup: () => void;
+}
+
+export function createSubmoduleLikeGitFileFixture(): FakeGitFileFixture {
+  const rootDir = mkdtempSync(join(tmpdir(), 'safety-net-submodule-like-'));
+  const cwd = join(rootDir, 'submodule');
+  const gitDir = join(rootDir, '.git', 'modules', 'submodule');
+
+  mkdirSync(cwd, { recursive: true });
+  mkdirSync(gitDir, { recursive: true });
+  writeFileSync(join(cwd, '.git'), 'gitdir: ../.git/modules/submodule\n');
+
+  return {
+    rootDir,
+    cwd,
+    cleanup: () => {
+      rmSync(rootDir, { recursive: true, force: true });
+    },
+  };
 }

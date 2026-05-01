@@ -8,6 +8,7 @@ function clearEnv(): void {
   delete process.env.SAFETY_NET_PARANOID;
   delete process.env.SAFETY_NET_PARANOID_RM;
   delete process.env.SAFETY_NET_PARANOID_INTERPRETERS;
+  delete process.env.SAFETY_NET_WORKTREE;
   delete process.env.CLAUDE_SETTINGS_PATH;
 }
 
@@ -77,6 +78,20 @@ describe('--statusline flag', () => {
     const exitCode = await proc.exited;
 
     expect(output.trim()).toBe('🛡️ Safety Net 👁️');
+    expect(exitCode).toBe(0);
+  });
+
+  test('shows worktree emoji when SAFETY_NET_WORKTREE=1', async () => {
+    const proc = Bun.spawn(['bun', 'src/bin/cc-safety-net.ts', '--statusline'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...process.env, CLAUDE_SETTINGS_PATH: enabledSettingsPath, SAFETY_NET_WORKTREE: '1' },
+    });
+
+    const output = await new Response(proc.stdout).text();
+    const exitCode = await proc.exited;
+
+    expect(output.trim()).toBe('🛡️ Safety Net 🌳');
     expect(exitCode).toBe(0);
   });
 

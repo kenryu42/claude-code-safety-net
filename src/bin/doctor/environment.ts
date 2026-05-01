@@ -29,6 +29,11 @@ const ENV_VARS: Array<{
     description: 'Block interpreter one-liners',
     defaultBehavior: 'off',
   },
+  {
+    name: 'SAFETY_NET_WORKTREE',
+    description: 'Allow local git discards in linked worktrees',
+    defaultBehavior: 'off',
+  },
 ];
 
 export function getEnvironmentInfo(): EnvVarInfo[] {

@@ -48,6 +48,7 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
 - [Advanced Features](#advanced-features)
   - [Strict Mode](#strict-mode)
   - [Paranoid Mode](#paranoid-mode)
+  - [Worktree Mode](#worktree-mode)
   - [Shell Wrapper Detection](#shell-wrapper-detection)
   - [Interpreter One-Liner Detection](#interpreter-one-liner-detection)
   - [Secret Redaction](#secret-redaction)
@@ -300,6 +301,7 @@ The status line displays different emojis based on the current configuration:
 | Paranoid mode | `🛡️ Safety Net 👁️` | `SAFETY_NET_PARANOID=1` — all paranoid checks enabled |
 | Paranoid RM only | `🛡️ Safety Net 🗑️` | `SAFETY_NET_PARANOID_RM=1` — blocks `rm -rf` even within cwd |
 | Paranoid interpreters only | `🛡️ Safety Net 🐚` | `SAFETY_NET_PARANOID_INTERPRETERS=1` — blocks interpreter one-liners |
+| Worktree mode | `🛡️ Safety Net 🌳` | `SAFETY_NET_WORKTREE=1` — relax local git discards inside linked worktrees |
 | Strict + Paranoid | `🛡️ Safety Net 🔒👁️` | Both strict and paranoid modes enabled |
 
 Multiple mode emojis are combined when multiple environment variables are set.
@@ -398,6 +400,7 @@ npx cc-safety-net explain --cwd /tmp "git status"
 | rm -rf /var/tmp/... | System temp directory |
 | rm -rf $TMPDIR/... | User's temp directory |
 | rm -rf ./... (within cwd) | Limited to current working directory |
+| git restore / checkout -- / reset --hard / clean -f (in linked worktree) | Relaxed only when `SAFETY_NET_WORKTREE=1` and cwd is a linked worktree |
 
 ## What Happens When Blocked
 
@@ -630,6 +633,48 @@ Paranoid behavior:
 - **rm**: blocks non-temp `rm -rf` even within the current working directory.
 - **interpreters**: blocks interpreter one-liners like `python -c`, `node -e`, `ruby -e`,
   and `perl -e` (these can hide destructive commands).
+
+### Worktree Mode
+
+Linked git worktrees are designed as disposable, isolated workspaces — discarding
+changes inside one doesn't risk the main working tree. Worktree mode relaxes
+local-discard rules when (and only when) the command is proven to run inside a
+linked worktree:
+
+```bash
+export SAFETY_NET_WORKTREE=1
+```
+
+When enabled, these commands are allowed inside a linked worktree:
+
+- `git restore <file>` and `git restore --worktree <file>`
+- `git checkout -- <file>`, `git checkout <ref> -- <file>`, `git checkout --force`,
+  and ambiguous multi-positional checkout forms
+- `git switch --discard-changes` and `git switch -f / --force`
+- `git reset --hard` and `git reset --merge`
+- `git clean -f` (and combined short flags like `-fd`)
+
+These remain blocked even in linked worktrees because they reach beyond the
+local working tree:
+
+- `git push --force` (affects remote)
+- `git branch -D` (affects shared refs)
+- `git stash drop` / `git stash clear` (stash is shared across worktrees)
+- `git worktree remove --force` (could delete another worktree)
+
+Detection is fail-closed and mostly filesystem-based:
+
+- A linked worktree is identified by a `.git` *file* containing `gitdir:` whose
+  resolved git directory contains a `commondir` file. Main worktrees and
+  submodules don't satisfy this and are not relaxed.
+- The cwd walk uses `realpath` so symlinked paths resolve correctly.
+- `git -C <path>` (including chained `-C` and attached `-Cpath`) is honored;
+  unresolved targets keep the command blocked.
+- Relaxation is disabled if cwd becomes unknown (e.g., after `cd`/`pushd`),
+  if `--git-dir` / `--work-tree` is passed, or if `GIT_DIR` / `GIT_WORK_TREE`
+  / `GIT_COMMON_DIR` is set in the environment.
+- Git may be invoked from a trusted system path to inspect effective config that
+  could make submodule operations recursive.
 
 ### Shell Wrapper Detection
 

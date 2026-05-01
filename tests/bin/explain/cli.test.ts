@@ -5,6 +5,7 @@ import { describe, expect, test } from 'bun:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createLinkedWorktreeFixture } from '../../helpers.ts';
 
 describe('explain CLI flag parsing', () => {
   test('explain preserves --debug in command when it appears after first positional arg', async () => {
@@ -122,6 +123,41 @@ describe('explain CLI flag parsing', () => {
       expect(exitCode).toBe(0);
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  test('explain --json reports worktree relaxation', async () => {
+    const fixture = createLinkedWorktreeFixture();
+    try {
+      const proc = Bun.spawn(
+        [
+          'bun',
+          'src/bin/cc-safety-net.ts',
+          'explain',
+          '--json',
+          '--cwd',
+          fixture.linkedWorktree,
+          'git reset --hard',
+        ],
+        {
+          stdout: 'pipe',
+          stderr: 'pipe',
+          env: { ...process.env, SAFETY_NET_WORKTREE: '1' },
+        },
+      );
+
+      const output = await new Response(proc.stdout).text();
+      const exitCode = await proc.exited;
+
+      const parsed = JSON.parse(output);
+      const worktreeStep = parsed.trace.segments
+        .flatMap((s: { steps: Array<{ type: string }> }) => s.steps)
+        .find((s: { type: string }) => s.type === 'worktree-relaxation');
+      expect(parsed.result).toBe('allowed');
+      expect(worktreeStep).toBeDefined();
+      expect(exitCode).toBe(0);
+    } finally {
+      fixture.cleanup();
     }
   });
 

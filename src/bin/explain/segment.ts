@@ -8,7 +8,12 @@ import {
   redactEnvAssignmentTokens,
   redactEnvVars,
 } from '@/bin/explain/redact';
-import { REASON_RECURSION_LIMIT } from '@/core/analyze/analyze-command';
+import {
+  applyShellGitContextEnvSegment,
+  createShellGitContextEnvState,
+  getSegmentGitContextEnvAssignments,
+  REASON_RECURSION_LIMIT,
+} from '@/core/analyze/analyze-command';
 import { DISPLAY_COMMANDS } from '@/core/analyze/constants';
 import { dangerousInText } from '@/core/analyze/dangerous-text';
 import { analyzeFind } from '@/core/analyze/find';
@@ -23,7 +28,7 @@ import { extractDashCArg } from '@/core/analyze/shell-wrappers';
 import { isTmpdirOverriddenToNonTemp } from '@/core/analyze/tmpdir';
 import { analyzeXargs } from '@/core/analyze/xargs';
 import { checkCustomRules } from '@/core/rules-custom';
-import { analyzeGit } from '@/core/rules-git';
+import { analyzeGit, getGitWorktreeRelaxation } from '@/core/rules-git';
 import { analyzeRm } from '@/core/rules-rm';
 import {
   normalizeCommandToken,
@@ -31,7 +36,7 @@ import {
   stripEnvAssignmentsWithInfo,
   stripWrappersWithInfo,
 } from '@/core/shell';
-import type { AnalyzeOptions, TraceStep } from '@/types';
+import type { AnalyzeNestedOverrides, AnalyzeOptions, TraceStep } from '@/types';
 import {
   INTERPRETERS,
   MAX_RECURSION_DEPTH,
@@ -87,6 +92,7 @@ function explainInnerSegments(
   // Preserve null (unknown CWD after cd/pushd) - only fall back to cwd when undefined
   let effectiveCwd: string | null | undefined =
     options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
+  const shellGitContextState = createShellGitContextEnvState(options.envAssignments);
 
   for (const segment of innerSegments) {
     // Check for unparseable segment (single token with spaces) - matches guard behavior
@@ -117,7 +123,16 @@ function explainInnerSegments(
       continue;
     }
 
-    const result = explainSegment(segment, depth + 1, { ...options, effectiveCwd }, steps);
+    const result = explainSegment(
+      segment,
+      depth + 1,
+      {
+        ...options,
+        effectiveCwd,
+        envAssignments: getSegmentGitContextEnvAssignments(segment, shellGitContextState),
+      },
+      steps,
+    );
     if (result) return result;
 
     if (segmentChangesCwd(segment)) {
@@ -128,6 +143,7 @@ function explainInnerSegments(
       });
       effectiveCwd = null;
     }
+    applyShellGitContextEnvSegment(segment, shellGitContextState);
   }
 
   return null;
@@ -157,7 +173,13 @@ export function explainSegment(
     });
   }
 
-  const wrapperResult = stripWrappersWithInfo(envResult.tokens);
+  // Preserve null (unknown CWD after cd/pushd) - only fall back to cwd when undefined
+  const effectiveCwd = options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
+  const cwdUnknown = effectiveCwd === null;
+  const baseCwdForRm = cwdUnknown ? undefined : (effectiveCwd ?? options.cwd);
+  const originalCwd = cwdUnknown ? undefined : options.cwd;
+
+  const wrapperResult = stripWrappersWithInfo(envResult.tokens, baseCwdForRm);
   const removed = envResult.tokens.slice(0, envResult.tokens.length - wrapperResult.tokens.length);
   if (removed.length > 0) {
     steps.push({
@@ -169,6 +191,22 @@ export function explainSegment(
   }
 
   const strippedTokens = wrapperResult.tokens;
+  const envAssignments = new Map(options.envAssignments ?? []);
+  for (const [k, v] of envResult.envAssignments) {
+    envAssignments.set(k, v);
+  }
+  for (const [k, v] of wrapperResult.envAssignments) {
+    envAssignments.set(k, v);
+  }
+  const cwdForRm = wrapperResult.cwd === null ? undefined : (wrapperResult.cwd ?? baseCwdForRm);
+  const nestedEffectiveCwd =
+    wrapperResult.cwd === undefined ? options.effectiveCwd : wrapperResult.cwd;
+  const nestedOptions = {
+    ...options,
+    effectiveCwd: nestedEffectiveCwd,
+    envAssignments,
+  };
+
   if (strippedTokens.length === 0) {
     return null;
   }
@@ -197,7 +235,7 @@ export function explainSegment(
         depth: depth + 1,
       });
 
-      return explainInnerSegments(innerCmd, depth, options, steps);
+      return explainInnerSegments(innerCmd, depth, nestedOptions, steps);
     }
   }
 
@@ -224,7 +262,7 @@ export function explainSegment(
         depth: depth + 1,
       });
 
-      const nestedResult = explainInnerSegments(codeArg, depth, options, steps);
+      const nestedResult = explainInnerSegments(codeArg, depth, nestedOptions, steps);
       if (nestedResult) return nestedResult;
 
       if (containsDangerousCode(codeArg)) {
@@ -253,23 +291,12 @@ export function explainSegment(
       innerCommand: redactEnvAssignmentsInString(busyboxInnerCmd),
       depth: depth + 1,
     });
-    return explainSegment(strippedTokens.slice(1), depth + 1, options, steps);
+    return explainSegment(strippedTokens.slice(1), depth + 1, nestedOptions, steps);
   }
 
-  const envAssignments = new Map(envResult.envAssignments);
-  for (const [k, v] of wrapperResult.envAssignments) {
-    envAssignments.set(k, v);
-  }
   const allowTmpdirVar = !isTmpdirOverriddenToNonTemp(envAssignments);
   // Use command-scoped TMPDIR if set, otherwise fall back to process.env
   const tmpdirValue = envAssignments.get('TMPDIR') ?? process.env.TMPDIR ?? null;
-  // Preserve null (unknown CWD after cd/pushd) - only fall back to cwd when undefined
-  const effectiveCwd = options.effectiveCwd === undefined ? options.cwd : options.effectiveCwd;
-
-  // Derive CWD context matching guard behavior: when CWD is unknown, both become undefined
-  const cwdUnknown = effectiveCwd === null;
-  const cwdForRm = cwdUnknown ? undefined : (effectiveCwd ?? options.cwd);
-  const originalCwd = cwdUnknown ? undefined : options.cwd;
 
   // git uses case-insensitive matching (matches guard: basename.toLowerCase() === 'git')
   // rm/find/xargs/parallel use case-sensitive matching (matches guard)
@@ -289,14 +316,27 @@ export function explainSegment(
   }
 
   if (isGit) {
-    const reason = analyzeGit(strippedTokens);
+    const gitOptions = {
+      cwd: cwdForRm,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
+    };
+    const relaxation = getGitWorktreeRelaxation(strippedTokens, gitOptions);
+    const reason = analyzeGit(strippedTokens, gitOptions);
     steps.push({
       type: 'rule-check',
       ruleModule: 'rules-git.ts',
       ruleFunction: 'analyzeGit',
-      matched: !!reason,
-      reason: reason ?? undefined,
+      matched: !!reason || !!relaxation,
+      reason: reason ?? relaxation?.originalReason,
     });
+    if (relaxation) {
+      steps.push({
+        type: 'worktree-relaxation',
+        originalReason: relaxation.originalReason,
+        gitCwd: relaxation.gitCwd,
+      });
+    }
     if (reason) return { reason };
   }
 
@@ -335,6 +375,8 @@ export function explainSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
     });
     steps.push({
       type: 'rule-check',
@@ -347,8 +389,17 @@ export function explainSegment(
   }
 
   if (isParallel) {
-    const analyzeNested = (cmd: string): string | null => {
-      const result = explainInnerSegments(cmd, depth, options, steps);
+    const analyzeNested = (cmd: string, overrides?: AnalyzeNestedOverrides): string | null => {
+      const overriddenOptions = {
+        ...nestedOptions,
+        effectiveCwd:
+          overrides && Object.hasOwn(overrides, 'effectiveCwd')
+            ? overrides.effectiveCwd
+            : nestedOptions.effectiveCwd,
+        envAssignments: overrides?.envAssignments ?? nestedOptions.envAssignments,
+        worktreeMode: overrides?.worktreeMode ?? nestedOptions.worktreeMode,
+      };
+      const result = explainInnerSegments(cmd, depth, overriddenOptions, steps);
       return result?.reason ?? null;
     };
     const reason = analyzeParallel(strippedTokens, {
@@ -356,6 +407,8 @@ export function explainSegment(
       originalCwd,
       paranoidRm: options.paranoidRm,
       allowTmpdirVar,
+      envAssignments,
+      worktreeMode: options.worktreeMode,
       analyzeNested,
     });
     steps.push({
@@ -371,6 +424,7 @@ export function explainSegment(
   const matchedKnown = isGit || isRm || isFind || isXargs || isParallel;
   const tokensScanned: string[] = [];
   let fallbackReason: string | null = null;
+  let fallbackRelaxation: ReturnType<typeof getGitWorktreeRelaxation> = null;
   let embeddedCommandFound: string | undefined;
 
   if (!matchedKnown && !DISPLAY_COMMANDS.has(normalizeCommandToken(head))) {
@@ -393,7 +447,13 @@ export function explainSegment(
       if (!fallbackReason && cmd === 'git') {
         embeddedCommandFound = 'git';
         const gitTokens = ['git', ...strippedTokens.slice(i + 1)];
-        fallbackReason = analyzeGit(gitTokens);
+        const gitOptions = {
+          cwd: cwdForRm,
+          envAssignments,
+          worktreeMode: false,
+        };
+        fallbackRelaxation = getGitWorktreeRelaxation(gitTokens, gitOptions);
+        fallbackReason = analyzeGit(gitTokens, gitOptions);
       }
       if (!fallbackReason && cmd === 'find') {
         embeddedCommandFound = 'find';
@@ -407,6 +467,13 @@ export function explainSegment(
     tokensScanned,
     embeddedCommandFound,
   });
+  if (fallbackRelaxation) {
+    steps.push({
+      type: 'worktree-relaxation',
+      originalReason: fallbackRelaxation.originalReason,
+      gitCwd: fallbackRelaxation.gitCwd,
+    });
+  }
   if (fallbackReason) return { reason: fallbackReason };
 
   const shouldCheckCustomRules = depth === 0 || !matchedKnown;
