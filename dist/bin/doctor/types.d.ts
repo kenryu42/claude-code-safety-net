@@ -93,6 +93,8 @@ export interface SystemInfo {
     version: string;
     /** Claude Code version (from `claude --version`) */
     claudeCodeVersion: string | null;
+    /** Claude Code plugin list output (from `claude plugin list`) */
+    claudePluginListOutput: string | null;
     /** OpenCode version (from `opencode --version`) */
     openCodeVersion: string | null;
     /** Gemini CLI version (from `gemini --version`) */

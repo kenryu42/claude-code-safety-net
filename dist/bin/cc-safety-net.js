@@ -5050,6 +5050,8 @@ function analyzeCommand(command, options = {}) {
 
 // src/bin/doctor/hooks.ts
 var COPILOT_PLUGIN_CONFIG_PATH = "copilot-plugin";
+var CLAUDE_PLUGIN_LIST_CONFIG_PATH = "claude plugin list";
+var CLAUDE_SAFETY_NET_PLUGIN_ID = "safety-net@cc-marketplace";
 var GEMINI_EXTENSIONS_LIST_CONFIG_PATH = "gemini extensions list";
 var GEMINI_SAFETY_NET_SOURCE = "https://github.com/kenryu42/gemini-safety-net";
 var SELF_TEST_CASES = [
@@ -5167,40 +5169,45 @@ function stripJsonComments(content) {
   }
   return result;
 }
-function detectClaudeCode(homeDir) {
-  const errors = [];
-  const settingsPath = join5(homeDir, ".claude", "settings.json");
-  const pluginKey = "safety-net@cc-marketplace";
-  if (existsSync6(settingsPath)) {
-    try {
-      const settings = JSON.parse(readFileSync6(settingsPath, "utf-8"));
-      const pluginValue = settings.enabledPlugins?.[pluginKey];
-      if (pluginValue === true) {
-        return {
-          platform: "claude-code",
-          status: "configured",
-          method: "marketplace plugin",
-          configPath: settingsPath,
-          selfTest: runSelfTest()
-        };
-      }
-      if (pluginValue === false) {
-        return {
-          platform: "claude-code",
-          status: "disabled",
-          method: "marketplace plugin",
-          configPath: settingsPath
-        };
-      }
-    } catch (e) {
-      errors.push(`Failed to parse settings.json: ${e instanceof Error ? e.message : String(e)}`);
-    }
+function detectClaudeCode(pluginListOutput) {
+  if (!pluginListOutput) {
+    return { platform: "claude-code", status: "n/a" };
+  }
+  const pluginBlock = _findClaudeSafetyNetPluginBlock(pluginListOutput);
+  if (!pluginBlock) {
+    return { platform: "claude-code", status: "n/a" };
+  }
+  if (/^\s*Status:\s*.*\bdisabled\b\s*$/im.test(pluginBlock)) {
+    return {
+      platform: "claude-code",
+      status: "disabled",
+      method: "plugin list",
+      configPath: CLAUDE_PLUGIN_LIST_CONFIG_PATH
+    };
+  }
+  if (/^\s*Status:\s*.*\benabled\b\s*$/im.test(pluginBlock)) {
+    return {
+      platform: "claude-code",
+      status: "configured",
+      method: "plugin list",
+      configPath: CLAUDE_PLUGIN_LIST_CONFIG_PATH,
+      selfTest: runSelfTest()
+    };
   }
   return {
     platform: "claude-code",
-    status: "n/a",
-    errors: errors.length > 0 ? errors : undefined
+    status: "disabled",
+    method: "plugin list",
+    configPath: CLAUDE_PLUGIN_LIST_CONFIG_PATH,
+    errors: ["Status is not enabled"]
   };
+}
+function _findClaudeSafetyNetPluginBlock(output) {
+  const pluginLinePattern = new RegExp(`^\\s*(?:\\S+\\s+)?${_escapeRegExp(CLAUDE_SAFETY_NET_PLUGIN_ID)}\\s*$`, "m");
+  return output.split(/\n\s*\n/).find((block) => pluginLinePattern.test(block));
+}
+function _escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 function detectOpenCode(homeDir) {
   const errors = [];
@@ -5497,7 +5504,7 @@ function detectAllHooks(cwd, options) {
     };
   };
   return [
-    detectClaudeCode(homeDir),
+    detectClaudeCode(options?.claudePluginListOutput),
     detectOpenCode(homeDir),
     detectGeminiCLI(options?.geminiExtensionsListOutput),
     detectCopilotCLI()
@@ -5583,6 +5590,7 @@ async function getSystemInfo(fetcher = defaultVersionFetcher) {
   };
   const [
     claudeRaw,
+    claudePluginListOutput,
     openCodeRaw,
     geminiRaw,
     geminiExtensionsListOutput,
@@ -5593,6 +5601,7 @@ async function getSystemInfo(fetcher = defaultVersionFetcher) {
     pluginListRaw
   ] = await Promise.all([
     fetcher(["claude", "--version"]),
+    fetcher(["claude", "plugin", "list"]),
     fetcher(["opencode", "--version"]),
     fetcher(["gemini", "--version"]),
     fetcher(["gemini", "extensions", "list"]),
@@ -5605,6 +5614,7 @@ async function getSystemInfo(fetcher = defaultVersionFetcher) {
   return {
     version: CURRENT_VERSION,
     claudeCodeVersion: parseVersion(claudeRaw),
+    claudePluginListOutput,
     openCodeVersion: parseVersion(openCodeRaw),
     geminiCliVersion: parseVersion(geminiRaw),
     geminiExtensionsListOutput,
@@ -5679,6 +5689,7 @@ async function runDoctor(options = {}) {
   const cwd = options.cwd ?? process.cwd();
   const system = await getSystemInfo();
   const hooks = detectAllHooks(cwd, {
+    claudePluginListOutput: system.claudePluginListOutput,
     geminiExtensionsListOutput: system.geminiExtensionsListOutput,
     copilotCliVersion: system.copilotCliVersion,
     copilotPluginInstalled: system.copilotPluginInstalled
