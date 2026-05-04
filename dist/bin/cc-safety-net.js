@@ -5341,7 +5341,7 @@ function _hasSafetyNetCopilotHook(config) {
 }
 function _readCopilotConfigFile(configPath, errors) {
   try {
-    return JSON.parse(readFileSync6(configPath, "utf-8"));
+    return JSON.parse(stripJsonComments(readFileSync6(configPath, "utf-8")));
   } catch (e) {
     errors?.push(`Failed to parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`);
     return;

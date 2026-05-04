@@ -440,7 +440,7 @@ function _readCopilotConfigFile(
   errors?: string[],
 ): CopilotHookConfig | undefined {
   try {
-    return JSON.parse(readFileSync(configPath, 'utf-8')) as CopilotHookConfig;
+    return JSON.parse(stripJsonComments(readFileSync(configPath, 'utf-8'))) as CopilotHookConfig;
   } catch (e) {
     errors?.push(`Failed to parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`);
     return undefined;

@@ -389,6 +389,45 @@ describe('detectAllHooks', () => {
     }
   });
 
+  test('Copilot CLI: accepts commented managed config when configured from installed plugin list', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const configDir = join(homeDir, '.copilot');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(configDir, { recursive: true });
+    writeFileSync(
+      join(configDir, 'config.json'),
+      `// User settings belong in settings.json.
+// This file is managed automatically.
+{
+  "installedPlugins": [
+    {
+      "name": "copilot-safety-net",
+      "version": "1.0.0"
+    }
+  ]
+}`,
+    );
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        copilotCliVersion: '1.0.40',
+        copilotPluginInstalled: true,
+      });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('plugin list');
+      expect(copilot?.errors?.some((error) => error.includes('Failed to parse')) ?? false).toBe(
+        false,
+      );
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
   test('Copilot CLI: installed plugin list overrides legacy hook config as configured signal', () => {
     const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');
