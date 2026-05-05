@@ -7,6 +7,7 @@
 [![OpenCode](https://img.shields.io/badge/OpenCode-black)](#opencode-installation)
 [![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-678AE3)](#gemini-cli-installation)
 [![Copilot CLI](https://img.shields.io/badge/Copilot%20CLI-4EA5C9)](#github-copilot-cli-installation)
+[![Codex](https://img.shields.io/badge/Codex-white)](#codex-installation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
 
 <div align="center">
@@ -28,6 +29,7 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
   - [OpenCode Installation](#opencode-installation)
   - [Gemini CLI Installation](#gemini-cli-installation)
   - [GitHub Copilot CLI Installation](#github-copilot-cli-installation)
+  - [Codex Installation](#codex-installation)
 - [Status Line Integration](#status-line-integration)
   - [Setup via Slash Command](#setup-via-slash-command)
   - [Manual Setup](#manual-setup)
@@ -212,6 +214,28 @@ gemini extensions install https://github.com/kenryu42/gemini-safety-net
 
 > [!NOTE]
 > After installing the plugin, you need to restart your Copilot CLI for it to take effect.
+
+---
+
+### Codex Installation
+
+1. Enable Codex plugin hooks in `~/.codex/config.toml`:
+
+  ```toml
+  [features]
+  plugin_hooks = true
+  ```
+
+2. Add the marketplace:
+
+  ```bash
+  codex plugin marketplace add kenryu42/cc-marketplace
+  ```
+
+3. Start Codex.
+4. In the TUI, run `/plugins`.
+5. Use arrow keys to select `[cc-marketplace]`.
+6. Press Enter to install the plugin.
 
 ---
 
