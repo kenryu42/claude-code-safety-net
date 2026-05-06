@@ -228,6 +228,30 @@ describe('detectAllHooks', () => {
     }
   });
 
+  test('Claude Code: keeps metadata email lines inside the safety-net entry', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: `Installed plugins:
+  ❯ safety-net@cc-marketplace
+    Version: 0.8.2
+    Publisher: author@example.com
+    Status: ✔ enabled`,
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('configured');
+      expect(claude?.method).toBe('plugin list');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
   test('Claude Code: n/a when plugin list is unavailable', () => {
     const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');

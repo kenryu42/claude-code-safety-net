@@ -5206,8 +5206,8 @@ function detectClaudeCode(pluginListOutput) {
   };
 }
 function _findClaudeSafetyNetPluginBlock(output) {
-  const pluginLinePattern = new RegExp(`^\\s*(?:\\S+\\s+)?${_escapeRegExp(CLAUDE_SAFETY_NET_PLUGIN_ID)}\\s*$`);
-  const pluginStartPattern = /^\s*(?:\S+\s+)?\S+@\S+\s*$/;
+  const pluginLinePattern = new RegExp(`^\\s*(?:[^\\w\\s@]+\\s+)?${_escapeRegExp(CLAUDE_SAFETY_NET_PLUGIN_ID)}\\s*$`);
+  const pluginStartPattern = /^\s*(?:[^\w\s@]+\s+)?\S+@\S+\s*$/;
   const lines = output.split(`
 `);
   const startIndex = lines.findIndex((line) => pluginLinePattern.test(line));
