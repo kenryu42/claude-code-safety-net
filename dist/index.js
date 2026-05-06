@@ -4078,10 +4078,11 @@ function envTruthy(name) {
 
 // src/core/format.ts
 function formatBlockedMessage(input) {
-  const { reason, command, segment } = input;
+  const { reason, command, segment, askMode } = input;
   const maxLen = input.maxLen ?? 200;
   const redact = input.redact ?? ((t) => t);
-  let message = `BLOCKED by Safety Net
+  const header = askMode ? "FLAGGED by Safety Net" : "BLOCKED by Safety Net";
+  let message = `${header}
 
 Reason: ${reason}`;
   if (command) {
@@ -4096,9 +4097,15 @@ Command: ${excerpt(safeCommand, maxLen)}`;
 
 Segment: ${excerpt(safeSegment, maxLen)}`;
   }
-  message += `
+  if (askMode) {
+    message += `
+
+This command may be destructive. Approve to proceed, or deny to cancel.`;
+  } else {
+    message += `
 
 If this operation is truly needed, ask the user for explicit permission and have them run the command manually.`;
+  }
   return message;
 }
 function excerpt(text, maxLen) {

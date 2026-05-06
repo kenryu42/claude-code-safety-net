@@ -53,7 +53,7 @@ export interface HookInput {
 export interface HookOutput {
     hookSpecificOutput: {
         hookEventName: string;
-        permissionDecision: 'allow' | 'deny';
+        permissionDecision: 'allow' | 'deny' | 'ask';
         permissionDecisionReason?: string;
     };
 }

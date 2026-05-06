@@ -46,6 +46,7 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
   - [Examples](#examples)
   - [Error Handling](#error-handling)
 - [Advanced Features](#advanced-features)
+  - [Ask Mode](#ask-mode)
   - [Strict Mode](#strict-mode)
   - [Paranoid Mode](#paranoid-mode)
   - [Worktree Mode](#worktree-mode)
@@ -297,6 +298,7 @@ The status line displays different emojis based on the current configuration:
 |--------|---------|---------|
 | Plugin disabled | `🛡️ Safety Net ❌` | Safety Net plugin is not enabled |
 | Default mode | `🛡️ Safety Net ✅` | Protection active with default settings |
+| Ask mode | `🛡️ Safety Net ❓` | `SAFETY_NET_ASK=1` — prompts user instead of blocking |
 | Strict mode | `🛡️ Safety Net 🔒` | `SAFETY_NET_STRICT=1` — fail-closed on unparseable commands |
 | Paranoid mode | `🛡️ Safety Net 👁️` | `SAFETY_NET_PARANOID=1` — all paranoid checks enabled |
 | Paranoid RM only | `🛡️ Safety Net 🗑️` | `SAFETY_NET_PARANOID_RM=1` — blocks `rm -rf` even within cwd |
@@ -603,6 +605,23 @@ Command: git add -A
 ```
 
 ## Advanced Features
+
+### Ask Mode
+
+By default, dangerous commands are blocked outright. Enable ask mode to prompt the user
+for confirmation instead, allowing them to approve or deny each flagged command
+interactively:
+
+```bash
+export SAFETY_NET_ASK=1
+```
+
+When a dangerous command is detected, the user sees the Safety Net warning and can choose
+to proceed or cancel. This is useful when you want awareness without hard blocks.
+
+> **Note:** Ask mode is currently supported in Claude Code only. Gemini CLI, OpenCode,
+> and Copilot CLI do not support interactive confirmation and will continue to block outright.
+> Strict mode (`SAFETY_NET_STRICT=1`) overrides ask mode — all blocks are hard-denied when strict is active.
 
 ### Strict Mode
 

@@ -20,6 +20,25 @@ describe('Copilot CLI hook', () => {
     });
   });
 
+  describe('ask mode ignored', () => {
+    test('ask mode still denies on Copilot CLI (unsupported)', async () => {
+      const input = {
+        timestamp: Date.now(),
+        cwd: process.cwd(),
+        toolName: 'bash',
+        toolArgs: JSON.stringify({ command: 'rm -rf /' }),
+      };
+
+      const { stdout, exitCode } = await runCopilotHook(input, {
+        SAFETY_NET_ASK: '1',
+      });
+
+      expect(exitCode).toBe(0);
+      const output = JSON.parse(stdout);
+      expect(output.permissionDecision).toBe('deny');
+    });
+  });
+
   describe('allowed commands', () => {
     test('allows safe commands (no output)', async () => {
       const input = {

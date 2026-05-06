@@ -4,18 +4,24 @@ import { envTruthy } from '@/core/env';
 import { formatBlockedMessage } from '@/core/format';
 import type { HookInput, HookOutput } from '@/types';
 
-function outputDeny(reason: string, command?: string, segment?: string): void {
+function outputDecision(
+  decision: 'deny' | 'ask',
+  reason: string,
+  command?: string,
+  segment?: string,
+): void {
   const message = formatBlockedMessage({
     reason,
     command,
     segment,
     redact: redactSecrets,
+    askMode: decision === 'ask',
   });
 
   const output: HookOutput = {
     hookSpecificOutput: {
       hookEventName: 'PreToolUse',
-      permissionDecision: 'deny',
+      permissionDecision: decision,
       permissionDecisionReason: message,
     },
   };
@@ -41,7 +47,7 @@ export async function runClaudeCodeHook(): Promise<void> {
     input = JSON.parse(inputText) as HookInput;
   } catch {
     if (envTruthy('SAFETY_NET_STRICT')) {
-      outputDeny('Failed to parse hook input JSON (strict mode)');
+      outputDecision('deny', 'Failed to parse hook input JSON (strict mode)');
     }
     return;
   }
@@ -57,6 +63,7 @@ export async function runClaudeCodeHook(): Promise<void> {
 
   const cwd = input.cwd ?? process.cwd();
   const strict = envTruthy('SAFETY_NET_STRICT');
+  const askMode = envTruthy('SAFETY_NET_ASK');
   const paranoidAll = envTruthy('SAFETY_NET_PARANOID');
   const paranoidRm = paranoidAll || envTruthy('SAFETY_NET_PARANOID_RM');
   const paranoidInterpreters = paranoidAll || envTruthy('SAFETY_NET_PARANOID_INTERPRETERS');
@@ -78,6 +85,6 @@ export async function runClaudeCodeHook(): Promise<void> {
     if (sessionId) {
       writeAuditLog(sessionId, command, result.segment, result.reason, cwd);
     }
-    outputDeny(result.reason, command, result.segment);
+    outputDecision(askMode && !strict ? 'ask' : 'deny', result.reason, command, result.segment);
   }
 }
