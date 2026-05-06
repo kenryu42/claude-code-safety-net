@@ -331,11 +331,11 @@ function detectOpenCode(homeDir: string): HookStatus {
  *
  * Checks:
  * 1. `gemini extensions list` output for the safety-net source URL
- * 2. Enabled (User) and Enabled (Workspace) are both true
+ * 2. Effective enabled state using workspace over user scope, defaulting to enabled
  *
  * Status meanings:
- * - 'configured': Extension source is installed and enabled for user and workspace
- * - 'disabled': Extension source is installed but not enabled for user or workspace
+ * - 'configured': Extension source is installed and effectively enabled
+ * - 'disabled': Extension source is installed but effectively disabled
  * - 'n/a': Extension source is not installed, or list output is unavailable
  */
 function detectGeminiCLI(extensionsListOutput: string | null | undefined): HookStatus {
@@ -351,10 +351,14 @@ function detectGeminiCLI(extensionsListOutput: string | null | undefined): HookS
     return { platform: 'gemini-cli', status: 'n/a' };
   }
 
-  const errors = [
-    ...(extension.enabledUser === true ? [] : ['Enabled (User) is not true']),
-    ...(extension.enabledWorkspace === true ? [] : ['Enabled (Workspace) is not true']),
-  ];
+  const effectiveEnabled = extension.enabledWorkspace ?? extension.enabledUser ?? true;
+  const errors = effectiveEnabled
+    ? []
+    : [
+        extension.enabledWorkspace === false
+          ? 'Enabled (Workspace) is false'
+          : 'Enabled (User) is false',
+      ];
 
   if (errors.length > 0) {
     return {

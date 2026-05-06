@@ -5262,9 +5262,9 @@ function detectGeminiCLI(extensionsListOutput) {
   if (!extension) {
     return { platform: "gemini-cli", status: "n/a" };
   }
-  const errors = [
-    ...extension.enabledUser === true ? [] : ["Enabled (User) is not true"],
-    ...extension.enabledWorkspace === true ? [] : ["Enabled (Workspace) is not true"]
+  const effectiveEnabled = extension.enabledWorkspace ?? extension.enabledUser ?? true;
+  const errors = effectiveEnabled ? [] : [
+    extension.enabledWorkspace === false ? "Enabled (Workspace) is false" : "Enabled (User) is false"
   ];
   if (errors.length > 0) {
     return {

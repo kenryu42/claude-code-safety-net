@@ -63,13 +63,14 @@ function _geminiExtensionsListOutput(options: {
   source?: string;
   enabledUser?: boolean;
   enabledWorkspace?: boolean;
+  omitEnabledUser?: boolean;
+  omitEnabledWorkspace?: boolean;
 }): string {
   return `✓ gemini-safety-net (1.0.0)
  ID: 9ca2544181766a522b98bbd5d0b327b297d2582960a40db855dc048a3b8e91e3
  Path: /Users/kenryu/.gemini/extensions/gemini-safety-net
  Source: ${options.source ?? 'https://github.com/kenryu42/gemini-safety-net'} (Type: github-release)
- Enabled (User): ${options.enabledUser ?? true}
- Enabled (Workspace): ${options.enabledWorkspace ?? true}`;
+${options.omitEnabledUser ? '' : ` Enabled (User): ${options.enabledUser ?? true}\n`}${options.omitEnabledWorkspace ? '' : ` Enabled (Workspace): ${options.enabledWorkspace ?? true}`}`;
 }
 
 function _claudePluginListOutput(options: { pluginId?: string; status?: string } = {}): string {
@@ -421,12 +422,63 @@ describe('detectAllHooks', () => {
     try {
       const hooks = detectAllHooks(projectDir, {
         homeDir,
-        geminiExtensionsListOutput: _geminiExtensionsListOutput({ enabledUser: false }),
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          enabledUser: false,
+          omitEnabledWorkspace: true,
+        }),
       });
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('disabled');
       expect(gemini?.errors?.some((e) => e.includes('Enabled (User)'))).toBe(true);
       expect(gemini?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: configured when workspace enables safety-net over disabled user scope', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          enabledUser: false,
+          enabledWorkspace: true,
+        }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('configured');
+      expect(gemini?.method).toBe('extension list');
+      expect(gemini?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: configured by default when enabled scopes are not listed', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          omitEnabledUser: true,
+          omitEnabledWorkspace: true,
+        }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('configured');
+      expect(gemini?.method).toBe('extension list');
+      expect(gemini?.selfTest?.failed).toBe(0);
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
