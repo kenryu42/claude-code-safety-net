@@ -265,10 +265,17 @@ function detectClaudeCode(pluginListOutput: string | null | undefined): HookStat
 function _findClaudeSafetyNetPluginBlock(output: string): string | undefined {
   const pluginLinePattern = new RegExp(
     `^\\s*(?:\\S+\\s+)?${_escapeRegExp(CLAUDE_SAFETY_NET_PLUGIN_ID)}\\s*$`,
-    'm',
   );
+  const pluginStartPattern = /^\s*(?:\S+\s+)?\S+@\S+\s*$/;
+  const lines = output.split('\n');
+  const startIndex = lines.findIndex((line) => pluginLinePattern.test(line));
 
-  return output.split(/\n\s*\n/).find((block) => pluginLinePattern.test(block));
+  if (startIndex === -1) return undefined;
+
+  const endIndex = lines.findIndex(
+    (line, index) => index > startIndex && pluginStartPattern.test(line),
+  );
+  return lines.slice(startIndex, endIndex === -1 ? undefined : endIndex).join('\n');
 }
 
 function _escapeRegExp(value: string): string {

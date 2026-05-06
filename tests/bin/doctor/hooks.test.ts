@@ -199,6 +199,34 @@ describe('detectAllHooks', () => {
     }
   });
 
+  test('Claude Code: reads status from safety-net entry without blank separators', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: `Installed plugins:
+  ❯ code-simplifier@claude-plugins-official
+    Version: 1.0.0
+    Scope: user
+    Status: ✘ disabled
+  ❯ safety-net@cc-marketplace
+    Version: 0.8.2
+    Scope: user
+    Status: ✔ enabled`,
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('configured');
+      expect(claude?.method).toBe('plugin list');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
   test('Claude Code: n/a when plugin list is unavailable', () => {
     const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');
