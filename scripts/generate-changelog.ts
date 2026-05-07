@@ -17,7 +17,7 @@ export const INCLUDED_COMMIT_PATTERN = /^(feat|fix)(\([^)]+\))?:/i;
 export const REPO = process.env.GITHUB_REPOSITORY ?? 'kenryu42/claude-code-safety-net';
 
 /** Paths that indicate Claude Code plugin changes */
-const CLAUDE_CODE_PATHS = ['commands/', 'hooks/', '.claude-plugin/'];
+const CLAUDE_CODE_PATHS = ['skills/', 'hooks/', '.claude-plugin/'];
 
 /** Paths that indicate OpenCode plugin changes */
 const OPENCODE_PATHS = ['.opencode/'];

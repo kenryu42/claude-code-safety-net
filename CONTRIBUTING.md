@@ -176,9 +176,9 @@ claude-code-safety-net/
 │   ├── rules/                # AST-grep rule definitions
 │   ├── rule-tests/           # Rule test cases
 │   └── utils/                # Shared utilities
-├── commands/
-│   ├── set-custom-rules.md   # Slash command: configure custom rules
-│   └── verify-custom-rules.md # Slash command: validate config
+├── skills/
+│   ├── set-custom-rules/     # Skill: configure custom rules
+│   └── verify-custom-rules/  # Skill: validate config
 ├── hooks/
 │   └── hooks.json            # Hook definitions
 ├── scripts/

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Set Custom Rules"
+  short_description: "Configure Safety Net custom rules"
+  default_prompt: "Use $set-custom-rules to configure Safety Net custom blocking rules."
+policy:
+  allow_implicit_invocation: false

@@ -59,6 +59,50 @@ function _writeCopilotInlineConfig(
   );
 }
 
+function _geminiExtensionsListOutput(options: {
+  source?: string;
+  enabledUser?: boolean;
+  enabledWorkspace?: boolean;
+  omitEnabledUser?: boolean;
+  omitEnabledWorkspace?: boolean;
+}): string {
+  return `✓ gemini-safety-net (1.0.0)
+ ID: 9ca2544181766a522b98bbd5d0b327b297d2582960a40db855dc048a3b8e91e3
+ Path: /Users/kenryu/.gemini/extensions/gemini-safety-net
+ Source: ${options.source ?? 'https://github.com/kenryu42/gemini-safety-net'} (Type: github-release)
+${options.omitEnabledUser ? '' : ` Enabled (User): ${options.enabledUser ?? true}\n`}${options.omitEnabledWorkspace ? '' : ` Enabled (Workspace): ${options.enabledWorkspace ?? true}`}`;
+}
+
+function _claudePluginListOutput(options: { pluginId?: string; status?: string } = {}): string {
+  return `Installed plugins:
+
+  ❯ code-simplifier@claude-plugins-official
+    Version: 1.0.0
+    Scope: user
+    Status: ✔ enabled
+
+  ❯ ${options.pluginId ?? 'safety-net@cc-marketplace'}
+    Version: 0.8.2
+    Scope: user
+    ${options.status === undefined ? 'Status: ✔ enabled' : options.status}`;
+}
+
+function _writeCodexConfig(
+  codexHome: string,
+  options: { pluginHooks?: boolean; enabled?: boolean } = {},
+): void {
+  writeFileSync(
+    join(codexHome, 'config.toml'),
+    `${options.pluginHooks === undefined ? '' : `[features]\nplugin_hooks = ${options.pluginHooks}\n\n`}[plugins."safety-net@cc-marketplace"]\nenabled = ${options.enabled ?? true}\n`,
+  );
+}
+
+function _createCodexPluginVersion(codexHome: string): void {
+  mkdirSync(join(codexHome, 'plugins', 'cache', 'cc-marketplace', 'safety-net', '0.8.2'), {
+    recursive: true,
+  });
+}
+
 describe('detectAllHooks', () => {
   test('detects configured hooks and runs self-test', () => {
     const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
@@ -66,15 +110,6 @@ describe('detectAllHooks', () => {
     const projectDir = join(tmpBase, 'project');
     mkdirSync(homeDir, { recursive: true });
     mkdirSync(projectDir, { recursive: true });
-
-    const claudeDir = join(homeDir, '.claude');
-    mkdirSync(claudeDir, { recursive: true });
-    writeFileSync(
-      join(claudeDir, 'settings.json'),
-      JSON.stringify({
-        enabledPlugins: { 'safety-net@cc-marketplace': true },
-      }),
-    );
 
     const opencodeDir = join(homeDir, '.config', 'opencode');
     mkdirSync(opencodeDir, { recursive: true });
@@ -86,32 +121,21 @@ describe('detectAllHooks', () => {
       }`,
     );
 
-    const geminiDir = join(homeDir, '.gemini');
-    const geminiExtDir = join(geminiDir, 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'gemini-safety-net': { overrides: ['/Users/kenryu/*'] },
-      }),
-    );
-    writeFileSync(
-      join(geminiDir, 'settings.json'),
-      JSON.stringify({
-        tools: { enableHooks: true },
-      }),
-    );
-
     const copilotDir = join(projectDir, '.github', 'hooks');
     mkdirSync(copilotDir, { recursive: true });
     _writeCopilotHook(join(copilotDir, 'safety-net.json'));
 
     try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: _claudePluginListOutput(),
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({}),
+      });
 
       const claude = hooks.find((hook) => hook.platform === 'claude-code');
       expect(claude?.status).toBe('configured');
-      expect(claude?.method).toBe('marketplace plugin');
+      expect(claude?.method).toBe('plugin list');
+      expect(claude?.configPath).toBe('claude plugin list');
       expect(claude?.selfTest?.failed).toBe(0);
 
       const opencode = hooks.find((hook) => hook.platform === 'opencode');
@@ -121,7 +145,7 @@ describe('detectAllHooks', () => {
 
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('configured');
-      expect(gemini?.method).toBe('extension plugin');
+      expect(gemini?.method).toBe('extension list');
       expect(gemini?.selfTest?.passed).toBe(gemini?.selfTest?.total);
 
       const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
@@ -133,27 +157,178 @@ describe('detectAllHooks', () => {
     }
   });
 
-  test('Claude Code: disabled when enabledPlugins value is false', () => {
+  test('Claude Code: configured when plugin list shows safety-net enabled', () => {
     const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');
     const projectDir = join(tmpBase, 'project');
     mkdirSync(homeDir, { recursive: true });
     mkdirSync(projectDir, { recursive: true });
 
-    const claudeDir = join(homeDir, '.claude');
-    mkdirSync(claudeDir, { recursive: true });
-    writeFileSync(
-      join(claudeDir, 'settings.json'),
-      JSON.stringify({
-        enabledPlugins: { 'safety-net@cc-marketplace': false },
-      }),
-    );
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: _claudePluginListOutput(),
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('configured');
+      expect(claude?.method).toBe('plugin list');
+      expect(claude?.configPath).toBe('claude plugin list');
+      expect(claude?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: disabled when plugin list shows safety-net disabled', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
 
     try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: _claudePluginListOutput({ status: 'Status: ✘ disabled' }),
+      });
       const claude = hooks.find((hook) => hook.platform === 'claude-code');
       expect(claude?.status).toBe('disabled');
-      expect(claude?.method).toBe('marketplace plugin');
+      expect(claude?.method).toBe('plugin list');
+      expect(claude?.configPath).toBe('claude plugin list');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: reads status from safety-net entry without blank separators', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: `Installed plugins:
+  ❯ code-simplifier@claude-plugins-official
+    Version: 1.0.0
+    Scope: user
+    Status: ✘ disabled
+  ❯ safety-net@cc-marketplace
+    Version: 0.8.2
+    Scope: user
+    Status: ✔ enabled`,
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('configured');
+      expect(claude?.method).toBe('plugin list');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: keeps metadata email lines inside the safety-net entry', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: `Installed plugins:
+  ❯ safety-net@cc-marketplace
+    Version: 0.8.2
+    Publisher: author@example.com
+    Status: ✔ enabled`,
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('configured');
+      expect(claude?.method).toBe('plugin list');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: n/a when plugin list is unavailable', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir, claudePluginListOutput: null });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('n/a');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: n/a when plugin list does not include safety-net', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: `Installed plugins:
+
+  ❯ code-simplifier@claude-plugins-official
+    Version: 1.0.0
+    Scope: user
+    Status: ✔ enabled`,
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('n/a');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: n/a for partial plugin id match', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: _claudePluginListOutput({
+          pluginId: 'other-safety-net@cc-marketplace',
+        }),
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('n/a');
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Claude Code: disabled with error when safety-net status is unrecognized', () => {
+    const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        claudePluginListOutput: _claudePluginListOutput({ status: 'Status: pending' }),
+      });
+      const claude = hooks.find((hook) => hook.platform === 'claude-code');
+      expect(claude?.status).toBe('disabled');
+      expect(claude?.method).toBe('plugin list');
+      expect(claude?.errors).toEqual(['Status is not enabled']);
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
@@ -166,25 +341,16 @@ describe('detectAllHooks', () => {
     mkdirSync(homeDir, { recursive: true });
     mkdirSync(projectDir, { recursive: true });
 
-    const claudeDir = join(homeDir, '.claude');
-    mkdirSync(claudeDir, { recursive: true });
-    writeFileSync(join(claudeDir, 'settings.json'), '{ invalid json }');
-
     const opencodeDir = join(homeDir, '.config', 'opencode');
     mkdirSync(opencodeDir, { recursive: true });
     writeFileSync(join(opencodeDir, 'opencode.json'), '{ invalid json }');
-
-    const geminiDir = join(homeDir, '.gemini');
-    const geminiExtDir = join(geminiDir, 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(join(geminiExtDir, 'extension-enablement.json'), '{ invalid json }');
 
     try {
       const hooks = detectAllHooks(projectDir, { homeDir });
 
       const claude = hooks.find((hook) => hook.platform === 'claude-code');
       expect(claude?.status).toBe('n/a');
-      expect(claude?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
+      expect(claude?.errors).toBeUndefined();
 
       const opencode = hooks.find((hook) => hook.platform === 'opencode');
       expect(opencode?.status).toBe('n/a');
@@ -192,13 +358,13 @@ describe('detectAllHooks', () => {
 
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('n/a');
-      expect(gemini?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
+      expect(gemini?.errors).toBeUndefined();
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
   });
 
-  test('Claude Code: returns n/a with error when settings.json is invalid', () => {
+  test('Claude Code: ignores settings.json when plugin list is unavailable', () => {
     const tmpBase = join(tmpdir(), `doctor-hooks-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');
     const projectDir = join(tmpBase, 'project');
@@ -210,10 +376,10 @@ describe('detectAllHooks', () => {
     writeFileSync(join(claudeDir, 'settings.json'), '{ invalid json }');
 
     try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
+      const hooks = detectAllHooks(projectDir, { homeDir, claudePluginListOutput: null });
       const claude = hooks.find((hook) => hook.platform === 'claude-code');
       expect(claude?.status).toBe('n/a');
-      expect(claude?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
+      expect(claude?.errors).toBeUndefined();
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
@@ -249,172 +415,155 @@ describe('detectAllHooks', () => {
     }
   });
 
-  test('Gemini CLI: disabled when overrides is empty', () => {
+  test('Gemini CLI: configured when safety-net source is enabled for user and workspace', () => {
     const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');
     const projectDir = join(tmpBase, 'project');
     mkdirSync(homeDir, { recursive: true });
     mkdirSync(projectDir, { recursive: true });
 
-    const geminiExtDir = join(homeDir, '.gemini', 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'gemini-safety-net': { overrides: [] },
-      }),
-    );
-
     try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
-      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
-      expect(gemini?.status).toBe('disabled');
-      expect(gemini?.errors?.some((e) => e.includes('no enabled workspace overrides'))).toBe(true);
-    } finally {
-      rmSync(tmpBase, { recursive: true, force: true });
-    }
-  });
-
-  test('Gemini CLI: disabled when all overrides are negated', () => {
-    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
-    const homeDir = join(tmpBase, 'home');
-    const projectDir = join(tmpBase, 'project');
-    mkdirSync(homeDir, { recursive: true });
-    mkdirSync(projectDir, { recursive: true });
-
-    const geminiExtDir = join(homeDir, '.gemini', 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'gemini-safety-net': { overrides: ['!/Users/disabled/*', '!/other/*'] },
-      }),
-    );
-
-    try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
-      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
-      expect(gemini?.status).toBe('disabled');
-      expect(gemini?.errors?.some((e) => e.includes('no enabled workspace overrides'))).toBe(true);
-    } finally {
-      rmSync(tmpBase, { recursive: true, force: true });
-    }
-  });
-
-  test('Gemini CLI: not configured when hooks not enabled in settings', () => {
-    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
-    const homeDir = join(tmpBase, 'home');
-    const projectDir = join(tmpBase, 'project');
-    mkdirSync(homeDir, { recursive: true });
-    mkdirSync(projectDir, { recursive: true });
-
-    const geminiDir = join(homeDir, '.gemini');
-    const geminiExtDir = join(geminiDir, 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'gemini-safety-net': { overrides: ['/Users/kenryu/*'] },
-      }),
-    );
-
-    try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
-      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
-      expect(gemini?.status).toBe('n/a');
-      expect(gemini?.errors?.some((e) => e.includes('tools.enableHooks'))).toBe(true);
-    } finally {
-      rmSync(tmpBase, { recursive: true, force: true });
-    }
-  });
-
-  test('Gemini CLI: uses local project settings.json for hooks check', () => {
-    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
-    const homeDir = join(tmpBase, 'home');
-    const projectDir = join(tmpBase, 'project');
-    mkdirSync(homeDir, { recursive: true });
-    mkdirSync(projectDir, { recursive: true });
-
-    const geminiExtDir = join(homeDir, '.gemini', 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'gemini-safety-net': { overrides: ['/Users/kenryu/*'] },
-      }),
-    );
-
-    const localGeminiDir = join(projectDir, '.gemini');
-    mkdirSync(localGeminiDir, { recursive: true });
-    writeFileSync(
-      join(localGeminiDir, 'settings.json'),
-      JSON.stringify({
-        tools: { enableHooks: true },
-      }),
-    );
-
-    try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({}),
+      });
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('configured');
-      expect(gemini?.method).toBe('extension plugin');
+      expect(gemini?.method).toBe('extension list');
+      expect(gemini?.selfTest?.failed).toBe(0);
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
   });
 
-  test('Gemini CLI: not configured when plugin key does not exist', () => {
+  test('Gemini CLI: disabled when safety-net source is disabled for user', () => {
     const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
     const homeDir = join(tmpBase, 'home');
     const projectDir = join(tmpBase, 'project');
     mkdirSync(homeDir, { recursive: true });
     mkdirSync(projectDir, { recursive: true });
 
-    const geminiExtDir = join(homeDir, '.gemini', 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'other-plugin': { overrides: ['/Users/kenryu/*'] },
-      }),
-    );
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          enabledUser: false,
+          omitEnabledWorkspace: true,
+        }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('disabled');
+      expect(gemini?.errors?.some((e) => e.includes('Enabled (User)'))).toBe(true);
+      expect(gemini?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: configured when workspace enables safety-net over disabled user scope', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
 
     try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          enabledUser: false,
+          enabledWorkspace: true,
+        }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('configured');
+      expect(gemini?.method).toBe('extension list');
+      expect(gemini?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: configured by default when enabled scopes are not listed', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          omitEnabledUser: true,
+          omitEnabledWorkspace: true,
+        }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('configured');
+      expect(gemini?.method).toBe('extension list');
+      expect(gemini?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: disabled when safety-net source is disabled for workspace', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({ enabledWorkspace: false }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('disabled');
+      expect(gemini?.errors?.some((e) => e.includes('Enabled (Workspace)'))).toBe(true);
+      expect(gemini?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: not configured when safety-net source is missing', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        geminiExtensionsListOutput: _geminiExtensionsListOutput({
+          source: 'https://github.com/gemini-cli-extensions/code-review',
+        }),
+      });
+      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
+      expect(gemini?.status).toBe('n/a');
+      expect(gemini?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Gemini CLI: not configured when extensions list is unavailable', () => {
+    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir, geminiExtensionsListOutput: null });
       const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
       expect(gemini?.status).toBe('n/a');
       expect(gemini?.errors).toBeUndefined();
-    } finally {
-      rmSync(tmpBase, { recursive: true, force: true });
-    }
-  });
-
-  test('Gemini CLI: reports error when settings.json is malformed', () => {
-    const tmpBase = join(tmpdir(), `doctor-gemini-${Date.now()}`);
-    const homeDir = join(tmpBase, 'home');
-    const projectDir = join(tmpBase, 'project');
-    mkdirSync(homeDir, { recursive: true });
-    mkdirSync(projectDir, { recursive: true });
-
-    const geminiDir = join(homeDir, '.gemini');
-    const geminiExtDir = join(geminiDir, 'extensions');
-    mkdirSync(geminiExtDir, { recursive: true });
-
-    writeFileSync(
-      join(geminiExtDir, 'extension-enablement.json'),
-      JSON.stringify({
-        'gemini-safety-net': { overrides: ['/Users/kenryu/*'] },
-      }),
-    );
-
-    writeFileSync(join(geminiDir, 'settings.json'), '{ invalid json }');
-
-    try {
-      const hooks = detectAllHooks(projectDir, { homeDir });
-      const gemini = hooks.find((hook) => hook.platform === 'gemini-cli');
-      expect(gemini?.status).toBe('n/a');
-      expect(gemini?.errors?.some((e) => e.includes('Failed to parse'))).toBe(true);
-      expect(gemini?.errors?.some((e) => e.includes('tools.enableHooks'))).toBe(true);
+      expect(gemini?.selfTest).toBeUndefined();
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
@@ -457,6 +606,45 @@ describe('detectAllHooks', () => {
       expect(copilot?.configPath).toBe('copilot-plugin');
       expect(copilot?.configPaths).toBeUndefined();
       expect(copilot?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Copilot CLI: accepts commented managed config when configured from installed plugin list', () => {
+    const tmpBase = join(tmpdir(), `doctor-copilot-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const configDir = join(homeDir, '.copilot');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(configDir, { recursive: true });
+    writeFileSync(
+      join(configDir, 'config.json'),
+      `// User settings belong in settings.json.
+// This file is managed automatically.
+{
+  "installedPlugins": [
+    {
+      "name": "copilot-safety-net",
+      "version": "1.0.0"
+    }
+  ]
+}`,
+    );
+
+    try {
+      const hooks = detectAllHooks(projectDir, {
+        homeDir,
+        copilotCliVersion: '1.0.40',
+        copilotPluginInstalled: true,
+      });
+      const copilot = hooks.find((hook) => hook.platform === 'copilot-cli');
+
+      expect(copilot?.status).toBe('configured');
+      expect(copilot?.method).toBe('plugin list');
+      expect(copilot?.errors?.some((error) => error.includes('Failed to parse')) ?? false).toBe(
+        false,
+      );
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }
@@ -1136,6 +1324,232 @@ describe('detectAllHooks', () => {
             error.includes(join(projectDir, '.github', 'hooks')),
         ),
       ).toBe(true);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: configured when plugin is installed, enabled, and plugin hooks are enabled', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(homeDir, '.codex');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(codexHome, { recursive: true });
+    _createCodexPluginVersion(codexHome);
+    _writeCodexConfig(codexHome, { pluginHooks: true, enabled: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('configured');
+      expect(codex?.method).toBe('plugin cache');
+      expect(codex?.configPath).toBe(join(codexHome, 'config.toml'));
+      expect(codex?.errors).toBeUndefined();
+      expect(codex?.selfTest?.failed).toBe(0);
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: parses config section headers with inline comments', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(homeDir, '.codex');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(codexHome, { recursive: true });
+    _createCodexPluginVersion(codexHome);
+    writeFileSync(
+      join(codexHome, 'config.toml'),
+      `[features] # required for plugin hooks
+plugin_hooks = true
+
+[plugins."safety-net@cc-marketplace"] # installed from marketplace
+enabled = true
+`,
+    );
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('configured');
+      expect(codex?.method).toBe('plugin cache');
+      expect(codex?.errors).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: uses CODEX_HOME when set', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(tmpBase, 'custom-codex');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(codexHome, { recursive: true });
+    _createCodexPluginVersion(codexHome);
+    _writeCodexConfig(codexHome, { pluginHooks: true, enabled: true });
+
+    try {
+      const hooks = withEnv({ CODEX_HOME: codexHome }, () =>
+        detectAllHooks(projectDir, { homeDir }),
+      );
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('configured');
+      expect(codex?.configPath).toBe(join(codexHome, 'config.toml'));
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: disabled with warning when plugin hooks feature flag is missing', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(homeDir, '.codex');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(codexHome, { recursive: true });
+    _createCodexPluginVersion(codexHome);
+    _writeCodexConfig(codexHome, { enabled: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('disabled');
+      expect(
+        codex?.errors?.some((error) =>
+          error.includes('Codex plugin hooks are behind a feature flag'),
+        ),
+      ).toBe(true);
+      expect(codex?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: disabled when plugin enabled config is missing or false', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const missingEnabledHome = join(tmpBase, 'missing-enabled');
+    const disabledHome = join(tmpBase, 'disabled');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(missingEnabledHome, { recursive: true });
+    mkdirSync(disabledHome, { recursive: true });
+    _createCodexPluginVersion(missingEnabledHome);
+    _createCodexPluginVersion(disabledHome);
+    writeFileSync(join(missingEnabledHome, 'config.toml'), '[features]\nplugin_hooks = true\n');
+    _writeCodexConfig(disabledHome, { pluginHooks: true, enabled: false });
+
+    try {
+      const missingEnabledHooks = withEnv({ CODEX_HOME: missingEnabledHome }, () =>
+        detectAllHooks(projectDir, { homeDir }),
+      );
+      const disabledHooks = withEnv({ CODEX_HOME: disabledHome }, () =>
+        detectAllHooks(projectDir, { homeDir }),
+      );
+
+      expect(missingEnabledHooks.find((hook) => hook.platform === 'codex')?.status).toBe(
+        'disabled',
+      );
+      expect(disabledHooks.find((hook) => hook.platform === 'codex')?.status).toBe('disabled');
+      expect(disabledHooks.find((hook) => hook.platform === 'codex')?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: n/a when plugin cache is missing', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    mkdirSync(homeDir, { recursive: true });
+    mkdirSync(projectDir, { recursive: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('n/a');
+      expect(codex?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: n/a when plugin cache has no version entries', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(homeDir, '.codex');
+    mkdirSync(join(codexHome, 'plugins', 'cache', 'cc-marketplace', 'safety-net'), {
+      recursive: true,
+    });
+    mkdirSync(projectDir, { recursive: true });
+    _writeCodexConfig(codexHome, { pluginHooks: true, enabled: true });
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('n/a');
+      expect(codex?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: n/a with error when plugin cache path cannot be listed', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(homeDir, '.codex');
+    const pluginCacheParent = join(codexHome, 'plugins', 'cache', 'cc-marketplace');
+    const pluginCachePath = join(pluginCacheParent, 'safety-net');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(pluginCacheParent, { recursive: true });
+    writeFileSync(pluginCachePath, 'not a directory');
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('n/a');
+      expect(codex?.configPath).toBe(pluginCachePath);
+      expect(codex?.errors?.some((error) => error.includes('Failed to read'))).toBe(true);
+      expect(codex?.selfTest).toBeUndefined();
+    } finally {
+      rmSync(tmpBase, { recursive: true, force: true });
+    }
+  });
+
+  test('Codex: disabled with read error when config.toml cannot be read', () => {
+    const tmpBase = join(tmpdir(), `doctor-codex-${Date.now()}`);
+    const homeDir = join(tmpBase, 'home');
+    const projectDir = join(tmpBase, 'project');
+    const codexHome = join(homeDir, '.codex');
+    const configPath = join(codexHome, 'config.toml');
+    mkdirSync(projectDir, { recursive: true });
+    mkdirSync(codexHome, { recursive: true });
+    _createCodexPluginVersion(codexHome);
+    mkdirSync(configPath);
+
+    try {
+      const hooks = detectAllHooks(projectDir, { homeDir });
+      const codex = hooks.find((hook) => hook.platform === 'codex');
+
+      expect(codex?.status).toBe('disabled');
+      expect(codex?.method).toBe('plugin cache');
+      expect(codex?.configPath).toBe(configPath);
+      expect(codex?.errors?.some((error) => error.includes('Failed to read'))).toBe(true);
+      expect(codex?.selfTest).toBeUndefined();
     } finally {
       rmSync(tmpBase, { recursive: true, force: true });
     }

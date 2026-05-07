@@ -7,6 +7,7 @@
 [![OpenCode](https://img.shields.io/badge/OpenCode-black)](#opencode-installation)
 [![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-678AE3)](#gemini-cli-installation)
 [![Copilot CLI](https://img.shields.io/badge/Copilot%20CLI-4EA5C9)](#github-copilot-cli-installation)
+[![Codex](https://img.shields.io/badge/Codex-white)](#codex-installation)
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
 
 <div align="center">
@@ -28,6 +29,7 @@ A Claude Code plugin that acts as a safety net, catching destructive git and fil
   - [OpenCode Installation](#opencode-installation)
   - [Gemini CLI Installation](#gemini-cli-installation)
   - [GitHub Copilot CLI Installation](#github-copilot-cli-installation)
+  - [Codex Installation](#codex-installation)
 - [Status Line Integration](#status-line-integration)
   - [Setup via Slash Command](#setup-via-slash-command)
   - [Manual Setup](#manual-setup)
@@ -215,25 +217,31 @@ gemini extensions install https://github.com/kenryu42/gemini-safety-net
 
 ---
 
+### Codex Installation
+
+1. Enable Codex plugin hooks in `~/.codex/config.toml`:
+
+  ```toml
+  [features]
+  plugin_hooks = true
+  ```
+
+2. Add the marketplace:
+
+  ```bash
+  codex plugin marketplace add kenryu42/cc-marketplace
+  ```
+
+3. Start Codex.
+4. In the TUI, run `/plugins`.
+5. Use arrow keys to select `[cc-marketplace]`.
+6. Press Enter to install the plugin.
+
+---
+
 ## Status Line Integration
 
 Safety Net can display its status in Claude Code's status line, showing whether protection is active and which modes are enabled.
-
-### Setup via Slash Command
-
-The easiest way to configure the status line is using the built-in slash command:
-
-```
-/set-statusline
-```
-
-This interactive command will:
-1. Ask whether you prefer `bunx` or `npx`
-2. Check for existing status line configuration
-3. Offer to replace or pipe with existing commands
-4. Write the configuration to `~/.claude/settings.json`
-
-### Manual Setup
 
 Add the following to your `~/.claude/settings.json`:
 
@@ -438,9 +446,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute to this 
 Beyond the built-in protections, you can define your own blocking rules to enforce team conventions or project-specific safety policies.
 
 > [!TIP]
-> Use `/set-custom-rules` to create custom rules interactively with natural language.
+> Use the `set-custom-rules` skill to create custom rules interactively with natural language.
 >
-> **GitHub Copilot CLI users**: Since Copilot CLI doesn't support custom slash commands, prompt your agent with:
+> If your agent does not support skills, prompt it with:
 > ```text
 > run npx cc-safety-net --custom-rules-doc and help me set up custom rules
 > ```
@@ -588,7 +596,7 @@ Custom rules use **silent fallback** error handling. If your config file is inva
 
 
 > [!IMPORTANT]  
-> If you add or modify custom rules manually, always validate them with `npx -y cc-safety-net --verify-config` or `/verify-custom-rules` slash command in your coding agent.
+> If you add or modify custom rules manually, always validate them with `npx -y cc-safety-net --verify-config` or the `verify-custom-rules` skill in your coding agent.
 
 ### Block Output Format
 

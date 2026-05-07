@@ -44,10 +44,13 @@ export const defaultVersionFetcher: VersionFetcher = async (args: string[]) => {
       let isSettled = false;
 
       let output = '';
+      let errorOutput = '';
       proc.stdout.on('data', (data: Buffer) => {
         output += data.toString();
       });
-      proc.stderr.on('data', () => {});
+      proc.stderr.on('data', (data: Buffer) => {
+        errorOutput += data.toString();
+      });
 
       const finish = (value: string | null): void => {
         if (isSettled) return;
@@ -62,7 +65,7 @@ export const defaultVersionFetcher: VersionFetcher = async (args: string[]) => {
       }, VERSION_FETCH_TIMEOUT_MS);
 
       proc.on('close', (code) => {
-        finish(code === 0 ? output.trim() || null : null);
+        finish(code === 0 ? output.trim() || errorOutput.trim() || null : null);
       });
 
       proc.on('error', () => {
@@ -120,23 +123,37 @@ export async function getSystemInfo(
   };
 
   // Run all version fetches in parallel
-  const [claudeRaw, openCodeRaw, geminiRaw, copilotRaw, nodeRaw, npmRaw, bunRaw, pluginListRaw] =
-    await Promise.all([
-      fetcher(['claude', '--version']),
-      fetcher(['opencode', '--version']),
-      fetcher(['gemini', '--version']),
-      fetchCopilotVersion(),
-      fetcher(['node', '--version']),
-      fetcher(['npm', '--version']),
-      fetcher(['bun', '--version']),
-      fetcher(['copilot', 'plugin', 'list']),
-    ]);
+  const [
+    claudeRaw,
+    claudePluginListOutput,
+    openCodeRaw,
+    geminiRaw,
+    geminiExtensionsListOutput,
+    copilotRaw,
+    nodeRaw,
+    npmRaw,
+    bunRaw,
+    pluginListRaw,
+  ] = await Promise.all([
+    fetcher(['claude', '--version']),
+    fetcher(['claude', 'plugin', 'list']),
+    fetcher(['opencode', '--version']),
+    fetcher(['gemini', '--version']),
+    fetcher(['gemini', 'extensions', 'list']),
+    fetchCopilotVersion(),
+    fetcher(['node', '--version']),
+    fetcher(['npm', '--version']),
+    fetcher(['bun', '--version']),
+    fetcher(['copilot', 'plugin', 'list']),
+  ]);
 
   return {
     version: CURRENT_VERSION,
     claudeCodeVersion: parseVersion(claudeRaw),
+    claudePluginListOutput,
     openCodeVersion: parseVersion(openCodeRaw),
     geminiCliVersion: parseVersion(geminiRaw),
+    geminiExtensionsListOutput,
     copilotCliVersion: parseVersion(copilotRaw),
     nodeVersion: parseVersion(nodeRaw),
     npmVersion: parseVersion(npmRaw),

@@ -164,13 +164,13 @@ describe('generateChangelog', () => {
     const runner = createRunner({
       'git log v1.0.0..HEAD --oneline --format="%h %s"': [
         'abc123 feat: core change',
-        'bcd234 fix(commands): adjust',
+        'bcd234 fix(skills): adjust',
         'cde345 fix(opencode): tweak',
         'eee111 feat: missing files',
         'fff222 chore: skip',
       ].join('\n'),
       'git diff-tree --no-commit-id --name-only -r abc123': 'src/core/analyze.ts\n',
-      'git diff-tree --no-commit-id --name-only -r bcd234': 'commands/example.json\n',
+      'git diff-tree --no-commit-id --name-only -r bcd234': 'skills/example/SKILL.md\n',
       'git diff-tree --no-commit-id --name-only -r cde345': '.opencode/config.json\n',
       'git diff-tree --no-commit-id --name-only -r eee111': () => {
         throw new Error('boom');
@@ -181,7 +181,7 @@ describe('generateChangelog', () => {
 
     expect(changelog).toEqual({
       core: ['- abc123 feat: core change', '- eee111 feat: missing files'],
-      claudeCode: ['- bcd234 fix(commands): adjust'],
+      claudeCode: ['- bcd234 fix(skills): adjust'],
       openCode: ['- cde345 fix(opencode): tweak'],
     });
   });

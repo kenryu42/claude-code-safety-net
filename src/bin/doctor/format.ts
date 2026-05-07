@@ -19,6 +19,7 @@ const PLATFORM_NAMES: Record<string, string> = {
   opencode: 'OpenCode',
   'gemini-cli': 'Gemini CLI',
   'copilot-cli': 'Copilot CLI',
+  codex: 'Codex',
 };
 
 /**
@@ -77,7 +78,7 @@ export function formatHooksSection(hooks: HookStatus[]): string {
 
   // Show errors
   for (const e of errors) {
-    lines.push(`   Error (${e.platform}): ${e.message}`);
+    lines.push(colors.red(`   Error (${e.platform}): ${e.message}`));
   }
 
   return lines.join('\n');

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Verify Custom Rules"
+  short_description: "Validate Safety Net custom rules"
+  default_prompt: "Use $verify-custom-rules to validate Safety Net custom rules config."
+policy:
+  allow_implicit_invocation: false

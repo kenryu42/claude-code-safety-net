@@ -2,7 +2,7 @@
  * Tests for the doctor command formatting functions.
  */
 
-import { describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { getEnvironmentInfo } from '@/bin/doctor/environment';
 import {
   formatActivitySection,
@@ -71,6 +71,27 @@ describe('formatRulesTable', () => {
 });
 
 describe('formatHooksSection', () => {
+  let originalIsTTY: boolean | undefined;
+  let originalNoColor: string | undefined;
+
+  beforeEach(() => {
+    originalIsTTY = process.stdout.isTTY;
+    originalNoColor = process.env.NO_COLOR;
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process.stdout, 'isTTY', {
+      value: originalIsTTY,
+      writable: true,
+      configurable: true,
+    });
+    if (originalNoColor === undefined) {
+      delete process.env.NO_COLOR;
+      return;
+    }
+    process.env.NO_COLOR = originalNoColor;
+  });
+
   test('formats configured hooks with self-test', () => {
     const hooks: HookStatus[] = [
       {
@@ -137,6 +158,22 @@ describe('formatHooksSection', () => {
 
     const output = formatHooksSection(hooks);
     expect(output).toContain('Error (OpenCode): Parse error');
+  });
+
+  test('shows hook errors in red when colors are enabled', () => {
+    Object.defineProperty(process.stdout, 'isTTY', {
+      value: true,
+      writable: true,
+      configurable: true,
+    });
+    delete process.env.NO_COLOR;
+
+    const hooks: HookStatus[] = [
+      { platform: 'codex', status: 'disabled', errors: ['Parse error'] },
+    ];
+
+    const output = formatHooksSection(hooks);
+    expect(output).toContain('\x1b[31m   Error (Codex): Parse error\x1b[0m');
   });
 
   test('shows warning for configured hooks with errors', () => {
@@ -365,8 +402,10 @@ describe('formatSystemInfoSection', () => {
     const sysInfo = {
       version: 'dev',
       claudeCodeVersion: null,
+      claudePluginListOutput: null,
       openCodeVersion: null,
       geminiCliVersion: null,
+      geminiExtensionsListOutput: null,
       copilotCliVersion: null,
       nodeVersion: '22.0.0',
       npmVersion: null,
@@ -407,8 +446,10 @@ describe('formatConfigSection', () => {
       system: {
         version: '0.6.0',
         claudeCodeVersion: '1.0.0',
+        claudePluginListOutput: null,
         openCodeVersion: '0.1.0',
         geminiCliVersion: null,
+        geminiExtensionsListOutput: null,
         copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
@@ -459,8 +500,10 @@ describe('formatConfigSection', () => {
       system: {
         version: '0.6.0',
         claudeCodeVersion: '1.0.0',
+        claudePluginListOutput: null,
         openCodeVersion: '0.1.0',
         geminiCliVersion: null,
+        geminiExtensionsListOutput: null,
         copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
@@ -502,8 +545,10 @@ describe('formatConfigSection', () => {
       system: {
         version: '0.6.0',
         claudeCodeVersion: '1.0.0',
+        claudePluginListOutput: null,
         openCodeVersion: '0.1.0',
         geminiCliVersion: null,
+        geminiExtensionsListOutput: null,
         copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
@@ -533,8 +578,10 @@ describe('formatSummary', () => {
       system: {
         version: '0.6.0',
         claudeCodeVersion: null,
+        claudePluginListOutput: null,
         openCodeVersion: null,
         geminiCliVersion: null,
+        geminiExtensionsListOutput: null,
         copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
@@ -560,8 +607,10 @@ describe('formatSummary', () => {
       system: {
         version: '0.6.0',
         claudeCodeVersion: null,
+        claudePluginListOutput: null,
         openCodeVersion: null,
         geminiCliVersion: null,
+        geminiExtensionsListOutput: null,
         copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',
@@ -587,8 +636,10 @@ describe('formatSummary', () => {
       system: {
         version: '0.6.0',
         claudeCodeVersion: null,
+        claudePluginListOutput: null,
         openCodeVersion: null,
         geminiCliVersion: null,
+        geminiExtensionsListOutput: null,
         copilotCliVersion: null,
         nodeVersion: '22.0.0',
         npmVersion: '10.0.0',

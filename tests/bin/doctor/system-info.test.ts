@@ -29,12 +29,19 @@ describe('getSystemInfo', () => {
     expect(
       sysInfo.claudeCodeVersion === null || typeof sysInfo.claudeCodeVersion === 'string',
     ).toBe(true);
+    expect(
+      sysInfo.claudePluginListOutput === null || typeof sysInfo.claudePluginListOutput === 'string',
+    ).toBe(true);
     expect(sysInfo.openCodeVersion === null || typeof sysInfo.openCodeVersion === 'string').toBe(
       true,
     );
     expect(sysInfo.geminiCliVersion === null || typeof sysInfo.geminiCliVersion === 'string').toBe(
       true,
     );
+    expect(
+      sysInfo.geminiExtensionsListOutput === null ||
+        typeof sysInfo.geminiExtensionsListOutput === 'string',
+    ).toBe(true);
     expect(
       sysInfo.copilotCliVersion === null || typeof sysInfo.copilotCliVersion === 'string',
     ).toBe(true);
@@ -52,6 +59,18 @@ describe('getSystemInfo', () => {
   test('includes Copilot CLI version with mock fetcher', async () => {
     const sysInfo = await getSystemInfo(mockVersionFetcher);
     expect(sysInfo.copilotCliVersion).toBe('1.0.9');
+  });
+
+  test('includes Gemini extensions list output with mock fetcher', async () => {
+    const sysInfo = await getSystemInfo(mockVersionFetcher);
+    expect(sysInfo.geminiExtensionsListOutput).toContain(
+      'https://github.com/kenryu42/gemini-safety-net',
+    );
+  });
+
+  test('includes Claude plugin list output with mock fetcher', async () => {
+    const sysInfo = await getSystemInfo(mockVersionFetcher);
+    expect(sysInfo.claudePluginListOutput).toContain('safety-net@cc-marketplace');
   });
 
   test('starts both copilot version probes immediately and prefers --binary-version', async () => {
@@ -140,7 +159,9 @@ describe('getSystemInfo', () => {
     const failingFetcher = async (_args: string[]) => null;
     const result = await getSystemInfo(failingFetcher);
     expect(result.claudeCodeVersion).toBeNull();
+    expect(result.claudePluginListOutput).toBeNull();
     expect(result.copilotCliVersion).toBeNull();
+    expect(result.geminiExtensionsListOutput).toBeNull();
     expect(result.copilotPluginInstalled).toBe(false);
     expect(result.bunVersion).toBeNull();
     expect(result.nodeVersion).toBeNull();
@@ -227,6 +248,15 @@ describe('defaultVersionFetcher', () => {
     const result = await defaultVersionFetcher(['bun', '--version']);
     expect(result).not.toBeNull();
     expect(result).toMatch(/^\d+\.\d+/);
+  });
+
+  test('returns stderr output when a successful command writes no stdout', async () => {
+    const result = await defaultVersionFetcher([
+      'bun',
+      '-e',
+      'console.error("stderr-only output")',
+    ]);
+    expect(result).toBe('stderr-only output');
   });
 
   test('returns null for commands that time out', async () => {

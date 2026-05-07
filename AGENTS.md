@@ -1,173 +1,95 @@
-# Agent Guidelines
+- ALWAYS USE PARALLEL TOOLS WHEN APPLICABLE.
+- Prefer automation: execute requested actions without confirmation unless blocked by missing info or safety/irreversibility.
+- ALWAYS use `bun run check` to verify changes. This runs typecheck, knip, biome lint, and tests together. Do not run these separately.
 
-A Claude Code / OpenCode plugin that blocks destructive git and filesystem commands before execution. Works as a PreToolUse hook intercepting Bash commands.
+## Style Guide
 
-## Commands
+### General Principles
 
-| Task | Command |
-|------|---------|
-| Install | `bun install` |
-| Build | `bun run build` |
-| All checks | `bun run check` |
-| Lint | `bun run lint` |
-| Type check | `bun run typecheck` |
-| Test all | `AGENT=1 bun test` |
-| Single test | `bun test tests/rules-git.test.ts` |
-| Pattern match | `bun test --test-name-pattern "pattern"` |
-| Dead code | `bun run knip` |
-| AST rules | `bun run sg:scan` |
-| Doctor | `bun src/bin/cc-safety-net.ts doctor` |
+- Keep things in one function unless composable or reusable
+- Avoid `try`/`catch` where possible
+- Avoid using the `any` type
+- Rely on type inference when possible; avoid explicit type annotations or interfaces unless necessary for exports or clarity
+- Prefer functional array methods (flatMap, filter, map) over for loops; use type guards on filter to maintain type inference downstream
+- In `src/config`, follow the existing self-export pattern at the top of the file (for example `export * as ConfigAgent from "./agent"`) when adding a new config module.
 
-**Always use `bun run check` to verify changes.** This runs typecheck, knip, biome lint, and tests together. Do not run these separately.
+Reduce total variable count by inlining when a value is only used once.
 
-## Pre-commit Hooks
-
-Runs on commit: `knip` → `lint-staged` (biome check --write, ast-grep scan)
-
-## Commit Conventions
-
-For changes to `commands/`, `hooks/`, or `.opencode/`, use only `fix` or `feat` commit types.
-
-## Code Style (TypeScript)
-
-### Formatting (Biome)
-- 2-space indentation, 100-char line width
-- Single quotes, trailing commas, semicolons required
-- Imports: auto-sorted by Biome, use relative imports within package
-- Prefer named exports over default exports
-
-### Type Hints
-- **Required** on all functions
-- Use `| null` or `| undefined` appropriately
-- Use lowercase primitives (`string`, `number`, `boolean`)
-- Use `readonly` arrays where mutation isn't needed
-
-```typescript
+```ts
 // Good
-function analyze(command: string, options?: { strict?: boolean }): string | null { ... }
-function analyzeRm(tokens: readonly string[], cwd: string | null): string | null { ... }
+const journal = JSON.parse(await fs.readFile(path.join(dir, "journal.json"), "utf8"))
 
 // Bad
-function analyze(command, strict) { ... }  // Missing types
+const journalPath = path.join(dir, "journal.json")
+const journal = JSON.parse(await fs.readFile(journalPath, "utf8"))
 ```
 
-### Naming
-- Functions/variables: `camelCase`
-- Types/interfaces: `PascalCase`
-- Constants: `UPPER_SNAKE_CASE` (reason strings: `REASON_*`)
-- Private/internal: `_leadingUnderscore` (for module-private functions)
+### Destructuring
 
-### Test-Only Exports
-When exporting a function solely for testing, add `@internal` JSDoc to satisfy knip:
-```typescript
-/** @internal Exported for testing */
-export const myInternalFn = () => { ... };
+Avoid unnecessary destructuring. Use dot notation to preserve context.
+
+```ts
+// Good
+obj.a
+obj.b
+
+// Bad
+const { a, b } = obj
 ```
 
-### Error Handling
-- Print errors to stderr
-- Exit codes: `0` = success, `1` = error
-- Block commands: exit 0 with JSON `permissionDecision: "deny"`
+### Variables
 
-## Testing
+Prefer `const` over `let`. Use ternaries or early returns instead of reassignment.
 
-Use Bun's built-in test runner with test helpers:
+```ts
+// Good
+const foo = condition ? 1 : 2
 
-```typescript
-import { describe, test } from 'bun:test';
-import { assertBlocked, assertAllowed } from './helpers.ts';
-
-describe('git rules', () => {
-  test('git reset --hard blocked', () => {
-    assertBlocked('git reset --hard', 'git reset --hard');
-  });
-
-  test('git status allowed', () => {
-    assertAllowed('git status');
-  });
-
-  test('with cwd', () => {
-    assertBlocked('rm -rf /', 'rm -rf', '/home/user');
-  });
-});
+// Bad
+let foo
+if (condition) foo = 1
+else foo = 2
 ```
 
-### Test Helpers
-| Function | Purpose |
-|----------|---------|
-| `assertBlocked(command, reasonContains, cwd?)` | Verify command is blocked |
-| `assertAllowed(command, cwd?)` | Verify command passes through |
-| `runGuard(command, cwd?, config?)` | Run analysis and return reason or null |
-| `withEnv(env, fn)` | Run test with temporary environment variables |
+### Control Flow
 
-## Environment Variables
+Avoid `else` statements. Prefer early returns.
 
-| Variable | Effect |
-|----------|--------|
-| `SAFETY_NET_STRICT=1` | Fail-closed on unparseable hook input/commands |
-| `SAFETY_NET_PARANOID=1` | Enable all paranoid checks (rm + interpreters) |
-| `SAFETY_NET_PARANOID_RM=1` | Block non-temp `rm -rf` even within cwd |
-| `SAFETY_NET_PARANOID_INTERPRETERS=1` | Block interpreter one-liners |
+```ts
+// Good
+function foo() {
+  if (condition) return 1
+  return 2
+}
 
-## What Gets Blocked
-
-**Git**: `checkout -- <files>`, `restore` (without --staged), `reset --hard/--merge`, `clean -f`, `push --force/-f` (without --force-with-lease), `branch -D`, `stash drop/clear`
-
-**Filesystem**: `rm -rf` outside cwd (except `/tmp`, `/var/tmp`, `$TMPDIR`), `rm -rf` when cwd is `$HOME`, `rm -rf /` or `~`, `find -delete`
-
-**Piped commands**: `xargs rm -rf`, `parallel rm -rf` (dynamic input to destructive commands)
-
-## Adding New Rules
-
-### Git Rule
-1. Add reason constant in `rules-git.ts`: `const REASON_* = "..."`
-2. Add detection logic in `analyzeGit()`
-3. Add tests in `tests/rules-git.test.ts`
-4. Run `bun run check`
-
-### rm Rule
-1. Add logic in `rules-rm.ts`
-2. Add tests in `tests/rules-rm.test.ts`
-3. Run `bun run check`
-
-### Other Command Rules
-1. Add reason constant in `analyze.ts`: `const REASON_* = "..."`
-2. Add detection in `analyzeSegment()`
-3. Add tests in appropriate test file
-4. Run `bun run check`
-
-## Edge Cases to Test
-
-- Shell wrappers: `bash -c '...'`, `sh -lc '...'`
-- Sudo/env: `sudo git ...`, `env VAR=1 git ...`
-- Pipelines: `echo ok | git reset --hard`
-- Interpreter one-liners: `python -c 'os.system("rm -rf /")'`
-- Xargs/parallel: `find . | xargs rm -rf`
-- Busybox: `busybox rm -rf /`
-- Nested commands: `$( rm -rf / )`, backticks
-
-## Hook Output Format
-
-Blocked commands produce JSON:
-```json
-{
-  "hookSpecificOutput": {
-    "hookEventName": "PreToolUse",
-    "permissionDecision": "deny",
-    "permissionDecisionReason": "BLOCKED by Safety Net\n\nReason: ..."
-  }
+// Bad
+function foo() {
+  if (condition) return 1
+  else return 2
 }
 ```
 
-Allowed commands produce no output (exit 0 silently).
+### Schema Definitions (Drizzle)
 
-## Bun Guidelines
+Use snake_case for field names so column names don't need to be redefined as strings.
 
-Default to Bun instead of Node.js:
-- `bun <file>` instead of `node <file>`
-- `bun test` instead of jest/vitest
-- `bun install` instead of npm/yarn/pnpm install
-- `bunx <pkg>` instead of `npx <pkg>`
-- Bun auto-loads `.env` - no dotenv needed
+```ts
+// Good
+const table = sqliteTable("session", {
+  id: text().primaryKey(),
+  project_id: text().notNull(),
+  created_at: integer().notNull(),
+})
 
-Use `AGENT=1 bun test` to run tests.
+// Bad
+const table = sqliteTable("session", {
+  id: text("id").primaryKey(),
+  projectID: text("project_id").notNull(),
+  createdAt: integer("created_at").notNull(),
+})
+```
+
+## Testing
+
+- Avoid mocks as much as possible
+- Test actual implementation, do not duplicate logic into tests

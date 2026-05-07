@@ -70,9 +70,25 @@ export function withEnv<T>(env: Record<string, string>, fn: () => T): T {
  * @internal Exported for testing
  */
 export const mockVersionFetcher: VersionFetcher = async (args: string[]) => {
+  if (args[0] === 'claude' && args[1] === 'plugin') {
+    return `Installed plugins:
+
+  ❯ safety-net@cc-marketplace
+    Version: 0.8.2
+    Scope: user
+    Status: ✔ enabled`;
+  }
+
   // Handle multi-word commands like `copilot plugin list`
   if (args[0] === 'copilot' && args[1] === 'plugin') {
     return 'Installed plugins:\n  • copilot-safety-net (v1.0.0)';
+  }
+
+  if (args[0] === 'gemini' && args[1] === 'extensions') {
+    return `✓ gemini-safety-net (1.0.0)
+ Source: https://github.com/kenryu42/gemini-safety-net (Type: github-release)
+ Enabled (User): true
+ Enabled (Workspace): true`;
   }
 
   const cmd = args[0];
