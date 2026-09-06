@@ -3,21 +3,22 @@
  */
 
 import { dirname } from 'node:path';
+import type { Environment } from '@/core/environment';
 import {
-  getPolicyPaths,
-  getProjectRulesConfigPath,
-  getRulesConfigRuntimeErrorsForConfig,
-  getUserRulesConfigPath,
-  loadRulesPolicy,
   PolicyFilesystemError,
   type PolicyFilesystemScope,
   type PolicyFilesystemTarget,
   readPolicyFile,
-  type ValidationResult,
-  validateRulesConfigFile,
-} from '@/engine/facade';
-import type { ConfigSourceInfo, EffectiveRule, ShadowedRule } from '@/integrations/doctor-types';
-import type { CustomRule } from '@/ir/policy';
+} from '@/core/io/safe-read';
+import { type ValidationResult, validateRulesConfigFile } from '@/core/policy/config-file';
+import {
+  getPolicyPaths,
+  getProjectRulesConfigPath,
+  getUserRulesConfigPath,
+} from '@/core/policy/paths';
+import { getRulesConfigRuntimeErrorsForConfig, loadRulesPolicy } from '@/core/policy/scope-policy';
+import type { CustomRule } from '@/core/policy/types';
+import type { ConfigSourceInfo, EffectiveRule, ShadowedRule } from '@/hosts/doctor-types';
 
 export interface ConfigInfo {
   userConfig: ConfigSourceInfo;
@@ -68,17 +69,21 @@ function toEffectiveRule(rule: CustomRule, source: 'user' | 'project'): Effectiv
   };
 }
 
-export function getConfigInfo(cwd: string, options?: ConfigInfoOptions): ConfigInfo {
-  const userPath = options?.userConfigPath ?? getUserRulesConfigPath();
+export function getConfigInfo(
+  environment: Environment,
+  cwd: string,
+  options?: ConfigInfoOptions,
+): ConfigInfo {
+  const userPath = options?.userConfigPath ?? getUserRulesConfigPath(environment);
   const projectPath = options?.projectConfigPath ?? getProjectRulesConfigPath(cwd);
   const userConfigDir = dirname(userPath);
-  const policy = loadRulesPolicy({
+  const policy = loadRulesPolicy(environment, {
     cwd,
     userConfigPath: userPath,
     projectConfigPath: projectPath,
     userConfigDir,
   });
-  const paths = getPolicyPaths({
+  const paths = getPolicyPaths(environment, {
     cwd,
     userConfigPath: userPath,
     projectConfigPath: projectPath,

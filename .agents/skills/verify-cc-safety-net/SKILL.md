@@ -16,7 +16,7 @@ commands (`status`, `doctor`, `explain`, `logs`) and a local web GUI (`gui`).
   a JSON payload or an `explain` argument. Never execute one in a shell.
 - Never run the CLI against the real home. Every invocation goes through `./ccsn-isolated` (see
   Helpers), which redirects `HOME`, `CC_SAFETY_NET_HOME`, and `CC_SAFETY_NET_AUDIT_HOME` into a
-  disposable directory. A bare `bun run src/cli/cc-safety-net.ts` writes to the developer's real
+  disposable directory. A bare `bun run src/entries/bin.ts` writes to the developer's real
   `~/.cc-safety-net/logs`.
 - Never drive `install`, `update`, or `uninstall` (CLI or GUI Integrations tab) in a verification
   run: install detection and npx-cache clearing reach real machine state beyond `$HOME`.
@@ -87,7 +87,7 @@ Deny prints `{"hookSpecificOutput":{…,"permissionDecision":"deny","permissionD
 allow prints nothing. Both exit 0 — the decision is the stdout JSON, never the exit code.
 `hook` also takes `--cursor`, `--gemini-cli`, `--copilot-cli`, `--kimi-code`, `--grok-build`,
 `--hermes-agent`, `--antigravity-cli` (payload shapes differ; see the integration under
-`src/integrations/<id>/hook.ts`).
+`src/hosts/<id>/hook.ts`).
 
 **Plain CLI.** `./ccsn-isolated explain --json "<command>"`, `status`, `doctor --json
 --skip-update-check`, `logs --json [--all]`. `logs` is scoped to the current working directory —
@@ -141,6 +141,6 @@ CCSN_VERIFY_HOME=/abs/disposable/dir ./ccsn-isolated <command> [args...]
 It requires `CCSN_VERIFY_HOME` to be absolute, redirects `HOME`/`USERPROFILE`/
 `CC_SAFETY_NET_HOME`/`CC_SAFETY_NET_AUDIT_HOME` into it, blanks the `CC_SAFETY_NET_LEVEL`/
 `STRICT`/`PARANOID*`/`WORKTREE` overrides a developer shell might export, and execs
-`bun run <repo>/src/cli/cc-safety-net.ts "$@"` with stdin/stdout/exit code passing through, so
+`bun run <repo>/src/entries/bin.ts "$@"` with stdin/stdout/exit code passing through, so
 hook payloads pipe straight in. It runs the CLI from your current cwd — `cd` into `$WS` for
 cwd-scoped commands like `logs`.

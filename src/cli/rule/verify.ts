@@ -1,18 +1,6 @@
 import { join, resolve } from 'node:path';
 import { colors } from '@/cli/utils/colors';
-import {
-  getLegacyProjectConfigPath,
-  type ValidationResult,
-  validateConfigFile,
-  validateRulesConfigFile,
-} from '@/rules/config';
-import {
-  getLegacyUserRulesConfigPath,
-  getProjectRulesConfigPath,
-  getRulesConfigRuntimeErrorsForConfig,
-  getUserRulesConfigPath,
-  RULES_DIR,
-} from '@/rules/policy';
+import type { Environment } from '@/core/environment';
 import {
   bindDelegatedPolicyFilesystemTarget,
   getPolicyFilesystemTargetForPath,
@@ -21,11 +9,23 @@ import {
   readPolicyDirectoryEntries,
   readPolicyFile,
   writePolicyFileAtomic,
-} from '@/rules/policy/filesystem';
-import { getPolicyPaths } from '@/rules/policy/paths';
-import { NAME_PATTERN } from '@/rules/policy/source-syntax';
-import { assertValidRulebook } from '@/rules/rulebook';
-import { evaluateRulebookFixtures } from '@/rules/rulebook-fixtures';
+} from '@/core/io/safe-read';
+import {
+  getLegacyProjectConfigPath,
+  getLegacyUserRulesConfigPath,
+  type ValidationResult,
+  validateConfigFile,
+  validateRulesConfigFile,
+} from '@/core/policy/config-file';
+import {
+  getPolicyPaths,
+  getProjectRulesConfigPath,
+  getUserRulesConfigPath,
+} from '@/core/policy/paths';
+import { assertValidRulebook } from '@/core/policy/rulebook';
+import { getRulesConfigRuntimeErrorsForConfig } from '@/core/policy/scope-policy';
+import { NAME_PATTERN, RULES_DIR } from '@/core/policy/source-syntax';
+import { evaluateRulebookFixtures } from '@/gate/rulebook-fixtures';
 
 const VERIFY_HEADER = 'CC Safety Net Config';
 const VERIFY_SEPARATOR = '═'.repeat(VERIFY_HEADER.length);
@@ -43,9 +43,9 @@ interface RulesVerifyOptions {
   legacyProjectConfigPath?: string;
 }
 
-export function runRulesVerify(options: RulesVerifyOptions = {}): number {
+export function runRulesVerify(environment: Environment, options: RulesVerifyOptions = {}): number {
   try {
-    return runRulesVerifyInternal(options);
+    return runRulesVerifyInternal(environment, options);
   } catch (error) {
     if (error instanceof PolicyFilesystemError) {
       console.error(error.message);
@@ -55,19 +55,20 @@ export function runRulesVerify(options: RulesVerifyOptions = {}): number {
   }
 }
 
-function runRulesVerifyInternal(options: RulesVerifyOptions): number {
+function runRulesVerifyInternal(environment: Environment, options: RulesVerifyOptions): number {
   const cwd = options.cwd ?? process.cwd();
-  const userConfig = options.userConfigPath ?? getUserRulesConfigPath();
+  const userConfig = options.userConfigPath ?? getUserRulesConfigPath(environment);
   const projectConfig = options.projectConfigPath ?? getProjectRulesConfigPath(cwd);
-  const legacyUserConfig = options.legacyUserConfigPath ?? getLegacyUserRulesConfigPath();
+  const legacyUserConfig =
+    options.legacyUserConfigPath ?? getLegacyUserRulesConfigPath(environment);
   const legacyProjectConfig = options.legacyProjectConfigPath ?? getLegacyProjectConfigPath(cwd);
   const githubSourceRulesDir = resolve(cwd, RULES_DIR);
-  const paths = getPolicyPaths({
+  const paths = getPolicyPaths(environment, {
     cwd,
     userConfigPath: userConfig,
     projectConfigPath: projectConfig,
   });
-  const defaultPaths = getPolicyPaths({ cwd });
+  const defaultPaths = getPolicyPaths(environment, { cwd });
   const userConfigTarget = getPolicyFilesystemTargetForPath(paths.userScope, userConfig);
   const projectConfigTarget = getPolicyFilesystemTargetForPath(paths.projectScope, projectConfig);
   const legacyUserTarget = options.legacyUserConfigPath

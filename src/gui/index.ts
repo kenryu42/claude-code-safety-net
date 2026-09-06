@@ -2,57 +2,53 @@ import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
-import type { AddressInfo } from 'node:net';
 import { Writable } from 'node:stream';
 import { parseCommandArgs } from '@/cli/args';
 import { getActivitySummary } from '@/cli/doctor/activity';
 import { checkForUpdates } from '@/cli/doctor/updates';
-import { explainCommand } from '@/cli/explain';
-import { type RunInstallCommandOptions, runInstallCommand } from '@/cli/install';
-import {
-  buildProjectPolicyFileValue,
-  createPolicySnapshot,
-  describeConfigState,
-  diffPolicyRows,
-  getProjectPolicyPath,
-  getUserPolicyDiagnostics,
-  loadPolicySnapshot,
-  loadRulesPolicy,
-  mergeProjectPolicy,
-  projectPolicyProjection,
-  type RulesPolicyOptions,
-  readPolicyJson,
-  readRuntimeUserBaseline,
-  resolveAuditRetentionDays,
-} from '@/engine/facade';
-import { getIntegrationDisplayName, installIntegrationMetadata } from '@/integrations/catalog';
-import { detectAllHooks } from '@/integrations/detect';
-import type { SystemInfo, UpdateInfo } from '@/integrations/doctor-types';
-import {
-  INSTALL_TARGETS,
-  type InstallAction,
-  type InstallTarget,
-} from '@/integrations/install/targets';
-import { getPackageVersion, getSystemInfo, type VersionFetcher } from '@/integrations/system-info';
-import type { ExplainResult } from '@/ir/explain';
-import {
-  createPolicyPreview,
-  DEFAULT_GUI_POLICY,
-  DESTRUCTIVE_COMMAND_RULE_METADATA,
-  normalizeGuiPolicy,
-  normalizeSafety,
-  previewUserPolicyForGui,
-  readUserPolicyForGui,
-  repairUserPolicyForGui,
-  resolveSecretDisabledRules,
-  SECRET_PROTECTION_RULE_METADATA,
-  writeUserPolicyFromGui,
-} from '@/policy/store';
+import { type RunInstallCommandOptions, runInstallCommand } from '@/cli/install/index';
+import { createProcessEnvironment, type Environment } from '@/core/environment';
 import {
   bindPolicyFilesystemScope,
   getPolicyFilesystemTargetForPath,
   writePolicyFileAtomic,
-} from '@/rules/policy/filesystem';
+} from '@/core/io/safe-read';
+import {
+  buildProjectPolicyFileValue,
+  diffPolicyRows,
+  readPolicyJson,
+  readRuntimeUserBaseline,
+} from '@/core/policy/diff';
+import { mergeProjectPolicy } from '@/core/policy/merge';
+import { getProjectPolicyPath, type RulesPolicyOptions } from '@/core/policy/paths';
+import { readRetentionDays } from '@/core/policy/retention';
+import { loadRulesPolicy } from '@/core/policy/scope-policy';
+import {
+  createPolicySnapshot,
+  describeConfigState,
+  loadPolicySnapshot,
+} from '@/core/policy/snapshot';
+import {
+  createPolicyPreview,
+  DEFAULT_GUI_POLICY,
+  normalizeGuiPolicy,
+  normalizeSafety,
+  previewUserPolicyForGui,
+  projectPolicyProjection,
+  readUserPolicyForGui,
+  repairUserPolicyForGui,
+  resolveSecretDisabledRules,
+  writeUserPolicyFromGui,
+} from '@/core/policy/store';
+import { getUserPolicyDiagnostics } from '@/core/policy/validate';
+import { DESTRUCTIVE_COMMAND_RULE_METADATA } from '@/core/rules/destructive';
+import { SECRET_PROTECTION_RULE_METADATA } from '@/core/rules/secret';
+import { type ExplainResult, explainCommand } from '@/gate/explain';
+import { getIntegrationDisplayName, installIntegrationMetadata } from '@/hosts/catalog';
+import { detectAllHooks } from '@/hosts/detect/index';
+import type { SystemInfo, UpdateInfo } from '@/hosts/doctor-types';
+import { INSTALL_TARGETS, type InstallAction, type InstallTarget } from '@/hosts/install/targets';
+import { getPackageVersion, getSystemInfo, type VersionFetcher } from '@/hosts/system-info';
 import { getActivityFeed } from './activity';
 import {
   type ChooseDirectoryResult,
@@ -114,7 +110,7 @@ const STALE_DRAFT_REVISION =
 const PROJECT_AUDIT_REJECTION =
   'audit settings are user scope only; remove the audit section from a project proposal';
 
-interface PolicyGuiServerOptions extends RulesPolicyOptions {
+interface PolicyGuiServerOptions extends Partial<RulesPolicyOptions> {
   chooseDirectory?: () => Promise<ChooseDirectoryResult>;
   starRepo?: () => Promise<{ ok: boolean }>;
   fetchStarContext?: () => Promise<StarContext>;
@@ -127,7 +123,7 @@ interface PolicyGuiServerOptions extends RulesPolicyOptions {
   activityLogsDir?: string;
 }
 
-interface RunGuiCommandOptions extends RulesPolicyOptions {
+interface RunGuiCommandOptions extends Partial<RulesPolicyOptions> {
   openBrowser?: (url: string) => Promise<void> | void;
   keepAlive?: boolean;
   log?: (message: string) => void;
@@ -147,7 +143,7 @@ export async function runGuiCommand(
     return 1;
   }
 
-  const server = await createPolicyGuiServer(options);
+  const server = await createPolicyGuiServer(createProcessEnvironment(), options);
   log(`CC Safety Net policy GUI: ${server.url}`);
 
   if (!parsed.flags.noOpen) {
@@ -172,6 +168,7 @@ export async function runGuiCommand(
 
 /** @internal */
 export async function createPolicyGuiServer(
+  environment: Environment,
   options: PolicyGuiServerOptions = {},
 ): Promise<PolicyGuiServer> {
   const token = randomBytes(24).toString('base64url');
@@ -179,7 +176,7 @@ export async function createPolicyGuiServer(
   // GUI this server serves, and a second server must not inherit its target.
   const session: ProjectDraftSession = { dir: null, revision: 0 };
   const server = createServer((request, response) => {
-    void handleRequest(request, response, token, options, session);
+    void handleRequest(environment, request, response, token, options, session);
   });
 
   await new Promise<void>((resolve, reject) => {
@@ -190,7 +187,7 @@ export async function createPolicyGuiServer(
     });
   });
 
-  const address = server.address() as AddressInfo;
+  const address = server.address() as { port: number };
   const origin = `http://127.0.0.1:${address.port}`;
   return {
     origin,
@@ -201,6 +198,7 @@ export async function createPolicyGuiServer(
 }
 
 async function handleRequest(
+  environment: Environment,
   request: IncomingMessage,
   response: ServerResponse,
   token: string,
@@ -225,8 +223,8 @@ async function handleRequest(
   }
 
   if (request.method === 'GET' && url.pathname === '/api/policy') {
-    const result = readUserPolicyForGui(options);
-    const snapshot = loadPolicySnapshot(options);
+    const result = readUserPolicyForGui(environment, options);
+    const snapshot = loadPolicySnapshot(environment, loaderOptions(options));
     sendJson(response, 200, {
       ...result,
       configState: describeConfigState(snapshot),
@@ -235,7 +233,7 @@ async function handleRequest(
       ...(snapshot.policyScopes
         ? {
             projectPolicy: {
-              path: getProjectPolicyPath(options.cwd),
+              path: getProjectPolicyPath(options.cwd ?? process.cwd()),
               weakenings: snapshot.policyScopes.weakenings,
             },
           }
@@ -243,7 +241,8 @@ async function handleRequest(
       destructiveCommandRules: DESTRUCTIVE_COMMAND_RULE_METADATA,
       secretPatterns: SECRET_PROTECTION_RULE_METADATA,
       version: getPackageVersion(),
-      preview: result.errors.length > 0 ? null : createPolicyPreview(result.policy),
+      preview:
+        result.errors.length > 0 ? null : createPolicyPreview(result.policy, environment.env),
     });
     return;
   }
@@ -254,7 +253,7 @@ async function handleRequest(
       sendJson(response, body.status, { errors: [body.error] });
       return;
     }
-    const result = previewUserPolicyForGui(body.value);
+    const result = previewUserPolicyForGui(environment, body.value);
     sendJson(response, result.errors.length > 0 ? 400 : 200, result);
     return;
   }
@@ -270,12 +269,16 @@ async function handleRequest(
       sendJson(response, 400, { errors: ['command must be a string'] });
       return;
     }
-    const errors = getUserPolicyDiagnostics(payload.policy);
+    const errors = getUserPolicyDiagnostics(payload.policy, environment.home);
     if (errors.length > 0) {
       sendJson(response, 400, { errors });
       return;
     }
-    sendJson(response, 200, explainDraftCommand(payload.command, payload.policy, options));
+    sendJson(
+      response,
+      200,
+      explainDraftCommand(environment, payload.command, payload.policy, options),
+    );
     return;
   }
 
@@ -285,18 +288,18 @@ async function handleRequest(
       sendJson(response, body.status, { errors: [body.error] });
       return;
     }
-    const result = writeUserPolicyFromGui(body.value, options);
+    const result = writeUserPolicyFromGui(environment, body.value, options);
     sendJson(response, result.errors.length > 0 ? 400 : 200, result);
     return;
   }
 
   if (request.method === 'POST' && url.pathname === '/api/reset') {
-    sendJson(response, 200, writeUserPolicyFromGui(DEFAULT_GUI_POLICY, options));
+    sendJson(response, 200, writeUserPolicyFromGui(environment, DEFAULT_GUI_POLICY, options));
     return;
   }
 
   if (request.method === 'POST' && url.pathname === '/api/repair') {
-    sendJson(response, 200, repairUserPolicyForGui(options));
+    sendJson(response, 200, repairUserPolicyForGui(environment, options));
     return;
   }
 
@@ -317,11 +320,11 @@ async function handleRequest(
 
   if (request.method === 'GET' && url.pathname === '/api/policy/project') {
     const dir = resolveDraftProjectDir(session, options);
-    const current = readProjectPolicyFile(dir);
+    const current = readProjectPolicyFile(dir, environment.home);
     // Both halves come from one read: the draft refuses to inherit from the
     // protective defaults an unreadable user policy degrades to, and a second
     // read could report defaults with the diagnostics that explain them gone.
-    const user = readRuntimeUserBaseline(options);
+    const user = readRuntimeUserBaseline(environment, options);
     sendJson(response, 200, {
       dir,
       // Named by the server rather than joined in the browser: the confirm
@@ -339,13 +342,16 @@ async function handleRequest(
   }
 
   if (request.method === 'POST' && url.pathname === '/api/policy/project/diff') {
-    const draft = await readProjectDraft(request, response, session, options);
+    const draft = await readProjectDraft(environment, request, response, session, options);
     if (!draft) return;
-    const current = readProjectPolicyFile(draft.dir);
-    const baseline = readRuntimeUserBaseline(options).baseline;
+    const current = readProjectPolicyFile(draft.dir, environment.home);
+    const baseline = readRuntimeUserBaseline(environment, options).baseline;
     // The weakenings come from the same merge as the proposed policy, so the
     // warnings describe exactly the proposal the rows below them show.
-    const proposed = mergeProjectPolicy(baseline, projectPolicyProjection(draft.proposal).policy);
+    const proposed = mergeProjectPolicy(
+      baseline,
+      projectPolicyProjection(draft.proposal, environment.home).policy,
+    );
     sendJson(response, 200, {
       rows: diffPolicyRows(
         mergeProjectPolicy(baseline, current.projection).policy,
@@ -360,15 +366,15 @@ async function handleRequest(
   }
 
   if (request.method === 'POST' && url.pathname === '/api/policy/project/apply') {
-    const draft = await readProjectDraft(request, response, session, options);
+    const draft = await readProjectDraft(environment, request, response, session, options);
     if (!draft) return;
-    const written = writeProjectPolicy(draft.dir, draft.proposal);
+    const written = writeProjectPolicy(draft.dir, draft.proposal, environment.home);
     sendJson(response, written.errors.length > 0 ? 500 : 200, written);
     return;
   }
 
   if (request.method === 'GET' && url.pathname === '/api/activity') {
-    const retentionDays = resolveAuditRetentionDays(options);
+    const retentionDays = readRetentionDays(environment, options);
     const days = parseActivityDays(url.searchParams.get('days'), retentionDays);
     if (days === null) {
       sendJson(response, 400, {
@@ -376,7 +382,7 @@ async function handleRequest(
       });
       return;
     }
-    sendJson(response, 200, getActivityFeed(days, options.activityLogsDir));
+    sendJson(response, 200, getActivityFeed(environment, days, options.activityLogsDir));
     return;
   }
 
@@ -388,7 +394,7 @@ async function handleRequest(
   }
 
   if (request.method === 'GET' && url.pathname === '/api/rules') {
-    const policy = loadRulesPolicy(options);
+    const policy = loadRulesPolicy(environment, loaderOptions(options));
     const enforcedByName = new Map(policy.rules.map((rule) => [rule.name, rule]));
     sendJson(response, 200, {
       projectPath: options.cwd ?? process.cwd(),
@@ -424,7 +430,8 @@ async function handleRequest(
       response,
       200,
       await (
-        options.fetchStarContext ?? (() => fetchStarContext({ logsDir: options.activityLogsDir }))
+        options.fetchStarContext ??
+        (() => fetchStarContext(environment, { logsDir: options.activityLogsDir }))
       )(),
     );
     return;
@@ -437,12 +444,16 @@ async function handleRequest(
   }
 
   if (request.method === 'GET' && url.pathname === '/api/integrations') {
-    sendJson(response, 200, await (options.fetchIntegrations ?? fetchIntegrations)());
+    sendJson(
+      response,
+      200,
+      await (options.fetchIntegrations ?? (() => fetchIntegrations(environment)))(),
+    );
     return;
   }
 
   if (request.method === 'GET' && url.pathname === '/api/health') {
-    sendJson(response, 200, await (options.fetchHealth ?? fetchHealth)());
+    sendJson(response, 200, await (options.fetchHealth ?? (() => fetchHealth(environment)))());
     return;
   }
 
@@ -472,6 +483,11 @@ async function handleRequest(
   sendJson(response, 404, { error: 'Not found' });
 }
 
+/** The loaders take a resolved project directory; the server's is optional as in the CLI. */
+function loaderOptions(options: PolicyGuiServerOptions): RulesPolicyOptions {
+  return { ...options, cwd: options.cwd ?? process.cwd() };
+}
+
 function resolveDraftProjectDir(
   session: ProjectDraftSession,
   options: PolicyGuiServerOptions,
@@ -484,10 +500,10 @@ function resolveDraftProjectDir(
  * invalid one produces. A malformed file projects to nothing so the draft starts
  * empty and says why, rather than pretending the team policy loaded.
  */
-function readProjectPolicyFile(dir: string) {
+function readProjectPolicyFile(dir: string, home: string) {
   const path = getProjectPolicyPath(dir);
   const file = existsSync(path) ? readPolicyJson(path) : { value: undefined, errors: [] };
-  const projection = projectPolicyProjection(file.value);
+  const projection = projectPolicyProjection(file.value, home);
   return {
     projection: projection.policy,
     diagnostics: [...file.errors, ...projection.diagnostics],
@@ -504,6 +520,7 @@ function readProjectPolicyFile(dir: string) {
  * body is answered here, so a caller handles only the accepted case.
  */
 async function readProjectDraft(
+  environment: Environment,
   request: IncomingMessage,
   response: ServerResponse,
   session: ProjectDraftSession,
@@ -527,7 +544,7 @@ async function readProjectDraft(
     sendJson(response, 409, { errors: [STALE_DRAFT_REVISION] });
     return null;
   }
-  const errors = getProjectProposalErrors(payload.proposal);
+  const errors = getProjectProposalErrors(payload.proposal, environment.home);
   if (errors.length > 0) {
     sendJson(response, 400, { errors });
     return null;
@@ -540,8 +557,8 @@ async function readProjectDraft(
  * project scope: accepting one would report a setting the loader then ignores.
  * The same two checks the CLI runs before a project `policy apply`.
  */
-function getProjectProposalErrors(proposal: unknown): string[] {
-  const errors = getUserPolicyDiagnostics(proposal);
+function getProjectProposalErrors(proposal: unknown, home: string): string[] {
+  const errors = getUserPolicyDiagnostics(proposal, home);
   if (errors.length > 0) return errors;
   return (proposal as { audit?: unknown } | null)?.audit === undefined
     ? []
@@ -554,9 +571,13 @@ function getProjectProposalErrors(proposal: unknown): string[] {
  * symlink, and following it would redirect the write out of the project — onto
  * the user's own policy file, for instance.
  */
-function writeProjectPolicy(dir: string, proposal: unknown): { path: string; errors: string[] } {
+function writeProjectPolicy(
+  dir: string,
+  proposal: unknown,
+  home: string,
+): { path: string; errors: string[] } {
   const path = getProjectPolicyPath(dir);
-  const value = buildProjectPolicyFileValue(proposal, normalizeGuiPolicy(proposal));
+  const value = buildProjectPolicyFileValue(proposal, normalizeGuiPolicy(proposal, home));
   try {
     writePolicyFileAtomic(
       getPolicyFilesystemTargetForPath(bindPolicyFilesystemScope(dir, 'project policy'), path),
@@ -571,12 +592,13 @@ function writeProjectPolicy(dir: string, proposal: unknown): { path: string; err
 }
 
 function explainDraftCommand(
+  environment: Environment,
   command: string,
   policy: unknown,
-  options: RulesPolicyOptions,
+  options: PolicyGuiServerOptions,
 ): ExplainResult {
-  const draft = normalizeGuiPolicy(policy);
-  const diskSnapshot = loadPolicySnapshot(options);
+  const draft = normalizeGuiPolicy(policy, environment.home);
+  const diskSnapshot = loadPolicySnapshot(environment, loaderOptions(options));
   const snapshot = createPolicySnapshot({
     rules: diskSnapshot.policy.rules,
     transparentWrappers: diskSnapshot.policy.transparentWrappers,
@@ -592,11 +614,15 @@ function explainDraftCommand(
       allowPaths: draft.secret_protection.allow_paths,
     },
   });
-  return explainCommand(command, {
-    policySnapshot: snapshot,
-    cwd: options.cwd,
-    userConfigDir: options.userConfigDir,
-  });
+  return explainCommand(
+    command,
+    {
+      policySnapshot: snapshot,
+      cwd: options.cwd,
+      userConfigDir: options.userConfigDir,
+    },
+    environment,
+  );
 }
 
 function parseActivityDays(raw: string | null, retentionDays: number): number | null {
@@ -711,10 +737,11 @@ export async function starRepo(
 
 /** @internal */
 export async function fetchIntegrations(
-  probe: { fetcher?: VersionFetcher; homeDir?: string } = {},
+  environment: Environment,
+  probe: { fetcher?: VersionFetcher } = {},
 ): Promise<IntegrationsStatus> {
   const systemInfo = await getSystemInfo(probe.fetcher);
-  const hookStatuses = detectHooksFromSystemInfo(systemInfo, probe.homeDir);
+  const hookStatuses = detectHooksFromSystemInfo(environment, systemInfo);
   return {
     targets: installIntegrationMetadata.map((meta) => {
       const hook = hookStatuses.find((status) => status.platform === meta.id);
@@ -739,9 +766,8 @@ export async function fetchIntegrations(
   };
 }
 
-function detectHooksFromSystemInfo(systemInfo: SystemInfo, homeDir?: string) {
-  return detectAllHooks(process.cwd(), {
-    homeDir,
+function detectHooksFromSystemInfo(environment: Environment, systemInfo: SystemInfo) {
+  return detectAllHooks(environment, process.cwd(), {
     ampPluginListOutput: systemInfo.ampPluginListOutput,
     codexPluginListOutput: systemInfo.codexPluginListOutput,
     copilotCliVersion: systemInfo.versions['copilot-cli'],
@@ -756,9 +782,9 @@ function detectHooksFromSystemInfo(systemInfo: SystemInfo, homeDir?: string) {
  * @internal
  */
 export async function fetchHealth(
+  environment: Environment,
   probe: {
     fetcher?: VersionFetcher;
-    homeDir?: string;
     checkUpdates?: () => Promise<UpdateInfo>;
   } = {},
 ): Promise<HealthStatus> {
@@ -767,7 +793,7 @@ export async function fetchHealth(
     (probe.checkUpdates ?? checkForUpdates)(),
   ]);
   return {
-    hooks: detectHooksFromSystemInfo(systemInfo, probe.homeDir)
+    hooks: detectHooksFromSystemInfo(environment, systemInfo)
       .filter((hook) => hook.detected)
       .map((hook) => ({
         platform: hook.platform,
@@ -825,12 +851,15 @@ export function runIntegration(
 
 /** @internal */
 export async function fetchStarContext(
+  environment: Environment,
   options: { command?: string; logsDir?: string; fetchRepo?: StarCountFetch } = {},
 ): Promise<StarContext> {
   const [starred, starCount, blockedTotal] = await Promise.all([
     userHasStarredRepo(options.command),
     fetchStarCount(options.fetchRepo),
-    Promise.resolve(getActivitySummary(resolveAuditRetentionDays(), options.logsDir).totalBlocked),
+    Promise.resolve(
+      getActivitySummary(environment, readRetentionDays(environment), options.logsDir).totalBlocked,
+    ),
   ]);
   return { starred, starCount, blockedTotal };
 }

@@ -1,12 +1,9 @@
-import { homedir } from 'node:os';
-import {
-  commandSignature,
-  getAuditLogsDir,
-  listAuditLogFiles,
-  pruneExpiredAuditLogs,
-  readAuditLogEntries,
-} from '@/engine/facade';
-import type { AuditLogEntry } from '@/ir/audit';
+import { commandSignature } from '@/audit/display';
+import { listAuditLogFiles, readAuditLogEntries } from '@/audit/reader';
+import { pruneExpiredAuditLogs } from '@/audit/retention';
+import { getAuditLogsDir } from '@/audit/writer';
+import type { AuditLogEntry } from '@/core/audit';
+import type { Environment } from '@/core/environment';
 
 const ENTRY_CAP = 500;
 
@@ -33,8 +30,12 @@ function capEntries(windowEntries: readonly AuditLogEntry[]): AuditLogEntry[] {
  * plus window aggregates so the client can render tiles and filter chips even
  * when the entry list is truncated.
  */
-export function getActivityFeed(days: number, logsDir: string | null = getAuditLogsDir()) {
-  if (logsDir) pruneExpiredAuditLogs(logsDir);
+export function getActivityFeed(
+  environment: Environment,
+  days: number,
+  logsDir: string | null = getAuditLogsDir(environment),
+) {
+  if (logsDir) pruneExpiredAuditLogs(environment, logsDir);
   const dayStart = (date: Date) =>
     new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
   const todayStart = dayStart(new Date());
@@ -87,7 +88,7 @@ export function getActivityFeed(days: number, logsDir: string | null = getAuditL
     logsDir,
     // Entries carry unredacted paths; the client scrubs this prefix out of
     // false-positive reports before they reach the public issue tracker.
-    homeDir: homedir(),
+    homeDir: environment.home,
     totalInWindow: windowEntries.length,
     truncated: windowEntries.length > ENTRY_CAP,
     unreadable: skips.count,

@@ -4,7 +4,7 @@ description: "Operate CC Safety Net: explain why a command was blocked, triage f
 disable-model-invocation: true
 ---
 
-<!-- Keep the body below in sync with src/integrations/templates/cc-safety-net.ts. -->
+<!-- Keep the body below in sync with src/hosts/templates/cc-safety-net.ts. -->
 
 # CC Safety Net
 

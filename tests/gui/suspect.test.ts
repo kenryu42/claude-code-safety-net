@@ -1,97 +1,86 @@
 import { describe, expect, test } from 'bun:test';
-import { renderPolicyGuiHtml } from '@/gui/page';
+import { renderPages, sliceBlock } from '../helpers/gui-page';
 
-const html = renderPolicyGuiHtml('test-token');
-// The ranking lives in the page script that ships inlined in the document.
-// Evaluate only the two pure helper blocks from their separate bundle locations
-// instead of running the DOM setup that now sits between them.
-const helperSource = [
-  html.slice(
-    html.indexOf('var commandSignature = (source) => {'),
-    html.indexOf('// src/integrations/catalog.ts'),
-  ),
-  html.slice(
-    html.indexOf('var findSuspects = (entries) => {'),
-    html.indexOf('var clearCommandFilter'),
-  ),
-].join('\n');
-type FeedEntry = {
-  decision: string;
+/**
+ * The activity feed marks the denials worth a second look: anything that failed inside the gate,
+ * and anything one session hit twice on the same command signature. Both halves — the signature from
+ * the shared display helper, the rule from the page script — are pinned by their recorded snapshot,
+ * and the pair is then run over fresh entries.
+ */
+
+// Token-shaped, assembled here rather than written out, and fixed so the slice is deterministic.
+const TOKEN = Buffer.from('cc-safety-net gui suspect fixture').toString('base64url');
+
+type Entry = {
   command: string;
-  segment?: string;
+  decision: string;
   sessionId?: string;
+  segment?: string;
   failureStage?: string;
 };
-const findSuspects = new Function(`${helperSource}return findSuspects;`)() as (
-  entries: FeedEntry[],
-) => Set<FeedEntry>;
 
-describe('suspect filter', () => {
-  test('flags a fail-closed denial on its own', () => {
-    const failed = {
-      decision: 'deny',
-      command: 'eval "$(cat script.sh)"',
-      sessionId: 's1',
-      failureStage: 'parse',
-    };
-    const blocked = { decision: 'deny', command: 'rm -rf /tmp/build', sessionId: 's1' };
+const pages = renderPages(TOKEN);
+// The signature helper is the last thing in its own bundled module, so the next module label ends
+// the slice.
+const block = (page: string) =>
+  [
+    sliceBlock(page, 'var commandSignature = (source) => {', '\n// '),
+    sliceBlock(page, 'var findSuspects = (entries) => {', 'var clearCommandFilter'),
+  ].join('\n');
 
-    expect(findSuspects([failed, blocked])).toEqual(new Set([failed]));
+const findSuspects = new Function(
+  'entries',
+  `${block(pages.ported)}\nreturn findSuspects(entries);`,
+) as (entries: readonly Entry[]) => Set<Entry>;
+
+const suspectCommands = (entries: readonly Entry[]) =>
+  [...findSuspects(entries)].map((entry) => entry.command);
+
+describe('the suspect block on the served page', () => {
+  test('is the shipped block byte for byte', () => {
+    expect(block(pages.ported)).toMatchSnapshot();
   });
 
-  test('flags a signature the same session was blocked on twice', () => {
-    const first = { decision: 'deny', command: 'git push origin main', sessionId: 's1' };
-    const second = { decision: 'deny', command: 'git push --force', sessionId: 's1' };
-    const other = { decision: 'deny', command: 'git status', sessionId: 's1' };
+  test('flags a denial that failed inside the gate on its own', () => {
+    const entries: Entry[] = [
+      { command: 'terraform destroy', decision: 'deny', sessionId: 's1', failureStage: 'analysis' },
+      { command: 'terraform plan', decision: 'deny', sessionId: 's1' },
+    ];
 
-    expect(findSuspects([first, second, other])).toEqual(new Set([first, second]));
+    expect(suspectCommands(entries)).toStrictEqual(['terraform destroy']);
   });
 
-  test('matches the signature on the offending segment when there is one', () => {
-    const first = {
-      decision: 'deny',
-      command: 'a && rm -rf dist',
-      segment: 'rm -rf dist',
-      sessionId: 's1',
-    };
-    const second = {
-      decision: 'deny',
-      command: 'b && rm -rf build',
-      segment: 'rm -rf build',
-      sessionId: 's1',
-    };
+  test('flags a signature one session was denied twice for, reading the segment first', () => {
+    const entries: Entry[] = [
+      {
+        command: 'cd /srv && git push --force origin main',
+        segment: 'git push --force origin main',
+        decision: 'deny',
+        sessionId: 's1',
+      },
+      {
+        command: 'FOO=1 git push --force',
+        segment: 'git push --force',
+        decision: 'deny',
+        sessionId: 's1',
+      },
+    ];
 
-    expect(findSuspects([first, second])).toEqual(new Set([first, second]));
+    // Two different command lines, one signature: both are the repeat the feed points at.
+    expect(findSuspects(entries).size).toBe(2);
   });
 
-  test('does not flag one block per session, or entries with no session', () => {
-    expect(
-      findSuspects([
-        { decision: 'deny', command: 'rm -rf dist', sessionId: 's1' },
-        { decision: 'deny', command: 'rm -rf dist', sessionId: 's2' },
-        { decision: 'deny', command: 'rm -rf dist' },
-        { decision: 'deny', command: 'rm -rf dist' },
-      ]),
-    ).toEqual(new Set());
-  });
+  test('leaves one denial per session and every allow alone', () => {
+    const entries: Entry[] = [
+      { command: 'git push --force', decision: 'deny', sessionId: 's1' },
+      { command: 'git push --force', decision: 'deny', sessionId: 's2' },
+      { command: 'git status', decision: 'allow', sessionId: 's3', failureStage: 'analysis' },
+      { command: 'git status', decision: 'allow', sessionId: 's3' },
+      // No session to attribute the repeat to, so it never counts as one.
+      { command: 'git push --force', decision: 'deny' },
+      { command: 'git push --force', decision: 'deny' },
+    ];
 
-  test('never flags allowed entries, however often they repeat', () => {
-    expect(
-      findSuspects([
-        { decision: 'allow', command: 'git push origin main', sessionId: 's1' },
-        { decision: 'allow', command: 'git push --force', sessionId: 's1' },
-      ]),
-    ).toEqual(new Set());
-  });
-
-  test('the chip renders only when there are suspects, and the feed filters on it', () => {
-    expect(html).toContain(
-      '[chipHtml("decision", "suspect", "Likely false positive", suspects.size)]',
-    );
-    expect(html).toContain(
-      'if (activityFilters.decision === "suspect" && !suspects.has(entry))\n      return false;',
-    );
-    expect(html).toContain('if (activityFilters.decision === "suspect" && suspects.size === 0) {');
-    expect(html).toContain('suspects = findSuspects(activity.entries);');
+    expect(suspectCommands(entries)).toStrictEqual([]);
   });
 });

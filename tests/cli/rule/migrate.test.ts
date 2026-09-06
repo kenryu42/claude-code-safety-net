@@ -1,164 +1,262 @@
-import { describe, expect, spyOn, test } from 'bun:test';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { afterEach, describe, expect, test } from 'bun:test';
 import { join } from 'node:path';
-import { runRulesMigrate } from '@/cli/rule/migrate';
-import { withEnv, withTempDir } from '../../helpers';
+import { runRulesMigrate as portedRulesMigrate } from '@/cli/rule/migrate';
+import { captureConsole } from '../../helpers/console-capture';
+import type { TreeSpec } from '../../helpers/fixture-tree';
+import {
+  json,
+  legacyConfig,
+  rulesConfig,
+  type SeedRule,
+  v1Rulebook,
+} from '../../helpers/rulebook-seeds';
+import { runManagerDifferential } from '../../helpers/rules-manager-differential';
+import { removeTempRoots } from '../../helpers/temp-home';
 
-function writeJson(path: string, value: unknown) {
-  mkdirSync(join(path, '..'), { recursive: true });
-  writeFileSync(path, JSON.stringify(value));
-}
+/**
+ * `rule migrate` converts a version 0 inline config into a rulebook and lists it, in both scopes,
+ * and every one of its outcomes is a pair: what the two implementations printed and what they left
+ * on disk. A failed scope has to leave the tree exactly as it found it, so the seeded files are
+ * part of the comparison rather than a setup detail.
+ */
 
-function migrationEnv(tempDir: string) {
-  return {
-    CC_SAFETY_NET_HOME: join(tempDir, 'home', '.cc-safety-net'),
-    HOME: join(tempDir, 'home'),
-  };
-}
+const PROJECT_LEGACY = 'project/.safety-net.json';
+const PROJECT_CONFIG = 'project/.cc-safety-net/rules/rule.json';
+const USER_LEGACY = 'home/.cc-safety-net/config.json';
+const USER_CONFIG = 'home/.cc-safety-net/rules/rule.json';
 
-const legacyRuleConfig = {
-  version: 1,
-  rules: [
-    {
-      name: 'block-rm',
-      command: 'rm',
-      block_args: ['--recursive'],
-      reason: 'Use a safer command.',
-    },
-  ],
+const NO_FORCE_PUSH: SeedRule = {
+  name: 'no-force-push',
+  command: 'git',
+  subcommand: 'push',
+  block_args: ['--force'],
+  reason: 'Force pushing rewrites history other clones already have.',
+};
+const NO_CURL_PIPE: SeedRule = {
+  name: 'no-curl-pipe',
+  command: 'curl',
+  block_args: ['|'],
+  reason: 'Piping a download into a shell runs whatever the server sent.',
 };
 
-async function runMigration(tempDir: string, cleanup = false) {
-  const logs: string[] = [];
-  const errors: string[] = [];
-  const logSpy = spyOn(console, 'log').mockImplementation((...values: unknown[]) => {
-    logs.push(values.map(String).join(' '));
-  });
-  const errorSpy = spyOn(console, 'error').mockImplementation((...values: unknown[]) => {
-    errors.push(values.map(String).join(' '));
+const PUSH_FIXTURE = { command: 'git push --force', expect: 'blocked', rule: 'no-force-push' };
+const CURL_FIXTURE = { command: 'curl |', expect: 'blocked', rule: 'no-curl-pipe' };
+
+/** The rulebook a migration writes, spelled out rather than recomputed: the commands it collects
+ *  and the fixture it derives per rule are the parts a silent change would move. */
+const migratedRulebook = (fields: {
+  name: string;
+  from: string;
+  commands: string[];
+  rules: readonly SeedRule[];
+  fixtures: readonly { command: string; expect: string; rule: string }[];
+}) =>
+  json({
+    rulebook_version: 1,
+    name: fields.name,
+    version: '1.0.0',
+    description: 'Migrated CC Safety Net rules.',
+    author: 'project',
+    migrated_from: fields.from,
+    allowed_commands: fields.commands,
+    rules: fields.rules,
+    tests: fields.fixtures,
   });
 
-  try {
-    const exitCode = await withEnv(migrationEnv(tempDir), () =>
-      runRulesMigrate({ cleanup, cwd: tempDir }),
+const PROJECT_MIGRATED = (name: string) =>
+  migratedRulebook({
+    name,
+    from: '.safety-net.json',
+    commands: ['git'],
+    rules: [NO_FORCE_PUSH],
+    fixtures: [PUSH_FIXTURE],
+  });
+
+async function runMigrate(spec: TreeSpec, cleanup = false) {
+  return runManagerDifferential(spec, (side, environment) =>
+    captureConsole(() => portedRulesMigrate(environment, { cleanup, cwd: side.project })),
+  );
+}
+
+const content = (tree: { path: string; content?: string }[], path: string) =>
+  tree.find((entry) => entry.path === path)?.content;
+
+afterEach(removeTempRoots);
+
+describe('rule migrate over both scopes', () => {
+  test('a workspace with no legacy file reports both scopes and changes nothing', async () => {
+    const agreed = await runMigrate({});
+    expect(agreed.results.returned).toBe(0);
+    expect(agreed.results.log).toEqual(
+      [join('<root>', PROJECT_LEGACY), join('<root>', USER_LEGACY)].map(
+        (path) => `No legacy config found at ${path}`,
+      ),
     );
-    return { errors, exitCode, logs };
-  } finally {
-    logSpy.mockRestore();
-    errorSpy.mockRestore();
-  }
-}
-
-function missingUserConfigLog(tempDir: string) {
-  return `No legacy config found at ${join(tempDir, 'home', '.cc-safety-net', 'config.json')}`;
-}
-
-function expectInvalidMigration(result: Awaited<ReturnType<typeof runMigration>>, tempDir: string) {
-  expect(result.exitCode).toBe(1);
-  expect(result.errors).toEqual(['Invalid JSON']);
-  expect(result.logs).toEqual([missingUserConfigLog(tempDir)]);
-}
-
-describe('runRulesMigrate', () => {
-  test('leaves malformed legacy JSON unchanged', async () => {
-    await withTempDir('safety-net-rule-migrate-invalid-json-', async (tempDir) => {
-      const legacyPath = join(tempDir, '.safety-net.json');
-      writeFileSync(legacyPath, '{ invalid');
-
-      const result = await runMigration(tempDir);
-
-      expectInvalidMigration(result, tempDir);
-      expect(readFileSync(legacyPath, 'utf8')).toBe('{ invalid');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'rules', 'rule.json'))).toBeFalse();
-    });
+    expect(agreed.results.error).toEqual([]);
+    expect(agreed.tree.map((entry) => entry.path)).toEqual(['home', 'home/tmp', 'project']);
   });
 
-  test('does not replace an invalid current rules config', async () => {
-    await withTempDir('safety-net-rule-migrate-invalid-current-', async (tempDir) => {
-      const configPath = join(tempDir, '.cc-safety-net', 'rules', 'rule.json');
-      writeJson(join(tempDir, '.safety-net.json'), legacyRuleConfig);
-      mkdirSync(join(configPath, '..'), { recursive: true });
-      writeFileSync(configPath, '{ invalid');
-
-      const result = await runMigration(tempDir);
-
-      expectInvalidMigration(result, tempDir);
-      expect(readFileSync(configPath, 'utf8')).toBe('{ invalid');
-      expect(
-        existsSync(join(tempDir, '.cc-safety-net', 'rules', 'project-rules', 'rulebook.json')),
-      ).toBeFalse();
+  test('a project legacy file becomes a listed rulebook and is kept', async () => {
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH, NO_CURL_PIPE]),
     });
+    expect(agreed.results.returned).toBe(0);
+    expect(agreed.results.log).toContain(
+      `Migrated legacy config at ${join('<root>', PROJECT_LEGACY)}. Legacy file is no longer used.`,
+    );
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe(rulesConfig(['project-rules']));
+    expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json')).toBe(
+      migratedRulebook({
+        name: 'project-rules',
+        from: '.safety-net.json',
+        commands: ['git', 'curl'],
+        rules: [NO_FORCE_PUSH, NO_CURL_PIPE],
+        fixtures: [PUSH_FIXTURE, CURL_FIXTURE],
+      }),
+    );
+    expect(content(agreed.tree, PROJECT_LEGACY)).toBe(legacyConfig([NO_FORCE_PUSH, NO_CURL_PIPE]));
   });
 
-  test('restores the current config when rule synchronization fails', async () => {
-    await withTempDir('safety-net-rule-migrate-rollback-', async (tempDir) => {
-      const configPath = join(tempDir, '.cc-safety-net', 'rules', 'rule.json');
-      const originalConfig = JSON.stringify({
-        version: 1,
-        rules: ['missing-rules'],
-        overrides: {},
-        transparent_wrappers: [],
-      });
-      writeJson(join(tempDir, '.safety-net.json'), legacyRuleConfig);
-      mkdirSync(join(configPath, '..'), { recursive: true });
-      writeFileSync(configPath, originalConfig);
-
-      const { errors, exitCode, logs } = await runMigration(tempDir);
-
-      expect(exitCode).toBe(1);
-      expect(errors).toEqual(['Rulebook source not found: missing-rules']);
-      expect(logs).toEqual([missingUserConfigLog(tempDir)]);
-      expect(readFileSync(configPath, 'utf8')).toBe(originalConfig);
-      expect(
-        existsSync(join(tempDir, '.cc-safety-net', 'rules', 'project-rules', 'rulebook.json')),
-      ).toBeFalse();
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'rules', 'rule.lock'))).toBeFalse();
-      expect(existsSync(join(tempDir, '.safety-net.json'))).toBeTrue();
-    });
+  test('--cleanup deletes the legacy file once the migrated pair verifies', async () => {
+    const agreed = await runMigrate({ [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]) }, true);
+    expect(agreed.results.returned).toBe(0);
+    expect(agreed.results.log).toContain(
+      `Deleted legacy config at ${join('<root>', PROJECT_LEGACY)}`,
+    );
+    expect(content(agreed.tree, PROJECT_LEGACY)).toBeUndefined();
+    expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json')).toBe(
+      PROJECT_MIGRATED('project-rules'),
+    );
   });
 
-  test('deduplicates allowed commands and creates one test for each migrated rule', async () => {
-    await withTempDir('safety-net-rule-migrate-output-', async (tempDir) => {
-      const legacyPath = join(tempDir, '.safety-net.json');
-      writeJson(legacyPath, {
-        version: 1,
-        rules: [
-          {
-            name: 'block-rm-recursive',
-            command: 'rm',
-            block_args: ['--recursive'],
-            reason: 'Use a safer command.',
-          },
-          {
-            name: 'block-rm-force',
-            command: 'rm',
-            subcommand: 'files',
-            block_args: ['--force'],
-            reason: 'Keep the files.',
-          },
-        ],
-      });
+  test('a user legacy file lands under the user rules directory', async () => {
+    const agreed = await runMigrate({ [USER_LEGACY]: legacyConfig([NO_CURL_PIPE]) });
+    expect(agreed.results.returned).toBe(0);
+    expect(agreed.results.log).toContain(
+      `Migrated legacy config at ${join('<root>', USER_LEGACY)}. Legacy file is no longer used.`,
+    );
+    expect(content(agreed.tree, USER_CONFIG)).toBe(rulesConfig(['user-rules']));
+    expect(content(agreed.tree, 'home/.cc-safety-net/rules/user-rules/rulebook.json')).toBe(
+      migratedRulebook({
+        name: 'user-rules',
+        from: '~/.cc-safety-net/config.json',
+        commands: ['curl'],
+        rules: [NO_CURL_PIPE],
+        fixtures: [CURL_FIXTURE],
+      }),
+    );
+  });
 
-      const { errors, exitCode, logs } = await runMigration(tempDir, true);
-      const rulebook = JSON.parse(
-        readFileSync(
-          join(tempDir, '.cc-safety-net', 'rules', 'project-rules', 'rulebook.json'),
-          'utf8',
-        ),
-      );
-
-      expect(exitCode).toBe(0);
-      expect(errors).toEqual([]);
-      expect(logs).toEqual([
-        `Deleted legacy config at ${legacyPath}`,
-        missingUserConfigLog(tempDir),
-      ]);
-      expect(existsSync(legacyPath)).toBeFalse();
-      expect(rulebook.allowed_commands).toEqual(['rm']);
-      expect(rulebook.tests).toEqual([
-        { command: 'rm --recursive', expect: 'blocked', rule: 'block-rm-recursive' },
-        { command: 'rm files --force', expect: 'blocked', rule: 'block-rm-force' },
-      ]);
+  test('both legacy files migrate in one run', async () => {
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]),
+      [USER_LEGACY]: legacyConfig([NO_CURL_PIPE]),
     });
+    expect(agreed.results.returned).toBe(0);
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe(rulesConfig(['project-rules']));
+    expect(content(agreed.tree, USER_CONFIG)).toBe(rulesConfig(['user-rules']));
+  });
+
+  test('a legacy file the schema rejects fails its scope and leaves the other one reported', async () => {
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: json({ version: 1, rules: [{ name: 'no-command' }] }),
+    });
+    expect(agreed.results.returned).toBe(1);
+    expect(agreed.results.log).toEqual([
+      `No legacy config found at ${join('<root>', USER_LEGACY)}`,
+    ]);
+    expect(agreed.results.error.length).toBeGreaterThan(0);
+    expect(agreed.tree.map((entry) => entry.path)).toEqual([
+      'home',
+      'home/tmp',
+      'project',
+      PROJECT_LEGACY,
+    ]);
+  });
+
+  test('a second run reuses the rulebook the first one wrote', async () => {
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]),
+      [PROJECT_CONFIG]: rulesConfig(['project-rules']),
+      'project/.cc-safety-net/rules/project-rules/rulebook.json': migratedRulebook({
+        name: 'project-rules',
+        from: '.safety-net.json',
+        commands: ['curl'],
+        rules: [NO_CURL_PIPE],
+        fixtures: [CURL_FIXTURE],
+      }),
+    });
+    expect(agreed.results.returned).toBe(0);
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe(rulesConfig(['project-rules']));
+    expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json')).toBe(
+      PROJECT_MIGRATED('project-rules'),
+    );
+    expect(agreed.tree.some((entry) => entry.path.includes('project-rules-2'))).toBeFalse();
+  });
+
+  test('a rulebook converted from another tool is listed past, not overwritten', async () => {
+    const imported = migratedRulebook({
+      name: 'imported-rules',
+      from: 'other-tool.json',
+      commands: ['curl'],
+      rules: [NO_CURL_PIPE],
+      fixtures: [CURL_FIXTURE],
+    });
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]),
+      [PROJECT_CONFIG]: rulesConfig(['imported-rules']),
+      'project/.cc-safety-net/rules/imported-rules/rulebook.json': imported,
+    });
+    expect(agreed.results.returned).toBe(0);
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe(
+      rulesConfig(['imported-rules', 'project-rules']),
+    );
+    expect(content(agreed.tree, 'project/.cc-safety-net/rules/imported-rules/rulebook.json')).toBe(
+      imported,
+    );
+    expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json')).toBe(
+      PROJECT_MIGRATED('project-rules'),
+    );
+  });
+
+  test('an unrelated rulebook holding the default name pushes the migration to the next one', async () => {
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]),
+      [PROJECT_CONFIG]: rulesConfig(['project-rules']),
+      'project/.cc-safety-net/rules/project-rules/rulebook.json': v1Rulebook('project-rules'),
+    });
+    expect(agreed.results.returned).toBe(0);
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe(
+      rulesConfig(['project-rules', 'project-rules-2']),
+    );
+    expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules-2/rulebook.json')).toBe(
+      PROJECT_MIGRATED('project-rules-2'),
+    );
+  });
+
+  test('a scope the reload refuses is restored to what it held before the write', async () => {
+    const seeded = rulesConfig([], { overrides: { 'ghost-rules/ghost-rule': 'off' } });
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]),
+      [PROJECT_CONFIG]: seeded,
+    });
+    expect(agreed.results.returned).toBe(1);
+    expect(agreed.results.error.join('\n')).toContain('ghost-rules/ghost-rule');
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe(seeded);
+    expect(
+      content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json'),
+    ).toBeUndefined();
+    expect(content(agreed.tree, PROJECT_LEGACY)).toBe(legacyConfig([NO_FORCE_PUSH]));
+  });
+
+  test('a rule config that cannot be read stops its scope before anything is written', async () => {
+    const agreed = await runMigrate({
+      [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]),
+      [PROJECT_CONFIG]: '{ not json',
+    });
+    expect(agreed.results.returned).toBe(1);
+    expect(agreed.results.error).toEqual(['Invalid JSON']);
+    expect(content(agreed.tree, PROJECT_CONFIG)).toBe('{ not json');
+    expect(agreed.tree.some((entry) => entry.path.includes('project-rules'))).toBeFalse();
   });
 });

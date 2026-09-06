@@ -2,8 +2,9 @@
  * Environment variable checking for the doctor command.
  */
 
-import { ENV_FLAGS, type EnvFlag, envFlagIsSet, getEnvFlagValue } from '@/engine/facade';
-import type { EnvVarInfo } from '@/integrations/doctor-types';
+import type { Environment } from '@/core/environment';
+import { ENV_FLAGS, type EnvFlag, envFlagIsSet, getEnvFlagValue } from '@/core/policy/env';
+import type { EnvVarInfo } from '@/hosts/doctor-types';
 
 const ENV_VARS: Array<{
   flag: EnvFlag;
@@ -52,22 +53,24 @@ const ENV_VARS: Array<{
   },
 ];
 
-export function getEnvironmentInfo(): EnvVarInfo[] {
+export function getEnvironmentInfo(environment: Environment): EnvVarInfo[] {
   return [
     ...ENV_VARS.map((v) => ({
       name: v.flag.name,
-      value: getEnvFlagValue(v.flag),
-      isSet: envFlagIsSet(v.flag),
+      value: getEnvFlagValue(v.flag, environment.env),
+      isSet: envFlagIsSet(v.flag, environment.env),
       legacyName: v.flag.legacyName,
-      legacyValue: v.flag.legacyName ? process.env[v.flag.legacyName] : undefined,
-      legacyIsSet: v.flag.legacyName ? process.env[v.flag.legacyName] !== undefined : undefined,
+      legacyValue: v.flag.legacyName ? environment.env.get(v.flag.legacyName) : undefined,
+      legacyIsSet: v.flag.legacyName
+        ? environment.env.get(v.flag.legacyName) !== undefined
+        : undefined,
       description: v.description,
       defaultBehavior: v.defaultBehavior,
     })),
     {
       name: 'CC_SAFETY_NET_HOME',
-      value: process.env.CC_SAFETY_NET_HOME,
-      isSet: process.env.CC_SAFETY_NET_HOME !== undefined,
+      value: environment.env.get('CC_SAFETY_NET_HOME'),
+      isSet: environment.env.get('CC_SAFETY_NET_HOME') !== undefined,
       description: 'Override user-scope config/cache directory',
       defaultBehavior: '~/.cc-safety-net',
     },

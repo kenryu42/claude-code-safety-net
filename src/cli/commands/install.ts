@@ -1,4 +1,4 @@
-import { getIntegrationDisplayName, installIntegrationMetadata } from '@/integrations/catalog';
+import { getIntegrationDisplayName, installIntegrationMetadata } from '@/hosts/catalog';
 import type { Command } from './types';
 
 export const installCommand = {

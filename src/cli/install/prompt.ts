@@ -5,8 +5,8 @@
 
 import * as readline from 'node:readline';
 import { colors } from '@/cli/utils/colors';
-import type { InstallTargetChoice } from '@/integrations/install/choices';
-import type { InstallAction, InstallTarget } from '@/integrations/install/targets';
+import type { InstallTargetChoice } from '@/hosts/install/choices';
+import type { InstallAction, InstallTarget } from '@/hosts/install/targets';
 
 type InstallPromptOptions = {
   input?: NodeJS.ReadStream;

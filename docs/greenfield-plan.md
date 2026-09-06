@@ -41,19 +41,16 @@ timeout on the one Git subprocess.
   user (5, 7, 9, 11) also run the `verify-cc-safety-net` skill against an isolated home. Its
   evidence under `artifacts/verify/` is gitignored and local to the machine that ran it; the
   commit message of the phase records the run id and the check results.
-- While the local bun is not the pinned 1.4.0, commits are made with `LEFTHOOK_EXCLUDE=build` so
-  the pre-commit hook does not rebuild `dist/` from an unchanged `src/` under a different bun
-  version. The knip and biome jobs still run; a contributor on bun 1.4.0 needs no override.
-  Pushes from a root container use `LEFTHOOK_EXCLUDE=check`, because the pre-push job runs
-  `bun run check` and the root-only failures below would reject the push; the check is run
-  explicitly before every commit instead.
-- In a container that runs as root, two pre-existing tests fail on `main` and on this branch
-  alike: the GUI oversized-POST 413 test and the Hermes process-tree kill test are sensitive to the
-  bun version or the sandbox (the container ships bun 1.3.11; the project pins 1.4.0). CI on a
-  non-root runner with bun 1.4.0 is the gate for those. Before the `main` v2.3.3 merge eight more
-  tests failed as root because they injected failures with `chmod`, which root ignores; `main`
-  reworked those and they now pass. Everything else in `bun run check`, including the 90%
-  coverage floor, must pass locally.
+- Every lefthook job runs through `scripts/project-bun.ts`, which resolves the pinned Bun
+  (1.4.1) with `bunx` when the local Bun differs, so `dist/` is always rebuilt by the pinned
+  version and no `LEFTHOOK_EXCLUDE=build` is needed. The pre-push job runs `bun run check`
+  through the same wrapper; on a machine whose local Bun is not the pinned one,
+  `tests/scripts/project-bun.test.ts` fails inside that nested wrapper (the inner `bun` is not on
+  the emptied `PATH`), so such a machine runs `bun run check` explicitly and pushes with
+  `LEFTHOOK_EXCLUDE=check`.
+- The two root-only failures of the shipped suite (the GUI oversized-POST 413 test and the
+  Hermes process-tree kill test) retired with it in Phase 11b; the promoted suite passes as root.
+  Everything in `bun run check`, including the 90% coverage floor, must pass locally.
 
 ## Phases
 
@@ -615,7 +612,7 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` done. Complexity: S, M, L
   `build:next` and `verify:package:next` back into the defaults in `package.json` and `ci.yml`,
   and the Windows-only gaps and the per-fixture worktree leak (Phase 11).
 
-### Phase 11 — Performance validation and cutover (S+M) `[ ]`
+### Phase 11 — Performance validation and cutover (S+M) `[x]`
 
 - Measure hook cold start before and after the lean entry and the validator removal on the CI
   runner; set a hook-path budget test.
@@ -672,14 +669,71 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` done. Complexity: S, M, L
   honours `CC_SAFETY_NET_TEST_TMPDIR`); confirm the digests on the macOS and Windows runners
   (the dump names any differing pair); a thrown outcome records only its kind and name; the
   snapshot record becomes the sole assertion once the shipped side is deleted.
+- Phase 11b landed (the cutover, one commit): `src/` is the port (`git mv next src`, history
+  follows), the shipped tree and every legacy suite under `tests/` are gone except the
+  structure-independent keepers (the two contract corpora under `tests/gate/`,
+  `tests/entries/public-api.test.ts`, `tests/hosts/pi/package.test.ts`,
+  `tests/hosts/amp/built-artifact.test.ts`, `tests/e2e`, `tests/e2e-live`, `tests/setup*.ts`),
+  `tests/next` is `tests/`, the `@next/*` alias is `@/*`, and `scripts/build-layout.ts`,
+  `tsconfig.build-next.json`, `build:next`, `verify:package:next`, `dist/vendor/zod.cjs`,
+  `gui-bundle-repair.ts` and `gate/evaluate-command.ts` with `trace-parity.test.ts` are
+  deleted; `build-layout.test.ts` is `build-closure.test.ts` over the one build. The one
+  behavior edit under `src/` is `src/gate/guards/safety-net-invocation.ts`, whose entrypoint
+  set names `src/entries/bin.ts` instead of the retired CLI path.
+- The 6,964 harvested literals are frozen in `tests/fixtures/gate/harvested-literals.json`
+  (the scanner over the legacy suites is gone); the snapshots, the 173 digests and the
+  doctor/explain goldens moved unchanged and are the sole oracle: every differential helper
+  runs one side and records it where it compared before, `knownGap` is gone from the corpus,
+  and `cd ~ && cat .ssh/config` is pinned as a `secret.home.ssh` denial in the corpus,
+  harvested and secret-protection tests.
+- `tests/helpers.ts` keeps only the exports the promoted suite, `tests/e2e` and
+  `tests/scripts` import; `tests/helpers/policy.ts` builds its snapshot over
+  `@/core/policy/snapshot`; `ci.yml` pins `TMPDIR=/tmp/ccsn` on the macOS leg so the two
+  `cli/status` rows keep their column width; `check-duplicates` ignores import blocks
+  (the single-sided helpers share their import lists). `tests/scripts/build-contract.test.ts`
+  pins the Amp and OpenClaw artifacts as zod-free (only the CLI chunk carries zod), reversing
+  the Phase 10 expectation that they bundle it. `SECURITY.md`, `docs/residual-risk.md`, the
+  residual-risk registry, `docs/review-prompt.md` and `docs/config-recovery.md` cite the
+  promoted tests; the historical findings documents keep their wording. Review added three
+  literal tests (the cutover entrypoint, the skill/template sync, the implicit `logs` window
+  below thirty days) and restored the packaged 1 MiB structural-limit journey under
+  `tests/e2e/`.
+- The pinned Bun (1.4.1, CI's runtime) records differently from the local 1.3.11 in four
+  places. Three are folded record-only in the helpers and their six snapshot files re-recorded:
+  the bundled GUI script body (`[bundle]`), the thrown `syscall` name (`statx` and `lstat` both
+  record `<stat>`), and directory modes in flow tree listings (file modes stay). The fourth was
+  a helper bug: the held-socket GUI reply arrives chunked under 1.4.1 and the observer now
+  de-frames it. The GUI oversized-POST row is recorded under the pinned Bun, where the server
+  answers 413; under 1.3.11 it is the one failing row.
+- Verified: `bun run check` under the bare Bun (2,605 pass, the 413 row the one failure,
+  13,584 snapshots consumed and none written, coverage 95.03% lines and 96.56% functions
+  against the 90% floor) and the suite under the pinned Bun (2,605 pass, the nested-wrapper
+  `project-bun` row the one failure); `bun run build` twice with a byte-identical `dist/`;
+  `verify:repository-plugin` and `verify:package` (tarball 449,076 bytes); the hook budget test
+  (closure 344,160 bytes under the local build, 350,268 in the committed `dist/`; node 30 ms,
+  hook 99 ms); the `verify-cc-safety-net` drive of the cut-over CLI (run
+  `verify-20260906-061638-cutover11`, 43 checks: source and built entry answer alike for
+  version, help, explain, status, logs, doctor, rule list, the hook rows including the closed
+  secret-walk gap, and the token-gated GUI; the real home untouched).
+- Carried: the skill body's source-inspection steps (`src/analyzer`, `src/guards`, `src/rules`
+  in `src/hosts/templates/cc-safety-net.ts` and `skills/cc-safety-net/SKILL.md`) still name
+  the retired layout because two recorded snapshots embed the template text; change both
+  together and re-record `tests/hosts/builtin-commands` and `tests/hosts/opencode/plugin`.
+  Describe and test titles that still say `shipped` or `next/… versus src/…` are snapshot
+  keys and stay until a deliberate re-record; the same holds for the `build-layout-` temp-root
+  prefix. `tests/scripts/project-bun.test.ts` fails only when the suite itself runs through
+  the pinned-Bun wrapper (the inner `bun` is not on the emptied `PATH`). Under a bare Bun
+  older than 1.4.1 the GUI 413 row and, after a file that loads `src/gui/assets` in-process,
+  a directory-listing staleness in `bun test` can fail; neither is worked around. The
+  Windows-only gaps and the per-fixture worktree leak remain as recorded.
 
 ## How to resume
 
 1. `git checkout feat/greenfield && git merge main` (merge, never rebase, so the corpus re-runs
    against every field fix).
 2. Read the phase status above; the status markers are the only record of progress.
-3. Run `bun test tests/engine/behavioral-contract-pipeline.test.ts tests/rules/rule-id-snapshot.test.ts`
-   to confirm the oracle is intact before touching `next/`.
+3. Run `CI=true bun test tests/gate/contract.test.ts tests/gate/harvested.test.ts` to confirm
+   the corpus and the recorded digests are intact before touching `src/`.
 4. Finish the phase, run `bun run check`, run the verify skill where the phase requires it,
-   update the status marker here, commit (with `LEFTHOOK_EXCLUDE=build` unless on bun 1.4.0), and
-   push to `feat/greenfield`.
+   update the status marker here, commit, and push to `feat/greenfield` (the Branch rules say
+   when the pre-push job needs `LEFTHOOK_EXCLUDE=check`).

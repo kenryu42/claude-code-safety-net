@@ -4,6 +4,6 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": []
   },
-  "include": ["src/gui/frontend", "next/gui/frontend"],
+  "include": ["src/gui/frontend"],
   "exclude": []
 }

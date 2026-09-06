@@ -1,6 +1,6 @@
-import { commandSignature, formatRelativeTime } from '@/engine/browser-facade';
-import { integrationDisplayNames } from '@/integrations/catalog';
-import { SAFETY_LEVEL_CAPABILITIES, type SafetyLevelCapability } from '@/ir/safety-level';
+import { commandSignature, formatRelativeTime } from '@/audit/display';
+import { SAFETY_LEVEL_CAPABILITIES, type SafetyLevelCapability } from '@/core/policy/safety-level';
+import { integrationDisplayNames } from '@/hosts/catalog';
 
 type SafetyLevel = 'standard' | 'strict' | 'paranoid';
 type Capability = SafetyLevelCapability;

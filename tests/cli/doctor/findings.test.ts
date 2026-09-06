@@ -1,399 +1,258 @@
 import { describe, expect, test } from 'bun:test';
-import { deriveDoctorFindings } from '@/cli/doctor/findings';
-import type { DoctorReport } from '@/integrations/doctor-types';
+import { deriveDoctorFindings as derivePorted } from '@/cli/doctor/findings';
+import type { DoctorReport } from '@/hosts/doctor-types';
+
+/**
+ * The finding catalog is the doctor's failure contract: an `error` finding is what makes the
+ * command exit 1, and the ids are what a user greps for. Every rule gets a row built from hand,
+ * so a rule that stops firing — or starts firing on the wrong facts — fails here rather than
+ * silently turning a red report green. Each row also records the catalog it produced, so a
+ * change in wording, severity or order fails against the snapshot.
+ */
 
 type DoctorFacts = Omit<DoctorReport, 'findings'>;
 
-function createReport(overrides: Partial<DoctorFacts> = {}): DoctorFacts {
-  return {
-    hooks: [
-      {
-        platform: 'claude-code',
-        detected: true,
-        configured: true,
-        inspectionStatus: 'verified',
-      },
-    ],
-    engineSelfTest: { passed: 3, failed: 0, total: 3, results: [] },
-    userConfig: {
-      path: '/home/user/.cc-safety-net/rules/rule.json',
-      exists: false,
-      valid: false,
-      ruleCount: 0,
-    },
-    projectConfig: {
-      path: '/project/.cc-safety-net/rules/rule.json',
-      exists: false,
-      valid: false,
-      ruleCount: 0,
-    },
-    configState: { state: 'ready' },
-    effectiveRules: [],
-    shadowedRules: [],
-    environment: [],
-    effectiveSafety: {
-      selectedPreset: 'standard',
-      level: 'standard',
-      capabilities: {
-        fail_closed: { enabled: false, source: 'preset', sources: [] },
-        paranoid_rm: { enabled: false, source: 'preset', sources: [] },
-        paranoid_interpreters: { enabled: false, source: 'preset', sources: [] },
-      },
-      ruleOverrides: {},
-      weakenedRuleOverrides: [],
-      ruleCounts: { stored: 0, effective: 0 },
-    },
-    posture: { directories: [] },
-    activity: { totalBlocked: 0, sessionCount: 0, recentEntries: [], unreadable: 0 },
-    update: { currentVersion: '1.0.0', latestVersion: '1.0.0', updateAvailable: false },
-    system: {
-      version: '1.0.0',
-      versions: {},
-      codexPluginListOutput: null,
-      ampPluginListOutput: null,
-      nodeVersion: null,
-      npmVersion: null,
-      bunVersion: null,
-      platform: 'test',
-    },
-    ...overrides,
-  };
-}
+const CAPABILITY_OFF = { enabled: false, source: 'preset', sources: [] } as const;
 
-describe('deriveDoctorFindings', () => {
-  test('returns no findings when all collected facts are healthy', () => {
-    expect(deriveDoctorFindings(createReport())).toEqual([]);
-  });
+const SAFETY: DoctorFacts['effectiveSafety'] = {
+  selectedPreset: 'standard',
+  level: 'standard',
+  capabilities: {
+    fail_closed: CAPABILITY_OFF,
+    paranoid_rm: CAPABILITY_OFF,
+    paranoid_interpreters: CAPABILITY_OFF,
+  },
+  ruleOverrides: {},
+  weakenedRuleOverrides: [],
+  ruleCounts: { stored: 0, effective: 0 },
+};
 
-  test('reports no configured integration as an error with an install action', () => {
-    const findings = deriveDoctorFindings(
-      createReport({
-        hooks: [
-          {
-            platform: 'claude-code',
-            detected: true,
-            configured: false,
-            inspectionStatus: 'verified',
-          },
-        ],
-      }),
-    );
+const absentConfig = (path: string) => ({ path, exists: false, valid: false, ruleCount: 0 });
 
-    expect(findings).toContainEqual({
-      checkId: 'integration.none-configured',
-      severity: 'error',
-      title: 'No integration configured',
-      detail: 'CC Safety Net is not connected to any supported coding-agent integration.',
-      fixHint: 'Run `cc-safety-net install` and configure at least one integration.',
-    });
-    expect(deriveDoctorFindings(createReport())).not.toContainEqual(
-      expect.objectContaining({ checkId: 'integration.none-configured' }),
-    );
-  });
+const NOTHING_PROBED: DoctorFacts['system'] = {
+  version: '9.9.9',
+  versions: {},
+  codexPluginListOutput: null,
+  ampPluginListOutput: null,
+  nodeVersion: null,
+  npmVersion: null,
+  bunVersion: null,
+  platform: 'linux x64',
+};
 
-  test('reports an integration inspection failure without copying its raw error', () => {
-    const findings = deriveDoctorFindings(
-      createReport({
-        hooks: [
-          {
-            platform: 'claude-code',
-            detected: true,
-            configured: true,
-            inspectionStatus: 'failed',
-            errors: ['sensitive-inspection-value'],
-          },
-        ],
-      }),
-    );
+const BASE: DoctorFacts = {
+  hooks: [],
+  engineSelfTest: { passed: 3, failed: 0, total: 3, results: [] },
+  userConfig: absentConfig('/u/rules/rule.json'),
+  projectConfig: absentConfig('/p/rules/rule.json'),
+  configState: { state: 'ready' },
+  effectiveRules: [],
+  shadowedRules: [],
+  environment: [],
+  effectiveSafety: SAFETY,
+  posture: { directories: [] },
+  activity: { totalBlocked: 0, sessionCount: 0, recentEntries: [], unreadable: 0 },
+  update: { currentVersion: '9.9.9', latestVersion: null, updateAvailable: false },
+  system: NOTHING_PROBED,
+};
 
-    expect(findings).toContainEqual({
-      checkId: 'integration.inspection-failed',
-      severity: 'error',
-      title: 'Claude Code inspection failed',
-      detail: 'Doctor could not verify the Claude Code integration configuration.',
-      fixHint:
-        'Correct the reported Claude Code configuration error, then run `cc-safety-net doctor` again.',
-      integration: 'claude-code',
-    });
-    expect(JSON.stringify(findings)).not.toContain('sensitive-inspection-value');
-    expect(deriveDoctorFindings(createReport())).not.toContainEqual(
-      expect.objectContaining({ checkId: 'integration.inspection-failed' }),
-    );
-  });
+const facts = (overrides: Partial<DoctorFacts>): DoctorFacts => ({ ...BASE, ...overrides });
 
-  for (const scope of ['user', 'project'] as const) {
-    test(`reports an invalid ${scope} configuration as an error with a verification action`, () => {
-      const config = {
-        path: `/${scope}/rule.json`,
-        exists: true,
-        valid: false,
-        ruleCount: 0,
-        errors: ['sensitive-config-value'],
-      };
-      const findings = deriveDoctorFindings(
-        createReport(scope === 'user' ? { userConfig: config } : { projectConfig: config }),
-      );
+const hook = (
+  platform: 'claude-code' | 'cursor' | 'codex',
+  overrides: Record<string, unknown>,
+) => ({
+  platform,
+  detected: false,
+  configured: false,
+  inspectionStatus: 'not-applicable' as const,
+  ...overrides,
+});
 
-      expect(findings).toContainEqual({
-        checkId: `config.${scope}-invalid`,
-        severity: 'error',
-        title: `${scope === 'user' ? 'User' : 'Project'} configuration is invalid`,
-        detail: `Doctor could not load a valid ${scope} rules configuration.`,
-        fixHint: 'Run `cc-safety-net rule verify`, correct the reported error, then rerun doctor.',
-        path: `/${scope}/rule.json`,
-      });
-      expect(JSON.stringify(findings)).not.toContain('sensitive-config-value');
+const auditScope = (value: string) => [
+  {
+    name: 'CC_SAFETY_NET_AUDIT_SCOPE',
+    value,
+    isSet: true,
+    description: 'scope',
+    defaultBehavior: 'all',
+  },
+];
 
-      const valid = { ...config, valid: true, errors: undefined };
-      expect(
-        deriveDoctorFindings(
-          createReport(scope === 'user' ? { userConfig: valid } : { projectConfig: valid }),
-        ),
-      ).not.toContainEqual(expect.objectContaining({ checkId: `config.${scope}-invalid` }));
-    });
-  }
+const unsafe = (kind: 'policy' | 'config' | 'audit', path: string, issues: string[]) => ({
+  kind,
+  path,
+  status: 'unsafe' as const,
+  issues: issues as ('ownership' | 'permissions' | 'symlink' | 'not-directory')[],
+});
 
-  test('reports the degraded runtime configuration state with its full reason', () => {
-    const expected = {
-      checkId: 'config.runtime-degraded',
-      severity: 'warning' as const,
-      title: 'Runtime is enforcing a fallback configuration',
-      detail:
-        'The rejected candidate configuration is not active: invalid rulebook /project/.cc-safety-net/rules/team-rules/rulebook.json: Invalid JSON; fix that file.',
-      fixHint:
-        'Fix the file named in the reason, or run `cc-safety-net rule update` to vendor a remote source, then rerun doctor.',
-    };
-    const reason = expected.detail.slice(expected.detail.indexOf(': ') + 2);
-
-    expect(
-      deriveDoctorFindings(createReport({ configState: { state: 'degraded', reason } })),
-    ).toContainEqual(expected);
-    expect(deriveDoctorFindings(createReport())).not.toContainEqual(
-      expect.objectContaining({ checkId: expected.checkId }),
-    );
-  });
-
-  test('reports v2 lock and cache leftovers with the one command that migrates them', () => {
-    const leftovers = ['/project/.cc-safety-net/rules/rule.lock', '/project/.cc-safety-net/cache'];
-
-    expect(deriveDoctorFindings(createReport({ v2Leftovers: leftovers }))).toContainEqual({
-      checkId: 'config.v2-leftovers',
-      severity: 'info',
-      title: 'Rulebook lock and cache leftovers detected',
-      detail: `Files an earlier version left behind are no longer read: ${leftovers.join(', ')}.`,
-      fixHint:
-        'Run `cc-safety-net rule sync` (add `--global` for user scope) to migrate them, then rerun doctor.',
-    });
-    expect(deriveDoctorFindings(createReport())).not.toContainEqual(
-      expect.objectContaining({ checkId: 'config.v2-leftovers' }),
-    );
-  });
-
-  test('reports an unrecognized audit scope and never echoes its value', () => {
-    const environment = (value: string | undefined) => [
-      {
-        name: 'CC_SAFETY_NET_AUDIT_SCOPE',
-        value,
-        isSet: value !== undefined,
-        description: 'audit scope',
-        defaultBehavior: 'all',
-      },
-    ];
-
-    for (const value of ['', 'ALL', 'Blocked', 'sensitive-env-value']) {
-      const findings = deriveDoctorFindings(createReport({ environment: environment(value) }));
-      expect(findings).toContainEqual({
-        checkId: 'environment.audit-scope-invalid',
-        severity: 'warning',
-        title: 'Audit scope value is invalid',
-        detail:
-          'CC_SAFETY_NET_AUDIT_SCOPE is not `all` or `blocked`, so allowed command decisions are not recorded.',
-        fixHint:
-          'Set CC_SAFETY_NET_AUDIT_SCOPE to `all` or `blocked`, then restart the integration.',
-      });
-      expect(JSON.stringify(findings)).not.toContain('sensitive-env-value');
-    }
-    for (const value of [undefined, 'all', 'blocked']) {
-      expect(
-        deriveDoctorFindings(createReport({ environment: environment(value) })),
-      ).not.toContainEqual(expect.objectContaining({ checkId: 'environment.audit-scope-invalid' }));
-    }
-  });
-
-  test('debug no longer produces an allow-logging finding', () => {
-    expect(
-      deriveDoctorFindings(
-        createReport({
-          environment: [
-            {
-              name: 'CC_SAFETY_NET_DEBUG',
-              value: '1',
-              isSet: true,
-              description: 'debug',
-              defaultBehavior: 'off',
-            },
-          ],
-        }),
-      ),
-    ).toEqual([]);
-  });
-
-  for (const kind of ['policy', 'config', 'audit'] as const) {
-    test(`reports an unsafe ${kind} directory as an integrity error`, () => {
-      const findings = deriveDoctorFindings(
-        createReport({
-          posture: {
-            directories: [
-              {
-                kind,
-                path: `/home/user/.cc-safety-net/${kind}`,
-                status: 'unsafe',
-                issues: ['permissions'],
-              },
-            ],
-          },
-        }),
-      );
-
-      expect(findings).toContainEqual({
-        checkId: `posture.${kind}-directory-unsafe`,
-        severity: 'error',
-        title: `${kind[0]?.toUpperCase()}${kind.slice(1)} directory is unsafe`,
-        detail: `The ${kind} directory has unsafe permissions.`,
-        fixHint:
-          'Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.',
-        path: `/home/user/.cc-safety-net/${kind}`,
-      });
-
-      expect(
-        deriveDoctorFindings(
-          createReport({
-            posture: {
-              directories: [
-                {
-                  kind,
-                  path: `/home/user/.cc-safety-net/${kind}`,
-                  status: 'safe',
-                  issues: [],
-                },
-              ],
-            },
-          }),
-        ),
-      ).not.toContainEqual(
-        expect.objectContaining({ checkId: `posture.${kind}-directory-unsafe` }),
-      );
-    });
-  }
-
-  for (const evidence of [
-    { issue: 'ownership', detail: 'is not owned by the current user' },
-    { issue: 'permissions', detail: 'has unsafe permissions' },
-    { issue: 'symlink', detail: 'is a symbolic link' },
-    { issue: 'not-directory', detail: 'is not a directory' },
-  ] as const) {
-    test(`describes unsafe directory ${evidence.issue} evidence`, () => {
-      const findings = deriveDoctorFindings(
-        createReport({
-          posture: {
-            directories: [
-              {
-                kind: 'policy',
-                path: '/policy',
-                status: 'unsafe',
-                issues: [evidence.issue],
-              },
-            ],
-          },
-        }),
-      );
-
-      expect(findings[0]?.detail).toBe(`The policy directory ${evidence.detail}.`);
-    });
-  }
-
-  test('reports only explicit overrides that weaken resolved preset enforcement', () => {
-    for (const selectedPreset of ['standard', 'strict', 'paranoid'] as const) {
-      const effectiveSafety = {
-        ...createReport().effectiveSafety,
-        selectedPreset,
-        ruleOverrides: { 'git.force-delete': 'off' as const, 'rm.paranoid': 'on' as const },
-        weakenedRuleOverrides: ['git.force-delete'],
-        ruleCounts: { stored: 2, effective: 2 },
-      };
-      expect(deriveDoctorFindings(createReport({ effectiveSafety }))).toContainEqual({
-        checkId: 'posture.rule-overrides-weaken-preset',
-        severity: 'warning',
-        title: 'Rule overrides weaken the selected preset',
-        detail:
-          'Explicit overrides disable rules the resolved preset would enable: git.force-delete.',
-        fixHint: 'Remove these `off` overrides or set them to `on`: git.force-delete.',
-      });
-    }
-
-    const customizationWithoutWeakening = {
-      ...createReport().effectiveSafety,
-      ruleOverrides: { 'rm.paranoid': 'off' as const },
-      weakenedRuleOverrides: [],
-      ruleCounts: { stored: 1, effective: 0 },
-    };
-    expect(
-      deriveDoctorFindings(createReport({ effectiveSafety: customizationWithoutWeakening })),
-    ).not.toContainEqual(
-      expect.objectContaining({ checkId: 'posture.rule-overrides-weaken-preset' }),
-    );
-  });
-
-  test('orders findings by severity and then stable catalog order', () => {
-    const report = createReport({
+const rows: Array<{ name: string; facts: DoctorFacts; ids: string[] }> = [
+  { name: 'no facts at all yield no findings', facts: BASE, ids: [] },
+  {
+    name: 'every discovered integration unconfigured',
+    facts: facts({ hooks: [hook('claude-code', {}), hook('cursor', {})] }),
+    ids: ['integration.none-configured'],
+  },
+  {
+    name: 'one configured integration silences the catalog',
+    facts: facts({
+      hooks: [hook('claude-code', { detected: true, configured: true }), hook('cursor', {})],
+    }),
+    ids: [],
+  },
+  {
+    name: 'two failed inspections each earn their own finding',
+    facts: facts({
       hooks: [
-        {
-          platform: 'claude-code',
-          detected: true,
-          configured: false,
-          inspectionStatus: 'verified',
-        },
+        hook('claude-code', { configured: true, inspectionStatus: 'failed' }),
+        hook('cursor', { configured: true, inspectionStatus: 'failed' }),
       ],
-      userConfig: {
-        path: '/user/rule.json',
-        exists: true,
-        valid: false,
-        ruleCount: 0,
-        errors: ['invalid'],
-      },
-      environment: [
-        {
-          name: 'CC_SAFETY_NET_AUDIT_SCOPE',
-          value: 'everything',
-          isSet: true,
-          description: 'audit scope',
-          defaultBehavior: 'all',
-        },
-      ],
-      effectiveSafety: {
-        ...createReport().effectiveSafety,
-        ruleOverrides: { 'git.force-delete': 'off' },
-        weakenedRuleOverrides: ['git.force-delete'],
-        ruleCounts: { stored: 1, effective: 1 },
-      },
+    }),
+    ids: ['integration.inspection-failed', 'integration.inspection-failed'],
+  },
+  {
+    name: 'an invalid config in each scope',
+    facts: facts({
+      userConfig: { path: '/u/rules/rule.json', exists: true, valid: false, ruleCount: 0 },
+      projectConfig: { path: '/p/rules/rule.json', exists: true, valid: false, ruleCount: 0 },
+    }),
+    ids: ['config.user-invalid', 'config.project-invalid'],
+  },
+  {
+    name: 'a valid config in each scope',
+    facts: facts({
+      userConfig: { path: '/u/rules/rule.json', exists: true, valid: true, ruleCount: 2 },
+      projectConfig: { path: '/p/rules/rule.json', exists: true, valid: true, ruleCount: 1 },
+    }),
+    ids: [],
+  },
+  {
+    name: 'a degraded runtime',
+    facts: facts({ configState: { state: 'degraded', reason: 'user policy is not valid JSON' } }),
+    ids: ['config.runtime-degraded'],
+  },
+  {
+    name: 'version 2 lock and cache leftovers',
+    facts: facts({ v2Leftovers: ['/p/rules/rule.lock', '/u/cache'] }),
+    ids: ['config.v2-leftovers'],
+  },
+  {
+    name: 'an empty leftovers list is not a finding',
+    facts: facts({ v2Leftovers: [] }),
+    ids: [],
+  },
+  {
+    name: 'an unparseable audit scope',
+    facts: facts({ environment: auditScope('bogus') }),
+    ids: ['environment.audit-scope-invalid'],
+  },
+  {
+    name: 'the blocked audit scope is valid',
+    facts: facts({ environment: auditScope('blocked') }),
+    ids: [],
+  },
+  {
+    name: 'each protected directory kind, with each issue wording',
+    facts: facts({
       posture: {
         directories: [
-          {
-            kind: 'audit',
-            path: '/audit',
-            status: 'unsafe',
-            issues: ['symlink'],
-          },
+          unsafe('policy', '/u', ['symlink']),
+          unsafe('config', '/u/rules', ['not-directory']),
+          unsafe('audit', '/u/logs', ['ownership', 'permissions']),
         ],
       },
-    });
-
-    expect(deriveDoctorFindings(report).map((finding) => finding.checkId)).toEqual([
-      'integration.none-configured',
-      'config.user-invalid',
+    }),
+    ids: [
+      'posture.policy-directory-unsafe',
+      'posture.config-directory-unsafe',
       'posture.audit-directory-unsafe',
+    ],
+  },
+  {
+    name: 'two unsafe directories of one kind keep their occurrence order',
+    facts: facts({
+      posture: {
+        directories: [
+          unsafe('config', '/first', ['ownership']),
+          { kind: 'audit', path: '/safe', status: 'safe', issues: [] },
+          unsafe('config', '/second', ['permissions']),
+        ],
+      },
+    }),
+    ids: ['posture.config-directory-unsafe', 'posture.config-directory-unsafe'],
+  },
+  {
+    name: 'rule overrides that weaken the preset',
+    facts: facts({
+      effectiveSafety: {
+        ...SAFETY,
+        weakenedRuleOverrides: ['rm.recursive-force-root-or-home', 'git.reset-hard'],
+      },
+    }),
+    ids: ['posture.rule-overrides-weaken-preset'],
+  },
+  {
+    name: 'severity outranks catalog order, which outranks occurrence',
+    facts: facts({
+      hooks: [hook('claude-code', {}), hook('cursor', { inspectionStatus: 'failed' })],
+      userConfig: { path: '/u/rules/rule.json', exists: true, valid: false, ruleCount: 0 },
+      configState: { state: 'degraded', reason: 'project policy is not valid JSON' },
+      environment: auditScope('nonsense'),
+      v2Leftovers: ['/u/cache'],
+      posture: { directories: [unsafe('policy', '/u', ['permissions'])] },
+      effectiveSafety: {
+        ...SAFETY,
+        weakenedRuleOverrides: ['git.reset-hard'],
+      },
+    }),
+    ids: [
+      'integration.none-configured',
+      'integration.inspection-failed',
+      'config.user-invalid',
+      'posture.policy-directory-unsafe',
+      'config.runtime-degraded',
       'environment.audit-scope-invalid',
       'posture.rule-overrides-weaken-preset',
-    ]);
+      'config.v2-leftovers',
+    ],
+  },
+];
+
+describe('deriveDoctorFindings', () => {
+  for (const row of rows) {
+    test(row.name, () => {
+      const ported = derivePorted(row.facts);
+      expect(ported).toMatchSnapshot();
+      expect(ported.map((finding) => finding.checkId)).toEqual(row.ids);
+    });
+  }
+
+  test('the weakened override list is sorted in both the detail and the fix', () => {
+    const [finding] = derivePorted(
+      facts({
+        effectiveSafety: {
+          ...SAFETY,
+          weakenedRuleOverrides: ['rm.recursive-force-root-or-home', 'git.reset-hard'],
+        },
+      }),
+    );
+    expect(finding?.detail).toBe(
+      'Explicit overrides disable rules the resolved preset would enable: git.reset-hard, rm.recursive-force-root-or-home.',
+    );
+    expect(finding?.fixHint).toBe(
+      'Remove these `off` overrides or set them to `on`: git.reset-hard, rm.recursive-force-root-or-home.',
+    );
+  });
+
+  test('the audit directory wording joins its two issues', () => {
+    const [finding] = derivePorted(
+      facts({
+        posture: { directories: [unsafe('audit', '/u/logs', ['ownership', 'permissions'])] },
+      }),
+    );
+    expect(finding?.detail).toBe(
+      'The audit directory is not owned by the current user and has unsafe permissions.',
+    );
+    expect(finding?.title).toBe('Audit directory is unsafe');
   });
 });

@@ -1,16 +1,13 @@
 import { readdirSync, statSync, unlinkSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { findSuspectEntries, listAuditLogFiles, readAuditLogEntries } from '@/audit/reader';
+import { pruneExpiredAuditLogs } from '@/audit/retention';
+import { getAuditLogsDir } from '@/audit/writer';
 import { parseCommandArgs, reportCommandArgErrors } from '@/cli/args';
 import { renderTerminalText } from '@/cli/utils/terminal';
-import {
-  findSuspectEntries,
-  getAuditLogsDir,
-  listAuditLogFiles,
-  pruneExpiredAuditLogs,
-  readAuditLogEntries,
-  resolveAuditRetentionDays,
-} from '@/engine/facade';
-import type { AuditLogEntry } from '@/ir/audit';
+import type { AuditLogEntry } from '@/core/audit';
+import type { Environment } from '@/core/environment';
+import { readRetentionDays } from '@/core/policy/retention';
 
 type LogsFlags = {
   limit: number;
@@ -34,10 +31,10 @@ type SourcedAuditLogEntry = {
   file: string;
 };
 
-function parseLogsFlags(args: string[]): LogsFlags | null {
+function parseLogsFlags(environment: Environment, args: string[]): LogsFlags | null {
   // Retained history is the only history, so neither the `--since` ceiling nor
   // the default window can reach past it.
-  const retentionDays = resolveAuditRetentionDays();
+  const retentionDays = readRetentionDays(environment);
   const parsed = parseCommandArgs(
     {
       label: 'logs',
@@ -140,13 +137,14 @@ function parseLogsFlags(args: string[]): LogsFlags | null {
 }
 
 export async function runLogsCommand(
+  environment: Environment,
   args: string[],
   options: { logsDir?: string; timeZone?: string } = {},
 ): Promise<number> {
-  const flags = parseLogsFlags(args);
+  const flags = parseLogsFlags(environment, args);
   if (!flags) return 1;
 
-  const logsDir = options.logsDir ?? getAuditLogsDir();
+  const logsDir = options.logsDir ?? getAuditLogsDir(environment);
   if (flags.pruneLegacy) return pruneLegacyAuditLogs(logsDir, flags.json, flags.dryRun);
   if (!logsDir) {
     console.log(
@@ -158,7 +156,7 @@ export async function runLogsCommand(
     );
     return 0;
   }
-  pruneExpiredAuditLogs(logsDir);
+  pruneExpiredAuditLogs(environment, logsDir);
   // An unreadable file or a malformed record makes every answer below a partial
   // one, including "nothing found". Say so once on stderr, name no paths, and
   // leave stdout and the exit code untouched.

@@ -1,28 +1,20 @@
-import { type Layout, SHIPPED_LAYOUT } from './build-layout';
-
 interface BuildOutput {
   path: string;
   size: number;
 }
 
-export function getBundledOutputs(outputs: BuildOutput[], layout: Layout = SHIPPED_LAYOUT) {
+export function getBundledOutputs(outputs: BuildOutput[]) {
   return {
     indexOutput: outputs.find((output) =>
-      normalizeBuildPath(output.path).endsWith(`${layout.outdir}/index.js`),
+      normalizeBuildPath(output.path).endsWith('dist/index.js'),
     ),
-    binOutput: outputs.find((output) =>
-      normalizeBuildPath(output.path).endsWith(`${layout.outdir}/${layout.emitted.bin}`),
-    ),
-    piOutput: outputs.find((output) =>
-      normalizeBuildPath(output.path).endsWith(`${layout.outdir}/${layout.emitted.pi}`),
-    ),
+    binOutput: outputs.find((output) => normalizeBuildPath(output.path).endsWith('dist/bin.js')),
+    piOutput: outputs.find((output) => normalizeBuildPath(output.path).endsWith('dist/pi.js')),
   };
 }
 
-export function isPublicDeclarationOutput(path: string, layout: Layout = SHIPPED_LAYOUT): boolean {
-  return layout.emitted.declarations
-    .map((declaration) => `${layout.outdir}/${declaration}`)
-    .includes(normalizeBuildPath(path));
+export function isPublicDeclarationOutput(path: string): boolean {
+  return ['dist/entries/index.d.ts', 'dist/entries/api.d.ts'].includes(normalizeBuildPath(path));
 }
 
 function normalizeBuildPath(path: string): string {

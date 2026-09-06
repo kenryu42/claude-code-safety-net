@@ -10,8 +10,8 @@ import {
   wrapReason,
 } from '@/cli/explain/format-helpers';
 import { colors } from '@/cli/utils/colors';
-import type { ExplainResult } from '@/ir/explain';
-import { describePolicyScope } from '@/ir/policy';
+import { describePolicyScope } from '@/core/policy/types';
+import type { ExplainResult } from '@/gate/explain';
 
 export function formatTraceHuman(result: ExplainResult, options?: { asciiOnly?: boolean }): string {
   const box = getBoxChars(options?.asciiOnly ?? false);

@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'bun:test';
 import { chmodSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { AMP_MANAGED_HEADER, buildAmpArtifactHeader } from '@/integrations/amp/artifact';
+import { AMP_MANAGED_HEADER, buildAmpArtifactHeader } from '@/hosts/amp/artifact';
 import {
   buildOpenClawArtifactHeader,
   buildOpenClawPluginManifests,
   OPENCLAW_MANAGED_HEADER,
-} from '@/integrations/openclaw/artifact';
+} from '@/hosts/openclaw/artifact';
 import pkg from '../../package.json';
 import {
   buildAmpBundle,
@@ -28,7 +28,6 @@ function writeBuildFixture(directory: string) {
   mkdirSync(join(directory, 'dist', 'pi'), { recursive: true });
   mkdirSync(join(directory, 'dist', 'amp', 'cc-safety-net'), { recursive: true });
   mkdirSync(join(directory, 'dist', 'openclaw', 'cc-safety-net'), { recursive: true });
-  mkdirSync(join(directory, 'dist', 'vendor'), { recursive: true });
   writeFileSync(
     join(directory, 'dist', 'bin', 'cc-safety-net.js'),
     '#!/usr/bin/env node\nimport "../chunks/index-fixture.js";\n',
@@ -40,7 +39,6 @@ function writeBuildFixture(directory: string) {
   writeFileSync(join(directory, 'dist', 'index.d.ts'), 'export {};\n');
   writeFileSync(join(directory, 'dist', 'index.js'), 'import "./chunks/index-fixture.js";\n');
   writeFileSync(join(directory, 'dist', 'pi', 'index.js'), 'export {};\n');
-  writeFileSync(join(directory, 'dist', 'vendor', 'zod.cjs'), 'module.exports = {};\n');
   writeFileSync(
     join(directory, 'dist', 'amp', 'cc-safety-net', 'index.ts'),
     `${buildAmpArtifactHeader(pkg.version)}export {};\n`,
@@ -63,7 +61,7 @@ describe('generated artifact contract', () => {
 
       expect(result.success).toBeTrue();
       expect(artifact.startsWith(buildAmpArtifactHeader(pkg.version))).toBeTrue();
-      expect(artifact).toContain('ZodError');
+      expect(artifact).not.toContain('ZodError');
       expect(unbundledRuntimeImports(artifact)).toEqual([]);
     });
   });
@@ -76,7 +74,7 @@ describe('generated artifact contract', () => {
 
       expect(result.success).toBeTrue();
       expect(artifact.startsWith(buildOpenClawArtifactHeader(pkg.version))).toBeTrue();
-      expect(artifact).toContain('ZodError');
+      expect(artifact).not.toContain('ZodError');
       expect(unbundledRuntimeImports(artifact)).toEqual([]);
       expect(JSON.parse(readFileSync(join(pluginDir, 'openclaw.plugin.json'), 'utf8')).id).toBe(
         'cc-safety-net',
@@ -190,7 +188,7 @@ describe('generated artifact contract', () => {
     expect(() => verifyManagedArtifact('Amp', AMP_MANAGED_HEADER, artifact)).not.toThrow();
     expect(artifact.startsWith(AMP_MANAGED_HEADER)).toBeTrue();
     expect(artifact).toContain(`// version: ${pkg.version}`);
-    expect(artifact).toContain('ZodError');
+    expect(artifact).not.toContain('ZodError');
     expect(unbundledRuntimeImports(artifact)).toEqual([]);
   });
 

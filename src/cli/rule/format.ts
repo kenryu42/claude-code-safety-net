@@ -1,10 +1,10 @@
-import type { CustomRule } from '@/ir/policy';
 import type {
   ActiveRulebookSummary,
-  AddRulebookSourceResult,
   LoadedRulesPolicy,
   RuleOverride,
-} from '@/rules/policy';
+} from '@/core/policy/rules-config';
+import type { CustomRule } from '@/core/policy/types';
+import type { AddRulebookSourceResult } from '@/rules-manager/types';
 
 export function printRuleChangeResult(
   result: {

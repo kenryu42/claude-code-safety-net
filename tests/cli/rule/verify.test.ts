@@ -1,398 +1,245 @@
-import { describe, expect, test } from 'bun:test';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { afterEach, describe, expect, spyOn, test } from 'bun:test';
 import { join } from 'node:path';
-import { runRulesVerify } from '@/cli/rule/verify';
-import { withStdoutColor, withTempDir } from '../../helpers';
-import { syncInitialGitRulebook, writeLocalRulebook } from '../../helpers/rulebook';
-
-const SCHEMA_URL =
-  'https://raw.githubusercontent.com/kenryu42/cc-safety-net/main/assets/cc-safety-net.schema.json';
-
-describe('rule verify runtime errors', () => {
-  test('reports an unvendored remote source in the user config', async () => {
-    await withTempDir('safety-net-rule-verify-user-unsynced-', (tempDir) => {
-      const userConfig = join(tempDir, 'user', 'rules', 'rule.json');
-      writeRulesConfig(userConfig, ['owner/repo#main/policy']);
-
-      const result = captureOutput(() => runVerify(tempDir, { userConfigPath: userConfig }));
-
-      expect(result.exitCode).toBe(1);
-      expect(result.output).toContain(`✗ User config: ${userConfig}`);
-      expect(result.output).toContain(
-        `1. missing rulebook file ${join(tempDir, 'user', 'rules', 'policy', 'rulebook.json')} for owner/repo#main/policy`,
-      );
-      expect(result.output).toContain(
-        '2. run `cc-safety-net rule update` to vendor owner/repo#main/policy',
-      );
-      expect(result.output).toContain('Config validation failed.');
-    });
-  });
-
-  test('reports an unvendored remote source in the project config', async () => {
-    await withTempDir('safety-net-rule-verify-project-unsynced-', (tempDir) => {
-      const projectConfig = join(tempDir, 'project', 'rules', 'rule.json');
-      writeRulesConfig(projectConfig, ['owner/repo#main/policy']);
-
-      const result = captureOutput(() => runVerify(tempDir, { projectConfigPath: projectConfig }));
-
-      expect(result.exitCode).toBe(1);
-      expect(result.output).toContain(`✗ Project config: ${projectConfig}`);
-      expect(result.output).toContain(
-        `1. missing rulebook file ${join(tempDir, 'project', 'rules', 'policy', 'rulebook.json')} for owner/repo#main/policy`,
-      );
-      expect(result.output).toContain(
-        '2. run `cc-safety-net rule update` to vendor owner/repo#main/policy',
-      );
-      expect(result.output).toContain('Config validation failed.');
-    });
-  });
-});
-
-describe('rule verify $schema backfill', () => {
-  test('adds $schema as the first key once and leaves other keys untouched', async () => {
-    await withTempDir('safety-net-rule-verify-schema-', (tempDir) => {
-      const projectConfig = join(tempDir, '.cc-safety-net', 'rules', 'rule.json');
-      mkdirSync(join(projectConfig, '..'), { recursive: true });
-      writeFileSync(
-        projectConfig,
-        JSON.stringify({
-          version: 1,
-          rules: [],
-          overrides: {},
-          transparent_wrappers: ['rtk'],
-        }),
-      );
-
-      const first = captureOutput(() => runVerify(tempDir, { projectConfigPath: projectConfig }));
-
-      expect(first.exitCode).toBe(0);
-      expect(first.output).toContain('Added $schema to project config.');
-      const written = readFileSync(projectConfig, 'utf-8');
-      const parsed = JSON.parse(written) as Record<string, unknown>;
-      expect(Object.keys(parsed)[0]).toBe('$schema');
-      expect(parsed).toEqual({
-        $schema: SCHEMA_URL,
-        version: 1,
-        rules: [],
-        overrides: {},
-        transparent_wrappers: ['rtk'],
-      });
-
-      const second = captureOutput(() => runVerify(tempDir, { projectConfigPath: projectConfig }));
-
-      expect(second.exitCode).toBe(0);
-      expect(second.output).not.toContain('Added $schema');
-      expect(readFileSync(projectConfig, 'utf-8')).toBe(written);
-    });
-  });
-});
-
-describe('rule verify GitHub source rules', () => {
-  test('skips rule.json, rule.lock and cache when scanning rulebook directories', async () => {
-    await withTempDir('safety-net-rule-verify-reserved-', (tempDir) => {
-      const rulesDir = join(tempDir, '.cc-safety-net', 'rules');
-      writeRulesConfig(join(rulesDir, 'rule.json'), []);
-      writeFileSync(join(rulesDir, 'rule.lock'), JSON.stringify({ version: 1, rulebooks: [] }));
-      mkdirSync(join(rulesDir, 'cache'), { recursive: true });
-      writeLocalRulebook(join(rulesDir, 'cwd-rules', 'rulebook.json'), 'cwd-rules');
-
-      const result = captureOutput(() =>
-        runVerify(tempDir, { projectConfigPath: join(rulesDir, 'rule.json') }),
-      );
-
-      expect(result.exitCode).toBe(0);
-      expect(result.output).not.toContain('must be a rulebook directory');
-      expect(result.output).not.toContain('rulebook directory names must match');
-      expect(result.output).toContain('✓ GitHub source rules:');
-      expect(result.output).toContain('1. cwd-rules');
-      expect(result.output).toContain('All configs valid.');
-    });
-  });
-
-  test('reports name/folder mismatch and missing rulebook.json for every bad directory', async () => {
-    await withTempDir('safety-net-rule-verify-bad-books-', (tempDir) => {
-      const rulesDir = join(tempDir, '.cc-safety-net', 'rules');
-      writeLocalRulebook(join(rulesDir, 'mismatch', 'rulebook.json'), 'other-name');
-      mkdirSync(join(rulesDir, 'empty-book'), { recursive: true });
-
-      const output = expectInvalidRulesDir(tempDir, rulesDir);
-
-      expect(output).toContain('1. empty-book/rulebook.json is required');
-      expect(output).toContain('2. rulebook name "other-name" must match folder "mismatch"');
-    });
-  });
-
-  test('reports one diagnostic per malformed rules directory entry', async () => {
-    await withTempDir('safety-net-rule-verify-malformed-', (tempDir) => {
-      const rulesDir = join(tempDir, '.cc-safety-net', 'rules');
-      writeLocalRulebook(join(rulesDir, 'good-book', 'rulebook.json'), 'good-book');
-      mkdirSync(join(rulesDir, 'Bad Name'), { recursive: true });
-      writeFileSync(join(rulesDir, 'notes'), 'not a rulebook directory');
-      mkdirSync(join(rulesDir, 'broken-json'), { recursive: true });
-      writeFileSync(join(rulesDir, 'broken-json', 'rulebook.json'), '{ "name": "broken-json", }');
-      mkdirSync(join(rulesDir, 'no-rules'), { recursive: true });
-      writeFileSync(
-        join(rulesDir, 'no-rules', 'rulebook.json'),
-        JSON.stringify({ rulebook_version: 1, name: 'no-rules', version: '1.0.0' }),
-      );
-
-      const output = expectInvalidRulesDir(tempDir, rulesDir);
-
-      expect(output).toContain('rulebook directory names must match');
-      expect(output).toContain('Bad Name');
-      expect(output).toContain('notes must be a rulebook directory');
-      expect(output).toContain('broken-json/rulebook.json: invalid JSON');
-      expect(output).toContain('no-rules/rulebook.json: allowed_commands: required array');
-      expect(output).toContain('rules: required array');
-    });
-  });
-
-  test('runs rulebook_version 2 fixtures and reports the ones that fail', async () => {
-    await withTempDir('safety-net-rule-verify-v2-fixtures-', (tempDir) => {
-      const rulesDir = join(tempDir, '.cc-safety-net', 'rules');
-      writeV2Rulebook(join(rulesDir, 'good-book', 'rulebook.json'), 'good-book', [
-        { command: 'terraform destroy', expect: 'blocked', rule: 'block-terraform-destroy' },
-        { command: 'terraform plan', expect: 'allowed' },
-      ]);
-
-      const passing = captureOutput(() => runVerify(tempDir));
-      expect(passing.exitCode).toBe(0);
-      expect(passing.output).toContain('1. good-book');
-
-      writeV2Rulebook(join(rulesDir, 'bad-book', 'rulebook.json'), 'bad-book', [
-        { command: 'terraform plan', expect: 'blocked', rule: 'block-terraform-destroy' },
-      ]);
-
-      const output = expectInvalidRulesDir(tempDir, rulesDir);
-
-      expect(output).toContain(
-        'bad-book/rulebook.json: tests[0]: expected "block-terraform-destroy" to block "terraform plan" but no rule matched',
-      );
-    });
-  });
-});
-
-describe('rule verify legacy project config', () => {
-  test('fails when only a legacy project config exists', async () => {
-    await withTempDir('safety-net-rule-verify-legacy-project-', (tempDir) => {
-      const legacyConfig = join(tempDir, '.safety-net.json');
-      writeLegacyConfig(legacyConfig);
-
-      const output = expectInactiveLegacyProject(tempDir, legacyConfig);
-
-      expect(output).toContain('1. block-project-git');
-      expect(output).toContain(
-        'Warning: Legacy project config is ignored by CC Safety Net. Run `npx -y cc-safety-net rule migrate`.',
-      );
-    });
-  });
-
-  test('lists the errors and asks to fix or delete an invalid legacy project config', async () => {
-    await withTempDir('safety-net-rule-verify-legacy-invalid-', (tempDir) => {
-      const legacyConfig = join(tempDir, '.safety-net.json');
-      writeFileSync(
-        legacyConfig,
-        JSON.stringify({
-          version: 2,
-          rules: [{ name: 'block-project-git', command: 'git', block_args: ['danger'] }],
-        }),
-      );
-
-      const output = expectInactiveLegacyProject(tempDir, legacyConfig);
-
-      expect(output).toContain('Errors:');
-      expect(output).toContain('1. version must be 1');
-      expect(output).toContain('2. rules[0].reason: required string');
-      expect(output).not.toContain('Rules:');
-      expect(output).toContain(
-        'Warning: Legacy project config is no longer supported. Fix or delete the legacy project config, then run `npx -y cc-safety-net rule migrate`.',
-      );
-    });
-  });
-
-  test('passes with a cleanup warning when a legacy config sits beside a migrated one', async () => {
-    await withTempDir('safety-net-rule-verify-legacy-coexist-', (tempDir) => {
-      const projectConfig = join(tempDir, '.cc-safety-net', 'rules', 'rule.json');
-      const legacyConfig = join(tempDir, '.safety-net.json');
-      writeRulesConfig(projectConfig, []);
-      writeLegacyConfig(legacyConfig);
-
-      const result = captureOutput(() =>
-        runVerify(tempDir, {
-          projectConfigPath: projectConfig,
-          legacyProjectConfigPath: legacyConfig,
-        }),
-      );
-
-      expect(result.exitCode).toBe(0);
-      expect(result.output).toContain(`✓ Project config: ${projectConfig}`);
-      expect(result.output).not.toContain('Legacy project config:');
-      expect(result.output).toContain(
-        'Warning: Legacy project config is no longer needed. Run `npx -y cc-safety-net rule migrate --cleanup` to clean it up safely.',
-      );
-      expect(result.output).toContain('Configs valid with warnings.');
-    });
-  });
-});
-
-describe('rule verify with no configs', () => {
-  test('reports built-in rules only when nothing is configured', async () => {
-    await withTempDir('safety-net-rule-verify-empty-', (tempDir) => {
-      expectNoConfigsFound(captureOutput(() => runVerify(tempDir)));
-    });
-  });
-
-  test('reports built-in rules only when the rules directory is empty', async () => {
-    await withTempDir('safety-net-rule-verify-empty-rules-dir-', (tempDir) => {
-      mkdirSync(join(tempDir, '.cc-safety-net', 'rules'), { recursive: true });
-
-      expectNoConfigsFound(captureOutput(() => runVerify(tempDir)));
-    });
-  });
-});
-
-describe('rule verify valid project config sources', () => {
-  test('lists configured rulebook sources for a synced project config', async () => {
-    await withTempDir('safety-net-rule-verify-synced-', async (tempDir) => {
-      await syncInitialGitRulebook(tempDir);
-      const projectConfig = join(tempDir, '.cc-safety-net', 'rules', 'rule.json');
-
-      const result = captureOutput(() => runVerify(tempDir, { projectConfigPath: projectConfig }));
-
-      expect(result.exitCode).toBe(0);
-      expect(result.output).toContain(`✓ Project config: ${projectConfig}`);
-      expect(result.output).toContain('Schema: rulebook sources');
-      expect(result.output).toContain('Sources:');
-      expect(result.output).toContain('1. project-rules');
-      expect(result.output).not.toContain('Sources: (none)');
-      expect(result.output).toContain('All configs valid.');
-    });
-  });
-});
+import { runRulesVerify as portedRulesVerify } from '@/cli/rule/verify';
+import { snapshotTree, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
+import {
+  createTempRoot,
+  environmentFor,
+  isolationEnv,
+  normalize,
+  removeTempRoots,
+} from '../../helpers/temp-home';
 
 /**
- * Always pins every config path into the temp dir so the developer's real
- * ~/.cc-safety-net never leaks into a verify run.
+ * `rule verify` is the one diagnostic that writes: a valid config missing its `$schema` gets one
+ * inserted. So each case compares the printed report, the exit code and the tree the run left
+ * behind, over the same fixture built twice.
  */
-function runVerify(
-  tempDir: string,
-  overrides: {
-    userConfigPath?: string;
-    projectConfigPath?: string;
-    legacyProjectConfigPath?: string;
-  } = {},
-): number {
-  return runRulesVerify({
-    cwd: tempDir,
-    userConfigPath: overrides.userConfigPath ?? join(tempDir, 'unused-user', 'rules', 'rule.json'),
-    projectConfigPath:
-      overrides.projectConfigPath ?? join(tempDir, 'unused-project', 'rules', 'rule.json'),
-    legacyUserConfigPath: join(tempDir, 'unused-user', 'config.json'),
-    legacyProjectConfigPath: overrides.legacyProjectConfigPath ?? join(tempDir, 'unused.json'),
+
+afterEach(() => {
+  removeTempRoots();
+});
+
+const RULEBOOK = (name: string, fixture: Record<string, unknown>) =>
+  JSON.stringify({
+    rulebook_version: 2,
+    name,
+    version: '1.0.0',
+    allowed_commands: ['docker'],
+    rules: [
+      {
+        name: 'block-system-prune',
+        command: 'docker',
+        match: { command_path: ['system', 'prune'] },
+        reason: 'Prune everything and an unrelated stopped container goes with it.',
+      },
+    ],
+    tests: [fixture],
   });
-}
 
-/** Asserts the shared failure envelope for a rules directory that has bad entries. */
-function expectInvalidRulesDir(tempDir: string, rulesDir: string): string {
-  const result = captureOutput(() => runVerify(tempDir));
-  expect(result.exitCode).toBe(1);
-  expect(result.output).toContain(`✗ GitHub source rules: ${rulesDir}`);
-  expect(result.output).toContain('Config validation failed.');
-  return result.output;
-}
+const PASSING_FIXTURE = {
+  command: 'docker system prune',
+  expect: 'blocked',
+  rule: 'block-system-prune',
+};
+const FAILING_FIXTURE = { command: 'docker ps', expect: 'blocked', rule: 'block-system-prune' };
 
-/** Asserts the shared inactive-legacy envelope for a project with only a legacy config. */
-function expectInactiveLegacyProject(tempDir: string, legacyConfig: string): string {
-  const result = captureOutput(() => runVerify(tempDir, { legacyProjectConfigPath: legacyConfig }));
-  expect(result.exitCode).toBe(1);
-  expect(result.output).toContain(`✗ Legacy project config: ${legacyConfig}`);
-  expect(result.output).toContain('Status: ignored by CC Safety Net');
-  expect(result.output).toContain('Config validation failed.');
-  return result.output;
-}
+const USER_RULES_CONFIG = 'home/.cc-safety-net/rules/rule.json';
+const USER_RULEBOOK = 'home/.cc-safety-net/rules/team-rules/rulebook.json';
+const SCHEMA_STAMPED_CONFIG = JSON.stringify({ $schema: 'x', version: 1, rules: [] });
+const LEGACY_USER_CONFIG = 'home/.cc-safety-net/config.json';
+const PROJECT_RULES_CONFIG = 'project/.cc-safety-net/rules/rule.json';
+const LEGACY_PROJECT_CONFIG = 'project/.safety-net.json';
 
-function expectNoConfigsFound(result: { exitCode: number; output: string }): void {
-  expect(result.exitCode).toBe(0);
-  expect(result.output).toContain('CC Safety Net Config');
-  expect(result.output).toContain('No config files found. Using built-in rules only.');
-  expect(result.output).not.toContain('GitHub source rules');
-  expect(result.output).not.toContain('All configs valid.');
-  expect(result.output).not.toContain('Config validation failed.');
-}
+const LEGACY_RULES = JSON.stringify({
+  version: 1,
+  rules: [
+    {
+      name: 'no-force-push',
+      command: 'git',
+      subcommand: 'push',
+      block_args: ['--force'],
+      reason: 'Force pushing rewrites history other clones already have.',
+    },
+  ],
+});
 
-function writeV2Rulebook(
-  path: string,
-  name: string,
-  tests: Array<{ command: string; expect: 'blocked' | 'allowed'; rule?: string }>,
-): void {
-  mkdirSync(join(path, '..'), { recursive: true });
-  writeFileSync(
-    path,
-    JSON.stringify({
-      rulebook_version: 2,
-      name,
-      version: '1.0.0',
-      allowed_commands: ['terraform'],
-      rules: [
-        {
-          name: 'block-terraform-destroy',
-          command: 'terraform',
-          match: { command_path: ['destroy'] },
-          reason: 'Ask before destroying infrastructure.',
-        },
-      ],
-      tests,
+function runVerify(label: string, spec: TreeSpec, call: (context: VerifyContext) => number) {
+  const root = createTempRoot(`verify-${label}-`);
+  const home = join(root, 'home');
+  const env = isolationEnv(home);
+  writeTree(root, spec);
+  // The report is one stream to the reader, so both channels land in one list in call order.
+  const written: string[] = [];
+  const spies = (['log', 'error'] as const).map((channel) =>
+    spyOn(console, channel).mockImplementation((...parts: unknown[]) => {
+      written.push(parts.join(' '));
     }),
   );
-}
-
-function writeRulesConfig(path: string, rules: string[]): void {
-  mkdirSync(join(path, '..'), { recursive: true });
-  writeFileSync(
-    path,
-    JSON.stringify({
-      $schema: SCHEMA_URL,
-      version: 1,
-      rules,
-      overrides: {},
-      transparent_wrappers: [],
-    }),
-  );
-}
-
-function writeLegacyConfig(path: string): void {
-  mkdirSync(join(path, '..'), { recursive: true });
-  writeFileSync(
-    path,
-    JSON.stringify({
-      version: 1,
-      rules: [
-        {
-          name: 'block-project-git',
-          command: 'git',
-          block_args: ['danger'],
-          reason: 'Do not run git danger.',
-        },
-      ],
-    }),
-  );
-}
-
-/**
- * Captures stdout and stderr together; verify writes errors and warnings to console.error.
- * Colors are disabled so warning text can be asserted verbatim.
- */
-function captureOutput(fn: () => number) {
-  const originalLog = console.log;
-  const originalError = console.error;
-  const output: string[] = [];
-  const record = (...parts: unknown[]) => output.push(parts.map(String).join(' '));
-  console.log = record;
-  console.error = record;
   try {
-    return { exitCode: withStdoutColor(false, fn), output: output.join('\n') };
+    const code = call({ home, env, cwd: join(root, 'project') });
+    return normalize({ code, written, tree: snapshotTree(root) }, [[root, '<root>']]);
   } finally {
-    console.log = originalLog;
-    console.error = originalError;
+    for (const spy of spies) spy.mockRestore();
   }
 }
+
+type VerifyContext = { home: string; env: Record<string, string | undefined>; cwd: string };
+
+const configContent = (tree: ReturnType<typeof snapshotTree>, path: string) =>
+  tree.find((entry) => entry.path === path)?.content;
+
+function verifyBothWays(spec: TreeSpec) {
+  const ported = runVerify('ported', spec, (context) =>
+    portedRulesVerify(environmentFor(context.home, context.env), { cwd: context.cwd }),
+  );
+  expect(ported).toMatchSnapshot();
+  return { ...ported, report: ported.written.join('\n') };
+}
+
+describe('rule verify', () => {
+  test('no config anywhere reports the built-in rules alone', () => {
+    const outcome = verifyBothWays({});
+    expect(outcome.code).toBe(0);
+    expect(outcome.written).toEqual([
+      'CC Safety Net Config',
+      '════════════════════',
+      '\nNo config files found. Using built-in rules only.',
+    ]);
+  });
+
+  test('a valid user config gains its schema and lists its sources', () => {
+    const outcome = verifyBothWays({
+      [USER_RULES_CONFIG]: JSON.stringify({ version: 1, rules: ['team-rules'] }),
+      [USER_RULEBOOK]: RULEBOOK('team-rules', PASSING_FIXTURE),
+    });
+    expect(outcome.code).toBe(0);
+    expect(outcome.report).toContain('\nAdded $schema to user config.');
+    expect(outcome.report).toContain(
+      `✓ User config: ${join('<root>', 'home', '.cc-safety-net', 'rules', 'rule.json')}`,
+    );
+    expect(outcome.report).toContain('    1. team-rules');
+    expect(outcome.report).toContain('\nAll configs valid.');
+    // The insertion is the only write the command makes, and it leads the rewritten file.
+    expect(configContent(outcome.tree, USER_RULES_CONFIG)).toContain(`{\n  "$schema": "https:`);
+  });
+
+  test('an unparseable user config is reported as invalid', () => {
+    const outcome = verifyBothWays({ [USER_RULES_CONFIG]: 'not json' });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain('✗ User config: ');
+    expect(outcome.report).toContain('    1. Invalid JSON');
+    expect(outcome.report).toContain('\nConfig validation failed.');
+    expect(configContent(outcome.tree, USER_RULES_CONFIG)).toBe('not json');
+  });
+
+  test('an override naming no rule its sources define is a runtime error', () => {
+    const outcome = verifyBothWays({
+      [USER_RULES_CONFIG]: JSON.stringify({
+        version: 1,
+        rules: ['team-rules'],
+        overrides: { 'team-rules/no-such-rule': 'off' },
+      }),
+      [USER_RULEBOOK]: RULEBOOK('team-rules', PASSING_FIXTURE),
+    });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain('unknown override key "team-rules/no-such-rule" in ');
+    // A config the run refused is a config it does not rewrite.
+    expect(configContent(outcome.tree, USER_RULES_CONFIG)).not.toContain('$schema');
+  });
+
+  test('a rulebook whose fixture fails is reported by index', () => {
+    const outcome = verifyBothWays({
+      'project/.cc-safety-net/rules/broken-rules/rulebook.json': RULEBOOK(
+        'broken-rules',
+        FAILING_FIXTURE,
+      ),
+    });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain(
+      `✗ GitHub source rules: ${join('<root>', 'project', '.cc-safety-net', 'rules')}`,
+    );
+    expect(outcome.report).toContain(
+      '    1. broken-rules/rulebook.json: tests[0]: expected "block-system-prune" to block "docker ps" but no rule matched',
+    );
+  });
+
+  test('a rulebook whose name disagrees with its folder is refused', () => {
+    const outcome = verifyBothWays({
+      'project/.cc-safety-net/rules/team-rules/rulebook.json': RULEBOOK('other', PASSING_FIXTURE),
+    });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain('    1. rulebook name "other" must match folder "team-rules"');
+  });
+
+  test('a regular file beside the rulebooks is not a rulebook', () => {
+    const outcome = verifyBothWays({ 'project/.cc-safety-net/rules/stray': 'not a rulebook' });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain('    1. stray must be a rulebook directory');
+  });
+
+  test('a legacy user config on its own is reported as ignored', () => {
+    const outcome = verifyBothWays({ [LEGACY_USER_CONFIG]: LEGACY_RULES });
+    expect(outcome.code).toBe(0);
+    expect(outcome.report).toContain(
+      '✗ Legacy user config: <root>/home/.cc-safety-net/config.json',
+    );
+    expect(outcome.report).toContain('  Status: ignored by CC Safety Net');
+    expect(outcome.report).toContain('    1. no-force-push');
+    expect(outcome.report).toContain(
+      'Warning: Legacy user config is ignored by CC Safety Net. Run `npx -y cc-safety-net rule migrate`.',
+    );
+    expect(outcome.report).toContain('\nConfigs valid with warnings.');
+  });
+
+  test('a legacy user config that no longer validates is an error', () => {
+    const outcome = verifyBothWays({
+      [LEGACY_USER_CONFIG]: JSON.stringify({ version: 1, rules: [{}] }),
+    });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain('    1. rules[0].name: required string');
+    expect(outcome.report).toContain('    4. rules[0].reason: required string');
+    expect(outcome.report).toContain('Warning: Legacy user config is no longer supported.');
+  });
+
+  test('a legacy user config beside a current one is only cleanup', () => {
+    const outcome = verifyBothWays({
+      [LEGACY_USER_CONFIG]: LEGACY_RULES,
+      [USER_RULES_CONFIG]: SCHEMA_STAMPED_CONFIG,
+    });
+    expect(outcome.code).toBe(0);
+    expect(outcome.report).toContain('  Sources: (none)');
+    expect(outcome.report).toContain(
+      'Warning: Legacy user config is no longer needed. Run `npx -y cc-safety-net rule migrate --cleanup` to clean it up safely.',
+    );
+  });
+
+  test('a legacy project config is reported against the project scope', () => {
+    const outcome = verifyBothWays({ [LEGACY_PROJECT_CONFIG]: LEGACY_RULES });
+    expect(outcome.code).toBe(1);
+    expect(outcome.report).toContain(
+      `✗ Legacy project config: ${join('<root>', 'project', '.safety-net.json')}`,
+    );
+    expect(outcome.report).toContain(
+      'Warning: Legacy project config is ignored by CC Safety Net. Run `npx -y cc-safety-net rule migrate`.',
+    );
+  });
+
+  test('a legacy project config beside a current one is only cleanup', () => {
+    const outcome = verifyBothWays({
+      [LEGACY_PROJECT_CONFIG]: LEGACY_RULES,
+      [PROJECT_RULES_CONFIG]: SCHEMA_STAMPED_CONFIG,
+    });
+    expect(outcome.code).toBe(0);
+    expect(outcome.report).toContain(
+      '✓ Project config: <root>/project/.cc-safety-net/rules/rule.json',
+    );
+    expect(outcome.report).toContain('Warning: Legacy project config is no longer needed.');
+  });
+
+  test('a regular file where the rules directory belongs stops the run', () => {
+    const outcome = verifyBothWays({ 'home/.cc-safety-net/rules': 'not a directory' });
+    expect(outcome.code).toBe(1);
+    expect(outcome.written.at(-1)).toBe('Unable to access user policy filesystem safely.');
+  });
+});

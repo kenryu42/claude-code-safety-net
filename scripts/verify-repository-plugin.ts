@@ -1,7 +1,6 @@
 #!/usr/bin/env bun
 
 import { readFileSync } from 'node:fs';
-import { type Layout, resolveLayout, SHIPPED_LAYOUT } from './build-layout';
 
 function run(command: string[]) {
   const result = Bun.spawnSync(command, { stdout: 'pipe', stderr: 'pipe' });
@@ -9,7 +8,7 @@ function run(command: string[]) {
   throw new Error(`${command.join(' ')} failed\n${result.stdout}${result.stderr}`);
 }
 
-export function verifyRepositoryPlugin(layout: Layout = SHIPPED_LAYOUT): void {
+export function verifyRepositoryPlugin(): void {
   const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string };
   const plugin = JSON.parse(readFileSync('.claude-plugin/plugin.json', 'utf8')) as {
     version: string;
@@ -42,7 +41,7 @@ export function verifyRepositoryPlugin(layout: Layout = SHIPPED_LAYOUT): void {
   if (codexCommand !== 'node "${PLUGIN_ROOT}/dist/bin/cc-safety-net.js" hook --codex') {
     throw new Error('Codex plugin hook target drifted');
   }
-  run(['node', '--check', `${layout.outdir}/bin/cc-safety-net.js`]);
+  run(['node', '--check', 'dist/bin/cc-safety-net.js']);
   run(['git', 'ls-files', '--error-unmatch', 'assets/cc-safety-net.schema.json']);
   run(['git', 'ls-files', '--error-unmatch', '.claude-plugin/plugin.json']);
   run(['git', 'ls-files', '--error-unmatch', '.codex-plugin/plugin.json']);
@@ -52,4 +51,4 @@ export function verifyRepositoryPlugin(layout: Layout = SHIPPED_LAYOUT): void {
   console.log(`Verified repository plugin v${pkg.version}`);
 }
 
-if (import.meta.main) verifyRepositoryPlugin(resolveLayout(process.argv));
+if (import.meta.main) verifyRepositoryPlugin();

@@ -69,6 +69,11 @@ jobs:
           bun-version-file: package.json
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      - name: Use a short temp directory
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p /tmp/ccsn
+          echo "TMPDIR=/tmp/ccsn" >> "$GITHUB_ENV"
       - name: Check source
         run: bun run check:ci
         env:

@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { parseCommandArgs } from '@/cli/args';
 import { checkForUpdates } from '@/cli/doctor/updates';
@@ -12,14 +11,14 @@ import {
 } from '@/cli/install/prompt';
 import { awaitWithSpinner, resolveAfterOptionalBanner } from '@/cli/startup/banner';
 import { colors } from '@/cli/utils/colors';
-import { installAmp, uninstallAmp } from '@/integrations/amp/install';
-import {
-  installAntigravityCli,
-  uninstallAntigravityCli,
-} from '@/integrations/antigravity-cli/install';
-import { getIntegrationDisplayName } from '@/integrations/catalog';
-import { detectClaudeCode, hasClaudeInstalledPlugin } from '@/integrations/claude-code/detect';
-import { _getCopilotConfigHome } from '@/integrations/copilot-cli/detect';
+import { createProcessEnvironment, type Environment } from '@/core/environment';
+import { atomicWriteFile } from '@/core/io/atomic-write';
+import { stripJsonComments } from '@/core/io/jsonc';
+import { installAmp, uninstallAmp } from '@/hosts/amp/install';
+import { installAntigravityCli, uninstallAntigravityCli } from '@/hosts/antigravity-cli/install';
+import { getIntegrationDisplayName } from '@/hosts/catalog';
+import { detectClaudeCode, hasClaudeInstalledPlugin } from '@/hosts/claude-code/detect';
+import { _getCopilotConfigHome } from '@/hosts/copilot-cli/detect';
 import {
   COPILOT_LEGACY_PLUGIN_DIR,
   COPILOT_PLUGIN_DIR,
@@ -30,59 +29,57 @@ import {
   hasCopilotMarketplace,
   hasCopilotPreRenamePlugin,
   hasCopilotSafetyNetPlugin,
-} from '@/integrations/copilot-cli/plugin-id';
-import { installCursor, uninstallCursor } from '@/integrations/cursor/install';
-import { detectAllHooks } from '@/integrations/detect';
-import type { UpdateInfo } from '@/integrations/doctor-types';
-import { detectGeminiCLI } from '@/integrations/gemini-cli/detect';
-import { installGrokBuild, uninstallGrokBuild } from '@/integrations/grok-build/install';
-import { HERMES_AGENT_PLUGIN_NAME } from '@/integrations/hermes-agent/artifact';
-import { isHermesAgentPluginEnabled } from '@/integrations/hermes-agent/detect';
+} from '@/hosts/copilot-cli/plugin-id';
+import { installCursor, uninstallCursor } from '@/hosts/cursor/install';
+import { detectAllHooks } from '@/hosts/detect/index';
+import type { UpdateInfo } from '@/hosts/doctor-types';
+import { detectGeminiCLI } from '@/hosts/gemini-cli/detect';
+import { installGrokBuild, uninstallGrokBuild } from '@/hosts/grok-build/install';
+import { HERMES_AGENT_PLUGIN_NAME } from '@/hosts/hermes-agent/artifact';
+import { isHermesAgentPluginEnabled } from '@/hosts/hermes-agent/detect';
 import {
   installHermesAgent,
   readOwnedHermesAgentFiles,
   uninstallHermesAgent,
-} from '@/integrations/hermes-agent/install';
-import { atomicWriteFile } from '@/integrations/install/atomic-write';
-import { clearBunxSafetyNetCache } from '@/integrations/install/bunx-cache';
+} from '@/hosts/hermes-agent/install';
+import { clearBunxSafetyNetCache } from '@/hosts/install/bunx-cache';
 import {
   applyInstallTargetState,
   buildInstallTargetChoicesAsync,
   type InstallTargetChoice,
   type InstallTargetProbe,
   probeInstallTarget,
-} from '@/integrations/install/choices';
+} from '@/hosts/install/choices';
 import {
   type NativeCommand,
   runNativeCleanupCommands,
   runNativeCommand,
   runNativeCommands,
-} from '@/integrations/install/native';
-import { clearNpxSafetyNetCache } from '@/integrations/install/npx-cache';
+} from '@/hosts/install/native';
+import { clearNpxSafetyNetCache } from '@/hosts/install/npx-cache';
 import {
   INSTALL_TARGETS,
   type InstallAction,
   type InstallTarget,
   orderInstallTargets,
   runInstallTargetsInOrder,
-} from '@/integrations/install/targets';
-import type { InstallResult } from '@/integrations/install/types';
-import { stripJsonComments } from '@/integrations/jsonc';
-import { detect as detectKimiCodeHook } from '@/integrations/kimi-code/detect';
-import { installKimiCode, uninstallKimiCode } from '@/integrations/kimi-code/install';
-import { OPENCLAW_PLUGIN_ID } from '@/integrations/openclaw/artifact';
+} from '@/hosts/install/targets';
+import type { InstallResult } from '@/hosts/install/types';
+import { detect as detectKimiCodeHook } from '@/hosts/kimi-code/detect';
+import { installKimiCode, uninstallKimiCode } from '@/hosts/kimi-code/install';
+import { OPENCLAW_PLUGIN_ID } from '@/hosts/openclaw/artifact';
 import {
   assertOpenClawPluginDirIsOurs,
   getOpenClawInstallCommands,
   verifyOpenClawPluginRuntime,
-} from '@/integrations/openclaw/install';
+} from '@/hosts/openclaw/install';
 import {
   clearOpenCodeCache,
   uninstallOpenCode,
   verifyOpenCodePluginRuntime,
-} from '@/integrations/opencode/install';
-import { getPiSettingsPath, isPiSafetyNetPackageSource } from '@/integrations/pi/detect';
-import { defaultVersionFetcher, type VersionFetcher } from '@/integrations/system-info';
+} from '@/hosts/opencode/install';
+import { getPiSettingsPath, isPiSafetyNetPackageSource } from '@/hosts/pi/detect';
+import { defaultVersionFetcher, type VersionFetcher } from '@/hosts/system-info';
 
 type ConfigInstallTarget = Extract<
   InstallTarget,
@@ -126,11 +123,11 @@ type NativeInstallDefinition = {
   installCommands:
     | readonly NativeCommand[]
     | ((
-        homeDir: string,
+        environment: Environment,
         codexPluginListOutput?: string | null,
       ) => NativeInstallPlan | Promise<NativeInstallPlan>);
   uninstallCommands?: readonly NativeCommand[];
-  beforeInstall?: (homeDir: string) => void;
+  beforeInstall?: (environment: Environment) => void;
   postInstallMessage?: string;
 };
 type InstallTargetResolution = {
@@ -179,8 +176,8 @@ function hasCodexMarketplace(output: string | null): boolean {
 
 const NATIVE_INSTALLS: Record<NativeInstallTarget, NativeInstallDefinition> = {
   'claude-code': {
-    installCommands: (homeDir) => {
-      const update = hasClaudeInstalledPlugin(homeDir, 'cc-safety-net@cc-marketplace');
+    installCommands: (environment) => {
+      const update = hasClaudeInstalledPlugin(environment, 'cc-safety-net@cc-marketplace');
       return {
         commands: [
           ...(update
@@ -195,13 +192,13 @@ const NATIVE_INSTALLS: Record<NativeInstallTarget, NativeInstallDefinition> = {
                 ['claude', 'plugin', 'marketplace', 'update', 'cc-marketplace'],
                 ['claude', 'plugin', 'install', 'cc-safety-net@cc-marketplace'],
               ] as const)),
-          ...(detectClaudeCode(homeDir).status === 'disabled'
+          ...(detectClaudeCode(environment).status === 'disabled'
             ? ([['claude', 'plugin', 'enable', 'cc-safety-net@cc-marketplace']] as const)
             : []),
         ],
         // Best-effort: the marketplace refresh can migrate the rename itself, leaving a plugin
         // record the CLI no longer accepts an uninstall for.
-        cleanupCommands: hasClaudeInstalledPlugin(homeDir, CLAUDE_LEGACY_PLUGIN_ID)
+        cleanupCommands: hasClaudeInstalledPlugin(environment, CLAUDE_LEGACY_PLUGIN_ID)
           ? ([['claude', 'plugin', 'uninstall', CLAUDE_LEGACY_PLUGIN_ID]] as const)
           : [],
         update,
@@ -215,7 +212,7 @@ const NATIVE_INSTALLS: Record<NativeInstallTarget, NativeInstallDefinition> = {
   codex: {
     // `update` already paid for a `codex plugin list` during detection, so it hands the output
     // over instead of refreshing the marketplace checkouts a second time.
-    installCommands: async (_homeDir, codexPluginListOutput) => {
+    installCommands: async (_environment, codexPluginListOutput) => {
       const pluginList =
         codexPluginListOutput ?? (await runNativeCommand(['codex', 'plugin', 'list']));
       const update = hasCodexReplacementPlugin(pluginList);
@@ -282,8 +279,8 @@ const NATIVE_INSTALLS: Record<NativeInstallTarget, NativeInstallDefinition> = {
     ],
   },
   'gemini-cli': {
-    installCommands: (homeDir) => {
-      const detection = detectGeminiCLI(homeDir);
+    installCommands: (environment) => {
+      const detection = detectGeminiCLI(environment);
       if (detection.status === 'configured')
         return {
           commands: [['gemini', 'extensions', 'update', 'gemini-safety-net']],
@@ -330,10 +327,6 @@ const NATIVE_INSTALLS: Record<NativeInstallTarget, NativeInstallDefinition> = {
   },
 };
 
-function getHomeDir() {
-  return process.env.HOME ?? homedir();
-}
-
 function parseJsonSettings(
   configPath: string,
   preprocess = (raw: string) => raw,
@@ -352,8 +345,8 @@ function parseJsonSettings(
   }
 }
 
-function enableCopilotPlugin(homeDir: string): string | undefined {
-  const settingsPath = join(_getCopilotConfigHome(homeDir), 'settings.json');
+function enableCopilotPlugin(environment: Environment): string | undefined {
+  const settingsPath = join(_getCopilotConfigHome(environment), 'settings.json');
   if (!existsSync(settingsPath)) return;
 
   const settings = parseJsonSettings(settingsPath, stripJsonComments);
@@ -375,8 +368,8 @@ function enableCopilotPlugin(homeDir: string): string | undefined {
   return `Enabled ${COPILOT_PLUGIN_ID} plugin in ${settingsPath}`;
 }
 
-function removePiExtensionsFilter(homeDir: string): string | undefined {
-  const settingsPath = getPiSettingsPath(homeDir);
+function removePiExtensionsFilter(environment: Environment): string | undefined {
+  const settingsPath = getPiSettingsPath(environment);
   if (!existsSync(settingsPath)) return;
 
   const settings = parseJsonSettings(settingsPath);
@@ -422,7 +415,7 @@ function parseInstallTarget(args: readonly string[], action: InstallAction): Ins
 // `gemini extensions list`, `copilot plugin list` and the Pi extension probe all write into the
 // user's real config directories, and this runs on every bare install/uninstall in a TTY.
 async function detectInstallHookState(
-  homeDir = getHomeDir(),
+  environment: Environment,
   fetchVersion = defaultVersionFetcher,
 ) {
   const [ampPluginListOutput, codexPluginListOutput, copilotCliVersion] = await Promise.all([
@@ -437,8 +430,7 @@ async function detectInstallHookState(
 
   return {
     codexPluginListOutput,
-    hooks: detectAllHooks(process.cwd(), {
-      homeDir,
+    hooks: detectAllHooks(environment, process.cwd(), {
       ampPluginListOutput,
       codexPluginListOutput,
       copilotCliVersion,
@@ -447,10 +439,11 @@ async function detectInstallHookState(
 }
 
 async function detectConfiguredInstallTargets(
+  environment: Environment,
   action: InstallAction,
   fetchVersion = defaultVersionFetcher,
 ): Promise<InstallTarget[]> {
-  const state = await detectInstallHookState(getHomeDir(), fetchVersion);
+  const state = await detectInstallHookState(environment, fetchVersion);
   return (
     state.hooks
       // Uninstall also keeps a runtime whose state could not be read: hiding it would make the
@@ -471,6 +464,7 @@ async function detectConfiguredInstallTargets(
 }
 
 function startResolveInstallTargets(
+  environment: Environment,
   action: InstallAction,
   args: readonly string[],
   options: RunInstallCommandOptions,
@@ -487,7 +481,7 @@ function startResolveInstallTargets(
 
   const detectConfiguredTargets =
     options.detectConfiguredTargets ??
-    (() => detectConfiguredInstallTargets(action, options.fetchVersion));
+    (() => detectConfiguredInstallTargets(environment, action, options.fetchVersion));
   const ready = Promise.all([
     buildInstallTargetChoicesAsync(options.probeTargets),
     detectConfiguredTargets(),
@@ -517,15 +511,15 @@ function startResolveInstallTargets(
 
 async function installNativeTarget(
   target: NativeInstallTarget,
-  homeDir: string,
+  environment: Environment,
   updating = false,
   codexPluginListOutput?: string | null,
 ): Promise<string> {
   const definition = NATIVE_INSTALLS[target];
-  definition.beforeInstall?.(homeDir);
+  definition.beforeInstall?.(environment);
   const plan =
     typeof definition.installCommands === 'function'
-      ? await definition.installCommands(homeDir, codexPluginListOutput)
+      ? await definition.installCommands(environment, codexPluginListOutput)
       : { commands: definition.installCommands };
   await runNativeCommands(plan.commands);
   await runNativeCleanupCommands(plan.cleanupCommands ?? []);
@@ -548,8 +542,8 @@ async function uninstallNativeTarget(
   return `Uninstalled ${getIntegrationDisplayName(target)} integration`;
 }
 
-function uninstallOpenCodeTarget(homeDir: string): string {
-  const result = uninstallOpenCode(homeDir);
+function uninstallOpenCodeTarget(environment: Environment): string {
+  const result = uninstallOpenCode(environment);
   return result.alreadyInstalled
     ? `Uninstalled OpenCode plugin from ${result.path}`
     : `OpenCode plugin not installed in ${result.path}`;
@@ -560,17 +554,20 @@ const CONFIG_INSTALLS = {
   cursor: { install: installCursor, uninstall: uninstallCursor },
   'grok-build': { install: installGrokBuild, uninstall: uninstallGrokBuild },
   'kimi-code': { install: installKimiCode, uninstall: uninstallKimiCode },
-} satisfies Record<ConfigInstallTarget, Record<InstallAction, (homeDir: string) => InstallResult>>;
+} satisfies Record<
+  ConfigInstallTarget,
+  Record<InstallAction, (environment: Environment) => InstallResult>
+>;
 
 function runConfigInstallTarget(
   action: InstallAction,
   target: ConfigInstallTarget,
-  homeDir: string,
+  environment: Environment,
   updating = false,
 ): string {
   // Updating clears the cache once up front instead, so its parallel targets cannot race.
-  if (action === 'install' && !updating) clearNpxSafetyNetCache(homeDir);
-  const result = CONFIG_INSTALLS[target][action](homeDir);
+  if (action === 'install' && !updating) clearNpxSafetyNetCache(environment);
+  const result = CONFIG_INSTALLS[target][action](environment);
   const name = getIntegrationDisplayName(target);
   const pastTense = action !== 'install' ? 'Uninstalled' : updating ? 'Updated' : 'Installed';
 
@@ -586,11 +583,11 @@ function runConfigInstallTarget(
 const MANAGED_ARTIFACT_INSTALLS: Record<
   ManagedArtifactTarget,
   {
-    install: (homeDir: string) => InstallResult | Promise<InstallResult>;
-    uninstall: (homeDir: string) => InstallResult | Promise<InstallResult>;
+    install: (environment: Environment) => InstallResult | Promise<InstallResult>;
+    uninstall: (environment: Environment) => InstallResult | Promise<InstallResult>;
     /** Returns whether it changed host state, which an unchanged artifact alone cannot tell. */
-    afterInstall?: (homeDir: string) => Promise<boolean>;
-    beforeUninstall?: (homeDir: string) => Promise<void>;
+    afterInstall?: (environment: Environment) => Promise<boolean>;
+    beforeUninstall?: (environment: Environment) => Promise<void>;
     restartNote: string;
   }
 > = {
@@ -605,8 +602,8 @@ const MANAGED_ARTIFACT_INSTALLS: Record<
     uninstall: uninstallHermesAgent,
     // Hermes loads a user plugin only when config.yaml lists it, so the artifact alone is inert —
     // and enabling a plugin the user had switched off is a change even when nothing was written.
-    afterInstall: async (homeDir) => {
-      const wasEnabled = isHermesAgentPluginEnabled(homeDir);
+    afterInstall: async (environment) => {
+      const wasEnabled = isHermesAgentPluginEnabled(environment);
       await runNativeCommand([
         'hermes',
         'plugins',
@@ -619,10 +616,10 @@ const MANAGED_ARTIFACT_INSTALLS: Record<
     // Left enabled, the config entry would auto-load any future plugin of the same name. Hermes
     // only resolves a plugin that is still on disk, so this runs before the files are removed —
     // and its failure is reported rather than thrown, so it can never keep them.
-    beforeUninstall: async (homeDir) => {
+    beforeUninstall: async (environment) => {
       // `plugins disable` edits the user's config, so an uninstall that is going to refuse the
       // files must refuse before it runs, not after.
-      readOwnedHermesAgentFiles(homeDir);
+      readOwnedHermesAgentFiles(environment);
       try {
         await runNativeCommand(['hermes', 'plugins', 'disable', HERMES_AGENT_PLUGIN_NAME]);
       } catch (error) {
@@ -638,14 +635,16 @@ const MANAGED_ARTIFACT_INSTALLS: Record<
 async function runManagedArtifactInstallTarget(
   action: InstallAction,
   target: ManagedArtifactTarget,
-  homeDir: string,
+  environment: Environment,
   updating = false,
 ): Promise<string> {
   const definition = MANAGED_ARTIFACT_INSTALLS[target];
-  if (action === 'uninstall') await definition.beforeUninstall?.(homeDir);
+  if (action === 'uninstall') await definition.beforeUninstall?.(environment);
   const result =
-    action === 'install' ? await definition.install(homeDir) : await definition.uninstall(homeDir);
-  const changedHostState = action === 'install' && (await definition.afterInstall?.(homeDir));
+    action === 'install'
+      ? await definition.install(environment)
+      : await definition.uninstall(environment);
+  const changedHostState = action === 'install' && (await definition.afterInstall?.(environment));
   const name = getIntegrationDisplayName(target);
   const noChange =
     !changedHostState &&
@@ -663,86 +662,100 @@ async function runManagedArtifactInstallTarget(
 
 const INSTALL_OPERATIONS = {
   amp: {
-    install: (homeDir: string, updating?: boolean) =>
-      runManagedArtifactInstallTarget('install', 'amp', homeDir, updating),
-    uninstall: (homeDir: string) => runManagedArtifactInstallTarget('uninstall', 'amp', homeDir),
+    install: (environment: Environment, updating?: boolean) =>
+      runManagedArtifactInstallTarget('install', 'amp', environment, updating),
+    uninstall: (environment: Environment) =>
+      runManagedArtifactInstallTarget('uninstall', 'amp', environment),
   },
   'antigravity-cli': {
-    install: (homeDir: string, updating?: boolean) =>
-      runConfigInstallTarget('install', 'antigravity-cli', homeDir, updating),
-    uninstall: (homeDir: string) => runConfigInstallTarget('uninstall', 'antigravity-cli', homeDir),
+    install: (environment: Environment, updating?: boolean) =>
+      runConfigInstallTarget('install', 'antigravity-cli', environment, updating),
+    uninstall: (environment: Environment) =>
+      runConfigInstallTarget('uninstall', 'antigravity-cli', environment),
   },
   'claude-code': {
-    install: (homeDir: string, updating?: boolean) =>
-      installNativeTarget('claude-code', homeDir, updating),
+    install: (environment: Environment, updating?: boolean) =>
+      installNativeTarget('claude-code', environment, updating),
     uninstall: () => uninstallNativeTarget('claude-code'),
   },
   codex: {
-    install: (homeDir: string, updating?: boolean, codexPluginListOutput?: string | null) =>
-      installNativeTarget('codex', homeDir, updating, codexPluginListOutput),
+    install: (
+      environment: Environment,
+      updating?: boolean,
+      codexPluginListOutput?: string | null,
+    ) => installNativeTarget('codex', environment, updating, codexPluginListOutput),
     uninstall: () => uninstallNativeTarget('codex'),
   },
   'copilot-cli': {
-    install: async (homeDir: string, updating?: boolean) =>
-      [await installNativeTarget('copilot-cli', homeDir, updating), enableCopilotPlugin(homeDir)]
+    install: async (environment: Environment, updating?: boolean) =>
+      [
+        await installNativeTarget('copilot-cli', environment, updating),
+        enableCopilotPlugin(environment),
+      ]
         .filter(Boolean)
         .join('\n'),
     uninstall: () => uninstallNativeTarget('copilot-cli'),
   },
   cursor: {
-    install: (homeDir: string, updating?: boolean) =>
-      runConfigInstallTarget('install', 'cursor', homeDir, updating),
-    uninstall: (homeDir: string) => runConfigInstallTarget('uninstall', 'cursor', homeDir),
+    install: (environment: Environment, updating?: boolean) =>
+      runConfigInstallTarget('install', 'cursor', environment, updating),
+    uninstall: (environment: Environment) =>
+      runConfigInstallTarget('uninstall', 'cursor', environment),
   },
   'gemini-cli': {
-    install: (homeDir: string, updating?: boolean) =>
-      installNativeTarget('gemini-cli', homeDir, updating),
+    install: (environment: Environment, updating?: boolean) =>
+      installNativeTarget('gemini-cli', environment, updating),
     uninstall: () => uninstallNativeTarget('gemini-cli'),
   },
   'grok-build': {
-    install: (homeDir: string, updating?: boolean) =>
-      runConfigInstallTarget('install', 'grok-build', homeDir, updating),
-    uninstall: (homeDir: string) => runConfigInstallTarget('uninstall', 'grok-build', homeDir),
+    install: (environment: Environment, updating?: boolean) =>
+      runConfigInstallTarget('install', 'grok-build', environment, updating),
+    uninstall: (environment: Environment) =>
+      runConfigInstallTarget('uninstall', 'grok-build', environment),
   },
   'hermes-agent': {
-    install: (homeDir: string, updating?: boolean) => {
+    install: (environment: Environment, updating?: boolean) => {
       // The managed plugin shells out to `npx cc-safety-net`, so a stale npx cache would
       // keep running the previous version. Updating clears it once up front instead, so its
       // parallel targets cannot race.
-      if (!updating) clearNpxSafetyNetCache(homeDir);
-      return runManagedArtifactInstallTarget('install', 'hermes-agent', homeDir, updating);
+      if (!updating) clearNpxSafetyNetCache(environment);
+      return runManagedArtifactInstallTarget('install', 'hermes-agent', environment, updating);
     },
-    uninstall: (homeDir: string) =>
-      runManagedArtifactInstallTarget('uninstall', 'hermes-agent', homeDir),
+    uninstall: (environment: Environment) =>
+      runManagedArtifactInstallTarget('uninstall', 'hermes-agent', environment),
   },
   'kimi-code': {
-    install: (homeDir: string, updating?: boolean) =>
-      runConfigInstallTarget('install', 'kimi-code', homeDir, updating),
-    uninstall: (homeDir: string) => runConfigInstallTarget('uninstall', 'kimi-code', homeDir),
+    install: (environment: Environment, updating?: boolean) =>
+      runConfigInstallTarget('install', 'kimi-code', environment, updating),
+    uninstall: (environment: Environment) =>
+      runConfigInstallTarget('uninstall', 'kimi-code', environment),
   },
   openclaw: {
-    install: async (homeDir: string, updating?: boolean) => {
-      const message = await installNativeTarget('openclaw', homeDir, updating);
+    install: async (environment: Environment, updating?: boolean) => {
+      const message = await installNativeTarget('openclaw', environment, updating);
       await verifyOpenClawPluginRuntime();
       return message;
     },
-    uninstall: (homeDir: string) => {
+    uninstall: (environment: Environment) => {
       // `plugins uninstall --force` deletes the extension directory outright.
-      assertOpenClawPluginDirIsOurs(homeDir);
+      assertOpenClawPluginDirIsOurs(environment);
       return uninstallNativeTarget('openclaw');
     },
   },
   opencode: {
-    install: async (homeDir: string, updating?: boolean) => {
-      const message = await installNativeTarget('opencode', homeDir, updating);
-      await verifyOpenCodePluginRuntime(homeDir);
+    install: async (environment: Environment, updating?: boolean) => {
+      const message = await installNativeTarget('opencode', environment, updating);
+      await verifyOpenCodePluginRuntime(environment);
       return message;
     },
-    uninstall: (homeDir: string) => uninstallOpenCodeTarget(homeDir),
+    uninstall: (environment: Environment) => uninstallOpenCodeTarget(environment),
   },
   pi: {
-    install: async (homeDir: string, updating?: boolean) =>
-      [await installNativeTarget('pi', homeDir, updating), removePiExtensionsFilter(homeDir)]
+    install: async (environment: Environment, updating?: boolean) =>
+      [
+        await installNativeTarget('pi', environment, updating),
+        removePiExtensionsFilter(environment),
+      ]
         .filter(Boolean)
         .join('\n'),
     uninstall: () => uninstallNativeTarget('pi'),
@@ -752,7 +765,7 @@ const INSTALL_OPERATIONS = {
   Record<
     InstallAction,
     (
-      homeDir: string,
+      environment: Environment,
       updating?: boolean,
       codexPluginListOutput?: string | null,
     ) => string | Promise<string>
@@ -770,8 +783,8 @@ const KIMI_PLUGIN_INSTRUCTIONS = [
   'out, Kimi Code allows the tool call.',
 ].join('\n');
 
-function formatKimiPluginInstructions(homeDir: string): string {
-  if (detectKimiCodeHook({ homeDir, cwd: process.cwd() }).status !== 'configured') {
+function formatKimiPluginInstructions(environment: Environment): string {
+  if (detectKimiCodeHook({ environment, cwd: process.cwd() }).status !== 'configured') {
     return KIMI_PLUGIN_INSTRUCTIONS;
   }
   // Uninstall comes after the plugin works, never before: a gap with neither hook active is
@@ -810,7 +823,7 @@ function allowKimiMethodChoice(
 
 function resolveKimiInstallMethod(
   options: RunInstallCommandOptions,
-  homeDir: string,
+  environment: Environment,
 ): Promise<KimiInstallMethod | null> {
   if (options.selectKimiInstallMethod) return options.selectKimiInstallMethod();
   // A non-interactive session cannot answer a prompt, so the flag keeps installing the
@@ -822,7 +835,7 @@ function resolveKimiInstallMethod(
     input: options.input,
     output: options.output,
     globalHookInstalled:
-      detectKimiCodeHook({ homeDir, cwd: process.cwd() }).status === 'configured',
+      detectKimiCodeHook({ environment, cwd: process.cwd() }).status === 'configured',
   });
 }
 
@@ -830,11 +843,11 @@ function resolveKimiInstallMethod(
 async function runSingleInstallTarget(
   action: InstallAction,
   target: InstallTarget,
-  homeDir: string,
+  environment: Environment,
   updating = false,
   codexPluginListOutput?: string | null,
 ): Promise<string> {
-  return INSTALL_OPERATIONS[target][action](homeDir, updating, codexPluginListOutput);
+  return INSTALL_OPERATIONS[target][action](environment, updating, codexPluginListOutput);
 }
 
 function parseUpdateArgs(args: readonly string[]): void {
@@ -842,9 +855,9 @@ function parseUpdateArgs(args: readonly string[]): void {
   if (error) throw new Error(error);
 }
 
-async function detectUpdateTargets(homeDir: string, fetchVersion = defaultVersionFetcher) {
-  const state = await detectInstallHookState(homeDir, fetchVersion);
-  const copilotPluginsDir = join(_getCopilotConfigHome(homeDir), 'installed-plugins');
+async function detectUpdateTargets(environment: Environment, fetchVersion = defaultVersionFetcher) {
+  const state = await detectInstallHookState(environment, fetchVersion);
+  const copilotPluginsDir = join(_getCopilotConfigHome(environment), 'installed-plugins');
   const targets = orderInstallTargets([
     // `detected` (not `configured`) so installed-but-disabled integrations update too.
     // Copilot is decided by its plugin checkouts on disk instead: its 'disabled' status
@@ -858,7 +871,7 @@ async function detectUpdateTargets(homeDir: string, fetchVersion = defaultVersio
     ).flatMap((dir) =>
       existsSync(join(copilotPluginsDir, ...dir)) ? (['copilot-cli'] as const) : [],
     ),
-    ...(hasClaudeInstalledPlugin(homeDir, CLAUDE_LEGACY_PLUGIN_ID)
+    ...(hasClaudeInstalledPlugin(environment, CLAUDE_LEGACY_PLUGIN_ID)
       ? (['claude-code'] as const)
       : []),
     ...(hasCodexLegacyPlugin(state.codexPluginListOutput) ? (['codex'] as const) : []),
@@ -867,7 +880,7 @@ async function detectUpdateTargets(homeDir: string, fetchVersion = defaultVersio
 }
 
 async function updateInstalledIntegrations(options: UpdateCommandOptions): Promise<number> {
-  const homeDir = getHomeDir();
+  const environment = createProcessEnvironment();
   const output = options.output ?? process.stdout;
   // Best-effort nudge for persistent installs (`npm i -g`). An npx or bunx cache path means an
   // ephemeral run the cache clears below already refresh, so the registry round-trip is skipped
@@ -892,25 +905,26 @@ async function updateInstalledIntegrations(options: UpdateCommandOptions): Promi
   };
   // Detection queries every host CLI, so it starts before the banner animation and the
   // spinner covers whatever latency is left once the animation ends.
-  const prepared = detectUpdateTargets(homeDir, options.fetchVersion ?? defaultVersionFetcher).then(
-    async (detection) => {
-      const targetSet = new Set(detection.targets);
-      return {
-        targets: detection.targets,
-        codexPluginListOutput: detection.codexPluginListOutput,
-        available: new Map(
-          await Promise.all(
-            INSTALL_TARGETS.filter(
-              (target) => targetSet.has(target.target) && NATIVE_UPDATE_TARGETS.has(target.target),
-            ).map(
-              async (target) =>
-                [target.target, await probeInstallTarget(target.probeCommand)] as const,
-            ),
+  const prepared = detectUpdateTargets(
+    environment,
+    options.fetchVersion ?? defaultVersionFetcher,
+  ).then(async (detection) => {
+    const targetSet = new Set(detection.targets);
+    return {
+      targets: detection.targets,
+      codexPluginListOutput: detection.codexPluginListOutput,
+      available: new Map(
+        await Promise.all(
+          INSTALL_TARGETS.filter(
+            (target) => targetSet.has(target.target) && NATIVE_UPDATE_TARGETS.has(target.target),
+          ).map(
+            async (target) =>
+              [target.target, await probeInstallTarget(target.probeCommand)] as const,
           ),
         ),
-      };
-    },
-  );
+      ),
+    };
+  });
   const detected = await resolveAfterOptionalBanner(
     options.showBanner ?? true,
     () => ({ ready: prepared, finish: () => prepared }),
@@ -924,7 +938,7 @@ async function updateInstalledIntegrations(options: UpdateCommandOptions): Promi
   // user-invoked, not tied to any target.
   const bunxCacheFailure = await Promise.resolve()
     .then(() => {
-      clearBunxSafetyNetCache(tmpdir(), process.platform, runningBunxEntry);
+      clearBunxSafetyNetCache(environment.tmpdir, process.platform, runningBunxEntry);
       return null;
     })
     .catch((error: unknown) => formatInstallError(error));
@@ -942,7 +956,7 @@ async function updateInstalledIntegrations(options: UpdateCommandOptions): Promi
   const npxCacheFailure = detected.targets.some((target) => NPX_CACHE_TARGETS.has(target))
     ? await Promise.resolve()
         .then(() => {
-          clearNpxSafetyNetCache(homeDir);
+          clearNpxSafetyNetCache(environment);
           return null;
         })
         .catch((error: unknown) => formatInstallError(error))
@@ -965,7 +979,7 @@ async function updateInstalledIntegrations(options: UpdateCommandOptions): Promi
         return runSingleInstallTarget(
           'install',
           target,
-          homeDir,
+          environment,
           true,
           detected.codexPluginListOutput,
         ).then(
@@ -1007,9 +1021,10 @@ export async function runInstallCommand(
   options: RunInstallCommandOptions = {},
 ): Promise<number> {
   try {
+    const environment = createProcessEnvironment();
     const targets = await resolveAfterOptionalBanner(
       true,
-      () => startResolveInstallTargets(action, args, options),
+      () => startResolveInstallTargets(environment, action, args, options),
       () =>
         printInstallBanner({
           input: options.input ?? process.stdin,
@@ -1044,23 +1059,22 @@ export async function runInstallCommand(
       )();
     }
 
-    const homeDir = getHomeDir();
     const output = options.output ?? process.stdout;
     // Host CLIs can install slowly (network fetches, marketplace refreshes), so each target
     // runs behind the same spinner the interactive selector uses, then prints its report.
     await runInstallTargetsInOrder(targets, async (target) => {
       if (target === 'kimi-code' && action === 'install') {
-        const method = await resolveKimiInstallMethod(options, homeDir);
+        const method = await resolveKimiInstallMethod(options, environment);
         if (method === null) {
           output.write('Cancelled: Kimi Code integration was not installed.\n');
           return;
         }
         if (method === 'plugin') {
-          output.write(`${formatKimiPluginInstructions(homeDir)}\n`);
+          output.write(`${formatKimiPluginInstructions(environment)}\n`);
           return;
         }
       }
-      const message = await awaitWithSpinner(runSingleInstallTarget(action, target, homeDir), {
+      const message = await awaitWithSpinner(runSingleInstallTarget(action, target, environment), {
         loadingMessage: `${action === 'install' ? 'Installing' : 'Uninstalling'} ${getIntegrationDisplayName(target)} integration…`,
         output,
       });

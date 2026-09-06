@@ -1,15 +1,12 @@
-import { homedir } from 'node:os';
 import { sep } from 'node:path';
 import { wrapReason } from '@/cli/explain/format-helpers';
 import { isPluginEnabled } from '@/cli/statusline';
 import { colors } from '@/cli/utils/colors';
-import {
-  getCCSafetyNetEnvModes,
-  getProjectPolicyPath,
-  getUserPolicyPath,
-  loadPolicySnapshot,
-  resolveEffectiveDestructiveCommandRules,
-} from '@/engine/facade';
+import type { Environment } from '@/core/environment';
+import { resolveEffectiveDestructiveCommandRules } from '@/core/policy/effective-rules';
+import { getCCSafetyNetEnvModes } from '@/core/policy/env';
+import { getProjectPolicyPath, getUserPolicyPath } from '@/core/policy/paths';
+import { loadPolicySnapshot } from '@/core/policy/snapshot';
 
 /**
  * Prints what the runtime is enforcing right now: a verdict line, an aligned
@@ -20,10 +17,10 @@ import {
  * configuration and never from one integration. The plugin check covers Claude
  * Code alone, so it is reported as a bullet scoped to that integration.
  */
-export function printStatus(): void {
-  const snapshot = loadPolicySnapshot({ cwd: process.cwd() });
+export function printStatus(environment: Environment): void {
+  const snapshot = loadPolicySnapshot(environment, { cwd: process.cwd() });
   const policy = snapshot.policy;
-  const modes = getCCSafetyNetEnvModes(policy);
+  const modes = getCCSafetyNetEnvModes(policy, environment.env);
   const asciiOnly = !!process.env.NO_COLOR || !process.stdout.isTTY;
   // `||`, not `??`: lefthook-style ptys report a 0-column TTY, which must fall back too.
   const width = Math.min(process.stdout.columns || 80, 100);
@@ -45,8 +42,8 @@ export function printStatus(): void {
   // A separator-delimited prefix only: `/Users/alice-work` merely shares a raw
   // string prefix with home `/Users/alice` and must not display as `~-work`.
   const shorten = (path: string) =>
-    path === homedir() || path.startsWith(`${homedir()}${sep}`)
-      ? `~${path.slice(homedir().length)}`
+    path === environment.home || path.startsWith(`${environment.home}${sep}`)
+      ? `~${path.slice(environment.home.length)}`
       : path;
   const paintVerdict = { ready: colors.green, degraded: colors.yellow }[snapshot.state];
   // Present only when a project policy file was read, so its absence is the
@@ -55,7 +52,7 @@ export function printStatus(): void {
 
   // Ordinary snapshot diagnostics, led by the Claude Code bullet when the plugin is off.
   const issues = [
-    ...(isPluginEnabled()
+    ...(isPluginEnabled(environment)
       ? []
       : [
           'plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is enforced in Claude Code until it is re-enabled. Other integrations are not affected.',
@@ -79,8 +76,10 @@ export function printStatus(): void {
           : modes.effectiveLevel,
       ),
       row('Rules', policy.rules.length === 0 ? 'none active' : `${policy.rules.length} active`),
-      row('Policy', shorten(getUserPolicyPath())),
-      ...(snapshot.policyScopes ? [row('Project', shorten(getProjectPolicyPath()))] : []),
+      row('Policy', shorten(getUserPolicyPath(environment))),
+      ...(snapshot.policyScopes
+        ? [row('Project', shorten(getProjectPolicyPath(process.cwd())))]
+        : []),
       ...(modes.worktreeMode ? [row('Worktree', 'relaxations active')] : []),
       '',
       // What the project scope relaxed is in force, not missing, so it is its own

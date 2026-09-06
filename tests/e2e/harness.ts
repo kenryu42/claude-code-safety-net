@@ -12,8 +12,8 @@ import {
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
-import { redactSecrets } from '@/engine/audit';
-import { listAuditLogFiles } from '@/engine/audit-scan';
+import { listAuditLogFiles } from '@/audit/reader';
+import { redactSecrets } from '@/core/redaction';
 import { createSpawnEnv, readAuditLogEntriesForSession } from '../helpers';
 
 export const NODE_EXECUTABLE = (() => {

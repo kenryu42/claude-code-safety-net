@@ -13,7 +13,7 @@ import {
 import { tmpdir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { type Layout, resolveLayout, SHIPPED_LAYOUT } from './build-layout';
+import { AMP_PLUGIN_ENTRY } from '../src/hosts/amp/artifact';
 import { AMP_HOST_SCRIPT, OPENCODE_HOST_SCRIPT, PI_HOST_SCRIPT } from './integration-host-scripts';
 import { verifyBuildArtifacts } from './verify-build';
 
@@ -23,12 +23,9 @@ const PACKAGE_ROOT_FILES = [
   'package/THIRD_PARTY_LICENSES.txt',
   'package/package.json',
 ] as const;
-// The standalone Amp and OpenClaw plugins each bundle their own trimmed zod
-// copy, and dist/vendor/zod.cjs ships a third for the repository-checkout
-// channels, so the tarball is materially larger than the pure-Node bundles
-// alone. Current size is ~490 KB; the cap leaves ~57 KB of headroom. The ported
-// layout's schema imports zod statically, so its tarball carries no vendored
-// copy and fits the same cap with more room to spare.
+// The four Node entries share their code through chunks rather than through the bin, and the
+// CLI chunk carries a trimmed zod, so the tarball is materially larger than the entries alone.
+// Current size is 449,053 bytes; the cap leaves ~111 KB of headroom.
 const MAX_TARBALL_BYTES = 560_000;
 
 interface PackResult {
@@ -67,7 +64,7 @@ function run(
   );
 }
 
-export async function verifyPackage(layout: Layout = SHIPPED_LAYOUT): Promise<void> {
+export async function verifyPackage(): Promise<void> {
   const directory = mkdtempSync(join(tmpdir(), 'cc-safety-net-package-'));
   const outputArgument = process.argv.indexOf('--output');
   const outputDirectory =
@@ -76,22 +73,18 @@ export async function verifyPackage(layout: Layout = SHIPPED_LAYOUT): Promise<vo
       : resolve(process.argv[outputArgument + 1] ?? throwMissingOutputDirectory());
   mkdirSync(outputDirectory, { recursive: true });
   try {
-    const buildArtifacts = await verifyBuildArtifacts(layout);
+    const buildArtifacts = await verifyBuildArtifacts();
     const gitHeadArgument = process.argv.indexOf('--git-head');
-    const { result, tarball } = await buildPackageTarball(
-      {
-        outputDirectory,
-        ...(gitHeadArgument === -1
-          ? {}
-          : { gitHead: process.argv[gitHeadArgument + 1] ?? throwMissingGitHead() }),
-      },
-      layout,
-    );
+    const { result, tarball } = await buildPackageTarball({
+      outputDirectory,
+      ...(gitHeadArgument === -1
+        ? {}
+        : { gitHead: process.argv[gitHeadArgument + 1] ?? throwMissingGitHead() }),
+    });
     const files = result.files.map((file) => `package/${file.path}`).sort();
-    // The staged package always publishes the layout's outdir as `dist`.
     const expectedFiles = [
       ...PACKAGE_ROOT_FILES,
-      ...buildArtifacts.map((path) => `package/dist/${path.slice(layout.outdir.length + 1)}`),
+      ...buildArtifacts.map((path) => `package/${path}`),
     ].sort();
     if (JSON.stringify(files) !== JSON.stringify(expectedFiles)) {
       throw new Error(`Unexpected npm package files:\n${files.join('\n')}`);
@@ -125,12 +118,11 @@ export async function verifyPackage(layout: Layout = SHIPPED_LAYOUT): Promise<vo
     const packageRoot = join(directory, 'node_modules', 'cc-safety-net');
     const cli = join(packageRoot, 'dist', 'bin', 'cc-safety-net.js');
     const packageVerificationEnv = getPackageVerificationEnv(directory);
-    const artifacts = await layout.loadArtifacts();
     for (const bundle of [
       'dist/index.js',
       'dist/bin/cc-safety-net.js',
       'dist/pi/index.js',
-      `dist/amp/${artifacts.amp.AMP_PLUGIN_ENTRY}`,
+      `dist/amp/${AMP_PLUGIN_ENTRY}`,
     ]) {
       if (readFileSync(join(packageRoot, bundle), 'utf8').includes('_operation')) {
         throw new Error(`Packed ${bundle} exposes the internal rule synchronization operation`);
@@ -141,7 +133,7 @@ export async function verifyPackage(layout: Layout = SHIPPED_LAYOUT): Promise<vo
       cli,
       pi: join(packageRoot, 'dist', 'pi', 'index.js'),
       openCode: join(packageRoot, 'dist', 'index.js'),
-      amp: join(packageRoot, 'dist', 'amp', artifacts.amp.AMP_PLUGIN_ENTRY),
+      amp: join(packageRoot, 'dist', 'amp', AMP_PLUGIN_ENTRY),
       env: packageVerificationEnv,
     });
     const overLimitRulebook = join(
@@ -615,10 +607,7 @@ export function getPackageVerificationEnv(directory: string): Record<string, str
   };
 }
 
-export async function buildPackageTarball(
-  options: BuildPackageTarballOptions,
-  layout: Layout = SHIPPED_LAYOUT,
-) {
+export async function buildPackageTarball(options: BuildPackageTarballOptions) {
   if (options.gitHead && !/^[0-9a-f]{40}$/.test(options.gitHead)) {
     throw new Error(`gitHead must be a full commit SHA: ${options.gitHead}`);
   }
@@ -627,7 +616,7 @@ export async function buildPackageTarball(
     cpSync('README.md', join(stagingDirectory, 'README.md'));
     cpSync('LICENSE', join(stagingDirectory, 'LICENSE'));
     cpSync('THIRD_PARTY_LICENSES.txt', join(stagingDirectory, 'THIRD_PARTY_LICENSES.txt'));
-    cpSync(layout.outdir, join(stagingDirectory, 'dist'), { recursive: true });
+    cpSync('dist', join(stagingDirectory, 'dist'), { recursive: true });
     chmodSync(join(stagingDirectory, 'dist', 'bin', 'cc-safety-net.js'), 0o755);
     const manifest = JSON.parse(readFileSync('package.json', 'utf8')) as Record<string, unknown>;
     delete manifest.gitHead;
@@ -672,4 +661,4 @@ function throwMissingGitHead(): never {
   throw new Error('--git-head requires a full commit SHA');
 }
 
-if (import.meta.main) await verifyPackage(resolveLayout(process.argv));
+if (import.meta.main) await verifyPackage();

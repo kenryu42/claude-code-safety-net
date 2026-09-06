@@ -11,8 +11,8 @@ import {
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { listAuditLogFiles } from '@/engine/audit-scan';
-import type { AuditLogEntry } from '@/ir/audit';
+import { listAuditLogFiles } from '@/audit/reader';
+import type { AuditLogEntry } from '@/core/audit';
 import { buildRuntimeBundles } from '../../scripts/build-runtime';
 
 // Live tests drive real agent binaries and spend real usage, so they are

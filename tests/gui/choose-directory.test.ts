@@ -1,137 +1,142 @@
-import { afterAll, describe, expect, test } from 'bun:test';
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { chooseDirectory, isDirectoryPickerAvailable } from '@/gui/choose-directory';
+import { afterEach, describe, expect, test } from 'bun:test';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { delimiter, join } from 'node:path';
+import {
+  type ChooseDirectoryResult,
+  isDirectoryPickerAvailable as portedAvailable,
+  chooseDirectory as portedChoose,
+} from '@/gui/choose-directory';
+import { createFakeBin, type FakeScriptEntry } from '../helpers/fake-bin';
+import { createTempRoot, normalize, removeTempRoots } from '../helpers/temp-home';
 
-// A real PATH entry holding a stub binary: asserting on the host's own zenity
-// would make the result depend on whatever the suite happens to run on.
-const withZenity = mkdtempSync(join(tmpdir(), 'cc-picker-'));
-writeFileSync(join(withZenity, 'zenity'), '');
-chmodSync(join(withZenity, 'zenity'), 0o755);
-const withKdialog = mkdtempSync(join(tmpdir(), 'cc-picker-'));
-writeFileSync(join(withKdialog, 'kdialog'), '');
-chmodSync(join(withKdialog, 'kdialog'), 0o755);
-const empty = mkdtempSync(join(tmpdir(), 'cc-picker-'));
+/**
+ * The native folder dialog: which platforms can open one, and what the picked path comes back as.
+ * Every row pins the answer and the argv the fake dialog recorded — a fake `zenity`, `kdialog` or
+ * missing `osascript` on a `PATH` of our own, so no test opens a window.
+ */
 
-afterAll(() => {
-  for (const dir of [withZenity, withKdialog, empty]) rmSync(dir, { recursive: true, force: true });
-});
-
-describe('directory picker availability', () => {
-  // osascript and powershell.exe ship with the OS, so the only question is
-  // whether a desktop session exists at all - which the GUI already implies.
-  test('is always available on macOS and Windows', () => {
-    expect(isDirectoryPickerAvailable('darwin', {})).toBe(true);
-    expect(isDirectoryPickerAvailable('win32', {})).toBe(true);
-  });
-
-  // Windows cannot execute the extensionless Unix stubs used to model Linux dialog binaries.
-  test.skipIf(process.platform === 'win32')('accepts either dialog binary on Linux', () => {
-    expect(isDirectoryPickerAvailable('linux', { PATH: withZenity, DISPLAY: ':0' })).toBe(true);
-    expect(isDirectoryPickerAvailable('linux', { PATH: withKdialog, DISPLAY: ':0' })).toBe(true);
-    expect(isDirectoryPickerAvailable('linux', { PATH: empty, DISPLAY: ':0' })).toBe(false);
-  });
-
-  // Windows cannot execute the extensionless Unix stub used to model a Linux dialog binary.
-  test.skipIf(process.platform === 'win32')('counts Wayland as a display', () => {
-    expect(
-      isDirectoryPickerAvailable('linux', { PATH: withZenity, WAYLAND_DISPLAY: 'wayland-0' }),
-    ).toBe(true);
-  });
-
-  // Present but unusable: WSL without WSLg and containers both look like this,
-  // and the dialog would only fail with "cannot open display" after the click.
-  test('rejects a dialog binary with no display', () => {
-    expect(isDirectoryPickerAvailable('linux', { PATH: withZenity })).toBe(false);
-  });
-
-  // A stale install can leave a plain file where the binary was: advertising it
-  // would offer a picker that can never start.
-  // Windows has no Unix executable mode bits, so it cannot exercise this Linux capability check.
-  test.skipIf(process.platform === 'win32')('rejects a dialog file that is not executable', () => {
-    const nonExecutable = mkdtempSync(join(tmpdir(), 'cc-picker-'));
-    stubs.push(nonExecutable);
-    writeFileSync(join(nonExecutable, 'zenity'), '');
-    chmodSync(join(nonExecutable, 'zenity'), 0o644);
-    expect(isDirectoryPickerAvailable('linux', { PATH: nonExecutable, DISPLAY: ':0' })).toBe(false);
-  });
-
-  // A PATH entry pointing at a file makes the lookup below it fail with ENOTDIR
-  // rather than "not found": the probe must treat that as one dead entry.
-  test('survives a PATH entry that is not a directory', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'cc-picker-'));
-    stubs.push(dir);
-    const fileEntry = join(dir, 'not-a-directory');
-    writeFileSync(fileEntry, '');
-    expect(isDirectoryPickerAvailable('linux', { PATH: fileEntry, DISPLAY: ':0' })).toBe(false);
-  });
-
-  // Directories carry the executable bit by default, so a directory named after
-  // the binary would otherwise advertise a picker that can never start.
-  test('rejects a directory named after a dialog binary', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'cc-picker-'));
-    stubs.push(dir);
-    mkdirSync(join(dir, 'zenity'));
-    // Explicit mode: a restrictive umask stripping the execute bits would let
-    // the mode check reject the entry before the isFile check is exercised.
-    chmodSync(join(dir, 'zenity'), 0o755);
-    expect(isDirectoryPickerAvailable('linux', { PATH: dir, DISPLAY: ':0' })).toBe(false);
-  });
-
-  test('is unavailable on platforms with no known dialog', () => {
-    expect(isDirectoryPickerAvailable('aix', { PATH: withZenity, DISPLAY: ':0' })).toBe(false);
-  });
-});
-
-// A stub on PATH stands in for the dialog: the real one cannot be driven
-// headlessly, but everything downstream of its stdout can be.
-const stubDialog = (output: string) => {
-  const dir = mkdtempSync(join(tmpdir(), 'cc-picker-stub-'));
-  const binary = join(dir, 'zenity');
-  writeFileSync(binary, `#!/bin/sh\nprintf '%s' '${output}'\n`);
-  chmodSync(binary, 0o755);
-  stubs.push(dir);
-  return { PATH: dir };
+const executableDir = (root: string, name: string) => {
+  const dir = join(root, `${name}-bin`);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, name), '#!/bin/sh\nexit 0\n', { mode: 0o755 });
+  return dir;
 };
-const stubs: string[] = [];
-afterAll(() => {
-  for (const dir of stubs) rmSync(dir, { recursive: true, force: true });
+
+describe('whether a folder dialog can be opened', () => {
+  afterEach(removeTempRoots);
+
+  test('agrees with the shipped answer on every platform and PATH shape', () => {
+    const root = createTempRoot('gui-picker-paths-');
+    const zenity = executableDir(root, 'zenity');
+    const kdialog = executableDir(root, 'kdialog');
+
+    const unreadable = join(root, 'not-a-directory');
+    writeFileSync(unreadable, 'a PATH entry that is a file, not a directory');
+    const shadowed = join(root, 'shadowed');
+    mkdirSync(join(shadowed, 'zenity'), { recursive: true });
+    const notExecutable = join(root, 'not-executable');
+    mkdirSync(notExecutable, { recursive: true });
+    writeFileSync(join(notExecutable, 'zenity'), '#!/bin/sh\nexit 0\n', { mode: 0o644 });
+
+    const rows: readonly [string, NodeJS.ProcessEnv, boolean][] = [
+      ['darwin', {}, true],
+      ['win32', {}, true],
+      ['linux', {}, false],
+      ['linux', { DISPLAY: ':0', PATH: zenity }, true],
+      ['linux', { WAYLAND_DISPLAY: 'wayland-0', PATH: kdialog }, true],
+      ['linux', { DISPLAY: ':0', PATH: [unreadable, shadowed].join(delimiter) }, false],
+      ['linux', { DISPLAY: ':0', PATH: notExecutable }, false],
+      ['freebsd', { DISPLAY: ':0', PATH: zenity }, false],
+    ];
+
+    for (const [platform, env, available] of rows) {
+      expect(portedAvailable(platform, env)).toBe(available);
+    }
+  });
 });
 
-describe('choosing a directory', () => {
-  // Windows cannot execute the POSIX shell dialog stub used by these Linux picker tests.
-  test.skipIf(process.platform === 'win32')(
-    'strips the trailing separator an AppleScript POSIX path carries',
-    async () => {
-      expect(await chooseDirectory('linux', stubDialog(`${withZenity}/`))).toEqual({
-        path: withZenity,
-      });
-    },
-  );
+const DIALOG_ROWS: readonly {
+  readonly label: string;
+  readonly platform: string;
+  readonly script: (root: string) => readonly FakeScriptEntry[];
+  readonly picked: boolean;
+  readonly result: ChooseDirectoryResult;
+  readonly argv: string[];
+}[] = [
+  {
+    label: 'a chosen folder',
+    platform: 'linux',
+    script: (root) => [{ command: 'zenity', stdout: `${join(root, 'picked')}\n` }],
+    picked: true,
+    result: { path: '<root>/picked' },
+    argv: ['zenity --file-selection --directory --title=Choose the project folder'],
+  },
+  {
+    label: 'a chosen folder reported with a trailing separator',
+    platform: 'linux',
+    script: (root) => [{ command: 'zenity', stdout: `${join(root, 'picked')}/\n` }],
+    picked: true,
+    result: { path: '<root>/picked' },
+    argv: ['zenity --file-selection --directory --title=Choose the project folder'],
+  },
+  {
+    label: 'a cancelled dialog',
+    platform: 'linux',
+    script: () => [{ command: 'zenity', stdout: '' }],
+    picked: false,
+    result: { cancelled: true },
+    argv: ['zenity --file-selection --directory --title=Choose the project folder'],
+  },
+  {
+    label: 'a path that is not a folder on disk',
+    platform: 'linux',
+    script: (root) => [{ command: 'zenity', stdout: `${join(root, 'missing')}\n` }],
+    picked: false,
+    result: { error: 'That selection is not a folder on disk' },
+    argv: ['zenity --file-selection --directory --title=Choose the project folder'],
+  },
+  {
+    label: 'the second dialog when only it is installed',
+    platform: 'linux',
+    script: (root) => [{ command: 'kdialog', stdout: `${join(root, 'picked')}\n` }],
+    picked: true,
+    result: { path: '<root>/picked' },
+    argv: ['kdialog --getexistingdirectory . --title Choose the project folder'],
+  },
+  {
+    label: 'no dialog at all',
+    platform: 'linux',
+    script: () => [],
+    picked: false,
+    result: { error: 'No folder dialog is available on this system' },
+    argv: [],
+  },
+  {
+    label: 'a macOS host whose osascript cannot be started',
+    platform: 'darwin',
+    script: () => [],
+    picked: false,
+    result: { error: 'Could not open the folder dialog (osascript)' },
+    argv: [],
+  },
+];
 
-  // Windows cannot execute the POSIX shell dialog stub used by this Linux picker test.
-  test.skipIf(process.platform === 'win32')(
-    'reads no output as a cancel rather than a failure',
-    async () => {
-      expect(await chooseDirectory('linux', stubDialog(''))).toEqual({ cancelled: true });
-    },
-  );
+describe('opening the folder dialog', () => {
+  afterEach(removeTempRoots);
 
-  // Windows shell dialogs can return a virtual folder such as "This PC", which
-  // would otherwise reach the prompt as a path the agent cannot write to.
-  // Windows cannot execute the POSIX shell dialog stub used by this Linux picker test.
-  test.skipIf(process.platform === 'win32')(
-    'rejects a selection that is not a directory on disk',
-    async () => {
-      const result = await chooseDirectory('linux', stubDialog('/nonexistent/virtual folder'));
-      expect(result).toEqual({ error: 'That selection is not a folder on disk' });
-    },
-  );
+  const runSide = async (row: (typeof DIALOG_ROWS)[number]) => {
+    const root = createTempRoot('gui-picker-ported-');
+    const fake = createFakeBin(root, row.script(root));
+    if (row.picked) mkdirSync(join(root, 'picked'), { recursive: true });
+    const result = await portedChoose(row.platform, { ...fake.env, DISPLAY: ':0' });
+    return normalize({ result, argv: fake.readLog().map((line) => line.split('\t')[0]) }, [
+      [root, '<root>'],
+    ]);
+  };
 
-  test('reports when no dialog binary is present', async () => {
-    expect(await chooseDirectory('linux', { PATH: empty })).toEqual({
-      error: 'No folder dialog is available on this system',
-    });
+  test.each(
+    DIALOG_ROWS.map((row) => [row.label, row] as const),
+  )('reports %s the same way', async (_label, row) => {
+    expect(await runSide(row)).toStrictEqual({ result: row.result, argv: row.argv });
   });
 });

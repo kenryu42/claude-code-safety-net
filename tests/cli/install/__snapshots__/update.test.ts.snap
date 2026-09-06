@@ -1,0 +1,1415 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`an empty home has nothing to update and still gets the nudge 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "No installed integrations found. Run \`cc-safety-net install\` to set one up.",
+    "",
+    "Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. \`npm i -g cc-safety-net@latest\` for a global install.",
+    "",
+  ],
+  "log": [],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`an unparseable argument fails before anything is detected 1`] = `
+{
+  "errors": [
+    "Unknown option for update: --x",
+  ],
+  "exitCode": 1,
+  "lines": [
+    "",
+  ],
+  "log": [],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`every installed integration is updated in catalog order behind one cache clear 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Installed Cursor hook in <home>/.cursor/hooks.json",
+    "",
+  ],
+  "log": [],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "npx -y cc-safety-net hook --cursor",
+        "timeout": 30,
+        "failClosed": true
+      }
+    ]
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`every installed integration is updated in catalog order behind one cache clear 2`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Installed Hermes Agent plugin at <home>/.hermes/plugins/cc-safety-net",
+    "Restart Hermes to apply the change.",
+    "",
+  ],
+  "log": [
+    "hermes plugins enable cc-safety-net --no-allow-tool-override	<root>",
+  ],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".hermes",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+"""CC Safety Net guard for Hermes Agent.
+
+Registers pre_tool_call and forwards the tool call to the packaged CC Safety Net
+adapter (cc-safety-net hook --hermes-agent) over JSON stdin. The adapter prints nothing
+when the call is allowed and an {"action": "block", ...} directive when it is denied.
+Hermes ignores a callback that raises, so every transport and analysis failure is turned
+into an explicit block here instead.
+"""
+
+import json
+import os
+import shutil
+import signal
+import subprocess
+
+HOOK_EVENT = "pre_tool_call"
+SUPPORTED_TOOLS = ("patch", "read_file", "terminal", "write_file")
+ANALYZER = ["npx", "-y", "cc-safety-net", "hook", "--hermes-agent"]
+TIMEOUT_SECONDS = 30
+
+
+def _block(detail):
+    return {"action": "block", "message": "CC Safety Net failed closed: " + detail}
+
+
+def _terminal_cwd(task_id, process_cwd):
+    """Return the directory Hermes will run this terminal command in.
+
+    A \`terminal\` call without \`workdir\` runs in the session's own cwd RECORD, not in the
+    Hermes process directory: \`_resolve_command_cwd\` in tools/terminal_tool.py returns
+    \`workdir or get_session_cwd(session_key) or default_cwd\`, and that record is rewritten
+    after every completed command, so it IS the session's \`cd\` state. The session key is
+    derived exactly as terminal_tool derives it: the contextvar when set, the raw task_id
+    otherwise. No record yet (first command of a session) means \`default_cwd\`, which the local
+    terminal backend reads from \`TERMINAL_CWD\` (\`hermes_cli/config.py\` bridges the configured
+    \`terminal.cwd\` into it) and only then falls back to the process directory.
+    """
+    from tools.approval import get_current_session_key
+    from tools.terminal_tool import get_session_cwd
+
+    return (
+        get_session_cwd(get_current_session_key(default="") or (task_id or ""))
+        or os.environ.get("TERMINAL_CWD")
+        or process_cwd
+    )
+
+
+def _pre_tool_call(tool_name="", args=None, session_id="", task_id="", **_):
+    if tool_name not in SUPPORTED_TOOLS:
+        return None
+
+    executable = shutil.which(ANALYZER[0])
+    if executable is None:
+        return _block(ANALYZER[0] + " was not found on PATH.")
+
+    try:
+        cwd = os.getcwd()
+    except OSError as error:
+        return _block("the working directory could not be resolved (%s)." % error)
+
+    if tool_name == "terminal":
+        try:
+            cwd = _terminal_cwd(task_id, cwd)
+        except ImportError as error:
+            # Without the session record we cannot tell which directory the command runs in,
+            # and analysing the wrong one clears every path-scoped protection.
+            return _block(
+                "the Hermes session directory could not be read (%s). Update cc-safety-net and "
+                "reinstall the plugin with: npx -y cc-safety-net install --hermes-agent." % error
+            )
+
+    payload = json.dumps(
+        {
+            "hook_event_name": HOOK_EVENT,
+            "tool_name": tool_name,
+            "tool_input": args if isinstance(args, dict) else None,
+            "session_id": session_id if isinstance(session_id, str) else "",
+            "cwd": cwd,
+        }
+    )
+
+    try:
+        if os.name == "nt":
+            launch_options = {}
+        else:
+            launch_options = {"start_new_session": True}
+        process = subprocess.Popen(
+            [executable] + ANALYZER[1:],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # Decode explicitly: the analyzer writes UTF-8, and a locale decoder would raise
+            # UnicodeDecodeError on output it cannot read — an exception Hermes swallows by
+            # allowing the tool call. "replace" turns that into unreadable output, which blocks.
+            encoding="utf-8",
+            errors="replace",
+            # Resolve the analyzer from a neutral directory: npx prefers a repository-local
+            # node_modules/.bin/cc-safety-net, so inheriting Hermes' working directory would
+            # let workspace contents stand in for the analyzer. The payload's "cwd" above is
+            # still the real Hermes working directory, which the analysis needs.
+            cwd=os.path.expanduser("~"),
+            # Own process group so the timeout below can kill the whole tree: npx's descendants
+            # outlive a kill aimed at npx alone and keep holding the pipes captured here. Windows
+            # uses taskkill's process-tree traversal instead because sessions are POSIX-only.
+            **launch_options,
+        )
+    except OSError as error:
+        return _block("analysis could not start (%s)." % error)
+
+    try:
+        stdout, _ = process.communicate(payload, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            if os.name == "nt":
+                system_root = os.environ.get("SystemRoot")
+                if not system_root:
+                    raise OSError("SystemRoot is unavailable")
+                subprocess.run(
+                    [
+                        os.path.join(system_root, "System32", "taskkill.exe"),
+                        "/PID",
+                        str(process.pid),
+                        "/T",
+                        "/F",
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                    check=False,
+                )
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        try:
+            process.communicate(timeout=1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return _block("analysis timed out after %ss." % TIMEOUT_SECONDS)
+
+    if process.returncode != 0:
+        return _block("analysis exited with status %s." % process.returncode)
+
+    directive = (stdout or "").strip()
+    if not directive:
+        return None
+
+    try:
+        parsed = json.loads(directive)
+    except ValueError:
+        return _block("analysis returned unreadable output.")
+
+    if isinstance(parsed, dict) and parsed.get("action") == "block":
+        message = parsed.get("message")
+        if isinstance(message, str) and message:
+            return parsed
+    return _block("analysis returned an unexpected directive.")
+
+
+def register(ctx):
+    ctx.register_hook("pre_tool_call", _pre_tool_call)
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/__init__.py",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+name: cc-safety-net
+version: "dev"
+description: "Block destructive commands and secret-file access before Hermes runs a tool."
+author: "cc-safety-net"
+provides_hooks:
+  - pre_tool_call
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`every installed integration is updated in catalog order behind one cache clear 3`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Updated Claude Code integration",
+    "Cursor hook up to date in <home>/.cursor/hooks.json",
+    "Gemini CLI not found; skipped",
+    "Updated Hermes Agent plugin at <home>/.hermes/plugins/cc-safety-net",
+    "Restart Hermes to apply the change.",
+    "Updated Kimi Code hook in <home>/.kimi-code/config.toml",
+    "",
+    "Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. \`npm i -g cc-safety-net@latest\` for a global install.",
+    "",
+  ],
+  "log": [
+    "claude --version	<root>",
+    "claude plugin marketplace update cc-marketplace	<root>",
+    "claude plugin update cc-safety-net@cc-marketplace	<root>",
+    "gemini --version	<root>",
+    "hermes --version	<root>",
+    "hermes plugins enable cc-safety-net --no-allow-tool-override	<root>",
+  ],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "path": ".claude/plugins",
+    },
+    {
+      "content": 
+"{"plugins":{"cc-safety-net@cc-marketplace":["kenryu42/cc-marketplace"]}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": 
+"{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "npx -y cc-safety-net hook --cursor",
+        "timeout": 30,
+        "failClosed": true
+      }
+    ]
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "path": ".gemini",
+    },
+    {
+      "kind": "directory",
+      "path": ".gemini/extensions",
+    },
+    {
+      "kind": "directory",
+      "path": ".gemini/extensions/gemini-safety-net",
+    },
+    {
+      "content": 
+"{}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".gemini/extensions/gemini-safety-net/gemini-extension.json",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+"""CC Safety Net guard for Hermes Agent.
+
+Registers pre_tool_call and forwards the tool call to the packaged CC Safety Net
+adapter (cc-safety-net hook --hermes-agent) over JSON stdin. The adapter prints nothing
+when the call is allowed and an {"action": "block", ...} directive when it is denied.
+Hermes ignores a callback that raises, so every transport and analysis failure is turned
+into an explicit block here instead.
+"""
+
+import json
+import os
+import shutil
+import signal
+import subprocess
+
+HOOK_EVENT = "pre_tool_call"
+SUPPORTED_TOOLS = ("patch", "read_file", "terminal", "write_file")
+ANALYZER = ["npx", "-y", "cc-safety-net", "hook", "--hermes-agent"]
+TIMEOUT_SECONDS = 30
+
+
+def _block(detail):
+    return {"action": "block", "message": "CC Safety Net failed closed: " + detail}
+
+
+def _terminal_cwd(task_id, process_cwd):
+    """Return the directory Hermes will run this terminal command in.
+
+    A \`terminal\` call without \`workdir\` runs in the session's own cwd RECORD, not in the
+    Hermes process directory: \`_resolve_command_cwd\` in tools/terminal_tool.py returns
+    \`workdir or get_session_cwd(session_key) or default_cwd\`, and that record is rewritten
+    after every completed command, so it IS the session's \`cd\` state. The session key is
+    derived exactly as terminal_tool derives it: the contextvar when set, the raw task_id
+    otherwise. No record yet (first command of a session) means \`default_cwd\`, which the local
+    terminal backend reads from \`TERMINAL_CWD\` (\`hermes_cli/config.py\` bridges the configured
+    \`terminal.cwd\` into it) and only then falls back to the process directory.
+    """
+    from tools.approval import get_current_session_key
+    from tools.terminal_tool import get_session_cwd
+
+    return (
+        get_session_cwd(get_current_session_key(default="") or (task_id or ""))
+        or os.environ.get("TERMINAL_CWD")
+        or process_cwd
+    )
+
+
+def _pre_tool_call(tool_name="", args=None, session_id="", task_id="", **_):
+    if tool_name not in SUPPORTED_TOOLS:
+        return None
+
+    executable = shutil.which(ANALYZER[0])
+    if executable is None:
+        return _block(ANALYZER[0] + " was not found on PATH.")
+
+    try:
+        cwd = os.getcwd()
+    except OSError as error:
+        return _block("the working directory could not be resolved (%s)." % error)
+
+    if tool_name == "terminal":
+        try:
+            cwd = _terminal_cwd(task_id, cwd)
+        except ImportError as error:
+            # Without the session record we cannot tell which directory the command runs in,
+            # and analysing the wrong one clears every path-scoped protection.
+            return _block(
+                "the Hermes session directory could not be read (%s). Update cc-safety-net and "
+                "reinstall the plugin with: npx -y cc-safety-net install --hermes-agent." % error
+            )
+
+    payload = json.dumps(
+        {
+            "hook_event_name": HOOK_EVENT,
+            "tool_name": tool_name,
+            "tool_input": args if isinstance(args, dict) else None,
+            "session_id": session_id if isinstance(session_id, str) else "",
+            "cwd": cwd,
+        }
+    )
+
+    try:
+        if os.name == "nt":
+            launch_options = {}
+        else:
+            launch_options = {"start_new_session": True}
+        process = subprocess.Popen(
+            [executable] + ANALYZER[1:],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # Decode explicitly: the analyzer writes UTF-8, and a locale decoder would raise
+            # UnicodeDecodeError on output it cannot read — an exception Hermes swallows by
+            # allowing the tool call. "replace" turns that into unreadable output, which blocks.
+            encoding="utf-8",
+            errors="replace",
+            # Resolve the analyzer from a neutral directory: npx prefers a repository-local
+            # node_modules/.bin/cc-safety-net, so inheriting Hermes' working directory would
+            # let workspace contents stand in for the analyzer. The payload's "cwd" above is
+            # still the real Hermes working directory, which the analysis needs.
+            cwd=os.path.expanduser("~"),
+            # Own process group so the timeout below can kill the whole tree: npx's descendants
+            # outlive a kill aimed at npx alone and keep holding the pipes captured here. Windows
+            # uses taskkill's process-tree traversal instead because sessions are POSIX-only.
+            **launch_options,
+        )
+    except OSError as error:
+        return _block("analysis could not start (%s)." % error)
+
+    try:
+        stdout, _ = process.communicate(payload, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            if os.name == "nt":
+                system_root = os.environ.get("SystemRoot")
+                if not system_root:
+                    raise OSError("SystemRoot is unavailable")
+                subprocess.run(
+                    [
+                        os.path.join(system_root, "System32", "taskkill.exe"),
+                        "/PID",
+                        str(process.pid),
+                        "/T",
+                        "/F",
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                    check=False,
+                )
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        try:
+            process.communicate(timeout=1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return _block("analysis timed out after %ss." % TIMEOUT_SECONDS)
+
+    if process.returncode != 0:
+        return _block("analysis exited with status %s." % process.returncode)
+
+    directive = (stdout or "").strip()
+    if not directive:
+        return None
+
+    try:
+        parsed = json.loads(directive)
+    except ValueError:
+        return _block("analysis returned unreadable output.")
+
+    if isinstance(parsed, dict) and parsed.get("action") == "block":
+        message = parsed.get("message")
+        if isinstance(message, str) and message:
+            return parsed
+    return _block("analysis returned an unexpected directive.")
+
+
+def register(ctx):
+    ctx.register_hook("pre_tool_call", _pre_tool_call)
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/__init__.py",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+name: cc-safety-net
+version: "dev"
+description: "Block destructive commands and secret-file access before Hermes runs a tool."
+author: "cc-safety-net"
+provides_hooks:
+  - pre_tool_call
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
+    },
+    {
+      "kind": "directory",
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx cc-safety-net hook --kimi-code"
+
+[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "path": ".npm",
+    },
+    {
+      "kind": "directory",
+      "path": ".npm/_npx",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`one failing target is reported as an error while the rest still update 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Installed Cursor hook in <home>/.cursor/hooks.json",
+    "",
+  ],
+  "log": [],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "npx -y cc-safety-net hook --cursor",
+        "timeout": 30,
+        "failClosed": true
+      }
+    ]
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`one failing target is reported as an error while the rest still update 2`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Installed Hermes Agent plugin at <home>/.hermes/plugins/cc-safety-net",
+    "Restart Hermes to apply the change.",
+    "",
+  ],
+  "log": [
+    "hermes plugins enable cc-safety-net --no-allow-tool-override	<root>",
+  ],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".hermes",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+"""CC Safety Net guard for Hermes Agent.
+
+Registers pre_tool_call and forwards the tool call to the packaged CC Safety Net
+adapter (cc-safety-net hook --hermes-agent) over JSON stdin. The adapter prints nothing
+when the call is allowed and an {"action": "block", ...} directive when it is denied.
+Hermes ignores a callback that raises, so every transport and analysis failure is turned
+into an explicit block here instead.
+"""
+
+import json
+import os
+import shutil
+import signal
+import subprocess
+
+HOOK_EVENT = "pre_tool_call"
+SUPPORTED_TOOLS = ("patch", "read_file", "terminal", "write_file")
+ANALYZER = ["npx", "-y", "cc-safety-net", "hook", "--hermes-agent"]
+TIMEOUT_SECONDS = 30
+
+
+def _block(detail):
+    return {"action": "block", "message": "CC Safety Net failed closed: " + detail}
+
+
+def _terminal_cwd(task_id, process_cwd):
+    """Return the directory Hermes will run this terminal command in.
+
+    A \`terminal\` call without \`workdir\` runs in the session's own cwd RECORD, not in the
+    Hermes process directory: \`_resolve_command_cwd\` in tools/terminal_tool.py returns
+    \`workdir or get_session_cwd(session_key) or default_cwd\`, and that record is rewritten
+    after every completed command, so it IS the session's \`cd\` state. The session key is
+    derived exactly as terminal_tool derives it: the contextvar when set, the raw task_id
+    otherwise. No record yet (first command of a session) means \`default_cwd\`, which the local
+    terminal backend reads from \`TERMINAL_CWD\` (\`hermes_cli/config.py\` bridges the configured
+    \`terminal.cwd\` into it) and only then falls back to the process directory.
+    """
+    from tools.approval import get_current_session_key
+    from tools.terminal_tool import get_session_cwd
+
+    return (
+        get_session_cwd(get_current_session_key(default="") or (task_id or ""))
+        or os.environ.get("TERMINAL_CWD")
+        or process_cwd
+    )
+
+
+def _pre_tool_call(tool_name="", args=None, session_id="", task_id="", **_):
+    if tool_name not in SUPPORTED_TOOLS:
+        return None
+
+    executable = shutil.which(ANALYZER[0])
+    if executable is None:
+        return _block(ANALYZER[0] + " was not found on PATH.")
+
+    try:
+        cwd = os.getcwd()
+    except OSError as error:
+        return _block("the working directory could not be resolved (%s)." % error)
+
+    if tool_name == "terminal":
+        try:
+            cwd = _terminal_cwd(task_id, cwd)
+        except ImportError as error:
+            # Without the session record we cannot tell which directory the command runs in,
+            # and analysing the wrong one clears every path-scoped protection.
+            return _block(
+                "the Hermes session directory could not be read (%s). Update cc-safety-net and "
+                "reinstall the plugin with: npx -y cc-safety-net install --hermes-agent." % error
+            )
+
+    payload = json.dumps(
+        {
+            "hook_event_name": HOOK_EVENT,
+            "tool_name": tool_name,
+            "tool_input": args if isinstance(args, dict) else None,
+            "session_id": session_id if isinstance(session_id, str) else "",
+            "cwd": cwd,
+        }
+    )
+
+    try:
+        if os.name == "nt":
+            launch_options = {}
+        else:
+            launch_options = {"start_new_session": True}
+        process = subprocess.Popen(
+            [executable] + ANALYZER[1:],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # Decode explicitly: the analyzer writes UTF-8, and a locale decoder would raise
+            # UnicodeDecodeError on output it cannot read — an exception Hermes swallows by
+            # allowing the tool call. "replace" turns that into unreadable output, which blocks.
+            encoding="utf-8",
+            errors="replace",
+            # Resolve the analyzer from a neutral directory: npx prefers a repository-local
+            # node_modules/.bin/cc-safety-net, so inheriting Hermes' working directory would
+            # let workspace contents stand in for the analyzer. The payload's "cwd" above is
+            # still the real Hermes working directory, which the analysis needs.
+            cwd=os.path.expanduser("~"),
+            # Own process group so the timeout below can kill the whole tree: npx's descendants
+            # outlive a kill aimed at npx alone and keep holding the pipes captured here. Windows
+            # uses taskkill's process-tree traversal instead because sessions are POSIX-only.
+            **launch_options,
+        )
+    except OSError as error:
+        return _block("analysis could not start (%s)." % error)
+
+    try:
+        stdout, _ = process.communicate(payload, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            if os.name == "nt":
+                system_root = os.environ.get("SystemRoot")
+                if not system_root:
+                    raise OSError("SystemRoot is unavailable")
+                subprocess.run(
+                    [
+                        os.path.join(system_root, "System32", "taskkill.exe"),
+                        "/PID",
+                        str(process.pid),
+                        "/T",
+                        "/F",
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                    check=False,
+                )
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        try:
+            process.communicate(timeout=1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return _block("analysis timed out after %ss." % TIMEOUT_SECONDS)
+
+    if process.returncode != 0:
+        return _block("analysis exited with status %s." % process.returncode)
+
+    directive = (stdout or "").strip()
+    if not directive:
+        return None
+
+    try:
+        parsed = json.loads(directive)
+    except ValueError:
+        return _block("analysis returned unreadable output.")
+
+    if isinstance(parsed, dict) and parsed.get("action") == "block":
+        message = parsed.get("message")
+        if isinstance(message, str) and message:
+            return parsed
+    return _block("analysis returned an unexpected directive.")
+
+
+def register(ctx):
+    ctx.register_hook("pre_tool_call", _pre_tool_call)
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/__init__.py",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+name: cc-safety-net
+version: "dev"
+description: "Block destructive commands and secret-file access before Hermes runs a tool."
+author: "cc-safety-net"
+provides_hooks:
+  - pre_tool_call
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`one failing target is reported as an error while the rest still update 3`] = `
+{
+  "errors": [
+    
+"Failed to run claude plugin update cc-safety-net@cc-marketplace (exit 1).
+marketplace gone"
+,
+  ],
+  "exitCode": 1,
+  "lines": [
+    "Cursor hook up to date in <home>/.cursor/hooks.json",
+    "Gemini CLI not found; skipped",
+    "Updated Hermes Agent plugin at <home>/.hermes/plugins/cc-safety-net",
+    "Restart Hermes to apply the change.",
+    "Updated Kimi Code hook in <home>/.kimi-code/config.toml",
+    "",
+    "Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. \`npm i -g cc-safety-net@latest\` for a global install.",
+    "",
+  ],
+  "log": [
+    "claude --version	<root>",
+    "claude plugin marketplace update cc-marketplace	<root>",
+    "claude plugin update cc-safety-net@cc-marketplace	<root>",
+    "gemini --version	<root>",
+    "hermes --version	<root>",
+    "hermes plugins enable cc-safety-net --no-allow-tool-override	<root>",
+  ],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "path": ".claude/plugins",
+    },
+    {
+      "content": 
+"{"plugins":{"cc-safety-net@cc-marketplace":["kenryu42/cc-marketplace"]}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": 
+"{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "npx -y cc-safety-net hook --cursor",
+        "timeout": 30,
+        "failClosed": true
+      }
+    ]
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "path": ".gemini",
+    },
+    {
+      "kind": "directory",
+      "path": ".gemini/extensions",
+    },
+    {
+      "kind": "directory",
+      "path": ".gemini/extensions/gemini-safety-net",
+    },
+    {
+      "content": 
+"{}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".gemini/extensions/gemini-safety-net/gemini-extension.json",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins",
+    },
+    {
+      "kind": "directory",
+      "path": ".hermes/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+"""CC Safety Net guard for Hermes Agent.
+
+Registers pre_tool_call and forwards the tool call to the packaged CC Safety Net
+adapter (cc-safety-net hook --hermes-agent) over JSON stdin. The adapter prints nothing
+when the call is allowed and an {"action": "block", ...} directive when it is denied.
+Hermes ignores a callback that raises, so every transport and analysis failure is turned
+into an explicit block here instead.
+"""
+
+import json
+import os
+import shutil
+import signal
+import subprocess
+
+HOOK_EVENT = "pre_tool_call"
+SUPPORTED_TOOLS = ("patch", "read_file", "terminal", "write_file")
+ANALYZER = ["npx", "-y", "cc-safety-net", "hook", "--hermes-agent"]
+TIMEOUT_SECONDS = 30
+
+
+def _block(detail):
+    return {"action": "block", "message": "CC Safety Net failed closed: " + detail}
+
+
+def _terminal_cwd(task_id, process_cwd):
+    """Return the directory Hermes will run this terminal command in.
+
+    A \`terminal\` call without \`workdir\` runs in the session's own cwd RECORD, not in the
+    Hermes process directory: \`_resolve_command_cwd\` in tools/terminal_tool.py returns
+    \`workdir or get_session_cwd(session_key) or default_cwd\`, and that record is rewritten
+    after every completed command, so it IS the session's \`cd\` state. The session key is
+    derived exactly as terminal_tool derives it: the contextvar when set, the raw task_id
+    otherwise. No record yet (first command of a session) means \`default_cwd\`, which the local
+    terminal backend reads from \`TERMINAL_CWD\` (\`hermes_cli/config.py\` bridges the configured
+    \`terminal.cwd\` into it) and only then falls back to the process directory.
+    """
+    from tools.approval import get_current_session_key
+    from tools.terminal_tool import get_session_cwd
+
+    return (
+        get_session_cwd(get_current_session_key(default="") or (task_id or ""))
+        or os.environ.get("TERMINAL_CWD")
+        or process_cwd
+    )
+
+
+def _pre_tool_call(tool_name="", args=None, session_id="", task_id="", **_):
+    if tool_name not in SUPPORTED_TOOLS:
+        return None
+
+    executable = shutil.which(ANALYZER[0])
+    if executable is None:
+        return _block(ANALYZER[0] + " was not found on PATH.")
+
+    try:
+        cwd = os.getcwd()
+    except OSError as error:
+        return _block("the working directory could not be resolved (%s)." % error)
+
+    if tool_name == "terminal":
+        try:
+            cwd = _terminal_cwd(task_id, cwd)
+        except ImportError as error:
+            # Without the session record we cannot tell which directory the command runs in,
+            # and analysing the wrong one clears every path-scoped protection.
+            return _block(
+                "the Hermes session directory could not be read (%s). Update cc-safety-net and "
+                "reinstall the plugin with: npx -y cc-safety-net install --hermes-agent." % error
+            )
+
+    payload = json.dumps(
+        {
+            "hook_event_name": HOOK_EVENT,
+            "tool_name": tool_name,
+            "tool_input": args if isinstance(args, dict) else None,
+            "session_id": session_id if isinstance(session_id, str) else "",
+            "cwd": cwd,
+        }
+    )
+
+    try:
+        if os.name == "nt":
+            launch_options = {}
+        else:
+            launch_options = {"start_new_session": True}
+        process = subprocess.Popen(
+            [executable] + ANALYZER[1:],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # Decode explicitly: the analyzer writes UTF-8, and a locale decoder would raise
+            # UnicodeDecodeError on output it cannot read — an exception Hermes swallows by
+            # allowing the tool call. "replace" turns that into unreadable output, which blocks.
+            encoding="utf-8",
+            errors="replace",
+            # Resolve the analyzer from a neutral directory: npx prefers a repository-local
+            # node_modules/.bin/cc-safety-net, so inheriting Hermes' working directory would
+            # let workspace contents stand in for the analyzer. The payload's "cwd" above is
+            # still the real Hermes working directory, which the analysis needs.
+            cwd=os.path.expanduser("~"),
+            # Own process group so the timeout below can kill the whole tree: npx's descendants
+            # outlive a kill aimed at npx alone and keep holding the pipes captured here. Windows
+            # uses taskkill's process-tree traversal instead because sessions are POSIX-only.
+            **launch_options,
+        )
+    except OSError as error:
+        return _block("analysis could not start (%s)." % error)
+
+    try:
+        stdout, _ = process.communicate(payload, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            if os.name == "nt":
+                system_root = os.environ.get("SystemRoot")
+                if not system_root:
+                    raise OSError("SystemRoot is unavailable")
+                subprocess.run(
+                    [
+                        os.path.join(system_root, "System32", "taskkill.exe"),
+                        "/PID",
+                        str(process.pid),
+                        "/T",
+                        "/F",
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                    check=False,
+                )
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        try:
+            process.communicate(timeout=1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return _block("analysis timed out after %ss." % TIMEOUT_SECONDS)
+
+    if process.returncode != 0:
+        return _block("analysis exited with status %s." % process.returncode)
+
+    directive = (stdout or "").strip()
+    if not directive:
+        return None
+
+    try:
+        parsed = json.loads(directive)
+    except ValueError:
+        return _block("analysis returned unreadable output.")
+
+    if isinstance(parsed, dict) and parsed.get("action") == "block":
+        message = parsed.get("message")
+        if isinstance(message, str) and message:
+            return parsed
+    return _block("analysis returned an unexpected directive.")
+
+
+def register(ctx):
+    ctx.register_hook("pre_tool_call", _pre_tool_call)
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/__init__.py",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+name: cc-safety-net
+version: "dev"
+description: "Block destructive commands and secret-file access before Hermes runs a tool."
+author: "cc-safety-net"
+provides_hooks:
+  - pre_tool_call
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
+    },
+    {
+      "kind": "directory",
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx cc-safety-net hook --kimi-code"
+
+[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "path": ".npm",
+    },
+    {
+      "kind": "directory",
+      "path": ".npm/_npx",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`an npx script path skips the registry check entirely 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "No installed integrations found. Run \`cc-safety-net install\` to set one up.",
+    "",
+  ],
+  "log": [],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`the bunx entry the update runs from survives while the stale one goes 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "No installed integrations found. Run \`cc-safety-net install\` to set one up.",
+    "",
+  ],
+  "log": [],
+  "tmp": [
+    {
+      "kind": "directory",
+      "path": "bunx-0-cc-safety-net@latest",
+    },
+    {
+      "content": 
+"running
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "bunx-0-cc-safety-net@latest/running.txt",
+    },
+    {
+      "kind": "directory",
+      "path": "bunx-0-other-tool@latest",
+    },
+    {
+      "content": 
+"keep
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "bunx-0-other-tool@latest/keep.txt",
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`a persistent install clears its bunx entry and prints the nudge 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "No installed integrations found. Run \`cc-safety-net install\` to set one up.",
+    "",
+    "Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. \`npm i -g cc-safety-net@latest\` for a global install.",
+    "",
+  ],
+  "log": [],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`a Codex plugin list with a legacy row updates Codex and removes the old plugin 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Updated Codex integration",
+    "Start Codex, open \`/hooks\`, select the cc-safety-net PreToolUse hook, and press \`t\` to trust it.",
+    "",
+    "Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. \`npm i -g cc-safety-net@latest\` for a global install.",
+    "",
+  ],
+  "log": [
+    "codex --version	<root>",
+    "codex plugin add cc-safety-net@cc-marketplace	<root>",
+    "codex plugin marketplace upgrade cc-marketplace	<root>",
+    "codex plugin remove safety-net@cc-marketplace	<root>",
+  ],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;
+
+exports[`a Copilot plugin checkout on disk is enough to update Copilot 1`] = `
+{
+  "errors": [],
+  "exitCode": 0,
+  "lines": [
+    "Updated GitHub Copilot CLI integration",
+    "",
+    "Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. \`npm i -g cc-safety-net@latest\` for a global install.",
+    "",
+  ],
+  "log": [
+    "copilot --binary-version	<root>",
+    "copilot plugin list	<root>",
+    "copilot plugin marketplace update cc-marketplace	<root>",
+    "copilot plugin update cc-safety-net@cc-marketplace	<root>",
+  ],
+  "tmp": [],
+  "tree": [
+    {
+      "kind": "directory",
+      "path": ".copilot",
+    },
+    {
+      "kind": "directory",
+      "path": ".copilot/installed-plugins",
+    },
+    {
+      "kind": "directory",
+      "path": ".copilot/installed-plugins/cc-marketplace",
+    },
+    {
+      "kind": "directory",
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
+    },
+    {
+      "content": 
+"{}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
+    },
+    {
+      "kind": "directory",
+      "path": "tmp",
+    },
+  ],
+  "warnings": [],
+}
+`;

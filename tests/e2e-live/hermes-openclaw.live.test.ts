@@ -23,11 +23,12 @@ import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { redactSecrets } from '@/engine/audit';
-import { listAuditLogFiles, readAuditLogEntries } from '@/engine/audit-scan';
-import { getHermesAgentPluginDir } from '@/integrations/hermes-agent/install';
-import { OPENCLAW_PLUGIN_ID } from '@/integrations/openclaw/artifact';
-import { getOpenClawPluginDir } from '@/integrations/openclaw/install';
+import { listAuditLogFiles, readAuditLogEntries } from '@/audit/reader';
+import { createTestEnvironment } from '@/core/environment';
+import { redactSecrets } from '@/core/redaction';
+import { getHermesAgentPluginDir } from '@/hosts/hermes-agent/install';
+import { OPENCLAW_PLUGIN_ID } from '@/hosts/openclaw/artifact';
+import { getOpenClawPluginDir } from '@/hosts/openclaw/install';
 import { buildOpenClawBundle, buildRuntimeBundles } from '../../scripts/build-runtime';
 import {
   buildE2EArtifacts,
@@ -134,7 +135,13 @@ describe.skipIf(skipHermes)('packaged Hermes Agent plugin under the real hermes 
       await runNode([cliPath, 'uninstall', '--hermes-agent'], '', cwd, home);
 
       expect(await listRealHermesPlugins(cwd, home)).toBe('');
-      expect(existsSync(getHermesAgentPluginDir(home))).toBe(false);
+      expect(
+        existsSync(
+          getHermesAgentPluginDir(
+            createTestEnvironment({ home, tmpdir: tmpdir(), env: new Map() }),
+          ),
+        ),
+      ).toBe(false);
     });
   });
 });
@@ -175,7 +182,11 @@ describe.skipIf(skipOpenClaw)('packaged OpenClaw plugin under the real openclaw 
         );
 
         expect(await listRealOpenClawPlugins(cwd, home)).toBe('');
-        expect(existsSync(getOpenClawPluginDir(home))).toBe(false);
+        expect(
+          existsSync(
+            getOpenClawPluginDir(createTestEnvironment({ home, tmpdir: tmpdir(), env: new Map() })),
+          ),
+        ).toBe(false);
       });
     },
     REAL_OPENCLAW_TIMEOUT_MS,
