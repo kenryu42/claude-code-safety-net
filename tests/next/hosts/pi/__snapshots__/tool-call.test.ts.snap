@@ -1,0 +1,483 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`one Pi tool call through both handlers a destructive command 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "rm -rf /",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "hard_stop",
+        "reason": "This path contains the protected policy config and you must not modify or delete it.",
+        "segment": "/",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: This path contains the protected policy config and you must not modify or delete it.
+
+Command: rm -rf /
+
+Segment: /
+
+Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a safe command recorded as an allow 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "git status",
+        "cwd": "<root>/project",
+        "decision": "allow",
+        "level": "standard",
+        "reason": "allowed",
+        "segment": "git status",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": undefined,
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a safe command under the blocked-only audit scope 1`] = `
+{
+  "entries": [],
+  "returned": undefined,
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a bash call without a tool input 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a bash call with a blank command 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a read of a file in the project 1`] = `
+{
+  "entries": [],
+  "returned": undefined,
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a read of a private key 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "<root>/home/.ssh/id_rsa",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "hard_stop",
+        "level": "standard",
+        "reason": "Access to a sensitive path is not allowed.",
+        "ruleId": "secret.home.ssh",
+        "segment": "<root>/home/.ssh/id_rsa",
+        "sessionId": "pi-1",
+        "toolName": "read",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: Access to a sensitive path is not allowed.
+
+Rule: secret.home.ssh
+
+Command: <root>/home/.ssh/id_rsa
+
+Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a read call without a tool input 1`] = `
+{
+  "entries": [],
+  "returned": undefined,
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers an event that is null 1`] = `
+{
+  "entries": [],
+  "returned": undefined,
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers an event of another type 1`] = `
+{
+  "entries": [],
+  "returned": undefined,
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers an event without a tool name 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "pi-1",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a context directory that is a regular file 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "",
+        "cwd": "<root>/not-a-directory",
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-not-a-directory/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a context without a directory 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "",
+        "cwd": null,
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "no-cwd/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers an analyzer that fails on a command 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "echo analyzed",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "errorCode": "unexpected-error",
+        "failureStage": "command-analysis",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "echo analyzed",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Command: echo analyzed
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers an analyzer that fails with debug output on 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "echo analyzed",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "errorCode": "unexpected-error",
+        "failureStage": "command-analysis",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "echo analyzed",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Command: echo analyzed
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [
+    "CC Safety Net debug: pi tool_call analysis failed: injected analyzer failure",
+  ],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a secret scan that fails on a read 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "cat README.md",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "errorCode": "unexpected-error",
+        "failureStage": "secret-protection",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "cat README.md",
+        "sessionId": "pi-1",
+        "toolName": "read",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Pi tool call through both handlers a user policy file that is not valid JSON 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "pi",
+        "command": "git reset --hard HEAD~1",
+        "configFallback": true,
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.",
+        "ruleId": "git.reset-hard",
+        "segment": "git reset --hard HEAD~1",
+        "sessionId": "pi-1",
+        "toolName": "bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-pi-1.jsonl",
+    },
+  ],
+  "returned": {
+    "block": true,
+    "reason": 
+"BLOCKED by CC Safety Net
+
+Reason: git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.
+
+Rule: git.reset-hard
+
+Command: git reset --hard HEAD~1
+
+Config warning: invalid policy config: <root>/pi-config/policy.json: Invalid JSON. Enforcing built-in protective defaults; the invalid values are not active. Fix the policy file manually.
+
+Do not retry the blocked form. Continue the task using the safer alternative described above."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;

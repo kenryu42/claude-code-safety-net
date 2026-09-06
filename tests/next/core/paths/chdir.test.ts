@@ -1,11 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { isAbsolute, join, relative, resolve } from 'node:path';
 import { createTestEnvironment, type FakeEntry, processPathResolver } from '@next/core/environment';
 import { resolveChdirTarget } from '@next/core/paths/chdir';
 import { resolveChdirTarget as shippedResolveChdirTarget } from '@/analyzer/path';
 import { processPathResolver as shippedPaths } from '@/ir/environment';
+import { rootFolds } from '../../helpers/temp-home';
 import {
   corpusWords,
   expectSameOutcome,
@@ -78,10 +79,21 @@ afterAll(() => {
   rmSync(root, { recursive: true, force: true });
 });
 
+/**
+ * Where a target lands when it climbs out of the fixture root: the temp directory the root sits
+ * in, which the host names — `/tmp` here, `/var/folders/…` on a macOS runner. Folding it out is
+ * not an option either, because the corpus spells `/tmp` itself, so the row is compared like
+ * every other and left out of the record.
+ */
+const climbsOut = (cwd: string, target: string) =>
+  !isAbsolute(target) && relative(root, resolve(cwd, target)).startsWith('..');
+
 function expectSameChdir(base: string, target: string): void {
   const thrown = expectSameOutcome(
     () => resolveChdirTarget(base, target, processPathResolver),
     () => shippedResolveChdirTarget(base, target, shippedPaths),
+    rootFolds(root),
+    !climbsOut(base, target),
   );
   if (thrown !== undefined) {
     expect(thrown).toBeInstanceOf(Error);

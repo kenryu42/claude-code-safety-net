@@ -1,0 +1,35 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the rule prompt block on the served page is the shipped block byte for byte 1`] = `
+"var rulePromptText = () => {
+  const names = rulesData?.rulebooks.map((rulebook) => rulebook.name) ?? [];
+  return [
+    "Use the cc-safety-net skill for this request.",
+    "If that skill is not available, run \`npx -y cc-safety-net rule doc\` first and treat its output as the source of truth for schema, paths, and validation.",
+    "",
+    rulesScope === "project" ? \`Scope: this project - \${qs("rules-project-path").value.trim()}\` : "Scope: all projects (user scope)",
+    \`Existing rulebooks (names must stay unique across both scopes): \${names.length > 0 ? names.join(", ") : "none"}\`,
+    "",
+    qs("rules-composer-input").value.trim()
+  ].join(\`
+\`);
+};
+var chooseProjectDirectory = async () => {
+  const button = qs("rules-choose-directory");
+  if (button.disabled)
+    return;
+  button.disabled = true;
+  const result = await requestJson("/api/rules/choose-directory", { method: "POST" });
+  button.disabled = false;
+  if (result.ok && result.data.path) {
+    qs("rules-project-path").value = result.data.path;
+    return;
+  }
+  if (result.ok && result.data.cancelled)
+    return;
+  directoryPickerFailed = true;
+  qs("rules-project-path").readOnly = false;
+  button.hidden = true;
+  setAppStatus(\`\${result.ok ? result.data.error : errorText(result)} - type the project path instead\`, "error");
+};"
+`;

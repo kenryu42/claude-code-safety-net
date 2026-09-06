@@ -50,6 +50,7 @@ describe('cli/install/banner', () => {
     expect(ported).toEqual(
       await runBanner(shippedPrintInstallBanner, { inputTTY: false, outputTTY: true }),
     );
+    expect(ported).toMatchSnapshot();
     expect(ported.rawModeCalls).toEqual([]);
     expect(ported.streamCalls).toEqual([]);
     expect(ported.chunks[0]?.startsWith('\x1b[?25l')).toBe(true);
@@ -69,6 +70,7 @@ describe('cli/install/banner', () => {
         outputTTY: true,
       }),
     );
+    expect(ported).toMatchSnapshot();
     expect(ported.rawModeCalls).toEqual([true, false]);
     expect(ported.streamCalls).toEqual(['resume', 'pause']);
     expect(ported.interrupts).toEqual([]);
@@ -89,6 +91,7 @@ describe('cli/install/banner', () => {
         outputTTY: true,
       }),
     );
+    expect(ported).toMatchSnapshot();
     expect(ported.interrupts).toEqual(['interrupt']);
     expect(ported.rawModeCalls).toEqual([true, false]);
   });

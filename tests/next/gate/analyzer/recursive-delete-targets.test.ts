@@ -29,6 +29,7 @@ import { projectCommandViews as shippedProjectCommandViews } from '@/parser/trav
 import { createLinkedWorktreeFixture, type LinkedWorktreeFixture } from '../../../helpers';
 import { corpusWords, pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   corpusCommands,
   FIXED_COMMANDS,
@@ -36,6 +37,7 @@ import {
   FUZZ_SEED,
   fuzzShellSources,
 } from '../../helpers/shell-inputs';
+import { normalize, rootFolds } from '../../helpers/temp-home';
 
 /**
  * Where a recursive delete lands decides which rule fires, so every classification branch —
@@ -204,6 +206,9 @@ function contextPair(row: ContextCase) {
   };
 }
 
+/** Both temp roots a recorded value can name: the fixture tree and the linked worktree clone. */
+const recordFolds = () => [...rootFolds(root), ...rootFolds(worktrees.rootDir)];
+
 function targets(cwd: string): readonly string[] {
   return [
     '/',
@@ -293,6 +298,7 @@ const CLASSIFICATION_OPTIONS: readonly RecursiveDeleteTargetClassificationOption
 
 describe('recursive delete target context', () => {
   test('resolves the same anchors, flags and allow roots as the shipped context', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of contextCases()) {
       const pair = contextPair(row);
       const readable = (context: ReadableContext) => ({
@@ -308,7 +314,9 @@ describe('recursive delete target context', () => {
         protectedGitMetadata: context.protectedGitMetadata,
       });
       expect(readable(pair.next), row.label).toStrictEqual(readable(pair.shipped));
+      recorded.push([row.label, normalize(readable(pair.next), recordFolds())]);
     }
+    expectRecordedDigest('analyzer-delete-targets/context', recorded);
   });
 
   test('an allow path that would widen into home is dropped', () => {
@@ -339,20 +347,32 @@ describe('recursive delete target context', () => {
   });
 });
 
+/** Every context row paired with one target resolved under that row's own cwd. */
+function contextTargets() {
+  return contextCases().flatMap((row) => {
+    const pair = contextPair(row);
+    return targets(pair.next.resolvedCwd ?? workspace).map((target) => ({ row, pair, target }));
+  });
+}
+
 describe('recursive delete target classification', () => {
   test('classifies every target the same way as the shipped classifier', () => {
-    for (const row of contextCases()) {
-      const pair = contextPair(row);
-      const cwd = pair.next.resolvedCwd ?? workspace;
-      for (const target of targets(cwd)) {
-        for (const options of CLASSIFICATION_OPTIONS) {
-          expect(
-            describeOutcome(() => classifyRecursiveDeleteTarget(target, pair.next, options)),
-            `${row.label}: ${target} ${JSON.stringify(options)}`,
-          ).toStrictEqual(describeOutcome(() => shippedClassify(target, pair.shipped, options)));
-        }
+    const recorded: [string, unknown][] = [];
+    for (const { row, pair, target } of contextTargets()) {
+      for (const options of CLASSIFICATION_OPTIONS) {
+        const classified = describeOutcome(() =>
+          classifyRecursiveDeleteTarget(target, pair.next, options),
+        );
+        expect(classified, `${row.label}: ${target} ${JSON.stringify(options)}`).toStrictEqual(
+          describeOutcome(() => shippedClassify(target, pair.shipped, options)),
+        );
+        recorded.push([
+          `${row.label}: ${normalize(target, recordFolds())} ${JSON.stringify(options)}`,
+          normalize(classified, recordFolds()),
+        ]);
       }
     }
+    expectRecordedDigest('analyzer-delete-targets/classification', recorded);
   });
 
   test('every classification kind is reached by the table', () => {
@@ -380,6 +400,7 @@ describe('recursive delete target classification', () => {
   });
 
   test('classifies the corpus words and the seeded fuzz like the shipped classifier', () => {
+    const recorded: [string, unknown][] = [];
     const row = contextCases()[1];
     if (!row) throw new Error('missing context case');
     const pair = contextPair(row);
@@ -388,30 +409,39 @@ describe('recursive delete target classification', () => {
       ...new Set(fuzzShellSources(300, FUZZ_SEED).flatMap((source) => source.split(/\s+/))),
     ]) {
       for (const options of [{}, { targetIsLiteral: true }]) {
-        expect(
-          describeOutcome(() => classifyRecursiveDeleteTarget(target, pair.next, options)),
-          target,
-        ).toStrictEqual(describeOutcome(() => shippedClassify(target, pair.shipped, options)));
+        const classified = describeOutcome(() =>
+          classifyRecursiveDeleteTarget(target, pair.next, options),
+        );
+        expect(classified, target).toStrictEqual(
+          describeOutcome(() => shippedClassify(target, pair.shipped, options)),
+        );
+        recorded.push([
+          `${normalize(target, recordFolds())} ${JSON.stringify(options)}`,
+          normalize(classified, recordFolds()),
+        ]);
       }
     }
+    expectRecordedDigest('analyzer-delete-targets/corpus-classification', recorded);
   });
 
   test('matches the shipped trusted-temp descendant test, including the containment target', () => {
-    for (const row of contextCases()) {
-      const pair = contextPair(row);
-      const cwd = pair.next.resolvedCwd ?? workspace;
-      for (const target of targets(cwd)) {
-        for (const containmentTarget of [undefined, join(root, 'tmp'), workspace, '/']) {
-          const options = { containmentTarget, targetIsLiteral: false };
-          expect(
-            describeOutcome(() => isTrustedTempDescendantTarget(target, pair.next, options)),
-            `${row.label}: ${target} contained by ${containmentTarget}`,
-          ).toStrictEqual(
-            describeOutcome(() => shippedIsTrustedTempDescendant(target, pair.shipped, options)),
-          );
-        }
+    const recorded: [string, unknown][] = [];
+    for (const { row, pair, target } of contextTargets()) {
+      for (const containmentTarget of [undefined, join(root, 'tmp'), workspace, '/']) {
+        const options = { containmentTarget, targetIsLiteral: false };
+        const trusted = describeOutcome(() =>
+          isTrustedTempDescendantTarget(target, pair.next, options),
+        );
+        expect(trusted, `${row.label}: ${target} contained by ${containmentTarget}`).toStrictEqual(
+          describeOutcome(() => shippedIsTrustedTempDescendant(target, pair.shipped, options)),
+        );
+        recorded.push([
+          normalize(`${row.label}: ${target} contained by ${containmentTarget}`, recordFolds()),
+          trusted,
+        ]);
       }
     }
+    expectRecordedDigest('analyzer-delete-targets/trusted-temp', recorded);
   });
 
   test('a temp descendant is trusted but a temp root or a workspace parent is not', () => {
@@ -436,13 +466,15 @@ describe('recursive delete target classification', () => {
 
 describe('dangerous root or home targets', () => {
   test('matches the shipped test for every spelling', () => {
+    const recorded: [string, unknown][] = [];
     for (const target of targets(workspace)) {
       for (const targetIsLiteral of [true, false]) {
-        expect(isDangerousRootOrHomeTarget(target, targetIsLiteral), target).toBe(
-          shippedIsDangerous(target, targetIsLiteral),
-        );
+        const dangerous = isDangerousRootOrHomeTarget(target, targetIsLiteral);
+        expect(dangerous, target).toBe(shippedIsDangerous(target, targetIsLiteral));
+        recorded.push([`${normalize(target, recordFolds())} ${targetIsLiteral}`, dangerous]);
       }
     }
+    expectRecordedDigest('analyzer-delete-targets/root-or-home', recorded);
   });
 
   test('the root and home spellings are dangerous only while they can expand', () => {
@@ -498,17 +530,21 @@ function expectSameWordFacts(
   nextWords.forEach((word, index) => {
     const shipped = shippedWords[index];
     if (!shipped) throw new Error(`missing shipped word for ${source}`);
-    expect(deleteTargetWordFacts(word), `${source} [${index}]`).toStrictEqual(
-      shippedWordFacts(shipped),
-    );
+    const facts = deleteTargetWordFacts(word);
+    expect(facts, `${source} [${index}]`).toStrictEqual(shippedWordFacts(shipped));
+    recordedFacts.push([`${source} [${index}]`, facts]);
   });
 }
+
+/** Every word fact the port derived since the last digest; each test drains it. */
+const recordedFacts: [string, unknown][] = [];
 
 describe('delete target word facts', () => {
   test('derives the same brace expansion, literal and word-splitting facts', () => {
     for (const source of WORD_SOURCES) {
       expectSameWordFacts(source, words(source, parseCommand), words(source, shippedParseCommand));
     }
+    expectRecordedDigest('analyzer-delete-targets/word-facts', recordedFacts.splice(0));
   });
 
   test('the table covers expansion, both limits and the quoted $TMPDIR form', () => {
@@ -540,5 +576,6 @@ describe('delete target word facts', () => {
         ),
       );
     }
+    expectRecordedDigest('analyzer-delete-targets/corpus-word-facts', recordedFacts.splice(0));
   });
 });

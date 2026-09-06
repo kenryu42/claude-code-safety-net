@@ -22,6 +22,7 @@ import {
   envTruthy as truthyWithSrc,
 } from '@/policy/env';
 import { withEnv } from '../../../helpers';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { createSeededRandom, FUZZ_SEED } from '../../helpers/shell-inputs';
 
 /**
@@ -178,24 +179,32 @@ function sampledCases(count: number): readonly EnvCase[] {
 describe('policy environment modes', () => {
   test('the flag table is the same in both implementations', () => {
     expect(NEXT_ENV_FLAGS).toStrictEqual(ENV_FLAGS);
+    expect(NEXT_ENV_FLAGS).toMatchSnapshot();
     expect(ENV_NAMES).toHaveLength(13);
   });
 
   test('the fixed environments agree on every reader and on stderr', () => {
     for (const subject of FIXED_CASES) {
-      expect(readWithNext(subject)).toStrictEqual(readWithSrc(subject));
+      const read = readWithNext(subject);
+      expect(read).toStrictEqual(readWithSrc(subject));
+      expect(read).toMatchSnapshot();
     }
   });
 
   test('a seeded sample of environments and policies agrees on every reader', () => {
-    for (const subject of sampledCases(300)) {
-      expect(readWithNext(subject)).toStrictEqual(readWithSrc(subject));
-    }
+    const recorded = sampledCases(300).map((subject, row) => {
+      const read = readWithNext(subject);
+      expect(read).toStrictEqual(readWithSrc(subject));
+      return [`${row}`, read] as const;
+    });
+    expectRecordedDigest('core-policy-env/sampled-cases', recorded);
   });
 
   test('resolveAuditScope agrees on raw values', () => {
     for (const value of ['all', 'blocked', 'invalid', '', 'ALL', 'Blocked', undefined]) {
-      expect(scopeWithNext(value)).toStrictEqual(scopeWithSrc(value));
+      const scope = scopeWithNext(value);
+      expect(scope).toStrictEqual(scopeWithSrc(value));
+      expect(scope).toMatchSnapshot();
     }
   });
 
@@ -211,7 +220,9 @@ describe('policy environment modes', () => {
     );
     expect(combinations).toHaveLength(8);
     for (const values of combinations) {
-      expect(deriveWithNext(values)).toStrictEqual(deriveWithSrc(values));
+      const derived = deriveWithNext(values);
+      expect(derived).toStrictEqual(deriveWithSrc(values));
+      expect(derived).toMatchSnapshot();
     }
   });
 });

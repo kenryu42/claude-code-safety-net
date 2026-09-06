@@ -1,0 +1,1600 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`an untouched home reports every host as not applicable, in doctor order 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": [
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "claude-code",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "amp",
+      },
+      {
+        "configPath": "<home>/.gemini/config/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "antigravity-cli",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "codex",
+      },
+      {
+        "configPath": "<home>/.cursor/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "cursor",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "gemini-cli",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "copilot-cli",
+      },
+      {
+        "configPath": "<home>/.grok/hooks/cc-safety-net.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "grok-build",
+      },
+      {
+        "configPath": "<home>/.hermes/plugins/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "hermes-agent",
+      },
+      {
+        "configPath": "<home>/.kimi-code/config.toml",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "kimi-code",
+      },
+      {
+        "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "openclaw",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "opencode",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "pi",
+      },
+    ],
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`a home with every host configured reports all thirteen as verified 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": [
+      {
+        "configPath": "<home>/.claude/plugins/installed_plugins.json",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "plugin config",
+        "platform": "claude-code",
+      },
+      {
+        "configPath": "amp plugins list",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "amp plugins list",
+        "platform": "amp",
+      },
+      {
+        "configPath": "<home>/.gemini/config/hooks.json",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "hook config",
+        "platform": "antigravity-cli",
+      },
+      {
+        "configPath": "codex plugin list",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "codex plugin list",
+        "platform": "codex",
+      },
+      {
+        "configPath": "<home>/.cursor/hooks.json",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "hook config",
+        "platform": "cursor",
+      },
+      {
+        "configPath": "<home>/.gemini/extensions/gemini-safety-net",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "extension config",
+        "platform": "gemini-cli",
+      },
+      {
+        "configPath": "<home>/.copilot/installed-plugins/cc-marketplace/cc-safety-net",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "plugin config",
+        "platform": "copilot-cli",
+      },
+      {
+        "configPath": "<home>/.grok/hooks/cc-safety-net.json",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "hook config",
+        "platform": "grok-build",
+      },
+      {
+        "configPath": "<home>/.hermes/plugins/cc-safety-net",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "plugin directory",
+        "platform": "hermes-agent",
+      },
+      {
+        "configPath": "<home>/.kimi-code/config.toml",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "hook config",
+        "platform": "kimi-code",
+      },
+      {
+        "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "plugin directory",
+        "platform": "openclaw",
+      },
+      {
+        "configPath": "<home>/.config/opencode/opencode.json",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "plugin array",
+        "platform": "opencode",
+      },
+      {
+        "configPath": "<home>/.pi/agent/settings.json",
+        "configPaths": undefined,
+        "configured": true,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "package config",
+        "platform": "pi",
+      },
+    ],
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/opencode",
+    },
+    {
+      "content": "{"plugin":["cc-safety-net"]}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".config/opencode/opencode.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins/cc-marketplace",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
+    },
+    {
+      "content": "{}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cursor",
+    },
+    {
+      "content": "{"version":1,"hooks":{"preToolUse":[{"command":"npx -y cc-safety-net hook --cursor","timeout":30,"failClosed":true}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/config",
+    },
+    {
+      "content": "{"cc-safety-net":{"enabled":true,"PreToolUse":[{"hooks":[{"type":"command","command":"npx -y cc-safety-net hook --agy-cli","timeout":30}]}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".gemini/config/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions/gemini-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".grok",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".grok/hooks",
+    },
+    {
+      "content": "{"hooks":{"PreToolUse":[{"hooks":[{"type":"command","command":"npx -y cc-safety-net hook --grok-build","timeout":30}]}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".grok/hooks/cc-safety-net.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".hermes",
+    },
+    {
+      "content": 
+"plugins:
+  enabled:
+    - cc-safety-net
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/config.yaml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".hermes/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".hermes/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+"""CC Safety Net guard for Hermes Agent.
+
+Registers pre_tool_call and forwards the tool call to the packaged CC Safety Net
+adapter (cc-safety-net hook --hermes-agent) over JSON stdin. The adapter prints nothing
+when the call is allowed and an {"action": "block", ...} directive when it is denied.
+Hermes ignores a callback that raises, so every transport and analysis failure is turned
+into an explicit block here instead.
+"""
+
+import json
+import os
+import shutil
+import signal
+import subprocess
+
+HOOK_EVENT = "pre_tool_call"
+SUPPORTED_TOOLS = ("patch", "read_file", "terminal", "write_file")
+ANALYZER = ["npx", "-y", "cc-safety-net", "hook", "--hermes-agent"]
+TIMEOUT_SECONDS = 30
+
+
+def _block(detail):
+    return {"action": "block", "message": "CC Safety Net failed closed: " + detail}
+
+
+def _terminal_cwd(task_id, process_cwd):
+    """Return the directory Hermes will run this terminal command in.
+
+    A \`terminal\` call without \`workdir\` runs in the session's own cwd RECORD, not in the
+    Hermes process directory: \`_resolve_command_cwd\` in tools/terminal_tool.py returns
+    \`workdir or get_session_cwd(session_key) or default_cwd\`, and that record is rewritten
+    after every completed command, so it IS the session's \`cd\` state. The session key is
+    derived exactly as terminal_tool derives it: the contextvar when set, the raw task_id
+    otherwise. No record yet (first command of a session) means \`default_cwd\`, which the local
+    terminal backend reads from \`TERMINAL_CWD\` (\`hermes_cli/config.py\` bridges the configured
+    \`terminal.cwd\` into it) and only then falls back to the process directory.
+    """
+    from tools.approval import get_current_session_key
+    from tools.terminal_tool import get_session_cwd
+
+    return (
+        get_session_cwd(get_current_session_key(default="") or (task_id or ""))
+        or os.environ.get("TERMINAL_CWD")
+        or process_cwd
+    )
+
+
+def _pre_tool_call(tool_name="", args=None, session_id="", task_id="", **_):
+    if tool_name not in SUPPORTED_TOOLS:
+        return None
+
+    executable = shutil.which(ANALYZER[0])
+    if executable is None:
+        return _block(ANALYZER[0] + " was not found on PATH.")
+
+    try:
+        cwd = os.getcwd()
+    except OSError as error:
+        return _block("the working directory could not be resolved (%s)." % error)
+
+    if tool_name == "terminal":
+        try:
+            cwd = _terminal_cwd(task_id, cwd)
+        except ImportError as error:
+            # Without the session record we cannot tell which directory the command runs in,
+            # and analysing the wrong one clears every path-scoped protection.
+            return _block(
+                "the Hermes session directory could not be read (%s). Update cc-safety-net and "
+                "reinstall the plugin with: npx -y cc-safety-net install --hermes-agent." % error
+            )
+
+    payload = json.dumps(
+        {
+            "hook_event_name": HOOK_EVENT,
+            "tool_name": tool_name,
+            "tool_input": args if isinstance(args, dict) else None,
+            "session_id": session_id if isinstance(session_id, str) else "",
+            "cwd": cwd,
+        }
+    )
+
+    try:
+        if os.name == "nt":
+            launch_options = {}
+        else:
+            launch_options = {"start_new_session": True}
+        process = subprocess.Popen(
+            [executable] + ANALYZER[1:],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # Decode explicitly: the analyzer writes UTF-8, and a locale decoder would raise
+            # UnicodeDecodeError on output it cannot read — an exception Hermes swallows by
+            # allowing the tool call. "replace" turns that into unreadable output, which blocks.
+            encoding="utf-8",
+            errors="replace",
+            # Resolve the analyzer from a neutral directory: npx prefers a repository-local
+            # node_modules/.bin/cc-safety-net, so inheriting Hermes' working directory would
+            # let workspace contents stand in for the analyzer. The payload's "cwd" above is
+            # still the real Hermes working directory, which the analysis needs.
+            cwd=os.path.expanduser("~"),
+            # Own process group so the timeout below can kill the whole tree: npx's descendants
+            # outlive a kill aimed at npx alone and keep holding the pipes captured here. Windows
+            # uses taskkill's process-tree traversal instead because sessions are POSIX-only.
+            **launch_options,
+        )
+    except OSError as error:
+        return _block("analysis could not start (%s)." % error)
+
+    try:
+        stdout, _ = process.communicate(payload, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            if os.name == "nt":
+                system_root = os.environ.get("SystemRoot")
+                if not system_root:
+                    raise OSError("SystemRoot is unavailable")
+                subprocess.run(
+                    [
+                        os.path.join(system_root, "System32", "taskkill.exe"),
+                        "/PID",
+                        str(process.pid),
+                        "/T",
+                        "/F",
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                    check=False,
+                )
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        try:
+            process.communicate(timeout=1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return _block("analysis timed out after %ss." % TIMEOUT_SECONDS)
+
+    if process.returncode != 0:
+        return _block("analysis exited with status %s." % process.returncode)
+
+    directive = (stdout or "").strip()
+    if not directive:
+        return None
+
+    try:
+        parsed = json.loads(directive)
+    except ValueError:
+        return _block("analysis returned unreadable output.")
+
+    if isinstance(parsed, dict) and parsed.get("action") == "block":
+        message = parsed.get("message")
+        if isinstance(message, str) and message:
+            return parsed
+    return _block("analysis returned an unexpected directive.")
+
+
+def register(ctx):
+    ctx.register_hook("pre_tool_call", _pre_tool_call)
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/__init__.py",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+name: cc-safety-net
+version: "dev"
+description: "Block destructive commands and secret-file access before Hermes runs a tool."
+author: "cc-safety-net"
+provides_hooks:
+  - pre_tool_call
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi/agent",
+    },
+    {
+      "content": "{"packages":["npm:cc-safety-net"]}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".pi/agent/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`a home where every host that can be switched off is switched off 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": [
+      {
+        "configPath": "<home>/.claude/settings.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "cc-safety-net@cc-marketplace is installed but not enabled in Claude Code",
+        ],
+        "inspectionStatus": "verified",
+        "method": "plugin config",
+        "platform": "claude-code",
+      },
+      {
+        "configPath": "amp plugins list",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "Amp personal plugin cc-safety-net is stale; run "plugins: reload" in Amp or reinstall with install --amp",
+        ],
+        "inspectionStatus": "verified",
+        "method": "amp plugins list",
+        "platform": "amp",
+      },
+      {
+        "configPath": "<home>/.gemini/config/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": undefined,
+        "inspectionStatus": "verified",
+        "method": "hook config",
+        "platform": "antigravity-cli",
+      },
+      {
+        "configPath": "codex plugin list",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "Codex plugin line for https://github.com/kenryu42/cc-safety-net.git must contain installed, enabled.",
+        ],
+        "inspectionStatus": "verified",
+        "method": "codex plugin list",
+        "platform": "codex",
+      },
+      {
+        "configPath": "<home>/.cursor/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "cursor",
+      },
+      {
+        "configPath": "<home>/.gemini/extensions/extension-enablement.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "gemini-safety-net is disabled in Gemini CLI",
+        ],
+        "inspectionStatus": "verified",
+        "method": "extension config",
+        "platform": "gemini-cli",
+      },
+      {
+        "configPath": "<home>/.copilot/settings.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "cc-safety-net@cc-marketplace is installed but not enabled in Copilot CLI",
+        ],
+        "inspectionStatus": "verified",
+        "method": "plugin config",
+        "platform": "copilot-cli",
+      },
+      {
+        "configPath": "<home>/.grok/hooks/cc-safety-net.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "grok-build",
+      },
+      {
+        "configPath": "<home>/.hermes/plugins/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "cc-safety-net is not enabled in Hermes; run \`hermes plugins enable cc-safety-net\`",
+        ],
+        "inspectionStatus": "verified",
+        "method": "plugin directory",
+        "platform": "hermes-agent",
+      },
+      {
+        "configPath": "<home>/.kimi-code/config.toml",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "kimi-code",
+      },
+      {
+        "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "cc-safety-net is not enabled; run \`openclaw plugins enable cc-safety-net\`",
+        ],
+        "inspectionStatus": "verified",
+        "method": "plugin directory",
+        "platform": "openclaw",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "opencode",
+      },
+      {
+        "configPath": "<home>/.pi/agent/settings.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": true,
+        "errors": [
+          "npm:cc-safety-net is installed but its extension is disabled in Pi settings",
+        ],
+        "inspectionStatus": "verified",
+        "method": "package config",
+        "platform": "pi",
+      },
+    ],
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins/cc-marketplace",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
+    },
+    {
+      "content": "{}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
+    },
+    {
+      "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".copilot/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/config",
+    },
+    {
+      "content": "{"cc-safety-net":{"enabled":false,"PreToolUse":[{"hooks":[{"command":"npx -y cc-safety-net hook --agy-cli"}]}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".gemini/config/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions",
+    },
+    {
+      "content": "{"gemini-safety-net":{"overrides":["!user"]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".gemini/extensions/extension-enablement.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions/gemini-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".hermes",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".hermes/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".hermes/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+"""CC Safety Net guard for Hermes Agent.
+
+Registers pre_tool_call and forwards the tool call to the packaged CC Safety Net
+adapter (cc-safety-net hook --hermes-agent) over JSON stdin. The adapter prints nothing
+when the call is allowed and an {"action": "block", ...} directive when it is denied.
+Hermes ignores a callback that raises, so every transport and analysis failure is turned
+into an explicit block here instead.
+"""
+
+import json
+import os
+import shutil
+import signal
+import subprocess
+
+HOOK_EVENT = "pre_tool_call"
+SUPPORTED_TOOLS = ("patch", "read_file", "terminal", "write_file")
+ANALYZER = ["npx", "-y", "cc-safety-net", "hook", "--hermes-agent"]
+TIMEOUT_SECONDS = 30
+
+
+def _block(detail):
+    return {"action": "block", "message": "CC Safety Net failed closed: " + detail}
+
+
+def _terminal_cwd(task_id, process_cwd):
+    """Return the directory Hermes will run this terminal command in.
+
+    A \`terminal\` call without \`workdir\` runs in the session's own cwd RECORD, not in the
+    Hermes process directory: \`_resolve_command_cwd\` in tools/terminal_tool.py returns
+    \`workdir or get_session_cwd(session_key) or default_cwd\`, and that record is rewritten
+    after every completed command, so it IS the session's \`cd\` state. The session key is
+    derived exactly as terminal_tool derives it: the contextvar when set, the raw task_id
+    otherwise. No record yet (first command of a session) means \`default_cwd\`, which the local
+    terminal backend reads from \`TERMINAL_CWD\` (\`hermes_cli/config.py\` bridges the configured
+    \`terminal.cwd\` into it) and only then falls back to the process directory.
+    """
+    from tools.approval import get_current_session_key
+    from tools.terminal_tool import get_session_cwd
+
+    return (
+        get_session_cwd(get_current_session_key(default="") or (task_id or ""))
+        or os.environ.get("TERMINAL_CWD")
+        or process_cwd
+    )
+
+
+def _pre_tool_call(tool_name="", args=None, session_id="", task_id="", **_):
+    if tool_name not in SUPPORTED_TOOLS:
+        return None
+
+    executable = shutil.which(ANALYZER[0])
+    if executable is None:
+        return _block(ANALYZER[0] + " was not found on PATH.")
+
+    try:
+        cwd = os.getcwd()
+    except OSError as error:
+        return _block("the working directory could not be resolved (%s)." % error)
+
+    if tool_name == "terminal":
+        try:
+            cwd = _terminal_cwd(task_id, cwd)
+        except ImportError as error:
+            # Without the session record we cannot tell which directory the command runs in,
+            # and analysing the wrong one clears every path-scoped protection.
+            return _block(
+                "the Hermes session directory could not be read (%s). Update cc-safety-net and "
+                "reinstall the plugin with: npx -y cc-safety-net install --hermes-agent." % error
+            )
+
+    payload = json.dumps(
+        {
+            "hook_event_name": HOOK_EVENT,
+            "tool_name": tool_name,
+            "tool_input": args if isinstance(args, dict) else None,
+            "session_id": session_id if isinstance(session_id, str) else "",
+            "cwd": cwd,
+        }
+    )
+
+    try:
+        if os.name == "nt":
+            launch_options = {}
+        else:
+            launch_options = {"start_new_session": True}
+        process = subprocess.Popen(
+            [executable] + ANALYZER[1:],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # Decode explicitly: the analyzer writes UTF-8, and a locale decoder would raise
+            # UnicodeDecodeError on output it cannot read — an exception Hermes swallows by
+            # allowing the tool call. "replace" turns that into unreadable output, which blocks.
+            encoding="utf-8",
+            errors="replace",
+            # Resolve the analyzer from a neutral directory: npx prefers a repository-local
+            # node_modules/.bin/cc-safety-net, so inheriting Hermes' working directory would
+            # let workspace contents stand in for the analyzer. The payload's "cwd" above is
+            # still the real Hermes working directory, which the analysis needs.
+            cwd=os.path.expanduser("~"),
+            # Own process group so the timeout below can kill the whole tree: npx's descendants
+            # outlive a kill aimed at npx alone and keep holding the pipes captured here. Windows
+            # uses taskkill's process-tree traversal instead because sessions are POSIX-only.
+            **launch_options,
+        )
+    except OSError as error:
+        return _block("analysis could not start (%s)." % error)
+
+    try:
+        stdout, _ = process.communicate(payload, timeout=TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired:
+        try:
+            if os.name == "nt":
+                system_root = os.environ.get("SystemRoot")
+                if not system_root:
+                    raise OSError("SystemRoot is unavailable")
+                subprocess.run(
+                    [
+                        os.path.join(system_root, "System32", "taskkill.exe"),
+                        "/PID",
+                        str(process.pid),
+                        "/T",
+                        "/F",
+                    ],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=1,
+                    check=False,
+                )
+            else:
+                os.killpg(process.pid, signal.SIGKILL)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        try:
+            process.communicate(timeout=1)
+        except (OSError, subprocess.SubprocessError):
+            pass
+        return _block("analysis timed out after %ss." % TIMEOUT_SECONDS)
+
+    if process.returncode != 0:
+        return _block("analysis exited with status %s." % process.returncode)
+
+    directive = (stdout or "").strip()
+    if not directive:
+        return None
+
+    try:
+        parsed = json.loads(directive)
+    except ValueError:
+        return _block("analysis returned unreadable output.")
+
+    if isinstance(parsed, dict) and parsed.get("action") == "block":
+        message = parsed.get("message")
+        if isinstance(message, str) and message:
+            return parsed
+    return _block("analysis returned an unexpected directive.")
+
+
+def register(ctx):
+    ctx.register_hook("pre_tool_call", _pre_tool_call)
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/__init__.py",
+    },
+    {
+      "content": 
+"# cc-safety-net managed Hermes Agent plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --hermes-agent
+# version: dev
+name: cc-safety-net
+version: "dev"
+description: "Block destructive commands and secret-file access before Hermes runs a tool."
+author: "cc-safety-net"
+provides_hooks:
+  - pre_tool_call
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi/agent",
+    },
+    {
+      "content": "{"packages":[{"source":"npm:cc-safety-net","extensions":["-cc-safety-net"]}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".pi/agent/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`a home whose state files cannot be read reports uninspected, never absent 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": [
+      {
+        "configured": false,
+        "detected": false,
+        "inspectionStatus": "not-inspected",
+        "platform": "claude-code",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "amp",
+      },
+      {
+        "configPath": "<home>/.gemini/config/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "antigravity-cli",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "codex",
+      },
+      {
+        "configPath": "<home>/.cursor/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "cursor",
+      },
+      {
+        "configured": false,
+        "detected": false,
+        "inspectionStatus": "not-inspected",
+        "platform": "gemini-cli",
+      },
+      {
+        "configured": false,
+        "detected": false,
+        "inspectionStatus": "not-inspected",
+        "platform": "copilot-cli",
+      },
+      {
+        "configPath": "<home>/.grok/hooks/cc-safety-net.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "grok-build",
+      },
+      {
+        "configPath": "<home>/.hermes/plugins/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "hermes-agent",
+      },
+      {
+        "configPath": "<home>/.kimi-code/config.toml",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "kimi-code",
+      },
+      {
+        "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "openclaw",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "opencode",
+      },
+      {
+        "configured": false,
+        "detected": false,
+        "inspectionStatus": "not-inspected",
+        "platform": "pi",
+      },
+    ],
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins/cc-marketplace",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
+    },
+    {
+      "content": "{}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".copilot/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions/extension-enablement.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".gemini/extensions/gemini-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi/agent",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".pi/agent/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`a config that will not parse is a failed inspection, with the reason attached 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": [
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "claude-code",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "amp",
+      },
+      {
+        "configPath": "<home>/.gemini/config/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "antigravity-cli",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "codex",
+      },
+      {
+        "configPath": "<home>/.cursor/hooks.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": [
+          "Failed to parse Cursor hooks config <home>/.cursor/hooks.json: JSON Parse error: Expected ':' before value in object property definition",
+        ],
+        "inspectionStatus": "failed",
+        "method": undefined,
+        "platform": "cursor",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "gemini-cli",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "copilot-cli",
+      },
+      {
+        "configPath": "<home>/.grok/hooks/cc-safety-net.json",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "grok-build",
+      },
+      {
+        "configPath": "<home>/.hermes/plugins/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "hermes-agent",
+      },
+      {
+        "configPath": "<home>/.kimi-code/config.toml",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "kimi-code",
+      },
+      {
+        "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "openclaw",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "opencode",
+      },
+      {
+        "configPath": undefined,
+        "configPaths": undefined,
+        "configured": false,
+        "detected": false,
+        "errors": undefined,
+        "inspectionStatus": "not-applicable",
+        "method": undefined,
+        "platform": "pi",
+      },
+    ],
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cursor",
+    },
+    {
+      "content": "{ "hooks"",
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

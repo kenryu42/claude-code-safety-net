@@ -1,0 +1,10 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the OpenClaw entry declares the same extension, with a register hook to call 1`] = `
+{
+  "description": "Block destructive commands and secret-file access before OpenClaw runs a tool.",
+  "id": "cc-safety-net",
+  "name": "CC Safety Net",
+  "register": "function",
+}
+`;

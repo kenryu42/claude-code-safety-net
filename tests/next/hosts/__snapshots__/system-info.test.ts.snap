@@ -1,0 +1,163 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the system report probes every host once and parses whatever each one printed 1`] = `
+{
+  "calls": [
+    {
+      "args": [
+        "amp",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "agy",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "claude",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "codex",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "cursor",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "gemini",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "copilot",
+        "--binary-version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "grok",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "hermes",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "kimi",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "openclaw",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "opencode",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "pi",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "codex",
+        "plugin",
+        "list",
+      ],
+      "timeoutMs": 30000,
+    },
+    {
+      "args": [
+        "amp",
+        "plugins",
+        "list",
+      ],
+      "timeoutMs": 30000,
+    },
+    {
+      "args": [
+        "node",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "npm",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+    {
+      "args": [
+        "bun",
+        "--version",
+      ],
+      "timeoutMs": undefined,
+    },
+  ],
+  "info": {
+    "ampPluginListOutput": null,
+    "bunVersion": "no digits",
+    "codexPluginListOutput": 
+"no digits
+second"
+,
+    "nodeVersion": "1.2.3",
+    "npmVersion": "2.0.0-beta.1",
+    "platform": "<platform>",
+    "version": "dev",
+    "versions": {
+      "amp": "2.0.0-beta.1",
+      "antigravity-cli": "no digits",
+      "claude-code": null,
+      "codex": "1.2.3",
+      "copilot-cli": null,
+      "cursor": "2.0.0-beta.1",
+      "gemini-cli": "no digits",
+      "grok-build": "1.2.3",
+      "hermes-agent": "2.0.0-beta.1",
+      "kimi-code": "no digits",
+      "openclaw": null,
+      "opencode": "1.2.3",
+      "pi": "2.0.0-beta.1",
+    },
+  },
+}
+`;

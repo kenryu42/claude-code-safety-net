@@ -5,6 +5,7 @@ import {
   parseCommand as parseWithSrc,
   DEFAULT_COMMAND_PARSER_LIMITS as SRC_LIMITS,
 } from '@/parser/command';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   differentialProgramPairs,
   differentialSources,
@@ -18,6 +19,7 @@ describe('next/core/shell/parse against src/parser/command', () => {
 
   test('ships the same default limits', () => {
     expect(DEFAULT_COMMAND_PARSER_LIMITS).toStrictEqual(SRC_LIMITS);
+    expect(DEFAULT_COMMAND_PARSER_LIMITS).toMatchSnapshot();
   });
 
   test('parses the corpus, the fixed table and the seeded fuzz identically in every dialect', () => {
@@ -29,6 +31,10 @@ describe('next/core/shell/parse against src/parser/command', () => {
         program: pair.src,
       });
     }
+    expectRecordedDigest(
+      'core-shell-parse/program-pairs',
+      pairs.map((pair) => [`${pair.dialect} ${pair.source}`, pair.next] as const),
+    );
   });
 
   test('every source under the caps yields one of the four statuses and never throws', () => {
@@ -45,7 +51,9 @@ describe('next/core/shell/parse against src/parser/command', () => {
 
   test('defaults the dialect to auto exactly as src does', () => {
     for (const source of ['rm -rf x', 'Remove-Item x', 'cat $env:TEMP\\x', '']) {
-      expect(parseCommand(source)).toStrictEqual(parseWithSrc(source));
+      const program = parseCommand(source);
+      expect(program).toStrictEqual(parseWithSrc(source));
+      expect(program).toMatchSnapshot();
     }
   });
 });
@@ -80,6 +88,7 @@ describe('parser caps yield status limited without throwing', () => {
           dialect,
           program: parseWithSrc(row.source, dialect, small),
         });
+        expect(program).toMatchSnapshot();
         expect(program.status).toBe('limited');
       }
     }
@@ -89,6 +98,7 @@ describe('parser caps yield status limited without throwing', () => {
     const source = 'cat <<EOF\n$($($(deep)))\nEOF';
     const program = parseCommand(source, 'posix', small);
     expect(program).toStrictEqual(parseWithSrc(source, 'posix', small));
+    expect(program).toMatchSnapshot();
     expect(program.status).toBe('complete');
     const command = program.nodes[0];
     expect(command?.kind === 'command' && command.nested[0]?.status).toBe('limited');
@@ -102,12 +112,15 @@ describe('parser caps yield status limited without throwing', () => {
         DEFAULT_COMMAND_PARSER_LIMITS.maxDepth + 1,
       )}`,
     ];
+    const recorded: (readonly [string, unknown])[] = [];
     for (const source of sources) {
       for (const dialect of SHELL_DIALECTS) {
         const program = parseCommand(source, dialect);
         expect(program).toStrictEqual(parseWithSrc(source, dialect));
         expect(program.status).toBe('limited');
+        recorded.push([`${dialect} ${source}`, program]);
       }
     }
+    expectRecordedDigest('core-shell-parse/default-caps', recorded);
   });
 });

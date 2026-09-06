@@ -1,0 +1,143 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`reading the Amp plugin listing reports no listing was taken at all 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "amp",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the Amp plugin listing reports an empty listing 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "amp",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the Amp plugin listing reports the personal plugin loaded 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "amp plugins list",
+      "method": "amp plugins list",
+      "platform": "amp",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the Amp plugin listing reports the legacy root file failing to load 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "amp plugins list",
+      "errors": [
+        "Amp personal plugin cc-safety-net is error; run "plugins: reload" in Amp or reinstall with install --amp",
+      ],
+      "method": "amp plugins list",
+      "platform": "amp",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the Amp plugin listing reports a colored terminal listing 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "amp plugins list",
+      "method": "amp plugins list",
+      "platform": "amp",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the Amp plugin listing reports only the system-scope path line 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "amp",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the Amp plugin listing reports a personal plugin whose name only starts like ours 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "amp",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

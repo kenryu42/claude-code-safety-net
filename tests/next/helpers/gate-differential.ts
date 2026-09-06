@@ -1,7 +1,9 @@
+import { expect } from 'bun:test';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 import { createTestEnvironment, type Environment } from '@next/core/environment';
 import type { EffectivePolicy } from '@next/core/policy/types';
 import { createToolInvocation, type ToolInvocation, type ToolRoute } from '@next/gate/invocation';
@@ -16,6 +18,7 @@ import {
   evaluateGuard as shippedEvaluateGuard,
 } from '@/engine/guard';
 import { writeTree } from './fixture-tree';
+import { normalize, rootFolds } from './temp-home';
 
 /**
  * The two gates side by side. The end-to-end differential files (`harvested`, `tool-routes`,
@@ -174,5 +177,75 @@ export function deniedByTrackedCwd(
         ? undefined
         : { ...config, denyPaths: [...config.denyPaths], allowPaths: [...config.allowPaths] },
     ) === null
+  );
+}
+
+const DIGEST_FILE = join(import.meta.dir, '..', 'fixtures', 'gate', 'harvested-digests.json');
+
+/**
+ * The recorded oracle for a corpus too large to snapshot row by row: the SHA-256 of the canonical
+ * JSON of `pairs` — sorted by input, with every plain object's keys sorted — under `key` in
+ * `tests/next/fixtures/gate/harvested-digests.json`. Call it with the ported values the shipped
+ * side has just been proven equal to, folded of anything a second machine spells differently.
+ *
+ * A recorded key is compared and the failure names the key and the pair count;
+ * `CC_SAFETY_NET_UPDATE_GOLDENS=1` rewrites it instead. An unrecorded key is written locally but
+ * throws under `CI`, the way bun refuses to create a missing snapshot there, so a renamed key
+ * cannot pass vacuously. `CC_SAFETY_NET_DUMP_VERDICTS=<dir>` also writes the whole pair list to
+ * `<dir>/<key>.json`, so two runs can be diffed instead of two hashes.
+ *
+ * `root` is the temp root a fixture handed the run: both its spellings are folded to `<root>` in
+ * every label and every value, so a caller that only has to hide one root does not repeat the
+ * fold at each recording site. A run that folds more than that folds it itself and omits `root`.
+ * The path separator is folded to `/` with it, so a digest recorded here is not off by the
+ * recording host's separator alone on the Windows leg — the same fold `recordPorted` makes.
+ *
+ * @internal
+ */
+export function expectRecordedDigest(
+  key: string,
+  pairs: readonly (readonly [string, unknown])[],
+  root?: string,
+): void {
+  const folds = [
+    ...(root === undefined ? [] : rootFolds(root)),
+    ...(sep === '/' ? [] : [[sep, '/'] as const]),
+  ];
+  const rows = pairs.map(([label, value]) => [normalize(label, folds), value] as const);
+  // Every string is folded here rather than up front, because folding a whole value walks it with
+  // `normalize`, which rebuilds a `Map` or a `Set` as a plain object — that is, as `{}`. Both are
+  // spread instead, so a table or an assignment map is hashed by its contents.
+  const json = JSON.stringify(
+    [...rows].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)),
+    (_name, value) =>
+      typeof value === 'string'
+        ? normalize(value, folds)
+        : value instanceof Map || value instanceof Set
+          ? [...value]
+          : value !== null && typeof value === 'object' && !Array.isArray(value)
+            ? Object.fromEntries(Object.entries(value).sort())
+            : value,
+  );
+  const digest = createHash('sha256').update(json).digest('hex');
+  const dump = process.env.CC_SAFETY_NET_DUMP_VERDICTS;
+  if (dump !== undefined) {
+    mkdirSync(dump, { recursive: true });
+    writeFileSync(join(dump, `${key.replaceAll('/', '-')}.json`), json);
+  }
+  const recorded = existsSync(DIGEST_FILE)
+    ? (JSON.parse(readFileSync(DIGEST_FILE, 'utf8')) as Record<string, string>)
+    : {};
+  if (recorded[key] !== undefined && process.env.CC_SAFETY_NET_UPDATE_GOLDENS !== '1') {
+    expect(digest, `${key}: ${pairs.length} pairs`).toBe(recorded[key]);
+    return;
+  }
+  if (process.env.CI)
+    throw new Error(
+      `${key}: no recorded digest for ${pairs.length} pairs; run without CI to record`,
+    );
+  mkdirSync(dirname(DIGEST_FILE), { recursive: true });
+  writeFileSync(
+    DIGEST_FILE,
+    `${JSON.stringify(Object.fromEntries(Object.entries({ ...recorded, [key]: digest }).sort()), null, 2)}\n`,
   );
 }

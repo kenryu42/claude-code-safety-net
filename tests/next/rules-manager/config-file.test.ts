@@ -48,9 +48,11 @@ function readBoth(file: string) {
   writeTree(shippedRoot, TREE);
   writeTree(portedRoot, TREE);
   const ported = readScopeRulesConfig(join(portedRoot, file));
-  expect(normalize(ported, [[portedRoot, '<root>']])).toEqual(
+  const read = normalize(ported, [[portedRoot, '<root>']]);
+  expect(read).toEqual(
     normalize(shippedReadScopeRulesConfig(join(shippedRoot, file)), [[shippedRoot, '<root>']]),
   );
+  expect(read).toMatchSnapshot();
   return ported;
 }
 
@@ -122,6 +124,7 @@ describe('writing a scope file leaves what the shipped writer leaves', () => {
     row.ported(join(portedRoot, target));
     const tree = snapshotTree(portedRoot);
     expect(tree).toEqual(snapshotTree(shippedRoot));
+    expect(tree).toMatchSnapshot();
     // The write is owner-only inside owner-only directories, and leaves no temp file behind.
     expect(tree.map((entry) => ({ path: entry.path, kind: entry.kind, mode: entry.mode }))).toEqual(
       [

@@ -1,0 +1,14 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the rulebook fixture evaluator reports the diagnostics the shipped evaluator reports 1`] = `
+[
+  "tests[2]: expected "block-system-prune" to block "sudo docker system prune" but no rule matched",
+  "tests[5]: expected "block-system-prune" to block "bash -c 'docker system prune'" but no rule matched",
+  "tests[8]: could not parse fixture command: ",
+  "tests[9]: expected "docker system prune --all" to be allowed but "block-system-prune" matched",
+  "tests[11]: expected "block-system-prune" to block "kubectl config use-context prod" but "block-context-use" matched first",
+  "tests[12]: expected "block-system-prune" to block "docker system prune --filter until=24h" but no rule matched",
+]
+`;
+
+exports[`the rulebook fixture evaluator reports the diagnostics the shipped evaluator reports 2`] = `[]`;

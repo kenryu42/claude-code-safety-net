@@ -16,6 +16,7 @@ const SIDES = [shipped, ported] as const;
 function agree<T>(run: (side: typeof ported) => T): T {
   const outcomes = SIDES.map((side) => run(side));
   expect(outcomes[1]).toEqual(outcomes[0]);
+  expect(outcomes[1]).toMatchSnapshot();
   return outcomes[1] as T;
 }
 

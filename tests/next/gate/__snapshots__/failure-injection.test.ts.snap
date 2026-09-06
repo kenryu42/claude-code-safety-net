@@ -1,0 +1,380 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`a filesystem that throws instead of answering a delete under an unresolvable cwd is treated as outside it, not as an internal fault 1`] = `
+{
+  "evidence": [
+    {
+      "command": "rm -rf ./build",
+      "kind": "command",
+      "segment": "rm -rf ./build",
+    },
+  ],
+  "intent": "scope_down",
+  "level": "standard",
+  "outcome": "deny",
+  "reason": "rm -rf outside cwd is blocked. Retry deleting only explicit paths inside the current directory; escalate for anything outside it.",
+  "ruleId": "rm.recursive-force-outside-cwd",
+  "stage": "command-analysis",
+}
+`;
+
+exports[`a filesystem that throws instead of answering commands that never resolve a path are unaffected 1`] = `
+{
+  "level": "standard",
+  "outcome": "allow",
+  "stage": "command-analysis",
+}
+`;
+
+exports[`a filesystem that throws instead of answering commands that never resolve a path are unaffected 2`] = `
+{
+  "level": "standard",
+  "outcome": "allow",
+  "stage": "command-analysis",
+}
+`;
+
+exports[`input past the intake caps a command longer than the parser can hold 1`] = `
+{
+  "command": "echo <200k-y>",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "echo <200k-y>",
+        "kind": "command",
+        "segment": "echo <200k-y>",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "outcome": "deny",
+    "reason": "Command exceeds maximum recursion depth and cannot be safely analyzed. Flatten the nesting and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`input past the intake caps a tool input string past the traversal cap fails closed with the command withheld 1`] = `
+{
+  "evidence": [],
+  "intent": "stop_and_explain",
+  "outcome": "deny",
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "stage": "policy-protection",
+  "thrown": "GuardEvaluationError",
+}
+`;
+
+exports[`a host that truncated the tool input a truncated command 1`] = `
+[
+  {
+    "command": "rm -rf /var/l",
+    "intent": "stop_and_explain",
+    "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+    "segment": "rm -rf /var/l",
+    "toolName": "run_terminal_command",
+  },
+]
+`;
+
+exports[`a host that truncated the tool input a payload past the traversal cap 1`] = `
+[
+  {
+    "command": "<1mb-x>",
+    "intent": "stop_and_explain",
+    "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+    "segment": "<1mb-x>",
+    "toolName": "run_terminal_command",
+  },
+]
+`;
+
+exports[`a host that truncated the tool input no payload at all 1`] = `
+[
+  {
+    "command": undefined,
+    "intent": "stop_and_explain",
+    "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+    "segment": undefined,
+    "toolName": "run_terminal_command",
+  },
+]
+`;
+
+exports[`process state the two gates read differently a Git config count past its cap is a rule denial on both sides 1`] = `
+{
+  "evidence": [
+    {
+      "command": "git status",
+      "kind": "command",
+      "segment": "git status",
+    },
+  ],
+  "intent": "manual_only",
+  "level": "standard",
+  "outcome": "deny",
+  "reason": "Git aliases supplied through command-line or environment config can hide or execute commands. Run git without Git alias overrides, or ask the user to run it manually.",
+  "ruleId": "git.alias-config",
+  "stage": "command-analysis",
+}
+`;
+
+exports[`process state the two gates read differently a Git config count past its cap is a rule denial on both sides 2`] = `
+{
+  "level": "standard",
+  "outcome": "allow",
+  "stage": "command-analysis",
+}
+`;
+
+exports[`process state the two gates read differently a rule config replaced between open and read degrades both snapshots alike 1`] = `
+{
+  "configFallback": {
+    "reason": "Unable to access user policy filesystem safely. Those rule sources are not active; every other rule and all built-in protections still apply.",
+  },
+  "level": "standard",
+  "outcome": "allow",
+  "stage": "command-analysis",
+}
+`;
+
+exports[`every cap a command can still reach recursion depth breaches with the same words 1`] = `
+{
+  "command": "sh -c "sh -c \\"sh -c \\\\\\"sh -c \\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"echo ok\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\"\\""",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "sh -c "sh -c \\"sh -c \\\\\\"sh -c \\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"echo ok\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\"\\""",
+        "kind": "command",
+        "segment": "sh -c sh -c "sh -c \\"sh -c \\\\\\"sh -c \\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"echo ok\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\"\\""",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Command exceeds maximum recursion depth and cannot be safely analyzed. Flatten the nesting and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach recursion depth breaches with the same words 2`] = `
+{
+  "command": "sh -c "sh -c \\"sh -c \\\\\\"sh -c \\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"sh -c \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"echo ok\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\"\\""",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach wrapper peel iterations breaches with the same words 1`] = `
+{
+  "command": "env env env env env env env env env env env env env env env env env env env env env echo ok",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "env env env env env env env env env env env env env env env env env env env env env echo ok",
+        "kind": "command",
+        "segment": "env env env env env env env env env env env env env env env env env env env env env echo ok",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach wrapper peel iterations breaches with the same words 2`] = `
+{
+  "command": "env env env env env env env env env env env env env env env env env env env echo ok",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach tracked heredoc files breaches with the same words 1`] = `
+{
+  "command": 
+"tee sink0 sink1 sink2 sink3 sink4 sink5 sink6 sink7 sink8 sink9 sink10 sink11 sink12 sink13 sink14 sink15 sink16 sink17 sink18 sink19 sink20 sink21 sink22 sink23 sink24 sink25 sink26 sink27 sink28 sink29 sink30 sink31 sink32 sink33 sink34 sink35 sink36 sink37 sink38 sink39 sink40 sink41 sink42 sink43 sink44 sink45 sink46 sink47 sink48 sink49 sink50 sink51 sink52 sink53 sink54 sink55 sink56 sink57 sink58 sink59 sink60 sink61 sink62 sink63 > extra <<'BODY'
+hello
+BODY"
+,
+  "verdict": {
+    "evidence": [
+      {
+        "command": 
+"tee sink0 sink1 sink2 sink3 sink4 sink5 sink6 sink7 sink8 sink9 sink10 sink11 sink12 sink13 sink14 sink15 sink16 sink17 sink18 sink19 sink20 sink21 sink22 sink23 sink24 sink25 sink26 sink27 sink28 sink29 sink30 sink31 sink32 sink33 sink34 sink35 sink36 sink37 sink38 sink39 sink40 sink41 sink42 sink43 sink44 sink45 sink46 sink47 sink48 sink49 sink50 sink51 sink52 sink53 sink54 sink55 sink56 sink57 sink58 sink59 sink60 sink61 sink62 sink63 > extra <<'BODY'
+hello
+BODY"
+,
+        "kind": "command",
+        "segment": 
+"tee sink0 sink1 sink2 sink3 sink4 sink5 sink6 sink7 sink8 sink9 sink10 sink11 sink12 sink13 sink14 sink15 sink16 sink17 sink18 sink19 sink20 sink21 sink22 sink23 sink24 sink25 sink26 sink27 sink28 sink29 sink30 sink31 sink32 sink33 sink34 sink35 sink36 sink37 sink38 sink39 sink40 sink41 sink42 sink43 sink44 sink45 sink46 sink47 sink48 sink49 sink50 sink51 sink52 sink53 sink54 sink55 sink56 sink57 sink58 sink59 sink60 sink61 sink62 sink63 > extra <<'BODY'
+hello
+BODY"
+,
+      },
+    ],
+    "intent": "stop_and_explain",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach tracked heredoc files breaches with the same words 2`] = `
+{
+  "command": 
+"tee sink0 sink1 sink2 sink3 sink4 sink5 sink6 sink7 sink8 sink9 sink10 sink11 sink12 sink13 sink14 sink15 sink16 sink17 sink18 sink19 sink20 sink21 sink22 sink23 sink24 sink25 sink26 sink27 sink28 sink29 sink30 sink31 sink32 sink33 sink34 sink35 sink36 sink37 sink38 sink39 sink40 sink41 sink42 sink43 sink44 sink45 sink46 sink47 sink48 sink49 sink50 sink51 sink52 sink53 sink54 sink55 sink56 sink57 sink58 sink59 sink60 sink61 sink62 > extra <<'BODY'
+hello
+BODY"
+,
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach control-flow states breaches with the same words 1`] = `
+{
+  "command": "export GIT_DIR=g0 && export GIT_DIR=g1 && export GIT_DIR=g2 && export GIT_DIR=g3 && export GIT_DIR=g4 && export GIT_DIR=g5 && export GIT_DIR=g6 && export GIT_DIR=g7 && export GIT_DIR=g8 && export GIT_DIR=g9 && export GIT_DIR=g10 && export GIT_DIR=g11 && export GIT_DIR=g12 && export GIT_DIR=g13 && export GIT_DIR=g14 && export GIT_DIR=g15 && export GIT_DIR=g16 && export GIT_DIR=g17 && export GIT_DIR=g18 && export GIT_DIR=g19 && export GIT_DIR=g20 && export GIT_DIR=g21 && export GIT_DIR=g22 && export GIT_DIR=g23 && export GIT_DIR=g24 && export GIT_DIR=g25 && export GIT_DIR=g26 && export GIT_DIR=g27 && export GIT_DIR=g28 && export GIT_DIR=g29 && export GIT_DIR=g30 && export GIT_DIR=g31 && export GIT_DIR=g32 && export GIT_DIR=g33 && export GIT_DIR=g34 && export GIT_DIR=g35 && export GIT_DIR=g36 && export GIT_DIR=g37 && export GIT_DIR=g38 && export GIT_DIR=g39 && export GIT_DIR=g40 && export GIT_DIR=g41 && export GIT_DIR=g42 && export GIT_DIR=g43 && export GIT_DIR=g44 && export GIT_DIR=g45 && export GIT_DIR=g46 && export GIT_DIR=g47 && export GIT_DIR=g48 && export GIT_DIR=g49 && export GIT_DIR=g50 && export GIT_DIR=g51 && export GIT_DIR=g52 && export GIT_DIR=g53 && export GIT_DIR=g54 && export GIT_DIR=g55 && export GIT_DIR=g56 && export GIT_DIR=g57 && export GIT_DIR=g58 && export GIT_DIR=g59 && export GIT_DIR=g60 && export GIT_DIR=g61 && export GIT_DIR=g62 && export GIT_DIR=g63",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "export GIT_DIR=g0 && export GIT_DIR=g1 && export GIT_DIR=g2 && export GIT_DIR=g3 && export GIT_DIR=g4 && export GIT_DIR=g5 && export GIT_DIR=g6 && export GIT_DIR=g7 && export GIT_DIR=g8 && export GIT_DIR=g9 && export GIT_DIR=g10 && export GIT_DIR=g11 && export GIT_DIR=g12 && export GIT_DIR=g13 && export GIT_DIR=g14 && export GIT_DIR=g15 && export GIT_DIR=g16 && export GIT_DIR=g17 && export GIT_DIR=g18 && export GIT_DIR=g19 && export GIT_DIR=g20 && export GIT_DIR=g21 && export GIT_DIR=g22 && export GIT_DIR=g23 && export GIT_DIR=g24 && export GIT_DIR=g25 && export GIT_DIR=g26 && export GIT_DIR=g27 && export GIT_DIR=g28 && export GIT_DIR=g29 && export GIT_DIR=g30 && export GIT_DIR=g31 && export GIT_DIR=g32 && export GIT_DIR=g33 && export GIT_DIR=g34 && export GIT_DIR=g35 && export GIT_DIR=g36 && export GIT_DIR=g37 && export GIT_DIR=g38 && export GIT_DIR=g39 && export GIT_DIR=g40 && export GIT_DIR=g41 && export GIT_DIR=g42 && export GIT_DIR=g43 && export GIT_DIR=g44 && export GIT_DIR=g45 && export GIT_DIR=g46 && export GIT_DIR=g47 && export GIT_DIR=g48 && export GIT_DIR=g49 && export GIT_DIR=g50 && export GIT_DIR=g51 && export GIT_DIR=g52 && export GIT_DIR=g53 && export GIT_DIR=g54 && export GIT_DIR=g55 && export GIT_DIR=g56 && export GIT_DIR=g57 && export GIT_DIR=g58 && export GIT_DIR=g59 && export GIT_DIR=g60 && export GIT_DIR=g61 && export GIT_DIR=g62 && export GIT_DIR=g63",
+        "kind": "command",
+        "segment": "export GIT_DIR=g0 && export GIT_DIR=g1 && export GIT_DIR=g2 && export GIT_DIR=g3 && export GIT_DIR=g4 && export GIT_DIR=g5 && export GIT_DIR=g6 && export GIT_DIR=g7 && export GIT_DIR=g8 && export GIT_DIR=g9 && export GIT_DIR=g10 && export GIT_DIR=g11 && export GIT_DIR=g12 && export GIT_DIR=g13 && export GIT_DIR=g14 && export GIT_DIR=g15 && export GIT_DIR=g16 && export GIT_DIR=g17 && export GIT_DIR=g18 && export GIT_DIR=g19 && export GIT_DIR=g20 && export GIT_DIR=g21 && export GIT_DIR=g22 && export GIT_DIR=g23 && export GIT_DIR=g24 && export GIT_DIR=g25 && export GIT_DIR=g26 && export GIT_DIR=g27 && export GIT_DIR=g28 && export GIT_DIR=g29 && export GIT_DIR=g30 && export GIT_DIR=g31 && export GIT_DIR=g32 && export GIT_DIR=g33 && export GIT_DIR=g34 && export GIT_DIR=g35 && export GIT_DIR=g36 && export GIT_DIR=g37 && export GIT_DIR=g38 && export GIT_DIR=g39 && export GIT_DIR=g40 && export GIT_DIR=g41 && export GIT_DIR=g42 && export GIT_DIR=g43 && export GIT_DIR=g44 && export GIT_DIR=g45 && export GIT_DIR=g46 && export GIT_DIR=g47 && export GIT_DIR=g48 && export GIT_DIR=g49 && export GIT_DIR=g50 && export GIT_DIR=g51 && export GIT_DIR=g52 && export GIT_DIR=g53 && export GIT_DIR=g54 && export GIT_DIR=g55 && export GIT_DIR=g56 && export GIT_DIR=g57 && export GIT_DIR=g58 && export GIT_DIR=g59 && export GIT_DIR=g60 && export GIT_DIR=g61 && export GIT_DIR=g62 && export GIT_DIR=g63",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach control-flow states breaches with the same words 2`] = `
+{
+  "command": "export GIT_DIR=g0 && export GIT_DIR=g1 && export GIT_DIR=g2 && export GIT_DIR=g3 && export GIT_DIR=g4 && export GIT_DIR=g5 && export GIT_DIR=g6 && export GIT_DIR=g7 && export GIT_DIR=g8 && export GIT_DIR=g9 && export GIT_DIR=g10 && export GIT_DIR=g11 && export GIT_DIR=g12 && export GIT_DIR=g13 && export GIT_DIR=g14 && export GIT_DIR=g15 && export GIT_DIR=g16 && export GIT_DIR=g17 && export GIT_DIR=g18 && export GIT_DIR=g19 && export GIT_DIR=g20 && export GIT_DIR=g21 && export GIT_DIR=g22 && export GIT_DIR=g23 && export GIT_DIR=g24 && export GIT_DIR=g25 && export GIT_DIR=g26 && export GIT_DIR=g27 && export GIT_DIR=g28 && export GIT_DIR=g29 && export GIT_DIR=g30 && export GIT_DIR=g31 && export GIT_DIR=g32 && export GIT_DIR=g33 && export GIT_DIR=g34 && export GIT_DIR=g35 && export GIT_DIR=g36 && export GIT_DIR=g37 && export GIT_DIR=g38 && export GIT_DIR=g39 && export GIT_DIR=g40 && export GIT_DIR=g41 && export GIT_DIR=g42 && export GIT_DIR=g43 && export GIT_DIR=g44 && export GIT_DIR=g45 && export GIT_DIR=g46 && export GIT_DIR=g47 && export GIT_DIR=g48 && export GIT_DIR=g49 && export GIT_DIR=g50 && export GIT_DIR=g51 && export GIT_DIR=g52 && export GIT_DIR=g53 && export GIT_DIR=g54 && export GIT_DIR=g55 && export GIT_DIR=g56 && export GIT_DIR=g57 && export GIT_DIR=g58 && export GIT_DIR=g59 && export GIT_DIR=g60 && export GIT_DIR=g61 && export GIT_DIR=g62",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach derived command work breaches with the same words 1`] = `
+{
+  "command": "unmapped-head sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "unmapped-head sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh",
+        "kind": "command",
+        "segment": "unmapped-head sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach derived command work breaches with the same words 2`] = `
+{
+  "command": "unmapped-head sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh sh",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach parallel child analyses breaches with the same words 1`] = `
+{
+  "command": "parallel rm -rf {} ::: arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9 arg10 arg11 arg12 arg13 arg14 arg15 arg16 arg17 arg18 arg19 arg20 arg21 arg22 arg23 arg24 arg25 arg26 arg27 arg28 arg29 arg30 arg31 arg32 arg33 arg34 arg35 arg36 arg37 arg38 arg39 arg40 arg41 arg42 arg43 arg44 arg45 arg46 arg47 arg48 arg49 arg50 arg51 arg52 arg53 arg54 arg55 arg56 arg57 arg58 arg59 arg60 arg61 arg62 arg63 arg64 arg65 arg66 arg67 arg68 arg69 arg70 arg71 arg72 arg73 arg74 arg75 arg76 arg77 arg78 arg79 arg80 arg81 arg82 arg83 arg84 arg85 arg86 arg87 arg88 arg89 arg90 arg91 arg92 arg93 arg94 arg95 arg96 arg97 arg98 arg99 arg100 arg101 arg102 arg103 arg104 arg105 arg106 arg107 arg108 arg109 arg110 arg111 arg112 arg113 arg114 arg115 arg116 arg117 arg118 arg119 arg120 arg121 arg122 arg123 arg124 arg125 arg126 arg127 arg128 arg129 arg130 arg131 arg132 arg133 arg134 arg135 arg136 arg137 arg138 arg139 arg140 arg141 arg142 arg143 arg144 arg145 arg146 arg147 arg148 arg149 arg150 arg151 arg152 arg153 arg154 arg155 arg156 arg157 arg158 arg159 arg160 arg161 arg162 arg163 arg164 arg165 arg166 arg167 arg168 arg169 arg170 arg171 arg172 arg173 arg174 arg175 arg176 arg177 arg178 arg179 arg180 arg181 arg182 arg183 arg184 arg185 arg186 arg187 arg188 arg189 arg190 arg191 arg192 arg193 arg194 arg195 arg196 arg197 arg198 arg199 arg200 arg201 arg202 arg203 arg204 arg205 arg206 arg207 arg208 arg209 arg210 arg211 arg212 arg213 arg214 arg215 arg216 arg217 arg218 arg219 arg220 arg221 arg222 arg223 arg224 arg225 arg226 arg227 arg228 arg229 arg230 arg231 arg232 arg233 arg234 arg235 arg236 arg237 arg238 arg239 arg240 arg241 arg242 arg243 arg244 arg245 arg246 arg247 arg248 arg249 arg250 arg251 arg252 arg253 arg254 arg255 arg256 arg257 arg258 arg259 arg260 arg261 arg262 arg263 arg264 arg265 arg266 arg267 arg268 arg269 arg270 arg271 arg272 arg273 arg274 arg275 arg276 arg277 arg278 arg279 arg280 arg281 arg282 arg283 arg284 arg285 arg286 arg287 arg288 arg289 arg290 arg291 arg292 arg293 arg294 arg295 arg296 arg297 arg298 arg299 arg300 arg301 arg302 arg303 arg304 arg305 arg306 arg307 arg308 arg309 arg310 arg311 arg312 arg313 arg314 arg315 arg316 arg317 arg318 arg319 arg320 arg321 arg322 arg323 arg324 arg325 arg326 arg327 arg328 arg329 arg330 arg331 arg332 arg333 arg334 arg335 arg336 arg337 arg338 arg339 arg340 arg341 arg342 arg343 arg344 arg345 arg346 arg347 arg348 arg349 arg350 arg351 arg352 arg353 arg354 arg355 arg356 arg357 arg358 arg359 arg360 arg361 arg362 arg363 arg364 arg365 arg366 arg367 arg368 arg369 arg370 arg371 arg372 arg373 arg374 arg375 arg376 arg377 arg378 arg379 arg380 arg381 arg382 arg383 arg384 arg385 arg386 arg387 arg388 arg389 arg390 arg391 arg392 arg393 arg394 arg395 arg396 arg397 arg398 arg399 arg400 arg401 arg402 arg403 arg404 arg405 arg406 arg407 arg408 arg409 arg410 arg411 arg412 arg413 arg414 arg415 arg416 arg417 arg418 arg419 arg420 arg421 arg422 arg423 arg424 arg425 arg426 arg427 arg428 arg429 arg430 arg431 arg432 arg433 arg434 arg435 arg436 arg437 arg438 arg439 arg440 arg441 arg442 arg443 arg444 arg445 arg446 arg447 arg448 arg449 arg450 arg451 arg452 arg453 arg454 arg455 arg456 arg457 arg458 arg459 arg460 arg461 arg462 arg463 arg464 arg465 arg466 arg467 arg468 arg469 arg470 arg471 arg472 arg473 arg474 arg475 arg476 arg477 arg478 arg479 arg480 arg481 arg482 arg483 arg484 arg485 arg486 arg487 arg488 arg489 arg490 arg491 arg492 arg493 arg494 arg495 arg496 arg497 arg498 arg499 arg500 arg501 arg502 arg503 arg504 arg505 arg506 arg507 arg508 arg509 arg510 arg511 arg512 arg513 arg514 arg515 arg516 arg517 arg518 arg519 arg520 arg521 arg522 arg523 arg524 arg525 arg526 arg527 arg528 arg529 arg530 arg531 arg532 arg533 arg534 arg535 arg536 arg537 arg538 arg539 arg540 arg541 arg542 arg543 arg544 arg545 arg546 arg547 arg548 arg549 arg550 arg551 arg552 arg553 arg554 arg555 arg556 arg557 arg558 arg559 arg560 arg561 arg562 arg563 arg564 arg565 arg566 arg567 arg568 arg569 arg570 arg571 arg572 arg573 arg574 arg575 arg576 arg577 arg578 arg579 arg580 arg581 arg582 arg583 arg584 arg585 arg586 arg587 arg588 arg589 arg590 arg591 arg592 arg593 arg594 arg595 arg596 arg597 arg598 arg599 arg600 arg601 arg602 arg603 arg604 arg605 arg606 arg607 arg608 arg609 arg610 arg611 arg612 arg613 arg614 arg615 arg616 arg617 arg618 arg619 arg620 arg621 arg622 arg623 arg624 arg625 arg626 arg627 arg628 arg629 arg630 arg631 arg632 arg633 arg634 arg635 arg636 arg637 arg638 arg639 arg640 arg641 arg642 arg643 arg644 arg645 arg646 arg647 arg648 arg649 arg650 arg651 arg652 arg653 arg654 arg655 arg656 arg657 arg658 arg659 arg660 arg661 arg662 arg663 arg664 arg665 arg666 arg667 arg668 arg669 arg670 arg671 arg672 arg673 arg674 arg675 arg676 arg677 arg678 arg679 arg680 arg681 arg682 arg683 arg684 arg685 arg686 arg687 arg688 arg689 arg690 arg691 arg692 arg693 arg694 arg695 arg696 arg697 arg698 arg699 arg700 arg701 arg702 arg703 arg704 arg705 arg706 arg707 arg708 arg709 arg710 arg711 arg712 arg713 arg714 arg715 arg716 arg717 arg718 arg719 arg720 arg721 arg722 arg723 arg724 arg725 arg726 arg727 arg728 arg729 arg730 arg731 arg732 arg733 arg734 arg735 arg736 arg737 arg738 arg739 arg740 arg741 arg742 arg743 arg744 arg745 arg746 arg747 arg748 arg749 arg750 arg751 arg752 arg753 arg754 arg755 arg756 arg757 arg758 arg759 arg760 arg761 arg762 arg763 arg764 arg765 arg766 arg767 arg768 arg769 arg770 arg771 arg772 arg773 arg774 arg775 arg776 arg777 arg778 arg779 arg780 arg781 arg782 arg783 arg784 arg785 arg786 arg787 arg788 arg789 arg790 arg791 arg792 arg793 arg794 arg795 arg796 arg797 arg798 arg799 arg800 arg801 arg802 arg803 arg804 arg805 arg806 arg807 arg808 arg809 arg810 arg811 arg812 arg813 arg814 arg815 arg816 arg817 arg818 arg819 arg820 arg821 arg822 arg823 arg824 arg825 arg826 arg827 arg828 arg829 arg830 arg831 arg832 arg833 arg834 arg835 arg836 arg837 arg838 arg839 arg840 arg841 arg842 arg843 arg844 arg845 arg846 arg847 arg848 arg849 arg850 arg851 arg852 arg853 arg854 arg855 arg856 arg857 arg858 arg859 arg860 arg861 arg862 arg863 arg864 arg865 arg866 arg867 arg868 arg869 arg870 arg871 arg872 arg873 arg874 arg875 arg876 arg877 arg878 arg879 arg880 arg881 arg882 arg883 arg884 arg885 arg886 arg887 arg888 arg889 arg890 arg891 arg892 arg893 arg894 arg895 arg896 arg897 arg898 arg899 arg900 arg901 arg902 arg903 arg904 arg905 arg906 arg907 arg908 arg909 arg910 arg911 arg912 arg913 arg914 arg915 arg916 arg917 arg918 arg919 arg920 arg921 arg922 arg923 arg924 arg925 arg926 arg927 arg928 arg929 arg930 arg931 arg932 arg933 arg934 arg935 arg936 arg937 arg938 arg939 arg940 arg941 arg942 arg943 arg944 arg945 arg946 arg947 arg948 arg949 arg950 arg951 arg952 arg953 arg954 arg955 arg956 arg957 arg958 arg959 arg960 arg961 arg962 arg963 arg964 arg965 arg966 arg967 arg968 arg969 arg970 arg971 arg972 arg973 arg974 arg975 arg976 arg977 arg978 arg979 arg980 arg981 arg982 arg983 arg984 arg985 arg986 arg987 arg988 arg989 arg990 arg991 arg992 arg993 arg994 arg995 arg996 arg997 arg998 arg999 arg1000 arg1001 arg1002 arg1003 arg1004 arg1005 arg1006 arg1007 arg1008 arg1009 arg1010 arg1011 arg1012 arg1013 arg1014 arg1015 arg1016 arg1017 arg1018 arg1019 arg1020 arg1021 arg1022 arg1023 arg1024",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "parallel rm -rf {} ::: arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9 arg10 arg11 arg12 arg13 arg14 arg15 arg16 arg17 arg18 arg19 arg20 arg21 arg22 arg23 arg24 arg25 arg26 arg27 arg28 arg29 arg30 arg31 arg32 arg33 arg34 arg35 arg36 arg37 arg38 arg39 arg40 arg41 arg42 arg43 arg44 arg45 arg46 arg47 arg48 arg49 arg50 arg51 arg52 arg53 arg54 arg55 arg56 arg57 arg58 arg59 arg60 arg61 arg62 arg63 arg64 arg65 arg66 arg67 arg68 arg69 arg70 arg71 arg72 arg73 arg74 arg75 arg76 arg77 arg78 arg79 arg80 arg81 arg82 arg83 arg84 arg85 arg86 arg87 arg88 arg89 arg90 arg91 arg92 arg93 arg94 arg95 arg96 arg97 arg98 arg99 arg100 arg101 arg102 arg103 arg104 arg105 arg106 arg107 arg108 arg109 arg110 arg111 arg112 arg113 arg114 arg115 arg116 arg117 arg118 arg119 arg120 arg121 arg122 arg123 arg124 arg125 arg126 arg127 arg128 arg129 arg130 arg131 arg132 arg133 arg134 arg135 arg136 arg137 arg138 arg139 arg140 arg141 arg142 arg143 arg144 arg145 arg146 arg147 arg148 arg149 arg150 arg151 arg152 arg153 arg154 arg155 arg156 arg157 arg158 arg159 arg160 arg161 arg162 arg163 arg164 arg165 arg166 arg167 arg168 arg169 arg170 arg171 arg172 arg173 arg174 arg175 arg176 arg177 arg178 arg179 arg180 arg181 arg182 arg183 arg184 arg185 arg186 arg187 arg188 arg189 arg190 arg191 arg192 arg193 arg194 arg195 arg196 arg197 arg198 arg199 arg200 arg201 arg202 arg203 arg204 arg205 arg206 arg207 arg208 arg209 arg210 arg211 arg212 arg213 arg214 arg215 arg216 arg217 arg218 arg219 arg220 arg221 arg222 arg223 arg224 arg225 arg226 arg227 arg228 arg229 arg230 arg231 arg232 arg233 arg234 arg235 arg236 arg237 arg238 arg239 arg240 arg241 arg242 arg243 arg244 arg245 arg246 arg247 arg248 arg249 arg250 arg251 arg252 arg253 arg254 arg255 arg256 arg257 arg258 arg259 arg260 arg261 arg262 arg263 arg264 arg265 arg266 arg267 arg268 arg269 arg270 arg271 arg272 arg273 arg274 arg275 arg276 arg277 arg278 arg279 arg280 arg281 arg282 arg283 arg284 arg285 arg286 arg287 arg288 arg289 arg290 arg291 arg292 arg293 arg294 arg295 arg296 arg297 arg298 arg299 arg300 arg301 arg302 arg303 arg304 arg305 arg306 arg307 arg308 arg309 arg310 arg311 arg312 arg313 arg314 arg315 arg316 arg317 arg318 arg319 arg320 arg321 arg322 arg323 arg324 arg325 arg326 arg327 arg328 arg329 arg330 arg331 arg332 arg333 arg334 arg335 arg336 arg337 arg338 arg339 arg340 arg341 arg342 arg343 arg344 arg345 arg346 arg347 arg348 arg349 arg350 arg351 arg352 arg353 arg354 arg355 arg356 arg357 arg358 arg359 arg360 arg361 arg362 arg363 arg364 arg365 arg366 arg367 arg368 arg369 arg370 arg371 arg372 arg373 arg374 arg375 arg376 arg377 arg378 arg379 arg380 arg381 arg382 arg383 arg384 arg385 arg386 arg387 arg388 arg389 arg390 arg391 arg392 arg393 arg394 arg395 arg396 arg397 arg398 arg399 arg400 arg401 arg402 arg403 arg404 arg405 arg406 arg407 arg408 arg409 arg410 arg411 arg412 arg413 arg414 arg415 arg416 arg417 arg418 arg419 arg420 arg421 arg422 arg423 arg424 arg425 arg426 arg427 arg428 arg429 arg430 arg431 arg432 arg433 arg434 arg435 arg436 arg437 arg438 arg439 arg440 arg441 arg442 arg443 arg444 arg445 arg446 arg447 arg448 arg449 arg450 arg451 arg452 arg453 arg454 arg455 arg456 arg457 arg458 arg459 arg460 arg461 arg462 arg463 arg464 arg465 arg466 arg467 arg468 arg469 arg470 arg471 arg472 arg473 arg474 arg475 arg476 arg477 arg478 arg479 arg480 arg481 arg482 arg483 arg484 arg485 arg486 arg487 arg488 arg489 arg490 arg491 arg492 arg493 arg494 arg495 arg496 arg497 arg498 arg499 arg500 arg501 arg502 arg503 arg504 arg505 arg506 arg507 arg508 arg509 arg510 arg511 arg512 arg513 arg514 arg515 arg516 arg517 arg518 arg519 arg520 arg521 arg522 arg523 arg524 arg525 arg526 arg527 arg528 arg529 arg530 arg531 arg532 arg533 arg534 arg535 arg536 arg537 arg538 arg539 arg540 arg541 arg542 arg543 arg544 arg545 arg546 arg547 arg548 arg549 arg550 arg551 arg552 arg553 arg554 arg555 arg556 arg557 arg558 arg559 arg560 arg561 arg562 arg563 arg564 arg565 arg566 arg567 arg568 arg569 arg570 arg571 arg572 arg573 arg574 arg575 arg576 arg577 arg578 arg579 arg580 arg581 arg582 arg583 arg584 arg585 arg586 arg587 arg588 arg589 arg590 arg591 arg592 arg593 arg594 arg595 arg596 arg597 arg598 arg599 arg600 arg601 arg602 arg603 arg604 arg605 arg606 arg607 arg608 arg609 arg610 arg611 arg612 arg613 arg614 arg615 arg616 arg617 arg618 arg619 arg620 arg621 arg622 arg623 arg624 arg625 arg626 arg627 arg628 arg629 arg630 arg631 arg632 arg633 arg634 arg635 arg636 arg637 arg638 arg639 arg640 arg641 arg642 arg643 arg644 arg645 arg646 arg647 arg648 arg649 arg650 arg651 arg652 arg653 arg654 arg655 arg656 arg657 arg658 arg659 arg660 arg661 arg662 arg663 arg664 arg665 arg666 arg667 arg668 arg669 arg670 arg671 arg672 arg673 arg674 arg675 arg676 arg677 arg678 arg679 arg680 arg681 arg682 arg683 arg684 arg685 arg686 arg687 arg688 arg689 arg690 arg691 arg692 arg693 arg694 arg695 arg696 arg697 arg698 arg699 arg700 arg701 arg702 arg703 arg704 arg705 arg706 arg707 arg708 arg709 arg710 arg711 arg712 arg713 arg714 arg715 arg716 arg717 arg718 arg719 arg720 arg721 arg722 arg723 arg724 arg725 arg726 arg727 arg728 arg729 arg730 arg731 arg732 arg733 arg734 arg735 arg736 arg737 arg738 arg739 arg740 arg741 arg742 arg743 arg744 arg745 arg746 arg747 arg748 arg749 arg750 arg751 arg752 arg753 arg754 arg755 arg756 arg757 arg758 arg759 arg760 arg761 arg762 arg763 arg764 arg765 arg766 arg767 arg768 arg769 arg770 arg771 arg772 arg773 arg774 arg775 arg776 arg777 arg778 arg779 arg780 arg781 arg782 arg783 arg784 arg785 arg786 arg787 arg788 arg789 arg790 arg791 arg792 arg793 arg794 arg795 arg796 arg797 arg798 arg799 arg800 arg801 arg802 arg803 arg804 arg805 arg806 arg807 arg808 arg809 arg810 arg811 arg812 arg813 arg814 arg815 arg816 arg817 arg818 arg819 arg820 arg821 arg822 arg823 arg824 arg825 arg826 arg827 arg828 arg829 arg830 arg831 arg832 arg833 arg834 arg835 arg836 arg837 arg838 arg839 arg840 arg841 arg842 arg843 arg844 arg845 arg846 arg847 arg848 arg849 arg850 arg851 arg852 arg853 arg854 arg855 arg856 arg857 arg858 arg859 arg860 arg861 arg862 arg863 arg864 arg865 arg866 arg867 arg868 arg869 arg870 arg871 arg872 arg873 arg874 arg875 arg876 arg877 arg878 arg879 arg880 arg881 arg882 arg883 arg884 arg885 arg886 arg887 arg888 arg889 arg890 arg891 arg892 arg893 arg894 arg895 arg896 arg897 arg898 arg899 arg900 arg901 arg902 arg903 arg904 arg905 arg906 arg907 arg908 arg909 arg910 arg911 arg912 arg913 arg914 arg915 arg916 arg917 arg918 arg919 arg920 arg921 arg922 arg923 arg924 arg925 arg926 arg927 arg928 arg929 arg930 arg931 arg932 arg933 arg934 arg935 arg936 arg937 arg938 arg939 arg940 arg941 arg942 arg943 arg944 arg945 arg946 arg947 arg948 arg949 arg950 arg951 arg952 arg953 arg954 arg955 arg956 arg957 arg958 arg959 arg960 arg961 arg962 arg963 arg964 arg965 arg966 arg967 arg968 arg969 arg970 arg971 arg972 arg973 arg974 arg975 arg976 arg977 arg978 arg979 arg980 arg981 arg982 arg983 arg984 arg985 arg986 arg987 arg988 arg989 arg990 arg991 arg992 arg993 arg994 arg995 arg996 arg997 arg998 arg999 arg1000 arg1001 arg1002 arg1003 arg1004 arg1005 arg1006 arg1007 arg1008 arg1009 arg1010 arg1011 arg1012 arg1013 arg1014 arg1015 arg1016 arg1017 arg1018 arg1019 arg1020 arg1021 arg1022 arg1023 arg1024",
+        "kind": "command",
+        "segment": "parallel rm -rf {} ::: arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9 arg10 arg11 arg12 arg13 arg14 arg15 arg16 arg17 arg18 arg19 arg20 arg21 arg22 arg23 arg24 arg25 arg26 arg27 arg28 arg29 arg30 arg31 arg32 arg33 arg34 arg35 arg36 arg37 arg38 arg39 arg40 arg41 arg42 arg43 arg44 arg45 arg46 arg47 arg48 arg49 arg50 arg51 arg52 arg53 arg54 arg55 arg56 arg57 arg58 arg59 arg60 arg61 arg62 arg63 arg64 arg65 arg66 arg67 arg68 arg69 arg70 arg71 arg72 arg73 arg74 arg75 arg76 arg77 arg78 arg79 arg80 arg81 arg82 arg83 arg84 arg85 arg86 arg87 arg88 arg89 arg90 arg91 arg92 arg93 arg94 arg95 arg96 arg97 arg98 arg99 arg100 arg101 arg102 arg103 arg104 arg105 arg106 arg107 arg108 arg109 arg110 arg111 arg112 arg113 arg114 arg115 arg116 arg117 arg118 arg119 arg120 arg121 arg122 arg123 arg124 arg125 arg126 arg127 arg128 arg129 arg130 arg131 arg132 arg133 arg134 arg135 arg136 arg137 arg138 arg139 arg140 arg141 arg142 arg143 arg144 arg145 arg146 arg147 arg148 arg149 arg150 arg151 arg152 arg153 arg154 arg155 arg156 arg157 arg158 arg159 arg160 arg161 arg162 arg163 arg164 arg165 arg166 arg167 arg168 arg169 arg170 arg171 arg172 arg173 arg174 arg175 arg176 arg177 arg178 arg179 arg180 arg181 arg182 arg183 arg184 arg185 arg186 arg187 arg188 arg189 arg190 arg191 arg192 arg193 arg194 arg195 arg196 arg197 arg198 arg199 arg200 arg201 arg202 arg203 arg204 arg205 arg206 arg207 arg208 arg209 arg210 arg211 arg212 arg213 arg214 arg215 arg216 arg217 arg218 arg219 arg220 arg221 arg222 arg223 arg224 arg225 arg226 arg227 arg228 arg229 arg230 arg231 arg232 arg233 arg234 arg235 arg236 arg237 arg238 arg239 arg240 arg241 arg242 arg243 arg244 arg245 arg246 arg247 arg248 arg249 arg250 arg251 arg252 arg253 arg254 arg255 arg256 arg257 arg258 arg259 arg260 arg261 arg262 arg263 arg264 arg265 arg266 arg267 arg268 arg269 arg270 arg271 arg272 arg273 arg274 arg275 arg276 arg277 arg278 arg279 arg280 arg281 arg282 arg283 arg284 arg285 arg286 arg287 arg288 arg289 arg290 arg291 arg292 arg293 arg294 arg295 arg296 arg297 arg298 arg299 arg300 arg301 arg302 arg303 arg304 arg305 arg306 arg307 arg308 arg309 arg310 arg311 arg312 arg313 arg314 arg315 arg316 arg317 arg318 arg319 arg320 arg321 arg322 arg323 arg324 arg325 arg326 arg327 arg328 arg329 arg330 arg331 arg332 arg333 arg334 arg335 arg336 arg337 arg338 arg339 arg340 arg341 arg342 arg343 arg344 arg345 arg346 arg347 arg348 arg349 arg350 arg351 arg352 arg353 arg354 arg355 arg356 arg357 arg358 arg359 arg360 arg361 arg362 arg363 arg364 arg365 arg366 arg367 arg368 arg369 arg370 arg371 arg372 arg373 arg374 arg375 arg376 arg377 arg378 arg379 arg380 arg381 arg382 arg383 arg384 arg385 arg386 arg387 arg388 arg389 arg390 arg391 arg392 arg393 arg394 arg395 arg396 arg397 arg398 arg399 arg400 arg401 arg402 arg403 arg404 arg405 arg406 arg407 arg408 arg409 arg410 arg411 arg412 arg413 arg414 arg415 arg416 arg417 arg418 arg419 arg420 arg421 arg422 arg423 arg424 arg425 arg426 arg427 arg428 arg429 arg430 arg431 arg432 arg433 arg434 arg435 arg436 arg437 arg438 arg439 arg440 arg441 arg442 arg443 arg444 arg445 arg446 arg447 arg448 arg449 arg450 arg451 arg452 arg453 arg454 arg455 arg456 arg457 arg458 arg459 arg460 arg461 arg462 arg463 arg464 arg465 arg466 arg467 arg468 arg469 arg470 arg471 arg472 arg473 arg474 arg475 arg476 arg477 arg478 arg479 arg480 arg481 arg482 arg483 arg484 arg485 arg486 arg487 arg488 arg489 arg490 arg491 arg492 arg493 arg494 arg495 arg496 arg497 arg498 arg499 arg500 arg501 arg502 arg503 arg504 arg505 arg506 arg507 arg508 arg509 arg510 arg511 arg512 arg513 arg514 arg515 arg516 arg517 arg518 arg519 arg520 arg521 arg522 arg523 arg524 arg525 arg526 arg527 arg528 arg529 arg530 arg531 arg532 arg533 arg534 arg535 arg536 arg537 arg538 arg539 arg540 arg541 arg542 arg543 arg544 arg545 arg546 arg547 arg548 arg549 arg550 arg551 arg552 arg553 arg554 arg555 arg556 arg557 arg558 arg559 arg560 arg561 arg562 arg563 arg564 arg565 arg566 arg567 arg568 arg569 arg570 arg571 arg572 arg573 arg574 arg575 arg576 arg577 arg578 arg579 arg580 arg581 arg582 arg583 arg584 arg585 arg586 arg587 arg588 arg589 arg590 arg591 arg592 arg593 arg594 arg595 arg596 arg597 arg598 arg599 arg600 arg601 arg602 arg603 arg604 arg605 arg606 arg607 arg608 arg609 arg610 arg611 arg612 arg613 arg614 arg615 arg616 arg617 arg618 arg619 arg620 arg621 arg622 arg623 arg624 arg625 arg626 arg627 arg628 arg629 arg630 arg631 arg632 arg633 arg634 arg635 arg636 arg637 arg638 arg639 arg640 arg641 arg642 arg643 arg644 arg645 arg646 arg647 arg648 arg649 arg650 arg651 arg652 arg653 arg654 arg655 arg656 arg657 arg658 arg659 arg660 arg661 arg662 arg663 arg664 arg665 arg666 arg667 arg668 arg669 arg670 arg671 arg672 arg673 arg674 arg675 arg676 arg677 arg678 arg679 arg680 arg681 arg682 arg683 arg684 arg685 arg686 arg687 arg688 arg689 arg690 arg691 arg692 arg693 arg694 arg695 arg696 arg697 arg698 arg699 arg700 arg701 arg702 arg703 arg704 arg705 arg706 arg707 arg708 arg709 arg710 arg711 arg712 arg713 arg714 arg715 arg716 arg717 arg718 arg719 arg720 arg721 arg722 arg723 arg724 arg725 arg726 arg727 arg728 arg729 arg730 arg731 arg732 arg733 arg734 arg735 arg736 arg737 arg738 arg739 arg740 arg741 arg742 arg743 arg744 arg745 arg746 arg747 arg748 arg749 arg750 arg751 arg752 arg753 arg754 arg755 arg756 arg757 arg758 arg759 arg760 arg761 arg762 arg763 arg764 arg765 arg766 arg767 arg768 arg769 arg770 arg771 arg772 arg773 arg774 arg775 arg776 arg777 arg778 arg779 arg780 arg781 arg782 arg783 arg784 arg785 arg786 arg787 arg788 arg789 arg790 arg791 arg792 arg793 arg794 arg795 arg796 arg797 arg798 arg799 arg800 arg801 arg802 arg803 arg804 arg805 arg806 arg807 arg808 arg809 arg810 arg811 arg812 arg813 arg814 arg815 arg816 arg817 arg818 arg819 arg820 arg821 arg822 arg823 arg824 arg825 arg826 arg827 arg828 arg829 arg830 arg831 arg832 arg833 arg834 arg835 arg836 arg837 arg838 arg839 arg840 arg841 arg842 arg843 arg844 arg845 arg846 arg847 arg848 arg849 arg850 arg851 arg852 arg853 arg854 arg855 arg856 arg857 arg858 arg859 arg860 arg861 arg862 arg863 arg864 arg865 arg866 arg867 arg868 arg869 arg870 arg871 arg872 arg873 arg874 arg875 arg876 arg877 arg878 arg879 arg880 arg881 arg882 arg883 arg884 arg885 arg886 arg887 arg888 arg889 arg890 arg891 arg892 arg893 arg894 arg895 arg896 arg897 arg898 arg899 arg900 arg901 arg902 arg903 arg904 arg905 arg906 arg907 arg908 arg909 arg910 arg911 arg912 arg913 arg914 arg915 arg916 arg917 arg918 arg919 arg920 arg921 arg922 arg923 arg924 arg925 arg926 arg927 arg928 arg929 arg930 arg931 arg932 arg933 arg934 arg935 arg936 arg937 arg938 arg939 arg940 arg941 arg942 arg943 arg944 arg945 arg946 arg947 arg948 arg949 arg950 arg951 arg952 arg953 arg954 arg955 arg956 arg957 arg958 arg959 arg960 arg961 arg962 arg963 arg964 arg965 arg966 arg967 arg968 arg969 arg970 arg971 arg972 arg973 arg974 arg975 arg976 arg977 arg978 arg979 arg980 arg981 arg982 arg983 arg984 arg985 arg986 arg987 arg988 arg989 arg990 arg991 arg992 arg993 arg994 arg995 arg996 arg997 arg998 arg999 arg1000 arg1001 arg1002 arg1003 arg1004 arg1005 arg1006 arg1007 arg1008 arg1009 arg1010 arg1011 arg1012 arg1013 arg1014 arg1015 arg1016 arg1017 arg1018 arg1019 arg1020 arg1021 arg1022 arg1023 arg1024",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Parallel command expands beyond CC Safety Net's analysis limits. Reduce the template or explicit argument list and retry.",
+    "ruleId": undefined,
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach parallel child analyses breaches with the same words 2`] = `
+{
+  "command": "parallel rm -rf {} ::: arg0 arg1 arg2 arg3 arg4 arg5 arg6 arg7 arg8 arg9 arg10 arg11 arg12 arg13 arg14 arg15 arg16 arg17 arg18 arg19 arg20 arg21 arg22 arg23 arg24 arg25 arg26 arg27 arg28 arg29 arg30 arg31 arg32 arg33 arg34 arg35 arg36 arg37 arg38 arg39 arg40 arg41 arg42 arg43 arg44 arg45 arg46 arg47 arg48 arg49 arg50 arg51 arg52 arg53 arg54 arg55 arg56 arg57 arg58 arg59 arg60 arg61 arg62 arg63 arg64 arg65 arg66 arg67 arg68 arg69 arg70 arg71 arg72 arg73 arg74 arg75 arg76 arg77 arg78 arg79 arg80 arg81 arg82 arg83 arg84 arg85 arg86 arg87 arg88 arg89 arg90 arg91 arg92 arg93 arg94 arg95 arg96 arg97 arg98 arg99 arg100 arg101 arg102 arg103 arg104 arg105 arg106 arg107 arg108 arg109 arg110 arg111 arg112 arg113 arg114 arg115 arg116 arg117 arg118 arg119 arg120 arg121 arg122 arg123 arg124 arg125 arg126 arg127 arg128 arg129 arg130 arg131 arg132 arg133 arg134 arg135 arg136 arg137 arg138 arg139 arg140 arg141 arg142 arg143 arg144 arg145 arg146 arg147 arg148 arg149 arg150 arg151 arg152 arg153 arg154 arg155 arg156 arg157 arg158 arg159 arg160 arg161 arg162 arg163 arg164 arg165 arg166 arg167 arg168 arg169 arg170 arg171 arg172 arg173 arg174 arg175 arg176 arg177 arg178 arg179 arg180 arg181 arg182 arg183 arg184 arg185 arg186 arg187 arg188 arg189 arg190 arg191 arg192 arg193 arg194 arg195 arg196 arg197 arg198 arg199 arg200 arg201 arg202 arg203 arg204 arg205 arg206 arg207 arg208 arg209 arg210 arg211 arg212 arg213 arg214 arg215 arg216 arg217 arg218 arg219 arg220 arg221 arg222 arg223 arg224 arg225 arg226 arg227 arg228 arg229 arg230 arg231 arg232 arg233 arg234 arg235 arg236 arg237 arg238 arg239 arg240 arg241 arg242 arg243 arg244 arg245 arg246 arg247 arg248 arg249 arg250 arg251 arg252 arg253 arg254 arg255 arg256 arg257 arg258 arg259 arg260 arg261 arg262 arg263 arg264 arg265 arg266 arg267 arg268 arg269 arg270 arg271 arg272 arg273 arg274 arg275 arg276 arg277 arg278 arg279 arg280 arg281 arg282 arg283 arg284 arg285 arg286 arg287 arg288 arg289 arg290 arg291 arg292 arg293 arg294 arg295 arg296 arg297 arg298 arg299 arg300 arg301 arg302 arg303 arg304 arg305 arg306 arg307 arg308 arg309 arg310 arg311 arg312 arg313 arg314 arg315 arg316 arg317 arg318 arg319 arg320 arg321 arg322 arg323 arg324 arg325 arg326 arg327 arg328 arg329 arg330 arg331 arg332 arg333 arg334 arg335 arg336 arg337 arg338 arg339 arg340 arg341 arg342 arg343 arg344 arg345 arg346 arg347 arg348 arg349 arg350 arg351 arg352 arg353 arg354 arg355 arg356 arg357 arg358 arg359 arg360 arg361 arg362 arg363 arg364 arg365 arg366 arg367 arg368 arg369 arg370 arg371 arg372 arg373 arg374 arg375 arg376 arg377 arg378 arg379 arg380 arg381 arg382 arg383 arg384 arg385 arg386 arg387 arg388 arg389 arg390 arg391 arg392 arg393 arg394 arg395 arg396 arg397 arg398 arg399 arg400 arg401 arg402 arg403 arg404 arg405 arg406 arg407 arg408 arg409 arg410 arg411 arg412 arg413 arg414 arg415 arg416 arg417 arg418 arg419 arg420 arg421 arg422 arg423 arg424 arg425 arg426 arg427 arg428 arg429 arg430 arg431 arg432 arg433 arg434 arg435 arg436 arg437 arg438 arg439 arg440 arg441 arg442 arg443 arg444 arg445 arg446 arg447 arg448 arg449 arg450 arg451 arg452 arg453 arg454 arg455 arg456 arg457 arg458 arg459 arg460 arg461 arg462 arg463 arg464 arg465 arg466 arg467 arg468 arg469 arg470 arg471 arg472 arg473 arg474 arg475 arg476 arg477 arg478 arg479 arg480 arg481 arg482 arg483 arg484 arg485 arg486 arg487 arg488 arg489 arg490 arg491 arg492 arg493 arg494 arg495 arg496 arg497 arg498 arg499 arg500 arg501 arg502 arg503 arg504 arg505 arg506 arg507 arg508 arg509 arg510 arg511 arg512 arg513 arg514 arg515 arg516 arg517 arg518 arg519 arg520 arg521 arg522 arg523 arg524 arg525 arg526 arg527 arg528 arg529 arg530 arg531 arg532 arg533 arg534 arg535 arg536 arg537 arg538 arg539 arg540 arg541 arg542 arg543 arg544 arg545 arg546 arg547 arg548 arg549 arg550 arg551 arg552 arg553 arg554 arg555 arg556 arg557 arg558 arg559 arg560 arg561 arg562 arg563 arg564 arg565 arg566 arg567 arg568 arg569 arg570 arg571 arg572 arg573 arg574 arg575 arg576 arg577 arg578 arg579 arg580 arg581 arg582 arg583 arg584 arg585 arg586 arg587 arg588 arg589 arg590 arg591 arg592 arg593 arg594 arg595 arg596 arg597 arg598 arg599 arg600 arg601 arg602 arg603 arg604 arg605 arg606 arg607 arg608 arg609 arg610 arg611 arg612 arg613 arg614 arg615 arg616 arg617 arg618 arg619 arg620 arg621 arg622 arg623 arg624 arg625 arg626 arg627 arg628 arg629 arg630 arg631 arg632 arg633 arg634 arg635 arg636 arg637 arg638 arg639 arg640 arg641 arg642 arg643 arg644 arg645 arg646 arg647 arg648 arg649 arg650 arg651 arg652 arg653 arg654 arg655 arg656 arg657 arg658 arg659 arg660 arg661 arg662 arg663 arg664 arg665 arg666 arg667 arg668 arg669 arg670 arg671 arg672 arg673 arg674 arg675 arg676 arg677 arg678 arg679 arg680 arg681 arg682 arg683 arg684 arg685 arg686 arg687 arg688 arg689 arg690 arg691 arg692 arg693 arg694 arg695 arg696 arg697 arg698 arg699 arg700 arg701 arg702 arg703 arg704 arg705 arg706 arg707 arg708 arg709 arg710 arg711 arg712 arg713 arg714 arg715 arg716 arg717 arg718 arg719 arg720 arg721 arg722 arg723 arg724 arg725 arg726 arg727 arg728 arg729 arg730 arg731 arg732 arg733 arg734 arg735 arg736 arg737 arg738 arg739 arg740 arg741 arg742 arg743 arg744 arg745 arg746 arg747 arg748 arg749 arg750 arg751 arg752 arg753 arg754 arg755 arg756 arg757 arg758 arg759 arg760 arg761 arg762 arg763 arg764 arg765 arg766 arg767 arg768 arg769 arg770 arg771 arg772 arg773 arg774 arg775 arg776 arg777 arg778 arg779 arg780 arg781 arg782 arg783 arg784 arg785 arg786 arg787 arg788 arg789 arg790 arg791 arg792 arg793 arg794 arg795 arg796 arg797 arg798 arg799 arg800 arg801 arg802 arg803 arg804 arg805 arg806 arg807 arg808 arg809 arg810 arg811 arg812 arg813 arg814 arg815 arg816 arg817 arg818 arg819 arg820 arg821 arg822 arg823 arg824 arg825 arg826 arg827 arg828 arg829 arg830 arg831 arg832 arg833 arg834 arg835 arg836 arg837 arg838 arg839 arg840 arg841 arg842 arg843 arg844 arg845 arg846 arg847 arg848 arg849 arg850 arg851 arg852 arg853 arg854 arg855 arg856 arg857 arg858 arg859 arg860 arg861 arg862 arg863 arg864 arg865 arg866 arg867 arg868 arg869 arg870 arg871 arg872 arg873 arg874 arg875 arg876 arg877 arg878 arg879 arg880 arg881 arg882 arg883 arg884 arg885 arg886 arg887 arg888 arg889 arg890 arg891 arg892 arg893 arg894 arg895 arg896 arg897 arg898 arg899 arg900 arg901 arg902 arg903 arg904 arg905 arg906 arg907 arg908 arg909 arg910 arg911 arg912 arg913 arg914 arg915 arg916 arg917 arg918 arg919 arg920 arg921 arg922 arg923 arg924 arg925 arg926 arg927 arg928 arg929 arg930 arg931 arg932 arg933 arg934 arg935 arg936 arg937 arg938 arg939 arg940 arg941 arg942 arg943 arg944 arg945 arg946 arg947 arg948 arg949 arg950 arg951 arg952 arg953 arg954 arg955 arg956 arg957 arg958 arg959 arg960 arg961 arg962 arg963 arg964 arg965 arg966 arg967 arg968 arg969 arg970 arg971 arg972 arg973 arg974 arg975 arg976 arg977 arg978 arg979 arg980 arg981 arg982 arg983 arg984 arg985 arg986 arg987 arg988 arg989 arg990 arg991 arg992 arg993 arg994 arg995 arg996 arg997 arg998 arg999 arg1000 arg1001 arg1002 arg1003 arg1004 arg1005 arg1006 arg1007 arg1008 arg1009 arg1010 arg1011 arg1012 arg1013 arg1014 arg1015 arg1016 arg1017 arg1018 arg1019 arg1020 arg1021 arg1022",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;
+
+exports[`every cap a command can still reach path environment expansion breaches with the same words 1`] = `
+{
+  "command": "cat \${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-x}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}/.ssh/config",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "cat \${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-x}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}/.ssh/config",
+        "kind": "command",
+        "segment": "cat \${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-\${HOME:-x}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}/.ssh/config",
+      },
+    ],
+    "intent": "stop_and_explain",
+    "outcome": "deny",
+    "reason": "CC Safety Net could not analyze the command because it exceeds safe analysis limits. Simplify or split the command and retry.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+    "thrown": "GuardEvaluationError",
+  },
+}
+`;
+
+exports[`every cap a command can still reach path environment expansion breaches with the same words 2`] = `
+{
+  "command": "cat \${HOME}/notes.md",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "command-analysis",
+  },
+}
+`;

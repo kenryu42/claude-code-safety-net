@@ -151,31 +151,30 @@ const TABLE: readonly Row[] = [
   },
 ];
 
+/** One row through both constructors, recorded once the shipped invocation matched it. */
+function comparedInvocation(row: Row) {
+  const ported = createPortedInvocation(
+    row.toolName,
+    row.input,
+    row.route,
+    row.context,
+    row.command,
+  );
+  expect(ported).toStrictEqual(
+    createShippedInvocation(row.toolName, row.input, row.route, row.context, row.command),
+  );
+  expect(ported).toMatchSnapshot();
+  return ported;
+}
+
 describe('ported tool invocation', () => {
   test('matches the shipped invocation for the corpus rows', () => {
-    corpusRows().forEach((row) => {
-      expect(
-        createPortedInvocation(row.toolName, row.input, row.route, row.context, row.command),
-      ).toStrictEqual(
-        createShippedInvocation(row.toolName, row.input, row.route, row.context, row.command),
-      );
-    });
+    corpusRows().forEach(comparedInvocation);
   });
 
   test('matches the shipped invocation for every route shape', () => {
     TABLE.forEach((row) => {
-      const ported = createPortedInvocation(
-        row.toolName,
-        row.input,
-        row.route,
-        row.context,
-        row.command,
-      );
-
-      expect(ported).toStrictEqual(
-        createShippedInvocation(row.toolName, row.input, row.route, row.context, row.command),
-      );
-      expect('command' in ported).toBe(row.route.kind === 'command');
+      expect('command' in comparedInvocation(row)).toBe(row.route.kind === 'command');
     });
   });
 });

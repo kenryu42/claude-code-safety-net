@@ -20,6 +20,7 @@ import {
   describeDifferential,
   type Side,
 } from '../../helpers/in-process';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The OpenCode plugin driven through a fake plugin input: the same project directory, the same
@@ -228,6 +229,7 @@ describeDifferential(
     expect(agreed.thrown ?? '').toContain(row.contains ?? '');
     expect(agreed.thrown === undefined).toBe(!row.blocked);
   },
+  () => fixture.root,
 );
 
 test('the config hook adds the builtin command without dropping the host own', async () => {
@@ -240,6 +242,7 @@ test('the config hook adds the builtin command without dropping the host own', a
 
   const ported = await configured('ported');
   expect(ported).toStrictEqual((await configured('shipped')) as Record<string, unknown>);
+  expect(ported).toMatchSnapshot();
   expect(Object.keys(ported as Record<string, unknown>)).toStrictEqual(['cc-safety-net', 'own']);
 });
 
@@ -298,9 +301,9 @@ test('a homeDir input steers the shipped audit tree and the environment steers t
   const shippedEntries = readAuditEntries(homeDir);
   const ported = await run('ported');
 
-  expect(ported.entries.map((line) => line.entry)).toStrictEqual(
-    shippedEntries.map((line) => line.entry),
-  );
+  const portedEntries = ported.entries.map((line) => line.entry);
+  expect(portedEntries).toStrictEqual(shippedEntries.map((line) => line.entry));
+  recordPorted(portedEntries, rootFolds(fixture.root));
   expect(shippedEntries).toHaveLength(1);
   // The shipped plugin wrote nowhere else, and the ported one wrote nowhere but the audit home.
   expect(shipped.entries).toStrictEqual([]);

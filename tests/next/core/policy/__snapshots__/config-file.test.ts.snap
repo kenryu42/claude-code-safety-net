@@ -1,0 +1,197 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the legacy config validator reports what the shipped one reports validates valid/rule.json as a rules config the same way 1`] = `
+{
+  "errors": [],
+  "ruleNames": [
+    "project-rules",
+  ],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates version-two/rule.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "version must be 1",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates not-json/rule.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "Invalid JSON",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates empty/rule.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "Config file is empty",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates absent/rule.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "File not found: <root>/absent/rule.json",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates blocked/rule.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "Unable to access rules policy filesystem safely.",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates legacy/two-rules.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "rules[0]: must be a rulebook source string",
+    "rules[1]: must be a rulebook source string",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates legacy/bad-rule.json as a rules config the same way 1`] = `
+{
+  "errors": [
+    "rules[0]: must be a rulebook source string",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates valid/rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "rules[0]: must be an object",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates version-two/rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "version must be 1",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates not-json/rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "Invalid JSON",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates empty/rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "Config file is empty",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates absent/rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "File not found: <root>/absent/rule.json",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates blocked/rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "Unable to access rules policy filesystem safely.",
+  ],
+  "ruleNames": [],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates legacy/two-rules.json as a legacy config the same way 1`] = `
+{
+  "errors": [],
+  "ruleNames": [
+    "no-force-push",
+    "no-system-prune",
+  ],
+}
+`;
+
+exports[`the legacy config validator reports what the shipped one reports validates legacy/bad-rule.json as a legacy config the same way 1`] = `
+{
+  "errors": [
+    "rules[0].name: must match pattern (letters, numbers, hyphens, underscores; max 64 chars)",
+    "rules[0].block_args: must have at least one element",
+    "rules[0].reason: must not be empty",
+  ],
+  "ruleNames": [
+    "bad name!",
+  ],
+}
+`;
+
+exports[`the legacy paths resolve where the shipped ones resolve the project config sits beside the project directory 1`] = `"<root>/.safety-net.json"`;
+
+exports[`the legacy paths resolve where the shipped ones resolve the user config sits under a relocated safety-net home 1`] = `"<root>/.cc-safety-net/config.json"`;
+
+exports[`the legacy paths resolve where the shipped ones resolve the user config sits under the default safety-net directory 1`] = `"<home>/.cc-safety-net/config.json"`;
+
+exports[`the atomic writer leaves the same file behind writes the same bytes with an explicit owner-only mode 1`] = `
+[
+  {
+    "content": 
+"{
+  "version": 1,
+  "rules": [
+    "project-rules"
+  ],
+  "overrides": {}
+}
+"
+,
+    "kind": "file",
+    "mode": 384,
+    "path": "rule.json",
+  },
+]
+`;
+
+exports[`the atomic writer leaves the same file behind writes the same bytes with the writer default 1`] = `
+[
+  {
+    "content": 
+"{
+  "version": 1,
+  "rules": [
+    "project-rules"
+  ],
+  "overrides": {}
+}
+"
+,
+    "kind": "file",
+    "mode": 384,
+    "path": "rule.json",
+  },
+]
+`;

@@ -1,0 +1,682 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`rule verify no config anywhere reports the built-in rules alone 1`] = `
+{
+  "code": 0,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+No config files found. Using built-in rules only."
+,
+  ],
+}
+`;
+
+exports[`rule verify a valid user config gains its schema and lists its sources 1`] = `
+{
+  "code": 0,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/rules",
+    },
+    {
+      "content": 
+"{
+  "$schema": "https://raw.githubusercontent.com/kenryu42/cc-safety-net/main/assets/cc-safety-net.schema.json",
+  "version": 1,
+  "rules": [
+    "team-rules"
+  ]
+}"
+,
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/rules/rule.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/rules/team-rules",
+    },
+    {
+      "content": "{"rulebook_version":2,"name":"team-rules","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker system prune","expect":"blocked","rule":"block-system-prune"}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+Added $schema to user config."
+,
+    
+"
+✓ User config: <root>/home/.cc-safety-net/rules/rule.json"
+,
+    "  Schema: rulebook sources",
+    "  Sources:",
+    "    1. team-rules",
+    
+"
+All configs valid."
+,
+  ],
+}
+`;
+
+exports[`rule verify an unparseable user config is reported as invalid 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/rules",
+    },
+    {
+      "content": "not json",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/rules/rule.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ User config: <root>/home/.cc-safety-net/rules/rule.json"
+,
+    "  Errors:",
+    "    1. Invalid JSON",
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify an override naming no rule its sources define is a runtime error 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/rules",
+    },
+    {
+      "content": "{"version":1,"rules":["team-rules"],"overrides":{"team-rules/no-such-rule":"off"}}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/rules/rule.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/rules/team-rules",
+    },
+    {
+      "content": "{"rulebook_version":2,"name":"team-rules","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker system prune","expect":"blocked","rule":"block-system-prune"}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ User config: <root>/home/.cc-safety-net/rules/rule.json"
+,
+    "  Errors:",
+    "    1. unknown override key "team-rules/no-such-rule" in <root>/home/.cc-safety-net/rules/rule.json",
+    "    2. only that override is ignored and other overrides and rules keep their configured state",
+    "    3. correct or remove it in that file",
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify a rulebook whose fixture fails is reported by index 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules/broken-rules",
+    },
+    {
+      "content": "{"rulebook_version":2,"name":"broken-rules","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker ps","expect":"blocked","rule":"block-system-prune"}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/rules/broken-rules/rulebook.json",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ GitHub source rules: <root>/project/.cc-safety-net/rules"
+,
+    "  Errors:",
+    "    1. broken-rules/rulebook.json: tests[0]: expected "block-system-prune" to block "docker ps" but no rule matched",
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify a rulebook whose name disagrees with its folder is refused 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules/team-rules",
+    },
+    {
+      "content": "{"rulebook_version":2,"name":"other","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker system prune","expect":"blocked","rule":"block-system-prune"}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/rules/team-rules/rulebook.json",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ GitHub source rules: <root>/project/.cc-safety-net/rules"
+,
+    "  Errors:",
+    "    1. rulebook name "other" must match folder "team-rules"",
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify a regular file beside the rulebooks is not a rulebook 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules",
+    },
+    {
+      "content": "not a rulebook",
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/rules/stray",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ GitHub source rules: <root>/project/.cc-safety-net/rules"
+,
+    "  Errors:",
+    "    1. stray must be a rulebook directory",
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify a legacy user config on its own is reported as ignored 1`] = `
+{
+  "code": 0,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/config.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ Legacy user config: <root>/home/.cc-safety-net/config.json"
+,
+    "  Schema: legacy inline rules",
+    "  Status: ignored by CC Safety Net",
+    "  Rules:",
+    "    1. no-force-push",
+    
+"
+Warning: Legacy user config is ignored by CC Safety Net. Run \`npx -y cc-safety-net rule migrate\`."
+,
+    
+"
+Configs valid with warnings."
+,
+  ],
+}
+`;
+
+exports[`rule verify a legacy user config that no longer validates is an error 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": "{"version":1,"rules":[{}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/config.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ Legacy user config: <root>/home/.cc-safety-net/config.json"
+,
+    "  Schema: legacy inline rules",
+    "  Status: ignored by CC Safety Net",
+    "  Errors:",
+    "    1. rules[0].name: required string",
+    "    2. rules[0].command: required string",
+    "    3. rules[0].block_args: required array",
+    "    4. rules[0].reason: required string",
+    
+"
+Warning: Legacy user config is no longer supported. Fix or delete the legacy user config, then run \`npx -y cc-safety-net rule migrate\`."
+,
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify a legacy user config beside a current one is only cleanup 1`] = `
+{
+  "code": 0,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/config.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/rules",
+    },
+    {
+      "content": "{"$schema":"x","version":1,"rules":[]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/rules/rule.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✓ User config: <root>/home/.cc-safety-net/rules/rule.json"
+,
+    "  Schema: rulebook sources",
+    "  Sources: (none)",
+    
+"
+Warning: Legacy user config is no longer needed. Run \`npx -y cc-safety-net rule migrate --cleanup\` to clean it up safely."
+,
+    
+"
+Configs valid with warnings."
+,
+  ],
+}
+`;
+
+exports[`rule verify a legacy project config is reported against the project scope 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.safety-net.json",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✗ Legacy project config: <root>/project/.safety-net.json"
+,
+    "  Schema: legacy inline rules",
+    "  Status: ignored by CC Safety Net",
+    "  Rules:",
+    "    1. no-force-push",
+    
+"
+Warning: Legacy project config is ignored by CC Safety Net. Run \`npx -y cc-safety-net rule migrate\`."
+,
+    
+"
+Config validation failed."
+,
+  ],
+}
+`;
+
+exports[`rule verify a legacy project config beside a current one is only cleanup 1`] = `
+{
+  "code": 0,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules",
+    },
+    {
+      "content": "{"$schema":"x","version":1,"rules":[]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/rules/rule.json",
+    },
+    {
+      "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.safety-net.json",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    
+"
+✓ Project config: <root>/project/.cc-safety-net/rules/rule.json"
+,
+    "  Schema: rulebook sources",
+    "  Sources: (none)",
+    
+"
+Warning: Legacy project config is no longer needed. Run \`npx -y cc-safety-net rule migrate --cleanup\` to clean it up safely."
+,
+    
+"
+Configs valid with warnings."
+,
+  ],
+}
+`;
+
+exports[`rule verify a regular file where the rules directory belongs stops the run 1`] = `
+{
+  "code": 1,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": "not a directory",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/rules",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+  ],
+  "written": [
+    "CC Safety Net Config",
+    "════════════════════",
+    "Unable to access user policy filesystem safely.",
+  ],
+}
+`;

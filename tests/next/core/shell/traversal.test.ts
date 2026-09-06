@@ -4,21 +4,22 @@ import {
   parseSimpleWords as parseSimpleWordsWithSrc,
   projectSegmentWords as projectSegmentWordsWithSrc,
 } from '@/parser/traversal';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { differentialProgramPairs, differentialSources } from '../../helpers/shell-inputs';
 
 describe('next/core/shell/traversal against src/parser/traversal', () => {
   test('projects the same segment word lists from every parsed program', () => {
+    const recorded: (readonly [string, unknown])[] = [];
     for (const pair of differentialProgramPairs()) {
-      expect({
-        source: pair.source,
-        dialect: pair.dialect,
-        words: projectSegmentWords(pair.next),
-      }).toStrictEqual({
+      const words = projectSegmentWords(pair.next);
+      expect({ source: pair.source, dialect: pair.dialect, words }).toStrictEqual({
         source: pair.source,
         dialect: pair.dialect,
         words: projectSegmentWordsWithSrc(pair.src),
       });
+      recorded.push([`${pair.dialect} ${pair.source}`, words]);
     }
+    expectRecordedDigest('core-shell-traversal/segment-words', recorded);
   });
 
   test('recognizes the same argv-like sources as one plain command', () => {
@@ -31,11 +32,12 @@ describe('next/core/shell/traversal against src/parser/traversal', () => {
       'echo {}',
       '',
     ];
+    const recorded: (readonly [string, unknown])[] = [];
     for (const source of [...differentialSources(), ...argvLike]) {
-      expect({ source, words: parseSimpleWords(source) }).toStrictEqual({
-        source,
-        words: parseSimpleWordsWithSrc(source),
-      });
+      const words = parseSimpleWords(source);
+      expect({ source, words }).toStrictEqual({ source, words: parseSimpleWordsWithSrc(source) });
+      recorded.push([source, words]);
     }
+    expectRecordedDigest('core-shell-traversal/simple-words', recorded);
   });
 });

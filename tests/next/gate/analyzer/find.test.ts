@@ -28,6 +28,7 @@ import { parseCommand as shippedParse } from '@/parser/command';
 import { projectCommandViews as shippedViews } from '@/parser/traversal';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, FUZZ_SEED, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -240,21 +241,27 @@ function tokenLists(): readonly (readonly string[])[] {
 
 describe('find primaries', () => {
   test('arity, exec primaries and the exec command slice match the shipped walk', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of tokenLists()) {
       tokens.forEach((token, index) => {
-        expect(getFindPrimaryArity(token), token).toBe(shippedPrimaryArity(token));
-        expect(isFindExecPrimary(token), token).toBe(shippedIsExecPrimary(token));
-        expect(getFindExecCommand(tokens, index), `${token}@${index}`).toStrictEqual(
-          shippedExecCommand(tokens, index),
-        );
+        const arity = getFindPrimaryArity(token);
+        expect(arity, token).toBe(shippedPrimaryArity(token));
+        const exec = isFindExecPrimary(token);
+        expect(exec, token).toBe(shippedIsExecPrimary(token));
+        const command = getFindExecCommand(tokens, index);
+        expect(command, `${token}@${index}`).toStrictEqual(shippedExecCommand(tokens, index));
+        recorded.push([`${token}@${index}`, { arity, exec, command }]);
       });
-      expect(isFindExecPrimary(undefined)).toBe(shippedIsExecPrimary(undefined));
+      const missing = isFindExecPrimary(undefined);
+      expect(missing).toBe(shippedIsExecPrimary(undefined));
+      recorded.push(['undefined primary', missing]);
       for (const start of [0, 1, 2]) {
-        expect(findHasDelete(tokens, start), tokens.join(' ')).toBe(
-          shippedHasDelete(tokens, start),
-        );
+        const deletes = findHasDelete(tokens, start);
+        expect(deletes, tokens.join(' ')).toBe(shippedHasDelete(tokens, start));
+        recorded.push([`${tokens.join(' ')}@${start}`, deletes]);
       }
     }
+    expectRecordedDigest('analyzer-find/primaries', recorded, root);
   });
 
   test('-delete is found only as an action, never as an option value or inside -exec', () => {
@@ -267,23 +274,25 @@ describe('find primaries', () => {
   });
 
   test('starting points and the exec-rm probe agree with the shipped helpers', () => {
+    const recorded: [string, unknown][] = [];
     const paired = pairedEnvironments({ HOME: home }, home);
     for (const source of [...FIND_COMMANDS, ...corpusCommands()]) {
       const nextPoints = getFindStartingPoints(commandWords(source, false));
       const shippedPoints = shippedStartingPoints(commandWords(source, true));
-      expect(nextPoints?.map((word) => word.text) ?? null, source).toStrictEqual(
-        shippedPoints?.map((word) => word.text) ?? null,
-      );
+      const points = nextPoints?.map((word) => word.text) ?? null;
+      expect(points, source).toStrictEqual(shippedPoints?.map((word) => word.text) ?? null);
       const tokens = source.split(' ');
-      expect(findExecRmDeletesFoundPaths(tokens, paired.next), source).toBe(
-        shippedExecRmDeletes(tokens, paired.shipped),
-      );
+      const deletes = findExecRmDeletesFoundPaths(tokens, paired.next);
+      expect(deletes, source).toBe(shippedExecRmDeletes(tokens, paired.shipped));
+      recorded.push([source, { points, deletes }]);
     }
+    expectRecordedDigest('analyzer-find/starting-points', recorded, root);
   });
 });
 
 describe('find analysis', () => {
   test('matches the shipped analyzer and issues the same nested calls', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of findCases()) {
       for (const mode of ['tokens', 'nested'] as const) {
         for (const source of FIND_COMMANDS) {
@@ -294,9 +303,11 @@ describe('find analysis', () => {
           expect(pair.next.calls, `${row.label}/${mode}: ${source}`).toStrictEqual(
             pair.shipped.calls,
           );
+          recorded.push([`${row.label}/${mode}: ${source}`, pair.next]);
         }
       }
     }
+    expectRecordedDigest('analyzer-find/analysis', recorded, root);
   });
 
   test('the table reaches the delete, exec and git-metadata rules', () => {
@@ -334,17 +345,20 @@ describe('find analysis', () => {
     const pair = analyzePair(source, { label: 'budget', cwd: workspace }, 'tokens');
     expect(pair.next.match.ok).toBeFalse();
     expect(pair.shipped.match.ok).toBe(pair.next.match.ok);
-    expect(pair.next.match.ok ? '' : pair.next.match.error.message).toBe(
-      pair.shipped.match.ok ? '' : pair.shipped.match.error.message,
-    );
+    const message = pair.next.match.ok ? '' : pair.next.match.error.message;
+    expect(message).toBe(pair.shipped.match.ok ? '' : pair.shipped.match.error.message);
+    expectRecordedDigest('analyzer-find/shared-budget', [[source, message]], root);
     expect(pair.next.match.ok ? '' : pair.next.match.error.name).toBe('AnalysisLimit');
   });
 
   test('the corpus commands and the seeded fuzz agree with the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     for (const source of [...corpusCommands(), ...fuzzShellSources(300, FUZZ_SEED)]) {
       const pair = analyzePair(source, { label: 'corpus', cwd: workspace }, 'nested');
       expect(pair.next.match, source).toStrictEqual(pair.shipped.match);
       expect(pair.next.calls, source).toStrictEqual(pair.shipped.calls);
+      recorded.push([source, pair.next]);
     }
+    expectRecordedDigest('analyzer-find/corpus-and-fuzz', recorded, root);
   });
 });

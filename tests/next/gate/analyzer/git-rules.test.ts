@@ -15,6 +15,7 @@ import {
 import { getGitWorktreeRelaxationForMatch as shippedRelaxationForMatch } from '@/analyzer/git/worktree-relaxation';
 import { createLinkedWorktreeFixture } from '../../../helpers';
 import { pairedEnvironments } from '../../core/differential-inputs';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands } from '../../helpers/shell-inputs';
 
 /**
@@ -184,44 +185,63 @@ function gitArgvs(): readonly string[][] {
 describe('git rule dispatch', () => {
   test('the dispatch table is the shipped table', () => {
     expect(GIT_RULE_SUBCOMMANDS).toStrictEqual(shippedSubcommands);
+    expectRecordedDigest('analyzer-git-rules/subcommands', [['subcommands', GIT_RULE_SUBCOMMANDS]]);
   });
 
   test('analyzeGitRule answers with the shipped rules', () => {
+    const recorded: [string, unknown][] = [];
     for (const argv of gitArgvs()) {
-      expect(analyzeGitRule(argv)).toStrictEqual(shippedAnalyzeGitRule(argv));
+      const rule = analyzeGitRule(argv);
+      expect(rule).toStrictEqual(shippedAnalyzeGitRule(argv));
+      recorded.push([argv.join(' '), rule]);
     }
+    expectRecordedDigest('analyzer-git-rules/rules', recorded);
   });
 
   test('matchesGitLongOption answers with the shipped abbreviation test', () => {
+    const recorded: [string, unknown][] = [];
     const options = ['--force', '--delete', '--hard', '--abort', '--discard-changes'];
     for (const argv of gitArgvs()) {
       for (const token of argv) {
         for (const option of options) {
-          expect(matchesGitLongOption(token, option)).toBe(shippedMatchesLongOption(token, option));
+          const matches = matchesGitLongOption(token, option);
+          expect(matches).toBe(shippedMatchesLongOption(token, option));
+          recorded.push([`${token} ${option}`, matches]);
         }
       }
     }
+    expectRecordedDigest('analyzer-git-rules/long-options', recorded);
   });
 });
 
 describe('git alias resolution', () => {
   test('resolveGitCommandLineAliases agrees for every command and environment', () => {
+    const recorded: [string, unknown][] = [];
     for (const argv of gitArgvs()) {
       for (const environment of GIT_ENV_CASES) {
-        expect(
-          resolveGitCommandLineAliases(argv, environment.env, environment.assignments),
-        ).toStrictEqual(shippedResolveAliases(argv, environment.env, environment.assignments));
+        const resolved = resolveGitCommandLineAliases(
+          argv,
+          environment.env,
+          environment.assignments,
+        );
+        expect(resolved).toStrictEqual(
+          shippedResolveAliases(argv, environment.env, environment.assignments),
+        );
+        recorded.push([argv.join(' '), resolved]);
       }
     }
+    expectRecordedDigest('analyzer-git-rules/alias-resolution', recorded);
   });
 
   test('an expanded alias reaches the rules through the shipped tokens', () => {
     const aliased = argvOf('git -c alias.co=checkout co --force main');
     const resolution = resolveGitCommandLineAliases(aliased, new Map());
     expect(resolution.expanded).toBeTrue();
-    expect(analyzeGitRule(resolution.tokens)).toStrictEqual(
+    const rule = analyzeGitRule(resolution.tokens);
+    expect(rule).toStrictEqual(
       shippedAnalyzeGitRule(shippedResolveAliases(aliased, new Map()).tokens),
     );
+    expectRecordedDigest('analyzer-git-rules/expanded-alias', [[aliased.join(' '), rule]]);
   });
 });
 
@@ -282,26 +302,27 @@ describe('worktree relaxation', () => {
   ];
 
   test('the relaxation decision matches the shipped one through the environment seam', () => {
+    const recorded: [string, unknown][] = [];
     for (const line of RELAXATION_COMMANDS) {
       const argv = argvOf(line);
       const match = analyzeGitRule(argv);
       const shippedMatch = shippedAnalyzeGitRule(argv);
       expect(match).toStrictEqual(shippedMatch);
+      recorded.push([line, match]);
       if (!match || !shippedMatch) continue;
       for (const environment of RELAXATION_ENVIRONMENTS) {
         const environments = pairedEnvironments(environment.variables, fixture.rootDir);
         for (const cwd of [fixture.linkedWorktree, fixture.mainWorktree, fixture.rootDir]) {
           for (const worktreeMode of [true, false]) {
             for (const dynamicArguments of [undefined, true]) {
-              expect(
-                getGitWorktreeRelaxationForMatch(argv, match, {
-                  environment: environments.next,
-                  cwd,
-                  envAssignments: environment.assignments,
-                  worktreeMode,
-                  dynamicArguments,
-                }),
-              ).toStrictEqual(
+              const relaxation = getGitWorktreeRelaxationForMatch(argv, match, {
+                environment: environments.next,
+                cwd,
+                envAssignments: environment.assignments,
+                worktreeMode,
+                dynamicArguments,
+              });
+              expect(relaxation).toStrictEqual(
                 shippedRelaxationForMatch(argv, shippedMatch, {
                   env: environments.shipped.env,
                   cwd,
@@ -310,11 +331,16 @@ describe('worktree relaxation', () => {
                   dynamicArguments,
                 }),
               );
+              recorded.push([
+                `${line} ${JSON.stringify(environment.variables)} ${worktreeMode} ${dynamicArguments}`,
+                relaxation,
+              ]);
             }
           }
         }
       }
     }
+    expectRecordedDigest('analyzer-git-rules/worktree-relaxation', recorded, fixture.rootDir);
   });
 
   test('a plain local discard in the linked worktree is relaxed on both sides', () => {

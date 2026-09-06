@@ -1,0 +1,610 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=%s with OPENCLAW_CONFIG_PATH=%s 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/.openclaw/openclaw.json",
+      "plugin": "<home>/.openclaw/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~ with OPENCLAW_CONFIG_PATH=%s 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/openclaw.json",
+      "plugin": "<home>/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~ with OPENCLAW_CONFIG_PATH=~/cfg/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/cfg/openclaw.json",
+      "plugin": "<home>/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~ with OPENCLAW_CONFIG_PATH=<home>/c/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/c/openclaw.json",
+      "plugin": "<home>/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~/state with OPENCLAW_CONFIG_PATH=%s 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/state/openclaw.json",
+      "plugin": "<home>/state/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~/state with OPENCLAW_CONFIG_PATH=~/cfg/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/cfg/openclaw.json",
+      "plugin": "<home>/state/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~/state with OPENCLAW_CONFIG_PATH=<home>/c/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/c/openclaw.json",
+      "plugin": "<home>/state/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=<home>/abs with OPENCLAW_CONFIG_PATH=%s 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/abs/openclaw.json",
+      "plugin": "<home>/abs/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=<home>/abs with OPENCLAW_CONFIG_PATH=~/cfg/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/cfg/openclaw.json",
+      "plugin": "<home>/abs/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=<home>/abs with OPENCLAW_CONFIG_PATH=<home>/c/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/c/openclaw.json",
+      "plugin": "<home>/abs/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=   with OPENCLAW_CONFIG_PATH=%s 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/.openclaw/openclaw.json",
+      "plugin": "<home>/.openclaw/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=   with OPENCLAW_CONFIG_PATH=~/cfg/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/cfg/openclaw.json",
+      "plugin": "<home>/cfg/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=   with OPENCLAW_CONFIG_PATH=<home>/c/openclaw.json 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "config": "<home>/c/openclaw.json",
+      "plugin": "<home>/c/extensions/cc-safety-net",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command lets a --force command touch a home with no install at all 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "ok": true,
+      "value": undefined,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command lets a --force command touch our own packaged install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "ok": true,
+      "value": undefined,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{"id":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{"name":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command lets a --force command touch the empty directory an uninstall leaves behind 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "ok": true,
+      "value": undefined,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command refuses to touch a file the user put beside ours 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "error": {
+        "message": "Refusing to modify <home>/.openclaw/extensions/cc-safety-net: it does not hold a cc-safety-net managed OpenClaw plugin. Move or remove it, then run the command again.",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{"id":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{"name":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "mine",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/README.md",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command refuses to touch an entry file without our header 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "error": {
+        "message": "Refusing to modify <home>/.openclaw/extensions/cc-safety-net: it does not hold a cc-safety-net managed OpenClaw plugin. Move or remove it, then run the command again.",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{"id":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{"name":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command refuses to touch an entry file that is a symlink 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "error": {
+        "message": "Refusing to modify <home>/.openclaw/extensions/cc-safety-net: it does not hold a cc-safety-net managed OpenClaw plugin. Move or remove it, then run the command again.",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "kind": "symlink",
+      "mode": 511,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+      "target": "../../../elsewhere.js",
+    },
+    {
+      "content": 
+"{"id":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{"name":"cc-safety-net"}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`guarding the extension directory before a --force command refuses to touch a symlink standing in for the directory 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "error": {
+        "message": "Refusing to modify <home>/.openclaw/extensions/cc-safety-net: it does not hold a cc-safety-net managed OpenClaw plugin. Move or remove it, then run the command again.",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "symlink",
+      "mode": 511,
+      "path": ".openclaw/extensions/cc-safety-net",
+      "target": "../../elsewhere",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "elsewhere",
+    },
+    {
+      "content": "kept",
+      "kind": "file",
+      "mode": 420,
+      "path": "elsewhere/keep.txt",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

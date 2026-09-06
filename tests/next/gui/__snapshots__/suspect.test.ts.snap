@@ -1,0 +1,21 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the suspect block on the served page is the shipped block byte for byte 1`] = `
+"var commandSignature = (source) => {
+  const tokens = (source ?? "").trim().split(/\\s+/).filter((token) => token && !/^[A-Za-z_][A-Za-z0-9_]*=/.test(token));
+  const binary = tokens[0]?.split("/").pop();
+  if (!binary)
+    return null;
+  const next = tokens[1];
+  return next && /^[a-z][a-z0-9-]*$/.test(next) ? \`\${binary} \${next}\` : binary;
+};
+var findSuspects = (entries) => {
+  const signatureKey = (entry) => \`\${entry.sessionId}
+\${commandSignature(entry.segment || entry.command)}\`;
+  const repeats = entries.filter((entry) => entry.decision !== "allow" && entry.sessionId).reduce((counts, entry) => {
+    const key = signatureKey(entry);
+    return counts.set(key, (counts.get(key) ?? 0) + 1);
+  }, new Map);
+  return new Set(entries.filter((entry) => entry.decision !== "allow" && (entry.failureStage || (repeats.get(signatureKey(entry)) ?? 0) >= 2)));
+};"
+`;

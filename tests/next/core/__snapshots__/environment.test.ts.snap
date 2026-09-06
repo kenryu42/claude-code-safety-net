@@ -1,0 +1,154 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`process environment resolves entries like the shipped resolver 1`] = `
+{
+  "ok": true,
+  "value": "<root>/dir",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 2`] = `
+{
+  "ok": true,
+  "value": "present",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 3`] = `
+{
+  "ok": true,
+  "value": "<root>/file",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 4`] = `
+{
+  "ok": true,
+  "value": "present",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 5`] = `
+{
+  "ok": true,
+  "value": "<root>/dir",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 6`] = `
+{
+  "ok": true,
+  "value": "symlink",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 7`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 8`] = `
+{
+  "ok": true,
+  "value": "symlink",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 9`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 10`] = `
+{
+  "ok": true,
+  "value": "symlink",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 11`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 12`] = `
+{
+  "ok": true,
+  "value": "missing",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 13`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 14`] = `
+{
+  "error": {
+    "code": "ENOTDIR",
+    "errno": -20,
+    "path": "<root>/file/under",
+    "syscall": "statx",
+  },
+  "ok": false,
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 15`] = `
+{
+  "ok": true,
+  "value": "<root>",
+}
+`;
+
+exports[`process environment resolves entries like the shipped resolver 16`] = `
+{
+  "ok": true,
+  "value": "present",
+}
+`;
+
+exports[`git facts through the seam gitMetadata agrees with the shipped resolver and is memoized per cwd 1`] = `
+{
+  "directories": [
+    "<root>/repo/.git",
+  ],
+  "entries": [
+    "<root>/repo/.git",
+  ],
+  "hooksDirectories": [
+    "<root>/repo/.git/hooks",
+  ],
+  "markerFiles": [],
+}
+`;
+
+exports[`git facts through the seam gitMetadata agrees with the shipped resolver and is memoized per cwd 2`] = `
+{
+  "directories": [
+    "<root>/repo/.git",
+  ],
+  "entries": [
+    "<root>/repo/.git",
+  ],
+  "hooksDirectories": [
+    "<root>/repo/.git/hooks",
+  ],
+  "markerFiles": [],
+}
+`;
+
+exports[`git facts through the seam gitMetadata agrees with the shipped resolver and is memoized per cwd 3`] = `null`;
+
+exports[`git facts through the seam gitMetadata agrees with the shipped resolver and is memoized per cwd 4`] = `null`;
+
+exports[`git facts through the seam worktreeFacts is null outside a linked worktree and memoized inside one 1`] = `false`;

@@ -1,0 +1,1922 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`next/core/shell/parse against src/parser/command ships the same default limits 1`] = `
+{
+  "maxDepth": 64,
+  "maxInputLength": 131072,
+  "maxWords": 16384,
+}
+`;
+
+exports[`next/core/shell/parse against src/parser/command defaults the dialect to auto exactly as src does 1`] = `
+{
+  "dialect": "posix",
+  "issues": [],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "posix",
+      "displayText": "rm -rf x",
+      "kind": "command",
+      "nested": [],
+      "redirections": [],
+      "source": "rm -rf x",
+      "span": {
+        "end": 8,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "rm",
+              "span": {
+                "end": 2,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "rm",
+          "span": {
+            "end": 2,
+            "start": 0,
+          },
+          "text": "rm",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "-rf",
+              "span": {
+                "end": 6,
+                "start": 3,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "-rf",
+          "span": {
+            "end": 6,
+            "start": 3,
+          },
+          "text": "-rf",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "x",
+              "span": {
+                "end": 8,
+                "start": 7,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "x",
+          "span": {
+            "end": 8,
+            "start": 7,
+          },
+          "text": "x",
+        },
+      ],
+    },
+  ],
+  "source": "rm -rf x",
+  "span": {
+    "end": 8,
+    "start": 0,
+  },
+  "status": "complete",
+}
+`;
+
+exports[`next/core/shell/parse against src/parser/command defaults the dialect to auto exactly as src does 2`] = `
+{
+  "dialect": "powershell",
+  "issues": [],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "powershell",
+      "displayText": "Remove-Item x",
+      "kind": "command",
+      "nested": [],
+      "redirections": [],
+      "source": "Remove-Item x",
+      "span": {
+        "end": 13,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "Remove-Item",
+              "span": {
+                "end": 11,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "Remove-Item",
+          "span": {
+            "end": 11,
+            "start": 0,
+          },
+          "text": "Remove-Item",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "x",
+              "span": {
+                "end": 13,
+                "start": 12,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "x",
+          "span": {
+            "end": 13,
+            "start": 12,
+          },
+          "text": "x",
+        },
+      ],
+    },
+  ],
+  "source": "Remove-Item x",
+  "span": {
+    "end": 13,
+    "start": 0,
+  },
+  "status": "complete",
+}
+`;
+
+exports[`next/core/shell/parse against src/parser/command defaults the dialect to auto exactly as src does 3`] = `
+{
+  "dialect": "powershell",
+  "issues": [],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "powershell",
+      "displayText": "cat $env:TEMP\\x",
+      "kind": "command",
+      "nested": [],
+      "redirections": [],
+      "source": "cat $env:TEMP\\x",
+      "span": {
+        "end": 15,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "cat",
+              "span": {
+                "end": 3,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "cat",
+          "span": {
+            "end": 3,
+            "start": 0,
+          },
+          "text": "cat",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "variable",
+              "raw": "$env:TEMP",
+              "span": {
+                "end": 13,
+                "start": 4,
+              },
+            },
+            {
+              "provenance": "literal",
+              "raw": "\\x",
+              "span": {
+                "end": 15,
+                "start": 13,
+              },
+            },
+          ],
+          "provenance": "variable",
+          "quoted": false,
+          "raw": "$env:TEMP\\x",
+          "span": {
+            "end": 15,
+            "start": 4,
+          },
+          "text": "$env:TEMP\\x",
+        },
+      ],
+    },
+  ],
+  "source": "cat $env:TEMP\\x",
+  "span": {
+    "end": 15,
+    "start": 0,
+  },
+  "status": "complete",
+}
+`;
+
+exports[`next/core/shell/parse against src/parser/command defaults the dialect to auto exactly as src does 4`] = `
+{
+  "dialect": "posix",
+  "issues": [],
+  "kind": "program",
+  "nodes": [],
+  "source": "",
+  "span": {
+    "end": 0,
+    "start": 0,
+  },
+  "status": "complete",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 1`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "input-limit",
+      "message": "command exceeds 40 UTF-16 code units",
+      "span": {
+        "end": 41,
+        "start": 0,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "span": {
+    "end": 41,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 2`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "input-limit",
+      "message": "command exceeds 40 UTF-16 code units",
+      "span": {
+        "end": 41,
+        "start": 0,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "span": {
+    "end": 41,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 3`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "word-limit",
+      "message": "command structure exceeds parser limit 6",
+      "span": {
+        "end": 13,
+        "start": 13,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "a b c d e f g",
+  "span": {
+    "end": 13,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 4`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "word-limit",
+      "message": "command exceeds 6 words",
+      "span": {
+        "end": 13,
+        "start": 12,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "powershell",
+      "displayText": "a b c d e f g",
+      "kind": "command",
+      "nested": [],
+      "redirections": [],
+      "source": "a b c d e f g",
+      "span": {
+        "end": 13,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "a",
+              "span": {
+                "end": 1,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "a",
+          "span": {
+            "end": 1,
+            "start": 0,
+          },
+          "text": "a",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "b",
+              "span": {
+                "end": 3,
+                "start": 2,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "b",
+          "span": {
+            "end": 3,
+            "start": 2,
+          },
+          "text": "b",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "c",
+              "span": {
+                "end": 5,
+                "start": 4,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "c",
+          "span": {
+            "end": 5,
+            "start": 4,
+          },
+          "text": "c",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "d",
+              "span": {
+                "end": 7,
+                "start": 6,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "d",
+          "span": {
+            "end": 7,
+            "start": 6,
+          },
+          "text": "d",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "e",
+              "span": {
+                "end": 9,
+                "start": 8,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "e",
+          "span": {
+            "end": 9,
+            "start": 8,
+          },
+          "text": "e",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "f",
+              "span": {
+                "end": 11,
+                "start": 10,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "f",
+          "span": {
+            "end": 11,
+            "start": 10,
+          },
+          "text": "f",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "g",
+              "span": {
+                "end": 13,
+                "start": 12,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "g",
+          "span": {
+            "end": 13,
+            "start": 12,
+          },
+          "text": "g",
+        },
+      ],
+    },
+  ],
+  "source": "a b c d e f g",
+  "span": {
+    "end": 13,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 5`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit",
+      "span": {
+        "end": 15,
+        "start": 11,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "echo $($($(deep)))",
+  "span": {
+    "end": 18,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 6`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 9,
+        "start": 9,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "powershell",
+      "displayText": "echo $($($(deep)))",
+      "kind": "command",
+      "nested": [
+        {
+          "dialect": "powershell",
+          "issues": [
+            {
+              "code": "depth-limit",
+              "message": "command structure exceeds parser limit 2",
+              "span": {
+                "end": 9,
+                "start": 9,
+              },
+            },
+          ],
+          "kind": "program",
+          "nodes": [
+            {
+              "dialect": "powershell",
+              "displayText": "$($(deep))",
+              "kind": "command",
+              "nested": [
+                {
+                  "dialect": "powershell",
+                  "issues": [
+                    {
+                      "code": "depth-limit",
+                      "message": "command structure exceeds parser limit 2",
+                      "span": {
+                        "end": 9,
+                        "start": 9,
+                      },
+                    },
+                  ],
+                  "kind": "program",
+                  "nodes": [
+                    {
+                      "dialect": "powershell",
+                      "displayText": "$(deep)",
+                      "kind": "command",
+                      "nested": [
+                        {
+                          "dialect": "powershell",
+                          "issues": [
+                            {
+                              "code": "depth-limit",
+                              "message": "command structure exceeds parser limit 2",
+                              "span": {
+                                "end": 9,
+                                "start": 9,
+                              },
+                            },
+                          ],
+                          "kind": "program",
+                          "nodes": [],
+                          "source": "deep",
+                          "span": {
+                            "end": 15,
+                            "start": 11,
+                          },
+                          "status": "limited",
+                        },
+                      ],
+                      "redirections": [],
+                      "source": "$(deep)",
+                      "span": {
+                        "end": 16,
+                        "start": 9,
+                      },
+                      "words": [
+                        {
+                          "kind": "word",
+                          "parts": [
+                            {
+                              "provenance": "command-substitution",
+                              "raw": "$(deep)",
+                              "span": {
+                                "end": 16,
+                                "start": 9,
+                              },
+                            },
+                          ],
+                          "provenance": "command-substitution",
+                          "quoted": false,
+                          "raw": "$(deep)",
+                          "span": {
+                            "end": 16,
+                            "start": 9,
+                          },
+                          "text": "$(deep)",
+                        },
+                      ],
+                    },
+                  ],
+                  "source": "$(deep)",
+                  "span": {
+                    "end": 16,
+                    "start": 9,
+                  },
+                  "status": "limited",
+                },
+              ],
+              "redirections": [],
+              "source": "$($(deep))",
+              "span": {
+                "end": 17,
+                "start": 7,
+              },
+              "words": [
+                {
+                  "kind": "word",
+                  "parts": [
+                    {
+                      "provenance": "command-substitution",
+                      "raw": "$($(deep))",
+                      "span": {
+                        "end": 17,
+                        "start": 7,
+                      },
+                    },
+                  ],
+                  "provenance": "command-substitution",
+                  "quoted": false,
+                  "raw": "$($(deep))",
+                  "span": {
+                    "end": 17,
+                    "start": 7,
+                  },
+                  "text": "$($(deep))",
+                },
+              ],
+            },
+          ],
+          "source": "$($(deep))",
+          "span": {
+            "end": 17,
+            "start": 7,
+          },
+          "status": "limited",
+        },
+      ],
+      "redirections": [],
+      "source": "echo $($($(deep)))",
+      "span": {
+        "end": 18,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "echo",
+              "span": {
+                "end": 4,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "echo",
+          "span": {
+            "end": 4,
+            "start": 0,
+          },
+          "text": "echo",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "command-substitution",
+              "raw": "$($($(deep)))",
+              "span": {
+                "end": 18,
+                "start": 5,
+              },
+            },
+          ],
+          "provenance": "command-substitution",
+          "quoted": false,
+          "raw": "$($($(deep)))",
+          "span": {
+            "end": 18,
+            "start": 5,
+          },
+          "text": "$($($(deep)))",
+        },
+      ],
+    },
+  ],
+  "source": "echo $($($(deep)))",
+  "span": {
+    "end": 18,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 7`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 4,
+        "start": 4,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "body": {
+        "dialect": "posix",
+        "issues": [
+          {
+            "code": "depth-limit",
+            "message": "command structure exceeds parser limit 2",
+            "span": {
+              "end": 4,
+              "start": 4,
+            },
+          },
+        ],
+        "kind": "program",
+        "nodes": [
+          {
+            "body": {
+              "dialect": "posix",
+              "issues": [
+                {
+                  "code": "depth-limit",
+                  "message": "command structure exceeds parser limit 2",
+                  "span": {
+                    "end": 4,
+                    "start": 4,
+                  },
+                },
+              ],
+              "kind": "program",
+              "nodes": [],
+              "source": " ",
+              "span": {
+                "end": 4,
+                "start": 3,
+              },
+              "status": "limited",
+            },
+            "kind": "group",
+            "span": {
+              "end": 4,
+              "start": 2,
+            },
+            "style": "subshell",
+          },
+        ],
+        "source": " ( ",
+        "span": {
+          "end": 4,
+          "start": 1,
+        },
+        "status": "limited",
+      },
+      "kind": "group",
+      "span": {
+        "end": 4,
+        "start": 0,
+      },
+      "style": "subshell",
+    },
+  ],
+  "source": "( ( ( echo ) ) )",
+  "span": {
+    "end": 16,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 8`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 12,
+        "start": 12,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "body": {
+        "dialect": "posix",
+        "issues": [
+          {
+            "code": "depth-limit",
+            "message": "command structure exceeds parser limit 2",
+            "span": {
+              "end": 12,
+              "start": 12,
+            },
+          },
+        ],
+        "kind": "program",
+        "nodes": [
+          {
+            "body": {
+              "dialect": "posix",
+              "issues": [
+                {
+                  "code": "depth-limit",
+                  "message": "command structure exceeds parser limit 2",
+                  "span": {
+                    "end": 12,
+                    "start": 12,
+                  },
+                },
+              ],
+              "kind": "program",
+              "nodes": [],
+              "source": " ",
+              "span": {
+                "end": 12,
+                "start": 11,
+              },
+              "status": "limited",
+            },
+            "kind": "function",
+            "name": "g",
+            "span": {
+              "end": 12,
+              "start": 6,
+            },
+          },
+        ],
+        "source": " g() { ",
+        "span": {
+          "end": 12,
+          "start": 5,
+        },
+        "status": "limited",
+      },
+      "kind": "function",
+      "name": "f",
+      "span": {
+        "end": 12,
+        "start": 0,
+      },
+    },
+  ],
+  "source": "f() { g() { h() { :; }; }; }",
+  "span": {
+    "end": 28,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 9`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit",
+      "span": {
+        "end": 16,
+        "start": 12,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "echo "$($($(deep)))"",
+  "span": {
+    "end": 20,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 10`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit",
+      "span": {
+        "end": 19,
+        "start": 18,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "echo $((1+$((2+$((3))))))",
+  "span": {
+    "end": 25,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 11`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 15,
+        "start": 15,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "{a,b}{c,d}{e,f}",
+  "span": {
+    "end": 15,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 12`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "word-limit",
+      "message": "command structure exceeds parser limit 6",
+      "span": {
+        "end": 15,
+        "start": 15,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "{a,b,c,d,e,f,g}",
+  "span": {
+    "end": 15,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 13`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "brace-expansion-limit",
+      "message": "command structure exceeds parser limit 40",
+      "span": {
+        "end": 38,
+        "start": 38,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "{aaaaaaaa,bbbbbbbb}{cccccccc,dddddddd}",
+  "span": {
+    "end": 38,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 14`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit",
+      "span": {
+        "end": 16,
+        "start": 12,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "echo >$($($(deep)))",
+  "span": {
+    "end": 19,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 15`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 4,
+        "start": 4,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "body": {
+        "dialect": "posix",
+        "issues": [
+          {
+            "code": "depth-limit",
+            "message": "command structure exceeds parser limit 2",
+            "span": {
+              "end": 4,
+              "start": 4,
+            },
+          },
+        ],
+        "kind": "program",
+        "nodes": [
+          {
+            "body": {
+              "dialect": "posix",
+              "issues": [
+                {
+                  "code": "depth-limit",
+                  "message": "command structure exceeds parser limit 2",
+                  "span": {
+                    "end": 4,
+                    "start": 4,
+                  },
+                },
+              ],
+              "kind": "program",
+              "nodes": [],
+              "source": " ",
+              "span": {
+                "end": 4,
+                "start": 3,
+              },
+              "status": "limited",
+            },
+            "kind": "group",
+            "span": {
+              "end": 4,
+              "start": 2,
+            },
+            "style": "brace",
+          },
+        ],
+        "source": " { ",
+        "span": {
+          "end": 4,
+          "start": 1,
+        },
+        "status": "limited",
+      },
+      "kind": "group",
+      "span": {
+        "end": 4,
+        "start": 0,
+      },
+      "style": "brace",
+    },
+  ],
+  "source": "{ { { echo; }; }; }",
+  "span": {
+    "end": 19,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 16`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 4,
+        "start": 4,
+      },
+    },
+    {
+      "code": "unclosed-script-block",
+      "message": "PowerShell script block is not closed",
+      "span": {
+        "end": 19,
+        "start": 2,
+      },
+    },
+    {
+      "code": "unclosed-script-block",
+      "message": "PowerShell script block is not closed",
+      "span": {
+        "end": 19,
+        "start": 0,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "body": {
+        "dialect": "powershell",
+        "issues": [
+          {
+            "code": "depth-limit",
+            "message": "command structure exceeds parser limit 2",
+            "span": {
+              "end": 4,
+              "start": 4,
+            },
+          },
+          {
+            "code": "unclosed-script-block",
+            "message": "PowerShell script block is not closed",
+            "span": {
+              "end": 19,
+              "start": 2,
+            },
+          },
+        ],
+        "kind": "program",
+        "nodes": [
+          {
+            "body": {
+              "dialect": "powershell",
+              "issues": [
+                {
+                  "code": "depth-limit",
+                  "message": "command structure exceeds parser limit 2",
+                  "span": {
+                    "end": 4,
+                    "start": 4,
+                  },
+                },
+              ],
+              "kind": "program",
+              "nodes": [],
+              "source": " { echo; }; }; }",
+              "span": {
+                "end": 19,
+                "start": 3,
+              },
+              "status": "limited",
+            },
+            "kind": "group",
+            "span": {
+              "end": 19,
+              "start": 2,
+            },
+            "style": "brace",
+          },
+        ],
+        "source": " { { echo; }; }; }",
+        "span": {
+          "end": 19,
+          "start": 1,
+        },
+        "status": "limited",
+      },
+      "kind": "group",
+      "span": {
+        "end": 19,
+        "start": 0,
+      },
+      "style": "brace",
+    },
+  ],
+  "source": "{ { { echo; }; }; }",
+  "span": {
+    "end": 19,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 17`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "comment-depth-limit",
+      "message": "PowerShell block comment exceeds nesting limit 2",
+      "span": {
+        "end": 8,
+        "start": 0,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": "<# <# <# deep #> #> #>",
+  "span": {
+    "end": 22,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 18`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 17,
+        "start": 17,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "powershell",
+      "displayText": "Remove-Item $($($(deep)))",
+      "kind": "command",
+      "nested": [
+        {
+          "dialect": "powershell",
+          "issues": [
+            {
+              "code": "depth-limit",
+              "message": "command structure exceeds parser limit 2",
+              "span": {
+                "end": 17,
+                "start": 17,
+              },
+            },
+          ],
+          "kind": "program",
+          "nodes": [
+            {
+              "dialect": "powershell",
+              "displayText": "$($(deep))",
+              "kind": "command",
+              "nested": [
+                {
+                  "dialect": "powershell",
+                  "issues": [
+                    {
+                      "code": "depth-limit",
+                      "message": "command structure exceeds parser limit 2",
+                      "span": {
+                        "end": 17,
+                        "start": 17,
+                      },
+                    },
+                  ],
+                  "kind": "program",
+                  "nodes": [
+                    {
+                      "dialect": "powershell",
+                      "displayText": "$(deep)",
+                      "kind": "command",
+                      "nested": [
+                        {
+                          "dialect": "powershell",
+                          "issues": [
+                            {
+                              "code": "depth-limit",
+                              "message": "command structure exceeds parser limit 2",
+                              "span": {
+                                "end": 17,
+                                "start": 17,
+                              },
+                            },
+                          ],
+                          "kind": "program",
+                          "nodes": [],
+                          "source": "deep",
+                          "span": {
+                            "end": 23,
+                            "start": 19,
+                          },
+                          "status": "limited",
+                        },
+                      ],
+                      "redirections": [],
+                      "source": "$(deep)",
+                      "span": {
+                        "end": 24,
+                        "start": 17,
+                      },
+                      "words": [
+                        {
+                          "kind": "word",
+                          "parts": [
+                            {
+                              "provenance": "command-substitution",
+                              "raw": "$(deep)",
+                              "span": {
+                                "end": 24,
+                                "start": 17,
+                              },
+                            },
+                          ],
+                          "provenance": "command-substitution",
+                          "quoted": false,
+                          "raw": "$(deep)",
+                          "span": {
+                            "end": 24,
+                            "start": 17,
+                          },
+                          "text": "$(deep)",
+                        },
+                      ],
+                    },
+                  ],
+                  "source": "$(deep)",
+                  "span": {
+                    "end": 24,
+                    "start": 17,
+                  },
+                  "status": "limited",
+                },
+              ],
+              "redirections": [],
+              "source": "$($(deep))",
+              "span": {
+                "end": 25,
+                "start": 15,
+              },
+              "words": [
+                {
+                  "kind": "word",
+                  "parts": [
+                    {
+                      "provenance": "command-substitution",
+                      "raw": "$($(deep))",
+                      "span": {
+                        "end": 25,
+                        "start": 15,
+                      },
+                    },
+                  ],
+                  "provenance": "command-substitution",
+                  "quoted": false,
+                  "raw": "$($(deep))",
+                  "span": {
+                    "end": 25,
+                    "start": 15,
+                  },
+                  "text": "$($(deep))",
+                },
+              ],
+            },
+          ],
+          "source": "$($(deep))",
+          "span": {
+            "end": 25,
+            "start": 15,
+          },
+          "status": "limited",
+        },
+      ],
+      "redirections": [],
+      "source": "Remove-Item "$($($(deep)))"",
+      "span": {
+        "end": 27,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "Remove-Item",
+              "span": {
+                "end": 11,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "Remove-Item",
+          "span": {
+            "end": 11,
+            "start": 0,
+          },
+          "text": "Remove-Item",
+        },
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": """,
+              "span": {
+                "end": 13,
+                "start": 12,
+              },
+            },
+            {
+              "provenance": "command-substitution",
+              "raw": "$($($(deep)))",
+              "span": {
+                "end": 26,
+                "start": 13,
+              },
+            },
+            {
+              "provenance": "literal",
+              "raw": """,
+              "span": {
+                "end": 27,
+                "start": 26,
+              },
+            },
+          ],
+          "provenance": "command-substitution",
+          "quoted": true,
+          "raw": ""$($($(deep)))"",
+          "span": {
+            "end": 27,
+            "start": 12,
+          },
+          "text": "$($($(deep)))",
+        },
+      ],
+    },
+  ],
+  "source": "Remove-Item "$($($(deep)))"",
+  "span": {
+    "end": 27,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 19`] = `
+{
+  "dialect": "powershell",
+  "issues": [
+    {
+      "code": "depth-limit",
+      "message": "command structure exceeds parser limit 2",
+      "span": {
+        "end": 18,
+        "start": 18,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "powershell",
+      "displayText": "Remove-Item",
+      "kind": "command",
+      "nested": [
+        {
+          "dialect": "powershell",
+          "issues": [
+            {
+              "code": "depth-limit",
+              "message": "command structure exceeds parser limit 2",
+              "span": {
+                "end": 18,
+                "start": 18,
+              },
+            },
+          ],
+          "kind": "program",
+          "nodes": [
+            {
+              "dialect": "powershell",
+              "displayText": "$($(deep))",
+              "kind": "command",
+              "nested": [
+                {
+                  "dialect": "powershell",
+                  "issues": [
+                    {
+                      "code": "depth-limit",
+                      "message": "command structure exceeds parser limit 2",
+                      "span": {
+                        "end": 18,
+                        "start": 18,
+                      },
+                    },
+                  ],
+                  "kind": "program",
+                  "nodes": [
+                    {
+                      "dialect": "powershell",
+                      "displayText": "$(deep)",
+                      "kind": "command",
+                      "nested": [
+                        {
+                          "dialect": "powershell",
+                          "issues": [
+                            {
+                              "code": "depth-limit",
+                              "message": "command structure exceeds parser limit 2",
+                              "span": {
+                                "end": 18,
+                                "start": 18,
+                              },
+                            },
+                          ],
+                          "kind": "program",
+                          "nodes": [],
+                          "source": "deep",
+                          "span": {
+                            "end": 24,
+                            "start": 20,
+                          },
+                          "status": "limited",
+                        },
+                      ],
+                      "redirections": [],
+                      "source": "$(deep)",
+                      "span": {
+                        "end": 25,
+                        "start": 18,
+                      },
+                      "words": [
+                        {
+                          "kind": "word",
+                          "parts": [
+                            {
+                              "provenance": "command-substitution",
+                              "raw": "$(deep)",
+                              "span": {
+                                "end": 25,
+                                "start": 18,
+                              },
+                            },
+                          ],
+                          "provenance": "command-substitution",
+                          "quoted": false,
+                          "raw": "$(deep)",
+                          "span": {
+                            "end": 25,
+                            "start": 18,
+                          },
+                          "text": "$(deep)",
+                        },
+                      ],
+                    },
+                  ],
+                  "source": "$(deep)",
+                  "span": {
+                    "end": 25,
+                    "start": 18,
+                  },
+                  "status": "limited",
+                },
+              ],
+              "redirections": [],
+              "source": "$($(deep))",
+              "span": {
+                "end": 26,
+                "start": 16,
+              },
+              "words": [
+                {
+                  "kind": "word",
+                  "parts": [
+                    {
+                      "provenance": "command-substitution",
+                      "raw": "$($(deep))",
+                      "span": {
+                        "end": 26,
+                        "start": 16,
+                      },
+                    },
+                  ],
+                  "provenance": "command-substitution",
+                  "quoted": false,
+                  "raw": "$($(deep))",
+                  "span": {
+                    "end": 26,
+                    "start": 16,
+                  },
+                  "text": "$($(deep))",
+                },
+              ],
+            },
+          ],
+          "source": "$($(deep))",
+          "span": {
+            "end": 26,
+            "start": 16,
+          },
+          "status": "limited",
+        },
+      ],
+      "redirections": [
+        {
+          "kind": "redirection",
+          "operator": ">",
+          "span": {
+            "end": 27,
+            "start": 12,
+          },
+          "target": {
+            "kind": "word",
+            "parts": [
+              {
+                "provenance": "command-substitution",
+                "raw": "$($($(deep)))",
+                "span": {
+                  "end": 27,
+                  "start": 14,
+                },
+              },
+            ],
+            "provenance": "command-substitution",
+            "quoted": false,
+            "raw": "$($($(deep)))",
+            "span": {
+              "end": 27,
+              "start": 14,
+            },
+            "text": "$($($(deep)))",
+          },
+        },
+      ],
+      "source": "Remove-Item > $($($(deep)))",
+      "span": {
+        "end": 27,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "Remove-Item",
+              "span": {
+                "end": 11,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "Remove-Item",
+          "span": {
+            "end": 11,
+            "start": 0,
+          },
+          "text": "Remove-Item",
+        },
+      ],
+    },
+  ],
+  "source": "Remove-Item > $($($(deep)))",
+  "span": {
+    "end": 27,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing with small custom limits, both implementations agree and report limited 20`] = `
+{
+  "dialect": "posix",
+  "issues": [
+    {
+      "code": "input-limit",
+      "message": "command exceeds 40 UTF-16 code units",
+      "span": {
+        "end": 64,
+        "start": 0,
+      },
+    },
+  ],
+  "kind": "program",
+  "nodes": [],
+  "source": 
+"echo yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+Remove-Item -Recurse x"
+,
+  "span": {
+    "end": 64,
+    "start": 0,
+  },
+  "status": "limited",
+}
+`;
+
+exports[`parser caps yield status limited without throwing a heredoc body substitution over the depth cap limits only the nested program 1`] = `
+{
+  "dialect": "posix",
+  "issues": [],
+  "kind": "program",
+  "nodes": [
+    {
+      "dialect": "posix",
+      "displayText": "cat",
+      "kind": "command",
+      "nested": [
+        {
+          "dialect": "posix",
+          "issues": [
+            {
+              "code": "depth-limit",
+              "message": "command structure exceeds parser limit",
+              "span": {
+                "end": 21,
+                "start": 14,
+              },
+            },
+          ],
+          "kind": "program",
+          "nodes": [],
+          "source": "$($(deep))",
+          "span": {
+            "end": 22,
+            "start": 12,
+          },
+          "status": "limited",
+        },
+      ],
+      "redirections": [
+        {
+          "heredoc": {
+            "body": 
+"$($($(deep)))
+"
+,
+            "bodySpan": {
+              "end": 24,
+              "start": 10,
+            },
+            "delimiter": "EOF",
+            "quotedDelimiter": false,
+            "terminatorSpan": {
+              "end": 27,
+              "start": 24,
+            },
+          },
+          "kind": "redirection",
+          "operator": "<<",
+          "span": {
+            "end": 9,
+            "start": 4,
+          },
+          "target": {
+            "kind": "word",
+            "parts": [
+              {
+                "provenance": "literal",
+                "raw": "EOF",
+                "span": {
+                  "end": 9,
+                  "start": 6,
+                },
+              },
+            ],
+            "provenance": "literal",
+            "quoted": false,
+            "raw": "EOF",
+            "span": {
+              "end": 9,
+              "start": 6,
+            },
+            "text": "EOF",
+          },
+        },
+      ],
+      "source": "cat <<EOF",
+      "span": {
+        "end": 9,
+        "start": 0,
+      },
+      "words": [
+        {
+          "kind": "word",
+          "parts": [
+            {
+              "provenance": "literal",
+              "raw": "cat",
+              "span": {
+                "end": 3,
+                "start": 0,
+              },
+            },
+          ],
+          "provenance": "literal",
+          "quoted": false,
+          "raw": "cat",
+          "span": {
+            "end": 3,
+            "start": 0,
+          },
+          "text": "cat",
+        },
+      ],
+    },
+    {
+      "kind": "connector",
+      "operator": 
+"
+"
+,
+      "span": {
+        "end": 10,
+        "start": 9,
+      },
+    },
+  ],
+  "source": 
+"cat <<EOF
+$($($(deep)))
+EOF"
+,
+  "span": {
+    "end": 27,
+    "start": 0,
+  },
+  "status": "complete",
+}
+`;

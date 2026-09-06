@@ -6,12 +6,14 @@ import * as ported from '@next/core/policy/store';
 import { processHomeDir } from '@/ir/environment';
 import * as shipped from '@/policy/store';
 import { snapshotTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { createSeededRandom, FUZZ_SEED } from '../../helpers/shell-inputs';
 import {
   createTempRoot,
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   removeTempRoots,
   withProcessEnv,
 } from '../../helpers/temp-home';
@@ -85,25 +87,29 @@ const ENV_MAPS: readonly {
 describe('the GUI policy preview', () => {
   test('previews every document exactly as the shipped store does', () => {
     withProcessEnv(processValues({}), () => {
-      for (const document of documents) {
-        expect(ported.previewUserPolicyForGui(environmentWith({}), document)).toStrictEqual(
-          shipped.previewUserPolicyForGui(document),
-        );
+      const recorded: (readonly [string, unknown])[] = [];
+      for (const [row, document] of documents.entries()) {
+        const preview = ported.previewUserPolicyForGui(environmentWith({}), document);
+        expect(preview).toStrictEqual(shipped.previewUserPolicyForGui(document));
+        recorded.push([`${row}`, preview]);
       }
+      expectRecordedDigest('core-store-gui/preview', normalize(recorded, [[HOME, '<home>']]));
     });
   }, 60_000);
 
   test.each(ENV_MAPS.map((row) => [row.label, row.values] as const))(
     'resolves every salvaged policy the same way with %s',
-    (_label, values) => {
+    (label, values) => {
       const policies = documents.map((document) => shipped.normalizeGuiPolicy(document));
       const environment = environmentWith(values);
       withProcessEnv(processValues(values), () => {
-        for (const policy of policies) {
-          expect(ported.createPolicyPreview(policy, environment.env)).toStrictEqual(
-            shipped.createPolicyPreview(policy),
-          );
+        const recorded: (readonly [string, unknown])[] = [];
+        for (const [row, policy] of policies.entries()) {
+          const preview = ported.createPolicyPreview(policy, environment.env);
+          expect(preview).toStrictEqual(shipped.createPolicyPreview(policy));
+          recorded.push([`${row}`, preview]);
         }
+        expectRecordedDigest(`core-store-gui/${label}`, normalize(recorded, [[HOME, '<home>']]));
       });
     },
     60_000,
@@ -184,7 +190,9 @@ describe('reading and repairing the user policy file', () => {
   test.each(
     POLICY_FILES.map((row) => [row.label, row.file] as const),
   )('reads and repairs %s the same way', (_label, file) => {
-    expect(portedSide(file)).toStrictEqual(shippedSide(file));
+    const observedPorted = portedSide(file);
+    expect(observedPorted).toStrictEqual(shippedSide(file));
+    recordPorted(observedPorted);
   });
 
   test('reports what each file state is', () => {

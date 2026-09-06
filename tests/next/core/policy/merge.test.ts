@@ -3,6 +3,7 @@ import type { ProjectPolicyProjection } from '@next/core/policy/merge';
 import { mergeProjectPolicy as mergeWithNext } from '@next/core/policy/merge';
 import type { DestructiveCommandRuleOverride, GuiPolicy } from '@next/core/policy/types';
 import { mergeProjectPolicy as mergeWithSrc } from '@/policy/merge';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { createSeededRandom, FUZZ_SEED } from '../../helpers/shell-inputs';
 
 /**
@@ -208,9 +209,9 @@ const FIXED_PAIRS: readonly { user: GuiPolicy; project: ProjectPolicyProjection 
 describe('project policy merge', () => {
   test('the hand-picked pairs agree on the merged policy and the weakening lines', () => {
     for (const pair of FIXED_PAIRS) {
-      expect(mergeWithNext(pair.user, pair.project)).toStrictEqual(
-        mergeWithSrc(pair.user, pair.project),
-      );
+      const merged = mergeWithNext(pair.user, pair.project);
+      expect(merged).toStrictEqual(mergeWithSrc(pair.user, pair.project));
+      expect(merged).toMatchSnapshot();
     }
   });
 
@@ -234,13 +235,14 @@ describe('project policy merge', () => {
 
   test('a seeded sample of user and project pairs agrees', () => {
     const random = createSeededRandom(FUZZ_SEED);
-    for (const pair of Array.from({ length: 400 }, () => ({
+    const recorded = Array.from({ length: 400 }, () => ({
       user: sampledUser(random),
       project: sampledProject(random),
-    }))) {
-      expect(mergeWithNext(pair.user, pair.project)).toStrictEqual(
-        mergeWithSrc(pair.user, pair.project),
-      );
-    }
+    })).map((pair, row) => {
+      const merged = mergeWithNext(pair.user, pair.project);
+      expect(merged).toStrictEqual(mergeWithSrc(pair.user, pair.project));
+      return [`${row}`, merged] as const;
+    });
+    expectRecordedDigest('core-policy-merge/sampled-pairs', recorded);
   });
 });

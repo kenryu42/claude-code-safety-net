@@ -4,7 +4,7 @@ import { mkdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { createFakeBin } from './fake-bin';
 import { snapshotTree, type TreeEntry, type TreeSpec, writeTree } from './fixture-tree';
-import { createTempRoot, isolatedSpawnEnv, normalize } from './temp-home';
+import { createTempRoot, isolatedSpawnEnv, normalize, recordPorted } from './temp-home';
 
 /**
  * The two bins over the same argument vector. Each row runs `bun run src/cli/cc-safety-net.ts`
@@ -72,7 +72,10 @@ const BLANKED_ENV_NAMES = [
 const SCAFFOLDING = /^(bin|fake-script\.json|fake-log\.txt|home\/\.bun)(\/|$)/;
 
 function createSide(label: string): CliSide {
-  const root = createTempRoot(`cli-${label}-`);
+  // Both sides get a root of the same length: a row that renders a path into a fixed-width
+  // column truncates it, and `cli-shipped-` against `cli-ported-` would truncate one character
+  // apart and read as a difference between the bins.
+  const root = createTempRoot(`cli-${label.padEnd(7, '-')}-`);
   const home = join(root, 'home');
   const project = join(root, 'project');
   mkdirSync(home, { recursive: true });
@@ -140,5 +143,7 @@ export function seedFiles(side: CliSide, spec: TreeSpec): void {
 /** Assert both bins answered identically, and hand back the shipped outcome to pin against. */
 export function expectSameCli(result: { shipped: CliOutcome; ported: CliOutcome }): CliOutcome {
   expect(result.ported).toStrictEqual(result.shipped);
+  // `doctor` names the machine it ran on, which both sides read from the same process.
+  recordPorted(result.ported, [[`${process.platform} ${process.arch}`, '<platform>']]);
   return result.shipped;
 }

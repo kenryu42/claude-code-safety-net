@@ -99,6 +99,7 @@ function verifyBothWays(spec: TreeSpec) {
     portedRulesVerify(environmentFor(context.home, context.env), { cwd: context.cwd }),
   );
   expect(ported).toStrictEqual(shipped);
+  expect(ported).toMatchSnapshot();
   return { ...shipped, report: shipped.written.join('\n') };
 }
 

@@ -17,6 +17,7 @@ import { parseCommand as shippedParseCommand } from '@/parser/command';
 import { projectCommandViews as shippedCommandViews } from '@/parser/traversal';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, FIXED_COMMANDS, SHELL_DIALECTS } from '../../helpers/shell-inputs';
 
 /**
@@ -168,21 +169,22 @@ function viewPairs(source: string, dialect: ShellKind) {
   });
 }
 
+/** Every match the port reached since the last digest; each test drains it. */
+const recorded: [string, unknown][] = [];
+
 function comparePair(source: string, dialect: ShellKind, row: RemoveItemCase) {
   const paired = pairedEnvironments({ HOME: home, TMPDIR: join(root, 'temp') }, home);
   const options = optionsFor(row);
   for (const pair of viewPairs(source, dialect)) {
     for (const hasPipelineInput of [false, true]) {
       const label = `${dialect}/${row.label}${hasPipelineInput ? ' piped' : ''}: ${source}`;
-      expect(
-        describeOutcome(() =>
-          analyzePowerShellCommandViewMatch(pair.next, hasPipelineInput, {
-            ...options,
-            environment: paired.next,
-          }),
-        ),
-        label,
-      ).toStrictEqual(
+      const match = describeOutcome(() =>
+        analyzePowerShellCommandViewMatch(pair.next, hasPipelineInput, {
+          ...options,
+          environment: paired.next,
+        }),
+      );
+      expect(match, label).toStrictEqual(
         describeOutcome(() =>
           shippedRemoveItem(pair.shipped, hasPipelineInput, {
             ...options,
@@ -190,6 +192,7 @@ function comparePair(source: string, dialect: ShellKind, row: RemoveItemCase) {
           }),
         ),
       );
+      recorded.push([label, match]);
     }
   }
 }
@@ -203,6 +206,7 @@ describe('powershell Remove-Item', () => {
         }
       }
     }
+    expectRecordedDigest('analyzer-remove-item/spellings', recorded.splice(0), root);
   });
 
   test('the table reaches every Remove-Item rule', () => {
@@ -244,6 +248,7 @@ describe('powershell Remove-Item', () => {
         { ...options, environment: paired.next },
         createRecursiveDeleteTargetContext({ ...anchoredAtHome, environment: paired.next }),
       );
+      recorded.push(['supplied context', next]);
       expect(next).toStrictEqual(
         shippedRemoveItem(
           pair.shipped,
@@ -264,6 +269,7 @@ describe('powershell Remove-Item', () => {
         }),
       ).toBeNull();
     }
+    expectRecordedDigest('analyzer-remove-item/supplied-context', recorded.splice(0), root);
   });
 
   test('-WhatIf disarms the command and an unabbreviated alias is still recognized', () => {
@@ -296,5 +302,6 @@ describe('powershell Remove-Item', () => {
         comparePair(source, dialect, row);
       }
     }
+    expectRecordedDigest('analyzer-remove-item/corpus', recorded.splice(0), root);
   });
 });

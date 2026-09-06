@@ -39,15 +39,19 @@ describe('cli/utils/lolcat', () => {
   test('renderLolcat paints the same bytes on both implementations', () => {
     const rendered = portedRender(TEXT, RENDER_OPTIONS);
     expect(rendered).toBe(shippedRender(TEXT, RENDER_OPTIONS));
+    expect(rendered).toMatchSnapshot();
     expect(rendered.split('\n')).toHaveLength(2);
     expect(rendered.endsWith('\x1b[0m')).toBe(true);
-    expect(portedRender('', RENDER_OPTIONS)).toBe(shippedRender('', RENDER_OPTIONS));
+    const empty = portedRender('', RENDER_OPTIONS);
+    expect(empty).toBe(shippedRender('', RENDER_OPTIONS));
+    expect(empty).toMatchSnapshot();
   });
 
   test('createLolcatAnimationFrames walks the seed the same way on both implementations', () => {
     const options = { duration: 3, seed: 5, speed: 2 };
     const frames = portedCreateFrames(TEXT, options);
     expect(frames).toEqual(shippedCreateFrames(TEXT, options));
+    expect(frames).toMatchSnapshot();
     expect(frames).toHaveLength(3);
     expect(new Set(frames).size).toBe(3);
   });
@@ -55,6 +59,7 @@ describe('cli/utils/lolcat', () => {
   test('writeAnimatedLolcat writes the same frames to a TTY on both implementations', async () => {
     const ported = await captureAnimation(portedWriteAnimated, true);
     expect(ported).toEqual(await captureAnimation(shippedWriteAnimated, true));
+    expect(ported).toMatchSnapshot();
     expect(ported[0]?.startsWith('\x1b[?25l')).toBe(true);
     expect(ported.at(-1)).toBe('\n\x1b[0m\x1b[?25h');
   });
@@ -62,6 +67,7 @@ describe('cli/utils/lolcat', () => {
   test('an aborted signal stops both implementations before the first frame', async () => {
     const ported = await captureAnimation(portedWriteAnimated, true, AbortSignal.abort());
     expect(ported).toEqual(await captureAnimation(shippedWriteAnimated, true, AbortSignal.abort()));
+    expect(ported).toMatchSnapshot();
     expect(ported.length).toBeLessThan((await captureAnimation(portedWriteAnimated, true)).length);
     expect(ported.at(-1)).toBe('\n\x1b[0m\x1b[?25h');
   });
@@ -69,6 +75,7 @@ describe('cli/utils/lolcat', () => {
   test('a non-TTY sink receives the same bytes as a TTY on both implementations', async () => {
     const ported = await captureAnimation(portedWriteAnimated, false);
     expect(ported).toEqual(await captureAnimation(shippedWriteAnimated, false));
+    expect(ported).toMatchSnapshot();
     // The animation itself never consults `isTTY`; the install banner is what gates on it.
     expect(ported).toEqual(await captureAnimation(portedWriteAnimated, true));
   });

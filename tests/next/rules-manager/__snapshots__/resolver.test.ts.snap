@@ -1,0 +1,1112 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the bounded GitHub fetch refuses the 132nd request of an operation before it reaches the network 1`] = `
+{
+  "requests": [
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+    "GET /api/tiny",
+  ],
+  "value": {
+    "outcomes": [
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "accepted",
+      "Rule synchronization exceeds CC Safety Net's safe resource limits.",
+    ],
+    "spend": {
+      "requests": 131,
+      "responseBytes": 262,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses the response that would overrun the operation byte budget 1`] = `
+{
+  "requests": [
+    "GET /api/six-hundred",
+    "GET /api/six-hundred",
+  ],
+  "value": {
+    "first": {
+      "kind": "returned",
+      "value": {
+        "head": "                        ",
+        "length": 600,
+        "status": 200,
+      },
+    },
+    "overBudget": true,
+    "requests": 2,
+    "second": {
+      "kind": "threw",
+      "message": "Rule synchronization exceeds CC Safety Net's safe resource limits.",
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses a declared Content-Length over the cap without reading a byte 1`] = `
+{
+  "requests": [
+    "GET /raw/declared",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub raw response exceeds 4194304 bytes",
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses a metadata body one byte past its cap while it streams 1`] = `
+{
+  "requests": [
+    "GET /api/overflow-metadata",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub metadata response exceeds 524288 bytes",
+    },
+    "requests": 1,
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses a commit body one byte past its cap while it streams 1`] = `
+{
+  "requests": [
+    "GET /api/overflow-commit",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub commit response exceeds 262144 bytes",
+    },
+    "requests": 1,
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses a tree body one byte past its cap while it streams 1`] = `
+{
+  "requests": [
+    "GET /api/overflow-tree",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub tree response exceeds 16777216 bytes",
+    },
+    "requests": 1,
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses a raw body one byte past its cap while it streams 1`] = `
+{
+  "requests": [
+    "GET /raw/overflow-raw",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub raw response exceeds 4194304 bytes",
+    },
+    "requests": 1,
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch accepts a metadata body of exactly its cap 1`] = `
+{
+  "requests": [
+    "GET /api/exact-metadata",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "head": "{}                      ",
+        "length": 524288,
+        "status": 200,
+      },
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 524288,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch accepts a commit body of exactly its cap 1`] = `
+{
+  "requests": [
+    "GET /api/exact-commit",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "head": "{}                      ",
+        "length": 262144,
+        "status": 200,
+      },
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 262144,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch accepts a tree body of exactly its cap 1`] = `
+{
+  "requests": [
+    "GET /api/exact-tree",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "head": "{}                      ",
+        "length": 16777216,
+        "status": 200,
+      },
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 16777216,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch accepts a raw body of exactly its cap 1`] = `
+{
+  "requests": [
+    "GET /raw/exact-raw",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "head": "{}                      ",
+        "length": 4194304,
+        "status": 200,
+      },
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 4194304,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch reassembles multibyte text split across writes 1`] = `
+{
+  "requests": [
+    "GET /raw/multibyte",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "head": "{"n":"é😀"}",
+        "length": 11,
+        "status": 200,
+      },
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 14,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch gives up on a body that never ends 1`] = `
+{
+  "requests": [
+    "GET /api/stalled",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub request timed out",
+    },
+    "requests": 1,
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses to follow a redirect 1`] = `
+{
+  "requests": [
+    "GET /api/moved",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "UnexpectedRedirect fetching "<github>/api/moved". For more information, pass \`verbose: true\` in the second argument to fetch()",
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch charges a failed request without reading its body 1`] = `
+{
+  "requests": [
+    "GET /api/server-error",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "head": "",
+        "length": 0,
+        "status": 500,
+      },
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`the bounded GitHub fetch refuses an already-aborted operation before it sends anything 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "operation cancelled",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`repository discovery lists every rulebook of the default branch, sorted and pinned to a commit 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/catalog",
+    "GET /api/repos/acme/catalog/commits/main",
+    "GET /api/repos/acme/catalog/git/trees/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?recursive=1",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "names": [
+          "infra",
+          "team",
+        ],
+        "owner": "acme",
+        "ref": "main",
+        "repo": "catalog",
+        "source": "acme/catalog",
+      },
+    },
+    "spend": {
+      "requests": 3,
+      "responseBytes": 297,
+    },
+  },
+}
+`;
+
+exports[`repository discovery an explicit ref skips the metadata request 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/catalog/commits/release%2Fv2",
+    "GET /api/repos/acme/catalog/git/trees/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb?recursive=1",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "commit": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "names": [
+          "team",
+        ],
+        "owner": "acme",
+        "ref": "release/v2",
+        "repo": "catalog",
+        "source": "acme/catalog",
+      },
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 206,
+    },
+  },
+}
+`;
+
+exports[`repository discovery a ref that is not a path segment is refused before any request 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "GitHub rulebook refs must use valid path segments: bad ref",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`repository discovery a ref GitHub does not know reports the status it answered with 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/catalog/commits/nope",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Failed to resolve acme/catalog: GitHub returned 404",
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`repository discovery a repository with nothing under the rules directory names the directory 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/empty",
+    "GET /api/repos/acme/empty/commits/main",
+    "GET /api/repos/acme/empty/git/trees/eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee?recursive=1",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "No rulebooks found in acme/empty under .cc-safety-net/rules/",
+    },
+    "spend": {
+      "requests": 3,
+      "responseBytes": 166,
+    },
+  },
+}
+`;
+
+exports[`repository discovery a source that is not owner/repo is refused before any request 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Invalid GitHub repository source: not a repo",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`repository discovery a tree response that is not an object is refused 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/catalog",
+    "GET /api/repos/acme/catalog/commits/main",
+    "GET /api/repos/acme/catalog/git/trees/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?recursive=1",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Failed to inspect acme/catalog: unexpected GitHub tree response",
+    },
+    "spend": {
+      "requests": 3,
+      "responseBytes": 77,
+    },
+  },
+}
+`;
+
+exports[`repository discovery a repository without a default branch is refused 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/catalog",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Failed to inspect acme/catalog: missing default branch",
+    },
+    "spend": {
+      "requests": 1,
+      "responseBytes": 21,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a local source resolves to the file the scope holds 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "content": 
+"{
+  "rulebook_version": 1,
+  "name": "team",
+  "version": "1.0.0",
+  "allowed_commands": [
+    "docker"
+  ],
+  "rules": [
+    {
+      "name": "block-docker-system-prune",
+      "command": "docker",
+      "subcommand": "system",
+      "block_args": [
+        "prune"
+      ],
+      "reason": "Use targeted cleanup instead."
+    }
+  ]
+}
+"
+,
+        "name": "team",
+        "spec": "team",
+      },
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a local source with no file names the source 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Rulebook source not found: team",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a local rulebook naming itself something else is refused 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "rulebook name "other" must match local source "team"",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a local rulebook that is not JSON is refused 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Invalid local rulebook source.",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a local rulebook whose own fixture fails is refused 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "tests[0]: expected "block-terraform-destroy" to block "terraform plan" but no rule matched",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a source that is not a bare name is refused before any read 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: bad name",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a GitHub source resolves the ref to a commit and fetches that commit 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/rules/commits/main",
+    "GET /raw/acme/rules/cccccccccccccccccccccccccccccccccccccccc/.cc-safety-net/rules/team/rulebook.json",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "content": 
+"{
+  "rulebook_version": 1,
+  "name": "team",
+  "version": "1.0.0",
+  "allowed_commands": [
+    "docker"
+  ],
+  "rules": [
+    {
+      "name": "block-docker-system-prune",
+      "command": "docker",
+      "subcommand": "system",
+      "block_args": [
+        "prune"
+      ],
+      "reason": "Use targeted cleanup instead."
+    }
+  ]
+}
+"
+,
+        "name": "team",
+        "spec": "acme/rules#main/team",
+      },
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 385,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a fetched rulebook naming itself something else is refused 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/rules/commits/main",
+    "GET /raw/acme/rules/cccccccccccccccccccccccccccccccccccccccc/.cc-safety-net/rules/skewed/rulebook.json",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "rulebook name "other" must match GitHub source "skewed"",
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 386,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a raw response GitHub failed reports the status 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/rules/commits/main",
+    "GET /raw/acme/rules/cccccccccccccccccccccccccccccccccccccccc/.cc-safety-net/rules/team/rulebook.json",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "Failed to fetch acme/rules#main/team: GitHub raw returned 500",
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 50,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a fetched rulebook whose own fixture fails is refused 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/rules/commits/main",
+    "GET /raw/acme/rules/cccccccccccccccccccccccccccccccccccccccc/.cc-safety-net/rules/flawed/rulebook.json",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "tests[0]: expected "block-terraform-destroy" to block "terraform plan" but no rule matched",
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 523,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a vendored copy is read without a request 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "content": 
+"{
+  "rulebook_version": 1,
+  "name": "team",
+  "version": "1.0.0",
+  "allowed_commands": [
+    "docker"
+  ],
+  "rules": [
+    {
+      "name": "block-docker-system-prune",
+      "command": "docker",
+      "subcommand": "system",
+      "block_args": [
+        "prune"
+      ],
+      "reason": "Vendored copy."
+    }
+  ]
+}
+"
+,
+        "name": "team",
+        "spec": "acme/rules#main/team",
+      },
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a refresh fetches over the vendored copy 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/rules/commits/main",
+    "GET /raw/acme/rules/cccccccccccccccccccccccccccccccccccccccc/.cc-safety-net/rules/team/rulebook.json",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "content": 
+"{
+  "rulebook_version": 1,
+  "name": "team",
+  "version": "1.0.0",
+  "allowed_commands": [
+    "docker"
+  ],
+  "rules": [
+    {
+      "name": "block-docker-system-prune",
+      "command": "docker",
+      "subcommand": "system",
+      "block_args": [
+        "prune"
+      ],
+      "reason": "Use targeted cleanup instead."
+    }
+  ]
+}
+"
+,
+        "name": "team",
+        "spec": "acme/rules#main/team",
+      },
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 385,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution an unselected source with nothing vendored is reported, not fetched 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "acme/rules#main/team is not vendored; run rule update acme/rules#main/team to vendor it",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a source with nothing vendored is fetched when the run may heal it 1`] = `
+{
+  "requests": [
+    "GET /api/repos/acme/rules/commits/main",
+    "GET /raw/acme/rules/cccccccccccccccccccccccccccccccccccccccc/.cc-safety-net/rules/team/rulebook.json",
+  ],
+  "value": {
+    "outcome": {
+      "kind": "returned",
+      "value": {
+        "content": 
+"{
+  "rulebook_version": 1,
+  "name": "team",
+  "version": "1.0.0",
+  "allowed_commands": [
+    "docker"
+  ],
+  "rules": [
+    {
+      "name": "block-docker-system-prune",
+      "command": "docker",
+      "subcommand": "system",
+      "block_args": [
+        "prune"
+      ],
+      "reason": "Use targeted cleanup instead."
+    }
+  ]
+}
+"
+,
+        "name": "team",
+        "spec": "acme/rules#main/team",
+      },
+    },
+    "spend": {
+      "requests": 2,
+      "responseBytes": 385,
+    },
+  },
+}
+`;
+
+exports[`rulebook resolution a vendored copy naming itself something else names the file 1`] = `
+{
+  "requests": [],
+  "value": {
+    "outcome": {
+      "kind": "threw",
+      "message": "rulebook name "other" in <root>/.cc-safety-net/rules/team/rulebook.json must match "team"",
+    },
+    "spend": {
+      "requests": 0,
+      "responseBytes": 0,
+    },
+  },
+}
+`;

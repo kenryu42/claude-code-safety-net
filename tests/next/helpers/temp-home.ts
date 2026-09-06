@@ -1,6 +1,7 @@
-import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { expect } from 'bun:test';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { createTestEnvironment, processPathResolver } from '@next/core/environment';
 import { createSpawnEnv } from '../../helpers';
 import { snapshotTree } from './fixture-tree';
@@ -132,7 +133,10 @@ export function snapshotHome(home: string) {
 }
 
 /** Replace machine-specific prefixes and Amp's random checkout id everywhere in a value. */
-export function normalize<T>(value: T, replacements: readonly (readonly [string, string])[]): T {
+export function normalize<T>(
+  value: T,
+  replacements: readonly (readonly [string | RegExp, string])[],
+): T {
   if (typeof value === 'string') {
     const replaced: string = replacements.reduce<string>(
       (text, [from, to]) => text.replaceAll(from, to),
@@ -149,6 +153,46 @@ export function normalize<T>(value: T, replacements: readonly (readonly [string,
     ) as T;
   }
   return value;
+}
+
+/** Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold. */
+export const rootFolds = (root: string) =>
+  [
+    [realpathSync(root), '<root>'],
+    [root, '<root>'],
+  ] as const;
+
+/**
+ * Wall-clock text no two runs of a row share: ISO and `YYYY-MM-DD HH:MM` timestamps, and the day
+ * and month the audit writer names its files after. Folded in the record alone, never in the
+ * comparison.
+ */
+const CLOCK_FOLDS = [
+  [/\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?Z?/g, '<time>'],
+  [/\b\d{4}-\d{2}-\d{2}\b/g, '<date>'],
+  [/\b\d{4}-\d{2}\b/g, '<month>'],
+] as const;
+
+/**
+ * The ported outcome, recorded as the cutover will assert it; call it right after the shipped side
+ * has been proven equal to it, so the record is certified.
+ *
+ * Every path a fold leaves behind is spelled with the recording host's separator, so a record made
+ * here would fail the Windows leg of `check:ci` on the separator alone. Folding it to `/` there
+ * costs nothing on a POSIX host and leaves only the gaps Windows already carries — a row whose own
+ * input spells a backslash reads the same as one that spelled a path.
+ */
+export function recordPorted(
+  value: unknown,
+  replacements: readonly (readonly [string | RegExp, string])[] = [],
+): void {
+  expect(
+    normalize(value, [
+      ...replacements,
+      ...CLOCK_FOLDS,
+      ...(sep === '/' ? [] : [[sep, '/'] as const]),
+    ]),
+  ).toMatchSnapshot();
 }
 
 /** What an async call settles with: its value, or the message of what it rejected with. */

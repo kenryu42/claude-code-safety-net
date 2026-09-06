@@ -12,7 +12,7 @@ import {
 } from '@/rules/policy/scope-policy';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
 import { rulesConfig, v1Rulebook } from '../../helpers/rulebook-seeds';
-import { createTempRoot, normalize, removeTempRoots } from '../../helpers/temp-home';
+import { createTempRoot, normalize, recordPorted, removeTempRoots } from '../../helpers/temp-home';
 
 /**
  * What `rule add` and `doctor` report after a scope changes is exactly what the gate would find
@@ -71,10 +71,10 @@ function reportsFor(scope: string, bound: boolean) {
       bound ? shippedBindPolicyFilesystemScope(root.shipped, 'project policy') : undefined,
     ),
   };
-  expect(normalize(ported, [[root.ported, '<root>']])).toEqual(
-    normalize(shipped, [[root.shipped, '<root>']]),
-  );
-  return normalize(ported, [[root.ported, '<root>']]);
+  const reported = normalize(ported, [[root.ported, '<root>']]);
+  expect(reported).toEqual(normalize(shipped, [[root.shipped, '<root>']]));
+  recordPorted(reported);
+  return reported;
 }
 
 describe('a scope reload reports what the shipped one reports', () => {

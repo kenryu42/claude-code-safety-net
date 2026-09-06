@@ -1,0 +1,738 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`policy check a project proposal is reported against the merged effective policy 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"Scope: project (<root>/project/.cc-safety-net/policy.json)
+Proposal: prop.json
+Effective policy (user + project merged):
+Changes (1):
+  safety.level: standard -> strict
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy check --global reports the same proposal against the user file 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"Scope: user (<root>/home/.cc-safety-net/policy.json)
+Proposal: prop.json
+Changes (1):
+  safety.level: standard -> strict
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy check a proposal that relaxes the user scope shows the level it drops 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"Scope: user (<root>/home/.cc-safety-net/policy.json)
+Proposal: prop.json
+Changes (1):
+  safety.level: strict -> standard
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "standard"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy check an unrecognized level is refused with the validator diagnostic 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"prop.json: safety.level must be "standard", "strict", or "paranoid"
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "nope"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy check an audit section names the one scope that reads it 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"prop.json: audit settings are user scope only; remove the audit section from a project proposal
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "audit": {
+    "retention_days": 5
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy check a file that does not exist is reported by path 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"missing.json: file not found
+missing.json: Config must be an object
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`policy usage the bare verb prints its help on stderr 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"cc-safety-net policy
+
+  Check and apply project or user policy proposals
+
+USAGE:
+  cc-safety-net policy <subcommand>
+
+SUBCOMMANDS:
+  check <file>  Validate a policy proposal and print its diff
+  apply <file>  Apply a proposal after confirming in a terminal
+
+OPTIONS:
+  -g, --global  Use the user-scope policy instead of the project one
+  -h, --help    Show this help
+
+EXAMPLES:
+  cc-safety-net policy check proposal.json
+  cc-safety-net policy apply proposal.json
+  cc-safety-net policy apply proposal.json --global
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`policy usage an unknown subcommand, a missing file and an extra argument each name themselves 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"Unknown policy subcommand: frob
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`policy usage an unknown subcommand, a missing file and an extra argument each name themselves 2`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"policy check requires a file
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`policy usage an unknown subcommand, a missing file and an extra argument each name themselves 3`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"Unexpected policy argument: b
+Unexpected policy argument: c
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`policy apply without a terminal a piped stdin is refused in both scopes and writes nothing 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"policy apply confirms interactively; run this yourself in a terminal:
+  cc-safety-net policy apply prop.json
+"
+,
+  "stdout": 
+"Scope: project (<root>/project/.cc-safety-net/policy.json)
+Proposal: prop.json
+Effective policy (user + project merged):
+Changes (1):
+  safety.level: standard -> strict
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy apply without a terminal a piped stdin is refused in both scopes and writes nothing 2`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"policy apply confirms interactively; run this yourself in a terminal:
+  cc-safety-net policy apply prop.json --global
+"
+,
+  "stdout": 
+"Scope: user (<root>/home/.cc-safety-net/policy.json)
+Proposal: prop.json
+Changes (1):
+  safety.level: standard -> strict
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+}
+`;
+
+exports[`policy apply at a terminal a typed yes writes only the fields the proposal set 1`] = `
+{
+  "code": 0,
+  "prompt": "Apply this policy to <root>/project/.cc-safety-net/policy.json? [y/N] ",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 384,
+      "path": "project/.cc-safety-net/policy.json",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+  "written": [
+    "Scope: project (<root>/project/.cc-safety-net/policy.json)",
+    "Proposal: <root>/project/prop.json",
+    "Effective policy (user + project merged):",
+    "Changes (1):",
+    "  safety.level: standard -> strict",
+    "Policy applied: <root>/project/.cc-safety-net/policy.json",
+  ],
+}
+`;
+
+exports[`policy apply at a terminal --global writes the user file readable by its owner alone 1`] = `
+{
+  "code": 0,
+  "prompt": "Apply this policy to <root>/home/.cc-safety-net/policy.json? [y/N] ",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 448,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+  "written": [
+    "Scope: user (<root>/home/.cc-safety-net/policy.json)",
+    "Proposal: <root>/project/prop.json",
+    "Changes (1):",
+    "  safety.level: standard -> strict",
+    "Policy applied: <root>/home/.cc-safety-net/policy.json",
+  ],
+}
+`;
+
+exports[`policy apply at a terminal a typed no cancels and leaves the scope untouched 1`] = `
+{
+  "code": 0,
+  "prompt": "Apply this policy to <root>/project/.cc-safety-net/policy.json? [y/N] ",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+  "written": [
+    "Scope: project (<root>/project/.cc-safety-net/policy.json)",
+    "Proposal: <root>/project/prop.json",
+    "Effective policy (user + project merged):",
+    "Changes (1):",
+    "  safety.level: standard -> strict",
+    "Cancelled; nothing was written.",
+  ],
+}
+`;
+
+exports[`policy apply at a terminal a closed stream declines rather than waiting for a line that never comes 1`] = `
+{
+  "code": 0,
+  "prompt": "Apply this policy to <root>/project/.cc-safety-net/policy.json? [y/N] ",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/prop.json",
+    },
+  ],
+  "written": [
+    "Scope: project (<root>/project/.cc-safety-net/policy.json)",
+    "Proposal: <root>/project/prop.json",
+    "Effective policy (user + project merged):",
+    "Changes (1):",
+    "  safety.level: standard -> strict",
+    "Cancelled; nothing was written.",
+  ],
+}
+`;

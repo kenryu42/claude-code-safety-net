@@ -26,7 +26,9 @@ describe('the managed hook command', () => {
 
   test('agrees with the constants the shipped installers write', () => {
     expect(managedHookCommands.cursor).toBe(CURSOR_HOOK_COMMAND);
+    expect(managedHookCommands.cursor).toMatchSnapshot();
     expect(managedHookCommands['grok-build']).toBe(GROK_BUILD_HOOK_COMMAND);
+    expect(managedHookCommands['grok-build']).toMatchSnapshot();
   });
 
   test('splits into the argv the Hermes shim spawns', () => {

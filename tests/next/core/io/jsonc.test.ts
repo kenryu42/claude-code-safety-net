@@ -19,6 +19,7 @@ import { stripJsonComments as stripWithSrc } from '@/integrations/jsonc';
 import { uninstallOpenCode } from '@/integrations/opencode/install';
 import { withEnv } from '../../../helpers';
 import { describeOutcome } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusStrings, seededRandom } from '../differential-inputs';
 
 const ERRORS = { stringError: 'unterminated string', bracketError: 'unmatched bracket' };
@@ -94,7 +95,9 @@ function allDocuments(): readonly string[] {
 describe('jsonc comment stripping', () => {
   test('matches the shipped stripper on fixed, corpus, and fuzzed documents', () => {
     for (const document of allDocuments()) {
-      expect(stripWithNext(document)).toBe(stripWithSrc(document));
+      const stripped = stripWithNext(document);
+      expect(stripped).toBe(stripWithSrc(document));
+      expect(stripped).toMatchSnapshot();
     }
   });
 });
@@ -102,33 +105,39 @@ describe('jsonc comment stripping', () => {
 describe('text-range primitives', () => {
   test('match brackets, indents, and item removal like the shipped config editor', () => {
     const random = seededRandom(0x5afe_0002);
-    for (const document of allDocuments()) {
+    const recorded: (readonly [string, unknown])[] = [];
+    for (const [row, document] of allDocuments().entries()) {
       const openIndex = document.search(/[[{]/);
       if (openIndex !== -1) {
-        expect(describeOutcome(() => findBracketWithNext(document, openIndex, ERRORS))).toEqual(
+        const bracket = describeOutcome(() => findBracketWithNext(document, openIndex, ERRORS));
+        expect(bracket).toEqual(
           describeOutcome(() => findBracketWithSrc(document, openIndex, ERRORS)),
         );
+        recorded.push([`${row} bracket`, bracket]);
       }
       const index = Math.floor(random() * (document.length + 1));
-      expect(indentWithNext(document, index)).toBe(indentWithSrc(document, index));
+      const indent = indentWithNext(document, index);
+      expect(indent).toBe(indentWithSrc(document, index));
+      recorded.push([`${row} indent`, indent]);
       const start = Math.floor(random() * (document.length + 1));
       const end = start + Math.floor(random() * (document.length - start + 1));
-      expect(removeWithNext(document, { start, end })).toBe(
-        removeWithSrc(document, { start, end }),
-      );
+      const removed = removeWithNext(document, { start, end });
+      expect(removed).toBe(removeWithSrc(document, { start, end }));
+      recorded.push([`${row} removal`, removed]);
     }
+    expectRecordedDigest('core-jsonc/text-ranges', recorded);
   });
 
   test('skips comments only when asked, so a TOML-style caller can supply its own', () => {
     const document = '[ "a", # ]\n "b" ]';
-    expect(describeOutcome(() => findBracketWithNext(document, 0, ERRORS))).toEqual(
-      describeOutcome(() => findBracketWithSrc(document, 0, ERRORS)),
-    );
+    const bracket = describeOutcome(() => findBracketWithNext(document, 0, ERRORS));
+    expect(bracket).toEqual(describeOutcome(() => findBracketWithSrc(document, 0, ERRORS)));
+    expect(bracket).toMatchSnapshot();
     const skipHash = (content: string, index: number) =>
       content[index] === '#' ? content.indexOf('\n', index) + 1 : index;
-    expect(findBracketWithNext(document, 0, { ...ERRORS, skipComment: skipHash })).toBe(
-      findBracketWithSrc(document, 0, { ...ERRORS, skipComment: skipHash }),
-    );
+    const skipped = findBracketWithNext(document, 0, { ...ERRORS, skipComment: skipHash });
+    expect(skipped).toBe(findBracketWithSrc(document, 0, { ...ERRORS, skipComment: skipHash }));
+    expect(skipped).toMatchSnapshot();
   });
 });
 
@@ -193,10 +202,13 @@ describe('jsonc surgical edit', () => {
       const shipped = readFileSync(configPath, 'utf-8');
       const result = removeManagedWithNext(content);
       expect(result.updated).toBe(shipped);
+      expect(result.updated).toMatchSnapshot();
       // Everything outside the located array, comments and formatting included, is untouched.
       expect(result.updated.startsWith(content.slice(0, result.array.start + 1))).toBe(true);
       expect(result.updated.endsWith(content.slice(result.array.end))).toBe(true);
-      expect(JSON.parse(stripWithNext(result.updated))).toEqual(JSON.parse(stripWithSrc(shipped)));
+      const parsed = JSON.parse(stripWithNext(result.updated));
+      expect(parsed).toEqual(JSON.parse(stripWithSrc(shipped)));
+      expect(parsed).toMatchSnapshot();
     }
   });
 

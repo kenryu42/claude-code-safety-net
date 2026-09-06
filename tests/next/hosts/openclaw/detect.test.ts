@@ -8,7 +8,7 @@ import {
 } from '@/integrations/openclaw/detect';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
 import { differential, expectSameSides } from '../../helpers/host-differential';
-import { createTempRoot, removeTempRoots } from '../../helpers/temp-home';
+import { createTempRoot, recordPorted, removeTempRoots, rootFolds } from '../../helpers/temp-home';
 
 /**
  * Doctor reads the extension directory OpenClaw copied the plugin into and the config that decides
@@ -188,6 +188,7 @@ describe('comparing an install against the packaged copy', () => {
 
     const errors = modifiedFileErrors(dirs[0], 'dev', dirs[1]);
     expect(errors).toEqual(shippedModifiedFileErrors(dirs[0], 'dev', dirs[1]));
+    recordPorted(errors, rootFolds(root));
     return errors.map((error) => error.replaceAll(root, '<root>'));
   };
 

@@ -19,6 +19,7 @@ import { createSemanticFacts as shippedCreateSemanticFacts } from '@/guards/sema
 import { createToolInvocation as shippedCreateToolInvocation } from '@/ir/invocation';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   corpusCommands,
   FIXED_COMMANDS,
@@ -140,10 +141,13 @@ afterAll(() => {
 
 describe('policy apply protection', () => {
   test('matches the shipped recognizer over every runner spelling', () => {
+    const recorded: [string, unknown][] = [];
     for (const command of [...RUNNER_SPELLINGS, ...UNBLOCKED_SPELLINGS]) {
       const pair = findPair(command);
       expect(pair.next, command).toStrictEqual(pair.shipped);
+      recorded.push([command, pair.next]);
     }
+    expectRecordedDigest('guards-policy-apply/runner-spellings', recorded, root);
   });
 
   test('blocks the runner spellings and leaves every other invocation alone', () => {
@@ -174,6 +178,7 @@ describe('policy apply protection', () => {
   });
 
   test('matches the shipped recognizer over the corpus and the seeded fuzz', () => {
+    const recorded: [string, unknown][] = [];
     for (const command of [
       ...corpusCommands(),
       ...FIXED_COMMANDS,
@@ -181,7 +186,9 @@ describe('policy apply protection', () => {
     ]) {
       const pair = findPair(command);
       expect(pair.next, command).toStrictEqual(pair.shipped);
+      recorded.push([command, pair.next]);
     }
+    expectRecordedDigest('guards-policy-apply/corpus-fuzz', recorded, root);
   });
 
   test('matches the shipped recognizer through the semantic facts, per route', () => {
@@ -193,10 +200,12 @@ describe('policy apply protection', () => {
         (kind): ToolRoute => ({ kind }),
       ),
     ];
+    const recorded: [string, unknown][] = [];
     for (const route of routes) {
       for (const command of [...RUNNER_SPELLINGS, ...UNBLOCKED_SPELLINGS]) {
         const pair = factsPair('Bash', { command }, route, command);
         expect(pair.next, `${route.kind}: ${command}`).toStrictEqual(pair.shipped);
+        recorded.push([`${route.kind}: ${command}`, pair.next]);
       }
       // A path that reads like the invocation must not reach the recognizer.
       const pair = factsPair(
@@ -206,11 +215,18 @@ describe('policy apply protection', () => {
         null,
       );
       expect(pair.next, `${route.kind}: path input`).toStrictEqual(pair.shipped);
+      recorded.push([`${route.kind}: path input`, pair.next]);
       expect(pair.next).toStrictEqual({ ok: true, value: null });
     }
+    expectRecordedDigest('guards-policy-apply/semantic-facts', recorded, root);
   });
 
   test('the denial reason is the shipped wording', () => {
     expect(REASON_POLICY_APPLY_PROTECTION).toBe(SHIPPED_REASON);
+    expectRecordedDigest(
+      'guards-policy-apply/reason',
+      [['REASON_POLICY_APPLY_PROTECTION', REASON_POLICY_APPLY_PROTECTION]],
+      root,
+    );
   });
 });

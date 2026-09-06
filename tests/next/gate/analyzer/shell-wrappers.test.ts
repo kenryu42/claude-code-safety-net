@@ -11,6 +11,7 @@ import {
   isShellSyntaxCheck as shippedIsShellSyntaxCheck,
   parseShellArgv as shippedParseShellArgv,
 } from '@/analyzer/shell-wrappers';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, createSeededRandom, FIXED_COMMANDS } from '../../helpers/shell-inputs';
 
 /**
@@ -124,38 +125,45 @@ describe('next/gate/analyzer/shell-wrappers against src/analyzer/shell-wrappers'
   });
 
   test('reads the same argv split', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of table) {
-      expect({ tokens, parsed: parseShellArgv(tokens) }).toStrictEqual({
-        tokens,
-        parsed: shippedParseShellArgv(tokens),
-      });
+      const split = { tokens, parsed: parseShellArgv(tokens) };
+      expect(split).toStrictEqual({ tokens, parsed: shippedParseShellArgv(tokens) });
+      recorded.push([tokens.join(' '), split]);
     }
+    expectRecordedDigest('analyzer-shell-wrappers/argv-split', recorded);
   });
 
   test('extracts the same -c operand', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of table) {
-      expect({ tokens, arg: extractDashCArg(tokens) }).toStrictEqual({
-        tokens,
-        arg: shippedExtractDashCArg(tokens),
-      });
+      const extracted = { tokens, arg: extractDashCArg(tokens) };
+      expect(extracted).toStrictEqual({ tokens, arg: shippedExtractDashCArg(tokens) });
+      recorded.push([tokens.join(' '), extracted]);
     }
+    expectRecordedDigest('analyzer-shell-wrappers/dash-c-operand', recorded);
   });
 
   test('agrees on the syntax-check flag', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of table) {
-      expect({ tokens, check: isShellSyntaxCheck(tokens) }).toStrictEqual({
-        tokens,
-        check: shippedIsShellSyntaxCheck(tokens),
-      });
+      const checked = { tokens, check: isShellSyntaxCheck(tokens) };
+      expect(checked).toStrictEqual({ tokens, check: shippedIsShellSyntaxCheck(tokens) });
+      recorded.push([tokens.join(' '), checked]);
     }
+    expectRecordedDigest('analyzer-shell-wrappers/syntax-check', recorded);
   });
 
   test('reports the same startup loader metadata', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of table) {
-      expect({ tokens, metadata: extractShellStartupLoaderMetadata(tokens) }).toStrictEqual({
+      const loader = { tokens, metadata: extractShellStartupLoaderMetadata(tokens) };
+      expect(loader).toStrictEqual({
         tokens,
         metadata: shippedExtractShellStartupLoaderMetadata(tokens),
       });
+      recorded.push([tokens.join(' '), loader]);
     }
+    expectRecordedDigest('analyzer-shell-wrappers/startup-loader', recorded);
   });
 });

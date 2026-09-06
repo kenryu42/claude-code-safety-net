@@ -6,6 +6,7 @@ import { createProcessEnvironment } from '@next/core/environment';
 import { resolveProtectedGitMetadata } from '@next/core/git/metadata';
 import { resolveProtectedGitMetadata as shippedResolveProtectedGitMetadata } from '@/guards/git-metadata-protection';
 import { runGit } from '../../../helpers/git-worktree';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 const IDENTITY = ['-c', 'user.name=Next Test', '-c', 'user.email=next@example.test'];
 
@@ -81,9 +82,9 @@ describe('protected git metadata', () => {
       '',
     ];
     for (const cwd of cwds) {
-      expect(resolveProtectedGitMetadata(cwd, environment)).toEqual(
-        shippedResolveProtectedGitMetadata([cwd]),
-      );
+      const metadata = resolveProtectedGitMetadata(cwd, environment);
+      expect(metadata).toEqual(shippedResolveProtectedGitMetadata([cwd]));
+      recordPorted(metadata, rootFolds(root));
     }
     expect(resolveProtectedGitMetadata(join(root, 'plain'), environment)).toBeNull();
     const submodule = resolveProtectedGitMetadata(join(root, 'main', 'vendor', 'sub'), environment);

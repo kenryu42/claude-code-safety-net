@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { safetyNetSubcommandIndex } from '@next/gate/guards/safety-net-invocation';
 import { safetyNetSubcommandIndex as shippedSafetyNetSubcommandIndex } from '@/guards/safety-net-invocation';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 
 /**
  * Two guards read this index with opposite strictness, so the port is checked against every
@@ -67,15 +68,16 @@ describe('next/gate/guards/safety-net-invocation against src/guards/safety-net-i
   );
 
   test('locates the same subcommand for every runner spelling in both modes', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of rows) {
-      expect({
-        ...row,
-        index: safetyNetSubcommandIndex(row.command, row.tokens, row.options),
-      }).toStrictEqual({
+      const index = safetyNetSubcommandIndex(row.command, row.tokens, row.options);
+      expect({ ...row, index }).toStrictEqual({
         ...row,
         index: shippedSafetyNetSubcommandIndex(row.command, row.tokens, row.options),
       });
+      recorded.push([JSON.stringify(row), index]);
     }
+    expectRecordedDigest('guards-safety-net-invocation/subcommand-index', recorded);
   });
 
   test('the table reaches both answers, so parity is not vacuous', () => {

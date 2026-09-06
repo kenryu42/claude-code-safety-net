@@ -31,7 +31,10 @@ const report = new Function(
 
 describe('the report block on the served page', () => {
   test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toBe(block(pages.shipped));
+    const reportBlock = block(pages.ported);
+
+    expect(reportBlock).toBe(block(pages.shipped));
+    expect(reportBlock).toMatchSnapshot();
   });
 
   test('scrubs the project path before the home it sits under', () => {

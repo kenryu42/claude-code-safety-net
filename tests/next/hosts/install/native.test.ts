@@ -53,6 +53,7 @@ describe('running a host CLI', () => {
       stdoutOnly: await native.runNativeCommand(['tool', 'go'], { stdoutOnly: true }),
     }));
     expect(ported).toEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual({ merged: 'out\n\nerr\n', stdoutOnly: 'out\n' });
   });
 
@@ -61,6 +62,7 @@ describe('running a host CLI', () => {
       describeAsyncOutcome(() => native.runNativeCommand(['tool', 'fail'])),
     );
     expect(ported).toEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual({
       kind: 'threw',
       message: 'Failed to run tool fail (exit 2).\nout\nerr',
@@ -84,6 +86,7 @@ describe('running a host CLI', () => {
       describeAsyncOutcome(() => native.runNativeCommand(['tool', 'slow'], { timeoutMs: 200 })),
     );
     expect(ported).toEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual({
       kind: 'threw',
       message: 'Failed to run tool slow.\nTimed out after 200ms.',
@@ -98,6 +101,7 @@ describe('running a host CLI', () => {
       ]),
     );
     expect(ported).toEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.calls).toEqual(['tool go', 'other ok']);
   });
 
@@ -115,6 +119,7 @@ describe('running a host CLI', () => {
       return warnings;
     });
     expect(ported).toEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual(['Failed to run tool gone (exit 3).\nnothing to remove']);
     expect(ported.calls).toEqual(['tool gone', 'tool go']);
   });

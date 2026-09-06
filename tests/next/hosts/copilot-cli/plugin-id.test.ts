@@ -41,16 +41,17 @@ const readAll = (
 
 describe('the Copilot plugin identifiers', () => {
   test('read the same identity out of every `plugin list` line', () => {
-    expect(
-      readAll([
-        hasCopilotSafetyNetPlugin,
-        hasCopilotMarketplace,
-        hasCopilotLegacyPlugin,
-        hasCopilotPreRenamePlugin,
-      ]),
-    ).toEqual(
+    const read = readAll([
+      hasCopilotSafetyNetPlugin,
+      hasCopilotMarketplace,
+      hasCopilotLegacyPlugin,
+      hasCopilotPreRenamePlugin,
+    ]);
+
+    expect(read).toEqual(
       readAll([shippedHasPlugin, shippedHasMarketplace, shippedHasLegacy, shippedHasPreRename]),
     );
+    expect(read).toMatchSnapshot();
   });
 
   test('match on a token boundary, so a longer identifier never counts as a hit', () => {
@@ -76,18 +77,21 @@ describe('the Copilot plugin identifiers', () => {
   });
 
   test('name the same plugin, marketplace and checkout directories', () => {
-    expect([
+    const names = [
       COPILOT_PLUGIN_ID,
       COPILOT_PLUGIN_DIR,
       COPILOT_LEGACY_PLUGIN_DIR,
       COPILOT_PRE_RENAME_PLUGIN_DIR,
       COPILOT_PRE_RENAME_PLUGIN_ID,
-    ]).toEqual([
+    ];
+
+    expect(names).toEqual([
       SHIPPED_PLUGIN_ID,
       SHIPPED_PLUGIN_DIR,
       SHIPPED_LEGACY_DIR,
       SHIPPED_PRE_RENAME_DIR,
       SHIPPED_PRE_RENAME_ID,
     ]);
+    expect(names).toMatchSnapshot();
   });
 });

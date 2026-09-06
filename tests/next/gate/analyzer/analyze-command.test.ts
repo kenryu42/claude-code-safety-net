@@ -12,6 +12,7 @@ import { analyzeCommand as shippedAnalyzeCommand } from '@/analyzer';
 import { resolveProtectedGitMetadata } from '@/guards/git-metadata-protection';
 import { processPathResolver as shippedPaths } from '@/ir/environment';
 import { policySnapshot as createShippedSnapshot } from '../../../helpers/policy';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, differentialSources } from '../../helpers/shell-inputs';
 
 /**
@@ -154,6 +155,12 @@ function portedDecision(command: string, analysis: AnalysisMode) {
   ).decision;
 }
 
+/**
+ * Every decision the port reached since the last digest. Each test drains it, so the recorded
+ * hash covers exactly the commands that test compared.
+ */
+const recorded: [string, unknown][] = [];
+
 /** Compares one command, naming it in the failure so a diff points at the input. */
 function expectSameDecision(command: string, analysis: AnalysisMode) {
   const ported = portedDecision(command, analysis);
@@ -161,6 +168,7 @@ function expectSameDecision(command: string, analysis: AnalysisMode) {
     command,
     decision: shippedDecision(command, analysis),
   });
+  recorded.push([`${analysis.label}: ${command}`, ported]);
   return ported;
 }
 
@@ -171,6 +179,11 @@ describe('analyzeCommand differential', () => {
         (command) => expectSameDecision(command, analysis) !== null,
       );
       expect(denials.length).toBeGreaterThan(20);
+      expectRecordedDigest(
+        `analyzer-analyze-command/sources-${analysis.label}`,
+        recorded.splice(0),
+        workspace,
+      );
     });
   }
 
@@ -179,6 +192,11 @@ describe('analyzeCommand differential', () => {
       const commands = corpusCommands();
       expect(commands.length).toBeGreaterThan(50);
       for (const command of commands) expectSameDecision(command, analysis);
+      expectRecordedDigest(
+        `analyzer-analyze-command/corpus-${analysis.label}`,
+        recorded.splice(0),
+        workspace,
+      );
     });
   }
 
@@ -197,6 +215,7 @@ describe('analyzeCommand differential', () => {
       'custom.terraform-destroy',
     );
     expect(expectSameDecision('helm upgrade release', standard)).toBeNull();
+    expectRecordedDigest('analyzer-analyze-command/custom-rules', recorded.splice(0), workspace);
   });
 });
 
@@ -259,6 +278,11 @@ describe('analyzer budget breaches', () => {
       expect(denial?.reason).toBe(breach.reason);
       expect(denial?.intent).toBe('stop_and_explain');
       expect(expectSameDecision(breach.allowed, standard)).toBeNull();
+      expectRecordedDigest(
+        `analyzer-analyze-command/budget-${breach.budget}`,
+        recorded.splice(0),
+        workspace,
+      );
     });
   }
 });

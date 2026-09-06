@@ -1,0 +1,48 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the engine self-test reaches the same verdicts as the shipped suite and writes nothing 1`] = `
+{
+  "entries": [],
+  "summary": {
+    "failed": 0,
+    "passed": 3,
+    "results": [
+      {
+        "actual": "blocked",
+        "command": "git reset --hard",
+        "description": "git reset --hard",
+        "expected": "blocked",
+        "passed": true,
+        "reason": "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.",
+        "ruleId": "git.reset-hard",
+      },
+      {
+        "actual": "blocked",
+        "command": "rm -rf /",
+        "description": "rm -rf /",
+        "expected": "blocked",
+        "passed": true,
+        "reason": "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
+        "ruleId": "rm.recursive-force-root-or-home",
+      },
+      {
+        "actual": "allowed",
+        "command": "rm -rf ./node_modules",
+        "description": "rm in cwd (safe)",
+        "expected": "allowed",
+        "passed": true,
+        "reason": undefined,
+        "ruleId": undefined,
+      },
+    ],
+    "total": 3,
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

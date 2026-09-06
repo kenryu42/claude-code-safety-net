@@ -21,6 +21,7 @@ import {
   parseInterpreterArgv as shippedParseArgv,
   getInterpreterExecutableSourceSelectors as shippedSelectors,
 } from '@/analyzer/interpreters';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -215,50 +216,64 @@ describe('next/gate/analyzer/interpreters versus src/analyzer/interpreters', () 
   test('the two denial reasons are the shipped strings', () => {
     expect(REASON_INTERPRETER_DANGEROUS).toBe(SHIPPED_REASON_DANGEROUS);
     expect(REASON_INTERPRETER_BLOCKED).toBe(SHIPPED_REASON_BLOCKED);
+    expectRecordedDigest('analyzer-interpreters/reasons', [
+      ['dangerous', REASON_INTERPRETER_DANGEROUS],
+      ['blocked', REASON_INTERPRETER_BLOCKED],
+    ]);
   });
 
   test('the argv scanner reports the same code, sources and open options', () => {
+    const recorded: [string, unknown][] = [];
     let withCode = 0;
     let withSources = 0;
     for (const tokens of argvRows()) {
       const parsed = parseInterpreterArgv(tokens);
       expect(parsed).toStrictEqual(shippedParseArgv(tokens));
-      expect(extractInterpreterCodeArg(tokens)).toStrictEqual(shippedExtractCodeArg(tokens));
-      expect(extractInterpreterExecutableSources(tokens)).toStrictEqual(
-        shippedExtractSources(tokens),
-      );
+      const codeArg = extractInterpreterCodeArg(tokens);
+      expect(codeArg).toStrictEqual(shippedExtractCodeArg(tokens));
+      const sources = extractInterpreterExecutableSources(tokens);
+      expect(sources).toStrictEqual(shippedExtractSources(tokens));
+      recorded.push([tokens.join(' '), { parsed, codeArg, sources }]);
       if (parsed.code !== null) withCode++;
       if (parsed.sources.length > 0) withSources++;
     }
     expect(withCode).toBeGreaterThan(30);
     expect(withSources).toBeGreaterThan(30);
+    expectRecordedDigest('analyzer-interpreters/argv-scan', recorded);
   });
 
   test('the source selectors and the interpreter predicate match per command', () => {
+    const recorded: [string, unknown][] = [];
     for (const command of [...INTERPRETER_COMMANDS, ...corpusCommands()]) {
-      expect(getInterpreterExecutableSourceSelectors(command)).toStrictEqual(
-        shippedSelectors(command),
-      );
+      const selectors = getInterpreterExecutableSourceSelectors(command);
+      expect(selectors).toStrictEqual(shippedSelectors(command));
       // The gate module no longer carries `isInterpreterCommand`; core answers for it now.
-      expect(isInterpreterCommand(command)).toBe(shippedIsInterpreterCommand(command));
+      const isInterpreter = isInterpreterCommand(command);
+      expect(isInterpreter).toBe(shippedIsInterpreterCommand(command));
+      recorded.push([command, { selectors, isInterpreter }]);
     }
+    expectRecordedDigest('analyzer-interpreters/selectors', recorded);
     expect(getInterpreterExecutableSourceSelectors('node').length).toBeGreaterThan(5);
     expect(INTERPRETER_COMMANDS.filter(isInterpreterCommand).length).toBeGreaterThan(8);
   });
 
   test('the display-only test agrees for every command and code pair', () => {
+    const recorded: [string, unknown][] = [];
     let displayOnly = 0;
     for (const command of INTERPRETER_COMMANDS) {
       for (const code of INTERPRETER_CODE) {
         const answer = isInterpreterDisplayOnly(command, code);
         expect(answer).toBe(shippedIsDisplayOnly(command, code));
+        recorded.push([`${command} ${code}`, answer]);
         if (answer) displayOnly++;
       }
     }
     expect(displayOnly).toBeGreaterThan(0);
+    expectRecordedDigest('analyzer-interpreters/display-only', recorded);
   });
 
   test('the dangerous-code detector agrees and charges the same work', () => {
+    const recorded: [string, unknown][] = [];
     let dangerous = 0;
     for (const code of [
       ...INTERPRETER_CODE,
@@ -270,11 +285,15 @@ describe('next/gate/analyzer/interpreters versus src/analyzer/interpreters', () 
       const answer = containsDangerousCode(code, work);
       expect(answer).toBe(shippedContainsDangerousCode(code, shippedWork));
       expect(work.units).toBe(shippedWork.units);
+      recorded.push([code, { answer, units: work.units }]);
       if (answer) dangerous++;
     }
     expect(dangerous).toBeGreaterThan(20);
     for (const code of INTERPRETER_CODE) {
-      expect(containsDangerousCode(code)).toBe(shippedContainsDangerousCode(code));
+      const uncounted = containsDangerousCode(code);
+      expect(uncounted).toBe(shippedContainsDangerousCode(code));
+      recorded.push([`uncounted ${code}`, uncounted]);
     }
+    expectRecordedDigest('analyzer-interpreters/dangerous-code', recorded);
   });
 });

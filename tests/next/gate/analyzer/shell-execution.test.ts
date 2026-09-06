@@ -27,6 +27,7 @@ import {
 } from '@/analyzer/shell-execution';
 import type { CommandView as ShippedCommandView } from '@/ir/command';
 import { parseCommand as shippedParseCommand } from '@/parser/command';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -239,19 +240,25 @@ function shippedFirstCommand(source: string): ShippedCommandView | undefined {
 
 describe('next/gate/analyzer/shell-execution versus src/analyzer/shell-execution', () => {
   test('the parsed extractors agree on every command', () => {
+    const recorded: [string, unknown][] = [];
     let literals = 0;
     for (const source of [...EXECUTION_COMMANDS, ...corpusCommands()]) {
       const command = firstCommand(source);
       const shipped = shippedFirstCommand(source);
-      expect(extractLiteralPrintfOutput(command)).toStrictEqual(shippedPrintfOutput(shipped));
+      const printf = extractLiteralPrintfOutput(command);
+      expect(printf).toStrictEqual(shippedPrintfOutput(shipped));
+      recorded.push([source, { printf }]);
       if (!command || !shipped) continue;
 
-      expect(extractEvalSource(command.words)).toStrictEqual(shippedEvalSource(shipped.words));
-      expect(extractTrapSource(command.words)).toStrictEqual(shippedTrapSource(shipped.words));
-      expect(extractShellScriptOperandSource(command.words)).toStrictEqual(
-        shippedScriptOperandSource(shipped.words),
-      );
-      expect(isVerifiableLocalGeneratorSource(command)).toBe(shippedVerifiableGenerator(shipped));
+      const evalSource = extractEvalSource(command.words);
+      expect(evalSource).toStrictEqual(shippedEvalSource(shipped.words));
+      const trap = extractTrapSource(command.words);
+      expect(trap).toStrictEqual(shippedTrapSource(shipped.words));
+      const operand = extractShellScriptOperandSource(command.words);
+      expect(operand).toStrictEqual(shippedScriptOperandSource(shipped.words));
+      const generator = isVerifiableLocalGeneratorSource(command);
+      expect(generator).toBe(shippedVerifiableGenerator(shipped));
+      recorded.push([source, { evalSource, trap, operand, generator }]);
       for (const pipeline of [
         { hasPipelineInput: false, literal: undefined },
         { hasPipelineInput: true, literal: undefined },
@@ -271,21 +278,26 @@ describe('next/gate/analyzer/shell-execution versus src/analyzer/shell-execution
             pipeline.literal,
           ),
         );
+        recorded.push([`${source} ${JSON.stringify(pipeline)}`, answer]);
         if (answer.kind === 'literal') literals++;
       }
     }
     expect(literals).toBeGreaterThan(5);
+    expectRecordedDigest('analyzer-shell-execution/parsed-extractors', recorded);
   });
 
   test('the printf extractor agrees on the fuzz corpus', () => {
+    const recorded: [string, unknown][] = [];
     for (const source of fuzzShellSources(300, 0x0033_71ab)) {
-      expect(extractLiteralPrintfOutput(firstCommand(source))).toStrictEqual(
-        shippedPrintfOutput(shippedFirstCommand(source)),
-      );
+      const printf = extractLiteralPrintfOutput(firstCommand(source));
+      expect(printf).toStrictEqual(shippedPrintfOutput(shippedFirstCommand(source)));
+      recorded.push([source, printf]);
     }
+    expectRecordedDigest('analyzer-shell-execution/printf-fuzz', recorded);
   });
 
   test('the positional carrier expands each script the same way', () => {
+    const recorded: [string, unknown][] = [];
     let expanded = 0;
     for (const script of POSITIONAL_SCRIPTS) {
       for (const argv of POSITIONAL_ARGVS) {
@@ -294,33 +306,38 @@ describe('next/gate/analyzer/shell-execution versus src/analyzer/shell-execution
         expect(answer).toStrictEqual(
           shippedPositionalSource(shippedTextCommandWords(tokens), script),
         );
+        recorded.push([`${script} ${argv.join(' ')}`, answer]);
         if (answer.kind === 'literal' && answer.source !== '') expanded++;
       }
     }
     expect(expanded).toBeGreaterThan(10);
+    expectRecordedDigest('analyzer-shell-execution/positional-carrier', recorded);
   });
 
   test('the positional carrier refuses an expansion past either cap', () => {
     const manyWords = ['bash', '-c', '"$@"', 'sh', ...Array.from({ length: 16_385 }, () => 'x')];
-    expect(extractPositionalShellSource(textCommandWords(manyWords), '"$@"')).toStrictEqual(
-      shippedPositionalSource(shippedTextCommandWords(manyWords), '"$@"'),
-    );
-    expect(extractPositionalShellSource(textCommandWords(manyWords), '"$@"').kind).toBe('dynamic');
+    const many = extractPositionalShellSource(textCommandWords(manyWords), '"$@"');
+    expect(many).toStrictEqual(shippedPositionalSource(shippedTextCommandWords(manyWords), '"$@"'));
+    expect(many.kind).toBe('dynamic');
 
     const longValue = ['bash', '-c', '"$1"', 'sh', 'y'.repeat(131_073)];
-    expect(extractPositionalShellSource(textCommandWords(longValue), '"$1"')).toStrictEqual(
-      shippedPositionalSource(shippedTextCommandWords(longValue), '"$1"'),
-    );
-    expect(extractPositionalShellSource(textCommandWords(longValue), '"$1"').kind).toBe('dynamic');
+    const long = extractPositionalShellSource(textCommandWords(longValue), '"$1"');
+    expect(long).toStrictEqual(shippedPositionalSource(shippedTextCommandWords(longValue), '"$1"'));
+    expect(long.kind).toBe('dynamic');
 
     const underCap = ['bash', '-c', '"$1"', 'sh', 'z'.repeat(64)];
-    expect(extractPositionalShellSource(textCommandWords(underCap), '"$1"')).toStrictEqual(
-      shippedPositionalSource(shippedTextCommandWords(underCap), '"$1"'),
-    );
-    expect(extractPositionalShellSource(textCommandWords(underCap), '"$1"').kind).toBe('literal');
+    const under = extractPositionalShellSource(textCommandWords(underCap), '"$1"');
+    expect(under).toStrictEqual(shippedPositionalSource(shippedTextCommandWords(underCap), '"$1"'));
+    expect(under.kind).toBe('literal');
+    expectRecordedDigest('analyzer-shell-execution/positional-caps', [
+      ['many words', many],
+      ['long value', long],
+      ['under the cap', under],
+    ]);
   });
 
   test('the dynamic-carrier walk agrees for every source and inherited name set', () => {
+    const recorded: [string, unknown][] = [];
     let carriers = 0;
     const sources = [
       ...CARRIER_SOURCES,
@@ -331,13 +348,15 @@ describe('next/gate/analyzer/shell-execution versus src/analyzer/shell-execution
     for (const source of sources) {
       const unresolved = shellSourceHasUnresolvedDynamicExecutionCarrier(source);
       expect(unresolved).toBe(shippedHasUnresolvedCarrier(source));
+      recorded.push([source, { unresolved }]);
       if (unresolved) carriers++;
       for (const names of CARRIER_NAME_SETS) {
-        expect(shellSourceHasDynamicExecutionCarrier(source, new Set(names))).toBe(
-          shippedHasCarrier(source, new Set(names)),
-        );
+        const carrier = shellSourceHasDynamicExecutionCarrier(source, new Set(names));
+        expect(carrier).toBe(shippedHasCarrier(source, new Set(names)));
+        recorded.push([`${source} ${names.join(',')}`, carrier]);
       }
     }
     expect(carriers).toBeGreaterThan(10);
+    expectRecordedDigest('analyzer-shell-execution/dynamic-carrier', recorded);
   });
 });

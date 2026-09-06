@@ -12,6 +12,7 @@ import { parseCommand as shippedParseCommand } from '@/parser/command';
 import { projectCommandViews as shippedProjectCommandViews } from '@/parser/traversal';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   corpusCommands,
   FIXED_COMMANDS,
@@ -243,13 +244,16 @@ function runPair(source: string, row: OptionCase) {
 
 describe('rm rule set', () => {
   test('every rm spelling matches the shipped analyzer under every option set', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of optionCases()) {
       for (const source of RM_COMMANDS) {
         for (const pair of runPair(source, row)) {
           expect(pair.next, `${row.label}: ${source}`).toStrictEqual(pair.shipped);
+          recorded.push([`${row.label}: ${source}`, pair.next]);
         }
       }
     }
+    expectRecordedDigest('analyzer-rm/option-sets', recorded, root);
   });
 
   test('the table reaches every rm rule the analyzer can report', () => {
@@ -323,6 +327,7 @@ describe('rm rule set', () => {
   });
 
   test('the corpus commands and the seeded fuzz agree with the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     const row = { label: 'corpus', options: { cwd: workspace, originalCwd: workspace } };
     for (const source of [
       ...corpusCommands(),
@@ -331,7 +336,9 @@ describe('rm rule set', () => {
     ]) {
       for (const pair of runPair(source, row)) {
         expect(pair.next, source).toStrictEqual(pair.shipped);
+        recorded.push([source, pair.next]);
       }
     }
+    expectRecordedDigest('analyzer-rm/corpus-and-fuzz', recorded, root);
   });
 });

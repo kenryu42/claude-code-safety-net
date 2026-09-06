@@ -5,6 +5,7 @@ import { createProcessEnvironment as createShippedEnvironment } from '@/ir/envir
 import { behavioralContractCases } from '../../analyzer/behavioral-contract-cases';
 import { pipelineContractCases } from '../../engine/pipeline-contract-cases';
 import { type TreeSpec, writeTree } from '../helpers/fixture-tree';
+import { recordPorted } from '../helpers/temp-home';
 
 /**
  * A file, a dangling link and a two-link cycle under `root`, plus `extras`: the shapes every path
@@ -95,13 +96,21 @@ function outcome<T>(call: () => T): Outcome<T> {
 }
 
 /**
- * Asserts the two calls both return the same value or both throw, and hands back what the
- * `next/` call threw so the caller can pin its kind.
+ * Asserts the two calls both return the same value or both throw, records what the `next/` call
+ * settled with — folded of the roots `replacements` names, unless `record` is false because the
+ * value is machine-shaped past what a fold can hide — and hands back what it threw so the caller
+ * can pin its kind.
  */
-export function expectSameOutcome<T>(next: () => T, shipped: () => T): unknown {
+export function expectSameOutcome<T>(
+  next: () => T,
+  shipped: () => T,
+  replacements: readonly (readonly [string | RegExp, string])[] = [],
+  record = true,
+): unknown {
   const left = outcome(next);
   const right = outcome(shipped);
   expect(left.ok).toBe(right.ok);
   if (left.ok && right.ok) expect(left.value).toEqual(right.value);
+  if (record) recordPorted(left, replacements);
   return left.ok ? undefined : left.error;
 }

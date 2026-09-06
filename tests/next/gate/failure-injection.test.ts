@@ -35,6 +35,7 @@ import {
   shippedVerdict,
   toolCall,
 } from '../helpers/gate-differential';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * What the gate does when something under it fails: a filesystem that throws, a config file
@@ -55,14 +56,27 @@ afterAll(() => {
 const repeated = (count: number, make: (index: number) => string, separator = ' ') =>
   Array.from({ length: count }, (_, index) => make(index)).join(separator);
 
+/**
+ * The two inputs past a cap, folded out of the record alone: a row's own evidence echoes the
+ * command back, and the exact filler each of them is built from carries nothing the verdict does
+ * not already say. Only the whole untruncated run folds, so a port that echoed less would show
+ * the shorter text instead of the marker.
+ */
+const FILLER_FOLDS = [
+  ['y'.repeat(200_000), '<200k-y>'],
+  ['x'.repeat(1024 * 1024 + 1), '<1mb-x>'],
+] as const;
+
 /** Compares one command and hands the port's verdict back for the row's own assertions. */
 function agreedOn(command: string, overrides = {}) {
   const call = bashCall(command, tree.workspace);
   const ported = portedVerdict(call, environment, { ...dependencies, ...overrides });
-  expect({ command, verdict: ported }).toStrictEqual({
+  const compared = { command, verdict: ported };
+  expect(compared).toStrictEqual({
     command,
     verdict: shippedVerdict(call, { ...dependencies, ...overrides }),
   });
+  recordPorted(compared, [...rootFolds(tree.root), ...FILLER_FOLDS]);
   return ported;
 }
 
@@ -89,23 +103,25 @@ describe('a filesystem that throws instead of answering', () => {
       shippedAnalyzeCommand(command, { ...options, environment: throwing }, program, store),
   };
 
-  test('a delete under an unresolvable cwd is treated as outside it, not as an internal fault', () => {
-    const call = bashCall('rm -rf ./build', tree.workspace);
+  /** One command through both gates with `realpath` broken, recorded once they agreed. */
+  const brokenRealpathVerdict = (command: string) => {
+    const call = bashCall(command, tree.workspace);
     const ported = portedVerdict(call, environment, { ...dependencies, ...breakingPaths });
     expect(ported).toStrictEqual(
       shippedVerdict(call, { ...dependencies, ...shippedBreakingPaths }),
     );
+    recordPorted(ported, rootFolds(tree.root));
+    return ported;
+  };
+
+  test('a delete under an unresolvable cwd is treated as outside it, not as an internal fault', () => {
+    const ported = brokenRealpathVerdict('rm -rf ./build');
     expect(ported.outcome).toBe('deny');
     expect(ported.reason).toContain('rm -rf outside cwd');
   });
 
   test('commands that never resolve a path are unaffected', () => {
-    for (const command of ['git status', 'echo hello']) {
-      const call = bashCall(command, tree.workspace);
-      expect(portedVerdict(call, environment, { ...dependencies, ...breakingPaths })).toStrictEqual(
-        shippedVerdict(call, { ...dependencies, ...shippedBreakingPaths }),
-      );
-    }
+    for (const command of ['git status', 'echo hello']) brokenRealpathVerdict(command);
   });
 });
 
@@ -125,6 +141,7 @@ describe('input past the intake caps', () => {
     );
     const ported = portedVerdict(call, environment, dependencies);
     expect(ported).toStrictEqual(shippedVerdict(call, dependencies));
+    recordPorted(ported, rootFolds(tree.root));
     expect(ported).toMatchObject({ thrown: 'GuardEvaluationError', evidence: [] });
   });
 });
@@ -146,28 +163,30 @@ describe('a host that truncated the tool input', () => {
     ['no payload at all', undefined],
   ] as const) {
     test(name, () => {
-      expect(truncatedDenial(portedOutputFailedClosed, toolInput)).toStrictEqual(
-        truncatedDenial(shippedOutputFailedClosed, toolInput),
-      );
+      const denials = truncatedDenial(portedOutputFailedClosed, toolInput);
+      expect(denials).toStrictEqual(truncatedDenial(shippedOutputFailedClosed, toolInput));
+      recordPorted(denials, [...rootFolds(tree.root), ...FILLER_FOLDS]);
     });
   }
 });
 
 describe('process state the two gates read differently', () => {
   test('a Git config count past its cap is a rule denial on both sides', () => {
-    withEnv({ GIT_CONFIG_COUNT: '1025' }, () => {
+    /** `git status` through both gates, reading the process state as it stands right now. */
+    const gitStatusVerdict = () => {
       const call = bashCall('git status', tree.workspace);
       const ported = portedVerdict(call, createProcessEnvironment(), dependencies);
       expect(ported).toStrictEqual(shippedVerdict(call, dependencies));
-      expect(ported.ruleId).toBe('git.alias-config');
+      recordPorted(ported, rootFolds(tree.root));
+      return ported;
+    };
+    withEnv({ GIT_CONFIG_COUNT: '1025' }, () => {
+      expect(gitStatusVerdict().ruleId).toBe('git.alias-config');
     });
     // `1024` is still a valid count, and the shipped analyzer denies large valid counts for its
     // own reason, so the counterpart here is the variable being absent.
     withEnv({ GIT_CONFIG_COUNT: undefined }, () => {
-      const call = bashCall('git status', tree.workspace);
-      const ported = portedVerdict(call, createProcessEnvironment(), dependencies);
-      expect(ported).toStrictEqual(shippedVerdict(call, dependencies));
-      expect(ported.outcome).toBe('allow');
+      expect(gitStatusVerdict().outcome).toBe('allow');
     });
   });
 
@@ -205,6 +224,7 @@ describe('process state the two gates read differently', () => {
 
       expect(swaps.length).toBe(2);
       expect(ported).toStrictEqual(shipped);
+      recordPorted(ported, rootFolds(tree.root));
       expect(ported.configFallback).toStrictEqual({
         reason:
           'Unable to access user policy filesystem safely. Those rule sources are not active; every other rule and all built-in protections still apply.',

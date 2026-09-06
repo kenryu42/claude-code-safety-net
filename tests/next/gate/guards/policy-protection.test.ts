@@ -18,6 +18,7 @@ import { createSemanticFacts as shippedCreateFacts } from '@/guards/semantic-fac
 import { createToolInvocation as shippedCreateInvocation } from '@/ir/invocation';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusToolInputs, FUZZ_SEED, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -138,10 +139,13 @@ function shellCases(): readonly string[] {
 
 describe('policy config protection through the shell', () => {
   test('every command reports the same target as the shipped guard', () => {
+    const recorded: [string, unknown][] = [];
     for (const command of shellCases()) {
       const pair = guardPair('Bash', { command }, { kind: 'command', shell: 'posix' });
       expect(pair.next, command).toStrictEqual(pair.shipped);
+      recorded.push([command, pair.next]);
     }
+    expectRecordedDigest('guards-policy-protection/shell-commands', recorded, root);
   });
 
   test('the table separates reads from writes and covers both scopes', () => {
@@ -162,16 +166,20 @@ describe('policy config protection through the shell', () => {
   });
 
   test('the corpus tool inputs and the seeded fuzz agree with the shipped guard', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of corpusToolInputs()) {
       const pair = guardPair(row.toolName, row.input, { kind: 'unknown' });
       expect(pair.next, `${row.toolName}: ${JSON.stringify(row.input)}`).toStrictEqual(
         pair.shipped,
       );
+      recorded.push([`${row.toolName}: ${JSON.stringify(row.input)}`, pair.next]);
     }
     for (const command of fuzzShellSources(250, FUZZ_SEED)) {
       const pair = guardPair('Bash', { command }, { kind: 'command', shell: 'posix' });
       expect(pair.next, command).toStrictEqual(pair.shipped);
+      recorded.push([`fuzz: ${command}`, pair.next]);
     }
+    expectRecordedDigest('guards-policy-protection/corpus-fuzz', recorded, root);
   });
 });
 
@@ -217,10 +225,13 @@ describe('policy config protection through tool inputs', () => {
       { toolName: 'Write', input: null, route: { kind: 'path' } },
       { toolName: 'Write', input: { file_path: 42 }, route: { kind: 'path' } },
     ];
-    for (const payload of payloads) {
+    const recorded: [string, unknown][] = [];
+    for (const [index, payload] of payloads.entries()) {
       const pair = guardPair(payload.toolName, payload.input, payload.route);
       expect(pair.next, `${payload.toolName} ${payload.route.kind}`).toStrictEqual(pair.shipped);
+      recorded.push([`${index} ${payload.toolName} ${payload.route.kind}`, pair.next]);
     }
+    expectRecordedDigest('guards-policy-protection/tool-inputs', recorded, root);
   });
 
   test('a write to either policy file is blocked while a read of it is not', () => {
@@ -241,6 +252,7 @@ describe('policy config protection through tool inputs', () => {
 describe('policy config protection over prepared facts', () => {
   test('a declared command reaches the same verdict through the facts entry point', () => {
     const paired = guardEnvironments();
+    const recorded: [string, unknown][] = [];
     for (const command of [
       `cp /dev/null ${userPolicy}`,
       `cat ${userPolicy}`,
@@ -248,22 +260,21 @@ describe('policy config protection over prepared facts', () => {
     ]) {
       const invocation = { toolName: 'Bash', input: { command }, context: toolContext() };
       const route = { kind: 'command', shell: 'posix' } as const;
-      expect(
-        findPolicyConfigMutationTargetInSemanticFacts(
-          createSemanticFacts(
-            createToolInvocation(
-              invocation.toolName,
-              invocation.input,
-              route,
-              invocation.context,
-              command,
-            ),
+      const target = findPolicyConfigMutationTargetInSemanticFacts(
+        createSemanticFacts(
+          createToolInvocation(
+            invocation.toolName,
+            invocation.input,
+            route,
+            invocation.context,
+            command,
           ),
-          paired.next,
-          createBudget(),
         ),
-        command,
-      ).toStrictEqual(
+        paired.next,
+        createBudget(),
+      );
+      recorded.push([command, target]);
+      expect(target, command).toStrictEqual(
         shippedFactsGuard(
           shippedCreateFacts(
             shippedCreateInvocation(
@@ -277,5 +288,6 @@ describe('policy config protection over prepared facts', () => {
         ),
       );
     }
+    expectRecordedDigest('guards-policy-protection/declared-facts', recorded, root);
   });
 });

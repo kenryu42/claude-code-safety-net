@@ -1,0 +1,526 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`reading what Claude Code recorded reports a home Claude Code never wrote to 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports a directory where the install record belongs 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "not-inspected",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports an install record that is not JSON 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "not-inspected",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{ "plugins":",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports an install record naming someone else 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"other@m":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports an entry with no installed copies 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports an install with no settings file yet 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.claude/settings.json",
+      "errors": [
+        "cc-safety-net@cc-marketplace is installed but not enabled in Claude Code",
+      ],
+      "method": "plugin config",
+      "platform": "claude-code",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports a directory where the settings belong 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "not-inspected",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports settings that are not JSON 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "platform": "claude-code",
+      "status": "not-inspected",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": "nope",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports settings that switch the plugin on 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.claude/plugins/installed_plugins.json",
+      "method": "plugin config",
+      "platform": "claude-code",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports settings that switch the plugin off 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.claude/settings.json",
+      "errors": [
+        "cc-safety-net@cc-marketplace is installed but not enabled in Claude Code",
+      ],
+      "method": "plugin config",
+      "platform": "claude-code",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading what Claude Code recorded reports settings that never mention the plugin 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.claude/settings.json",
+      "errors": [
+        "cc-safety-net@cc-marketplace is installed but not enabled in Claude Code",
+      ],
+      "method": "plugin config",
+      "platform": "claude-code",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": "{}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`asking whether a specific plugin id is installed finds the pre-rename id the install flow cleans up after 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": true,
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"safety-net@cc-marketplace":[{}],"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`asking whether a specific plugin id is installed answers no when only the current id is recorded 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": false,
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`asking whether a specific plugin id is installed answers no when nothing was ever installed 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": false,
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`asking whether a specific plugin id is installed answers no when the record cannot be read 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": false,
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

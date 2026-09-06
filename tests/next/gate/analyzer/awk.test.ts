@@ -13,6 +13,7 @@ import {
   parseAwkArgv as shippedParseAwkArgv,
   AWK_EXECUTABLE_SOURCE_SELECTORS as shippedSelectors,
 } from '@/analyzer/awk';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -116,45 +117,59 @@ function nestedAnalyzer(command: string) {
 describe('awk argv scanning', () => {
   test('the selector table is the shipped table', () => {
     expect(AWK_EXECUTABLE_SOURCE_SELECTORS).toStrictEqual(shippedSelectors);
+    expectRecordedDigest('analyzer-awk/selectors', [
+      ['selectors', AWK_EXECUTABLE_SOURCE_SELECTORS],
+    ]);
   });
 
   test('parseAwkArgv and extractAwkExecutableSources agree with the shipped scanner', () => {
+    const recorded: [string, unknown][] = [];
     for (const argv of awkArgvs()) {
-      expect(parseAwkArgv(argv)).toStrictEqual(shippedParseAwkArgv(argv));
-      expect(extractAwkExecutableSources(argv)).toStrictEqual(shippedExtractSources(argv));
+      const parsed = parseAwkArgv(argv);
+      expect(parsed).toStrictEqual(shippedParseAwkArgv(argv));
+      const sources = extractAwkExecutableSources(argv);
+      expect(sources).toStrictEqual(shippedExtractSources(argv));
+      recorded.push([argv.join(' '), { parsed, sources }]);
     }
+    expectRecordedDigest('analyzer-awk/argv-scan', recorded);
   });
 });
 
 describe('awk program scanning', () => {
   test('extractAwkSystemCommands agrees over programs, corpus commands and fuzz', () => {
     const sources = [...AWK_PROGRAMS, ...corpusCommands(), ...fuzzShellSources(500, 0x00a4_2f19)];
+    const recorded: [string, unknown][] = [];
     for (const code of sources) {
       const work = { units: 0 };
       const shippedWork = { units: 0 };
-      expect(extractAwkSystemCommands(code, work)).toStrictEqual(
-        shippedExtractSystemCommands(code, shippedWork),
-      );
+      const commands = extractAwkSystemCommands(code, work);
+      expect(commands).toStrictEqual(shippedExtractSystemCommands(code, shippedWork));
       expect(work).toStrictEqual(shippedWork);
+      recorded.push([code, { commands, work }]);
     }
+    expectRecordedDigest('analyzer-awk/system-commands', recorded);
   });
 
   test('analyzeAwkSystemCallMatch agrees, charging the same scan work', () => {
+    const recorded: [string, unknown][] = [];
     for (const argv of awkArgvs()) {
       const work = { units: 0 };
       const shippedWork = { units: 0 };
-      expect(analyzeAwkSystemCallMatch(argv, nestedAnalyzer, work)).toStrictEqual(
+      const match = analyzeAwkSystemCallMatch(argv, nestedAnalyzer, work);
+      expect(match).toStrictEqual(
         shippedAnalyzeAwkSystemCallMatch(argv, nestedAnalyzer, shippedWork),
       );
       expect(work).toStrictEqual(shippedWork);
+      recorded.push([argv.join(' '), { match, work }]);
     }
+    expectRecordedDigest('analyzer-awk/system-call', recorded);
   });
 
   test('analyzeAwkSystemCallMatch works without a scan-work counter', () => {
     const dynamic = ['awk', 'BEGIN { system($0) }'];
-    expect(analyzeAwkSystemCallMatch(dynamic, nestedAnalyzer)).toStrictEqual(
-      shippedAnalyzeAwkSystemCallMatch(dynamic, nestedAnalyzer),
-    );
+    const match = analyzeAwkSystemCallMatch(dynamic, nestedAnalyzer);
+    expect(match).toStrictEqual(shippedAnalyzeAwkSystemCallMatch(dynamic, nestedAnalyzer));
+    expectRecordedDigest('analyzer-awk/no-counter', [[dynamic.join(' '), match]]);
     expect(analyzeAwkSystemCallMatch(dynamic, nestedAnalyzer)?.id).toBe('awk.system-dynamic');
   });
 });

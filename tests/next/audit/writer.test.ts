@@ -290,6 +290,7 @@ describe('audit writer parity', () => {
 
       const produced = snapshotTree(nextHome);
       expect(produced).toStrictEqual(snapshotTree(srcHome));
+      expect(produced).toMatchSnapshot();
       expect(
         produced
           .filter((node) => node.kind === 'file')

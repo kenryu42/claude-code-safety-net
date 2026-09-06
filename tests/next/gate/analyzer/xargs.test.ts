@@ -18,6 +18,7 @@ import {
 } from '@/analyzer/xargs';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, FUZZ_SEED, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -248,11 +249,13 @@ const EVERY_SHAPE = [...OPTION_SHAPES, ...CHILD_SHAPES];
 
 describe('xargs option parsing', () => {
   test('finds the same child start and replacement token as the shipped parser', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of [...EVERY_SHAPE, [], ['xargs', '-I', '', 'rm'], ['-I', '{}']]) {
-      expect(extractXargsChildCommandWithInfo(tokens), tokens.join(' ')).toStrictEqual(
-        shippedExtractChild(tokens),
-      );
+      const child = extractXargsChildCommandWithInfo(tokens);
+      expect(child, tokens.join(' ')).toStrictEqual(shippedExtractChild(tokens));
+      recorded.push([tokens.join(' '), child]);
     }
+    expectRecordedDigest('analyzer-xargs/child-start', recorded);
   });
 
   test('the table separates every replacement spelling from the plain options', () => {
@@ -268,14 +271,17 @@ describe('xargs option parsing', () => {
 
 describe('xargs analysis', () => {
   test('reports the same rule and asks for the same nested sources as the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of EVERY_SHAPE) {
       for (const setting of SETTINGS) {
         const both = runBothXargs(tokens, setting);
         const where = `${setting.label}: ${tokens.join(' ')}`;
         expect(both.next.match, where).toStrictEqual(both.shipped.match);
         expect(both.next.asked, where).toStrictEqual(both.shipped.asked);
+        recorded.push([where, { match: both.next.match, asked: both.next.asked }]);
       }
     }
+    expectRecordedDigest('analyzer-xargs/analysis', recorded);
   });
 
   test('the shapes reach the dynamic-source, dynamic-rm and custom-rule verdicts', () => {
@@ -317,15 +323,21 @@ describe('xargs analysis', () => {
     expect(on.ok && on.value?.reason).toBe(REASON_XARGS_SHELL);
     const off = runBothXargs(dynamicShell, { label: 'off', ruleOff: 'xargs.shell-dynamic' });
     expect(off.next.match).toStrictEqual(off.shipped.match);
+    expectRecordedDigest('analyzer-xargs/disabled-rule', [['off', off.next.match]]);
     expect(off.next.match).toStrictEqual({ ok: true, value: null });
   });
 
   test('the reason strings are the shipped strings', () => {
     expect(REASON_XARGS_RM).toBe(SHIPPED_RM_REASON);
     expect(REASON_XARGS_SHELL).toBe(SHIPPED_SHELL_REASON);
+    expectRecordedDigest('analyzer-xargs/reasons', [
+      ['rm', REASON_XARGS_RM],
+      ['shell', REASON_XARGS_SHELL],
+    ]);
   });
 
   test('corpus and fuzz sources placed after xargs agree with the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     const prefixes = [['xargs'], ['xargs', '-I', '{}'], ['xargs', '-0', '-n', '1']];
     for (const source of [...corpusCommands(), ...fuzzShellSources(1_000, FUZZ_SEED)]) {
       const words = source.split(/\s+/).filter((token) => token !== '');
@@ -337,7 +349,12 @@ describe('xargs analysis', () => {
         });
         expect(both.next.match, source).toStrictEqual(both.shipped.match);
         expect(both.next.asked, source).toStrictEqual(both.shipped.asked);
+        recorded.push([
+          `${prefix.join(' ')} ${source}`,
+          { match: both.next.match, asked: both.next.asked },
+        ]);
       }
     }
+    expectRecordedDigest('analyzer-xargs/corpus-and-fuzz', recorded);
   });
 });

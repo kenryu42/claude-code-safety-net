@@ -1,0 +1,92 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 1`] = `false`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 2`] = `"<root>/main/.git"`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 3`] = `true`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 4`] = `"<root>/linked/.git"`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 5`] = `true`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 6`] = `"<root>/linked/.git"`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 7`] = `false`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 8`] = `"<root>/linked/.git"`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 9`] = `false`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 10`] = `null`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 11`] = `false`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 12`] = `null`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 13`] = `false`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 14`] = `null`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 15`] = `null`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 16`] = `
+{
+  "commonDir": "<root>/main/.git",
+  "gitDir": "<root>/main/.git/worktrees/linked",
+}
+`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 17`] = `null`;
+
+exports[`linked worktree facts detects linked worktrees and reads gitdir files like the shipped helpers 18`] = `null`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 1`] = `true`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 2`] = `false`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 3`] = `false`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 4`] = `true`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 5`] = `false`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 6`] = `true`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 7`] = `false`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 8`] = `false`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 9`] = `false`;
+
+exports[`linked worktree facts reads quoted and escaped core.worktree values like the shipped parser 10`] = `true`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 1`] = `"C:/x"`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 2`] = `"//srv/share"`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 3`] = `"C:/x/y"`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 4`] = `"/a/b"`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 5`] = `"/"`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 6`] = `"x"`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 7`] = `""`;
+
+exports[`linked worktree facts normalizes comparison paths like the shipped helper 8`] = `"<root>/linked"`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 1`] = `false`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 2`] = `true`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 3`] = `false`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 4`] = `true`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 5`] = `true`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 6`] = `true`;
+
+exports[`linked worktree facts reports the effective submodule.recurse setting like the shipped config walk 7`] = `true`;

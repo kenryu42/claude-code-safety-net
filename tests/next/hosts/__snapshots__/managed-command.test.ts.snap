@@ -1,0 +1,5 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the managed hook command agrees with the constants the shipped installers write 1`] = `"npx -y cc-safety-net hook --cursor"`;
+
+exports[`the managed hook command agrees with the constants the shipped installers write 2`] = `"npx -y cc-safety-net hook --grok-build"`;

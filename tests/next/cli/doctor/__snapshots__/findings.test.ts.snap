@@ -1,0 +1,227 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`deriveDoctorFindings no facts at all yield no findings 1`] = `[]`;
+
+exports[`deriveDoctorFindings every discovered integration unconfigured 1`] = `
+[
+  {
+    "checkId": "integration.none-configured",
+    "detail": "CC Safety Net is not connected to any supported coding-agent integration.",
+    "fixHint": "Run \`cc-safety-net install\` and configure at least one integration.",
+    "severity": "error",
+    "title": "No integration configured",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings one configured integration silences the catalog 1`] = `[]`;
+
+exports[`deriveDoctorFindings two failed inspections each earn their own finding 1`] = `
+[
+  {
+    "checkId": "integration.inspection-failed",
+    "detail": "Doctor could not verify the Claude Code integration configuration.",
+    "fixHint": "Correct the reported Claude Code configuration error, then run \`cc-safety-net doctor\` again.",
+    "integration": "claude-code",
+    "severity": "error",
+    "title": "Claude Code inspection failed",
+  },
+  {
+    "checkId": "integration.inspection-failed",
+    "detail": "Doctor could not verify the Cursor integration configuration.",
+    "fixHint": "Correct the reported Cursor configuration error, then run \`cc-safety-net doctor\` again.",
+    "integration": "cursor",
+    "severity": "error",
+    "title": "Cursor inspection failed",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings an invalid config in each scope 1`] = `
+[
+  {
+    "checkId": "config.user-invalid",
+    "detail": "Doctor could not load a valid user rules configuration.",
+    "fixHint": "Run \`cc-safety-net rule verify\`, correct the reported error, then rerun doctor.",
+    "path": "/u/rules/rule.json",
+    "severity": "error",
+    "title": "User configuration is invalid",
+  },
+  {
+    "checkId": "config.project-invalid",
+    "detail": "Doctor could not load a valid project rules configuration.",
+    "fixHint": "Run \`cc-safety-net rule verify\`, correct the reported error, then rerun doctor.",
+    "path": "/p/rules/rule.json",
+    "severity": "error",
+    "title": "Project configuration is invalid",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings a valid config in each scope 1`] = `[]`;
+
+exports[`deriveDoctorFindings a degraded runtime 1`] = `
+[
+  {
+    "checkId": "config.runtime-degraded",
+    "detail": "The rejected candidate configuration is not active: user policy is not valid JSON",
+    "fixHint": "Fix the file named in the reason, or run \`cc-safety-net rule update\` to vendor a remote source, then rerun doctor.",
+    "severity": "warning",
+    "title": "Runtime is enforcing a fallback configuration",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings version 2 lock and cache leftovers 1`] = `
+[
+  {
+    "checkId": "config.v2-leftovers",
+    "detail": "Files an earlier version left behind are no longer read: /p/rules/rule.lock, /u/cache.",
+    "fixHint": "Run \`cc-safety-net rule sync\` (add \`--global\` for user scope) to migrate them, then rerun doctor.",
+    "severity": "info",
+    "title": "Rulebook lock and cache leftovers detected",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings an empty leftovers list is not a finding 1`] = `[]`;
+
+exports[`deriveDoctorFindings an unparseable audit scope 1`] = `
+[
+  {
+    "checkId": "environment.audit-scope-invalid",
+    "detail": "CC_SAFETY_NET_AUDIT_SCOPE is not \`all\` or \`blocked\`, so allowed command decisions are not recorded.",
+    "fixHint": "Set CC_SAFETY_NET_AUDIT_SCOPE to \`all\` or \`blocked\`, then restart the integration.",
+    "severity": "warning",
+    "title": "Audit scope value is invalid",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings the blocked audit scope is valid 1`] = `[]`;
+
+exports[`deriveDoctorFindings each protected directory kind, with each issue wording 1`] = `
+[
+  {
+    "checkId": "posture.policy-directory-unsafe",
+    "detail": "The policy directory is a symbolic link.",
+    "fixHint": "Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.",
+    "path": "/u",
+    "severity": "error",
+    "title": "Policy directory is unsafe",
+  },
+  {
+    "checkId": "posture.config-directory-unsafe",
+    "detail": "The config directory is not a directory.",
+    "fixHint": "Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.",
+    "path": "/u/rules",
+    "severity": "error",
+    "title": "Config directory is unsafe",
+  },
+  {
+    "checkId": "posture.audit-directory-unsafe",
+    "detail": "The audit directory is not owned by the current user and has unsafe permissions.",
+    "fixHint": "Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.",
+    "path": "/u/logs",
+    "severity": "error",
+    "title": "Audit directory is unsafe",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings two unsafe directories of one kind keep their occurrence order 1`] = `
+[
+  {
+    "checkId": "posture.config-directory-unsafe",
+    "detail": "The config directory is not owned by the current user.",
+    "fixHint": "Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.",
+    "path": "/first",
+    "severity": "error",
+    "title": "Config directory is unsafe",
+  },
+  {
+    "checkId": "posture.config-directory-unsafe",
+    "detail": "The config directory has unsafe permissions.",
+    "fixHint": "Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.",
+    "path": "/second",
+    "severity": "error",
+    "title": "Config directory is unsafe",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings rule overrides that weaken the preset 1`] = `
+[
+  {
+    "checkId": "posture.rule-overrides-weaken-preset",
+    "detail": "Explicit overrides disable rules the resolved preset would enable: git.reset-hard, rm.recursive-force-root-or-home.",
+    "fixHint": "Remove these \`off\` overrides or set them to \`on\`: git.reset-hard, rm.recursive-force-root-or-home.",
+    "severity": "warning",
+    "title": "Rule overrides weaken the selected preset",
+  },
+]
+`;
+
+exports[`deriveDoctorFindings severity outranks catalog order, which outranks occurrence 1`] = `
+[
+  {
+    "checkId": "integration.none-configured",
+    "detail": "CC Safety Net is not connected to any supported coding-agent integration.",
+    "fixHint": "Run \`cc-safety-net install\` and configure at least one integration.",
+    "severity": "error",
+    "title": "No integration configured",
+  },
+  {
+    "checkId": "integration.inspection-failed",
+    "detail": "Doctor could not verify the Cursor integration configuration.",
+    "fixHint": "Correct the reported Cursor configuration error, then run \`cc-safety-net doctor\` again.",
+    "integration": "cursor",
+    "severity": "error",
+    "title": "Cursor inspection failed",
+  },
+  {
+    "checkId": "config.user-invalid",
+    "detail": "Doctor could not load a valid user rules configuration.",
+    "fixHint": "Run \`cc-safety-net rule verify\`, correct the reported error, then rerun doctor.",
+    "path": "/u/rules/rule.json",
+    "severity": "error",
+    "title": "User configuration is invalid",
+  },
+  {
+    "checkId": "posture.policy-directory-unsafe",
+    "detail": "The policy directory has unsafe permissions.",
+    "fixHint": "Ensure this is a real directory owned by the current user with no group or other write access, then rerun doctor.",
+    "path": "/u",
+    "severity": "error",
+    "title": "Policy directory is unsafe",
+  },
+  {
+    "checkId": "config.runtime-degraded",
+    "detail": "The rejected candidate configuration is not active: project policy is not valid JSON",
+    "fixHint": "Fix the file named in the reason, or run \`cc-safety-net rule update\` to vendor a remote source, then rerun doctor.",
+    "severity": "warning",
+    "title": "Runtime is enforcing a fallback configuration",
+  },
+  {
+    "checkId": "environment.audit-scope-invalid",
+    "detail": "CC_SAFETY_NET_AUDIT_SCOPE is not \`all\` or \`blocked\`, so allowed command decisions are not recorded.",
+    "fixHint": "Set CC_SAFETY_NET_AUDIT_SCOPE to \`all\` or \`blocked\`, then restart the integration.",
+    "severity": "warning",
+    "title": "Audit scope value is invalid",
+  },
+  {
+    "checkId": "posture.rule-overrides-weaken-preset",
+    "detail": "Explicit overrides disable rules the resolved preset would enable: git.reset-hard.",
+    "fixHint": "Remove these \`off\` overrides or set them to \`on\`: git.reset-hard.",
+    "severity": "warning",
+    "title": "Rule overrides weaken the selected preset",
+  },
+  {
+    "checkId": "config.v2-leftovers",
+    "detail": "Files an earlier version left behind are no longer read: /u/cache.",
+    "fixHint": "Run \`cc-safety-net rule sync\` (add \`--global\` for user scope) to migrate them, then rerun doctor.",
+    "severity": "info",
+    "title": "Rulebook lock and cache leftovers detected",
+  },
+]
+`;

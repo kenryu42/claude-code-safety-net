@@ -10,6 +10,7 @@ import { processHomeDir } from '@/ir/environment';
 import { loadPolicySnapshot } from '@/policy/snapshot';
 import { withEnv } from '../../../helpers';
 import { snapshotTree, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The loader is the one reader behind the gate, the CLI, the GUI and audit retention, so the
@@ -760,6 +761,7 @@ describe('the policy loader port reproduces every configuration recovery row', (
         options,
       );
       expect(actual).toStrictEqual(expected);
+      recordPorted(actual, [...rootFolds(root), [HOME, '<home>']]);
       expect(Object.isFrozen(actual)).toBeTrue();
       expect(Object.isFrozen(actual.policy)).toBeTrue();
       expect(Object.isFrozen(actual.policy.rules)).toBeTrue();

@@ -20,6 +20,7 @@ import {
   createTempRoot,
   environmentFor,
   isolationEnv,
+  recordPorted,
   removeTempRoots,
   withProcessEnv,
 } from '../helpers/temp-home';
@@ -433,6 +434,7 @@ describe('logs --prune-legacy failure', () => {
       }),
     );
     expect(ported).toStrictEqual(shipped);
+    recordPorted(ported);
     return { ...shipped, file: join(shippedSide.logsDir, LEGACY_FILE) };
   }
 

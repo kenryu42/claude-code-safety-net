@@ -1,5 +1,5 @@
 import { expect } from 'bun:test';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   type RunInstallCommandOptions,
@@ -14,7 +14,14 @@ import {
 import { createFakeBin, type FakeScriptEntry } from './fake-bin';
 import { createFakeInput, createFakeOutput } from './fake-tty';
 import { snapshotTree, type TreeSpec, writeTree } from './fixture-tree';
-import { createTempRoot, isolationEnv, normalize, snapshotHome, withProcessEnv } from './temp-home';
+import {
+  createTempRoot,
+  isolationEnv,
+  normalize,
+  recordPorted,
+  snapshotHome,
+  withProcessEnv,
+} from './temp-home';
 
 /**
  * The whole command as a user runs it. Each side gets its own root, its own seeded home and its
@@ -26,6 +33,13 @@ import { createTempRoot, isolationEnv, normalize, snapshotHome, withProcessEnv }
  */
 
 const REPO_ROOT = join(import.meta.dir, '..', '..', '..');
+
+/** The `install --amp` row's tmp tree holds the packaged artifact byte for byte, and the cutover's
+ *  rebuild of `dist/` changes it; the comparison sees the bytes, the record sees a placeholder. */
+const AMP_ARTIFACT = readFileSync(
+  join(REPO_ROOT, 'dist', 'amp', 'cc-safety-net', 'index.ts'),
+  'utf8',
+);
 
 type FlowSide = 'shipped' | 'ported';
 
@@ -129,5 +143,6 @@ export async function runFlowDifferential(spec: FlowSpec) {
 /** The two sides must be indistinguishable; the shipped one is what the contract is asserted on. */
 export function expectSameFlow<T>(result: { shipped: T; ported: T }): T {
   expect(result.ported).toEqual(result.shipped);
+  recordPorted(result.ported, [[AMP_ARTIFACT, '<amp-artifact>']]);
   return result.shipped;
 }

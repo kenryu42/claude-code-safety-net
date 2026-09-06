@@ -73,32 +73,44 @@ const withoutRun = (integrations: readonly HookIntegration[]) =>
 describe('the ported hook table', () => {
   test('resolves the same integration for every hook argument list', () => {
     for (const args of HOOK_ARGS) {
-      expect([args, portedFindByFlag(args)?.id]).toStrictEqual([args, shippedFindByFlag(args)?.id]);
+      const resolved = portedFindByFlag(args)?.id;
+      expect([args, resolved]).toStrictEqual([args, shippedFindByFlag(args)?.id]);
+      expect(resolved).toMatchSnapshot();
     }
   });
 
   test('resolves the same integration for every legacy top-level flag', () => {
     for (const flag of LEGACY_FLAGS) {
-      expect([flag, portedFindLegacy(flag)?.id]).toStrictEqual([flag, shippedFindLegacy(flag)?.id]);
+      const resolved = portedFindLegacy(flag)?.id;
+      expect([flag, resolved]).toStrictEqual([flag, shippedFindLegacy(flag)?.id]);
+      expect(resolved).toMatchSnapshot();
     }
   });
 
   test('carries the same metadata for the same integrations in the same order', () => {
-    expect(withoutRun(portedIntegrations)).toStrictEqual(withoutRun(shippedIntegrations));
+    const metadata = withoutRun(portedIntegrations);
+    expect(metadata).toStrictEqual(withoutRun(shippedIntegrations));
+    expect(metadata).toMatchSnapshot();
   });
 });
 
 describe('the ported catalog', () => {
   test('projects the same four tables', () => {
     expect(portedRuntimeMetadata).toStrictEqual(shippedRuntimeMetadata);
+    expect(portedRuntimeMetadata).toMatchSnapshot();
     expect(portedInstallMetadata).toStrictEqual(shippedInstallMetadata);
+    expect(portedInstallMetadata).toMatchSnapshot();
     expect(portedDoctorOrder).toStrictEqual(shippedDoctorOrder);
+    expect(portedDoctorOrder).toMatchSnapshot();
     expect(portedDisplayNames).toStrictEqual(shippedDisplayNames);
+    expect(portedDisplayNames).toMatchSnapshot();
   });
 
   test('names every integration the way the shipped catalog names it', () => {
     for (const id of Object.keys(shippedDisplayNames) as IntegrationId[]) {
-      expect([id, portedDisplayName(id)]).toStrictEqual([id, shippedDisplayName(id)]);
+      const name = portedDisplayName(id);
+      expect([id, name]).toStrictEqual([id, shippedDisplayName(id)]);
+      expect(name).toMatchSnapshot();
     }
   });
 });

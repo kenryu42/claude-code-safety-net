@@ -28,7 +28,10 @@ import {
 
 describe('the OpenClaw plugin artifact', () => {
   test.each(['dev', '1.2.3'])('builds the shipped metadata files at version %s', (version) => {
-    expect(buildOpenClawPluginManifests(version)).toEqual(shippedManifests(version));
+    const manifests = buildOpenClawPluginManifests(version);
+
+    expect(manifests).toEqual(shippedManifests(version));
+    expect(manifests).toMatchSnapshot();
   });
 
   test('stamps the runtime entry the way the build does', () => {
@@ -39,14 +42,16 @@ describe('the OpenClaw plugin artifact', () => {
   });
 
   test('names the same plugin OpenClaw was told to load', () => {
-    expect({
+    const named = {
       id: OPENCLAW_PLUGIN_ID,
       entryFile: OPENCLAW_PLUGIN_ENTRY_FILE,
       manifestFile: OPENCLAW_PLUGIN_MANIFEST_FILE,
       packageFile: OPENCLAW_PLUGIN_PACKAGE_FILE,
       header: OPENCLAW_MANAGED_HEADER,
       entry: OPENCLAW_PLUGIN_ENTRY,
-    }).toEqual({
+    };
+
+    expect(named).toEqual({
       id: SHIPPED_ID,
       entryFile: SHIPPED_ENTRY_FILE,
       manifestFile: SHIPPED_MANIFEST_FILE,
@@ -54,5 +59,6 @@ describe('the OpenClaw plugin artifact', () => {
       header: SHIPPED_MANAGED_HEADER,
       entry: SHIPPED_ENTRY,
     });
+    expect(named).toMatchSnapshot();
   });
 });

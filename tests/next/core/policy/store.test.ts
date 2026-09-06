@@ -14,7 +14,7 @@ import {
 } from '@/rules/secret-protection-rules';
 import { snapshotTree } from '../../helpers/fixture-tree';
 import { createSeededRandom, FUZZ_SEED } from '../../helpers/shell-inputs';
-import { createTempRoot, normalize, removeTempRoots } from '../../helpers/temp-home';
+import { createTempRoot, normalize, recordPorted, removeTempRoots } from '../../helpers/temp-home';
 import { mutate, USER_POLICY_VALUES } from './policy-values';
 
 /**
@@ -26,6 +26,7 @@ import { mutate, USER_POLICY_VALUES } from './policy-values';
  */
 
 const HOME = processHomeDir();
+const HOME_FOLDS = [[HOME, '<home>']] as const;
 const MUTATION_COUNT = 200;
 
 const documents = (() => {
@@ -52,28 +53,31 @@ const overrideMaps: readonly Record<string, 'on' | 'off'>[] = [
 describe('the policy store port normalizes exactly as the shipped store does', () => {
   test('the built-in default policy is the same document', () => {
     expect(ported.DEFAULT_GUI_POLICY).toStrictEqual(shipped.DEFAULT_GUI_POLICY);
+    expect(ported.DEFAULT_GUI_POLICY).toMatchSnapshot();
   });
 
   test('every user policy document salvages to the same canonical policy', () => {
     for (const document of documents) {
-      expect(ported.normalizeGuiPolicy(document, HOME)).toStrictEqual(
-        shipped.normalizeGuiPolicy(document),
-      );
+      const salvaged = ported.normalizeGuiPolicy(document, HOME);
+      expect(salvaged).toStrictEqual(shipped.normalizeGuiPolicy(document));
+      recordPorted(salvaged, HOME_FOLDS);
     }
   }, 30_000);
 
   test('every project policy document projects to the same present fields', () => {
     for (const document of documents) {
-      expect(ported.projectPolicyProjection(document, HOME)).toStrictEqual(
-        shipped.projectPolicyProjection(document),
-      );
+      const projected = ported.projectPolicyProjection(document, HOME);
+      expect(projected).toStrictEqual(shipped.projectPolicyProjection(document));
+      recordPorted(projected, HOME_FOLDS);
     }
   }, 30_000);
 
   test('every salvaged safety section projects to the same runtime safety', () => {
     for (const document of documents) {
       const safety = shipped.normalizeGuiPolicy(document).safety;
-      expect(ported.normalizeSafety(safety)).toStrictEqual(shipped.normalizeSafety(safety));
+      const normalized = ported.normalizeSafety(safety);
+      expect(normalized).toStrictEqual(shipped.normalizeSafety(safety));
+      expect(normalized).toMatchSnapshot();
     }
   }, 30_000);
 
@@ -85,9 +89,9 @@ describe('the policy store port normalizes exactly as the shipped store does', (
       ),
     ];
     for (const overrides of maps) {
-      expect(ported.resolveSecretDisabledRules(overrides)).toStrictEqual(
-        shipped.resolveSecretDisabledRules(overrides),
-      );
+      const disabled = ported.resolveSecretDisabledRules(overrides);
+      expect(disabled).toStrictEqual(shipped.resolveSecretDisabledRules(overrides));
+      expect(disabled).toMatchSnapshot();
     }
   }, 30_000);
 });
@@ -132,20 +136,26 @@ describe('audit retention reads the same window as the shipped resolver', () => 
     mkdirSync(join(home, 'rules'), { recursive: true });
     writeFileSync(join(home, 'policy.json'), file);
     const userConfigDir = join(home, 'rules');
-    expect(windowFor(userConfigDir)).toBe(resolveAuditRetentionDays({ userConfigDir }));
+    const days = windowFor(userConfigDir);
+    expect(days).toBe(resolveAuditRetentionDays({ userConfigDir }));
+    expect(days).toMatchSnapshot();
   });
 
   test('reads a directory at the policy path the same way', () => {
     const userConfigDir = join(root, 'directory', 'rules');
     mkdirSync(userConfigDir, { recursive: true });
     mkdirSync(join(root, 'directory', 'policy.json'));
-    expect(windowFor(userConfigDir)).toBe(resolveAuditRetentionDays({ userConfigDir }));
+    const days = windowFor(userConfigDir);
+    expect(days).toBe(resolveAuditRetentionDays({ userConfigDir }));
+    expect(days).toMatchSnapshot();
   });
 
   test('reads a missing policy file the same way', () => {
     const userConfigDir = join(root, 'absent', 'rules');
     mkdirSync(userConfigDir, { recursive: true });
-    expect(windowFor(userConfigDir)).toBe(resolveAuditRetentionDays({ userConfigDir }));
+    const days = windowFor(userConfigDir);
+    expect(days).toBe(resolveAuditRetentionDays({ userConfigDir }));
+    expect(days).toMatchSnapshot();
   });
 });
 
@@ -184,11 +194,13 @@ describe('the GUI policy write lands what the shipped write lands', () => {
   test.each(
     GUI_POLICIES.map((row) => [row.label, row.policy] as const),
   )('writes %s the same way', (_label, policy) => {
-    expect(
-      landed('ported', (options) => ported.writeUserPolicyFromGui(environment, policy, options)),
-    ).toStrictEqual(
+    const applied = landed('ported', (options) =>
+      ported.writeUserPolicyFromGui(environment, policy, options),
+    );
+    expect(applied).toStrictEqual(
       landed('shipped', (options) => shipped.writeUserPolicyFromGui(policy, options)),
     );
+    recordPorted(applied, HOME_FOLDS);
   });
 
   test('leaves an owner-only file inside an owner-only directory', () => {

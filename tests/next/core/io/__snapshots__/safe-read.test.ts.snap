@@ -1,0 +1,2541 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 1`] = `
+{
+  "ok": true,
+  "value": 
+"{"level":"standard"}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 2`] = `
+{
+  "ok": true,
+  "value": 
+"{"level":"standard"}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 3`] = `
+{
+  "ok": true,
+  "value": 
+"{"level":"standard"}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 4`] = `
+{
+  "ok": true,
+  "value": 
+"{"rules":[]}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 5`] = `
+{
+  "ok": true,
+  "value": 
+"{"rules":[]}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 6`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 7`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 8`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 9`] = `
+{
+  "ok": true,
+  "value": 
+"plain text
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 10`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 11`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 12`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 13`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 14`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 15`] = `
+{
+  "ok": true,
+  "value": 
+"leaf
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 16`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 17`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 18`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 19`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 20`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 21`] = `
+{
+  "ok": true,
+  "value": 
+"{"level":"standard"}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 22`] = `
+{
+  "ok": true,
+  "value": 
+"{"level":"standard"}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 23`] = `
+{
+  "ok": true,
+  "value": 
+"{"level":"standard"}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 24`] = `
+{
+  "ok": true,
+  "value": 
+"{"rules":[]}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 25`] = `
+{
+  "ok": true,
+  "value": 
+"{"rules":[]}
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 26`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 27`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 28`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 29`] = `
+{
+  "ok": true,
+  "value": 
+"plain text
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 30`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 31`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 32`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 33`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 34`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 35`] = `
+{
+  "ok": true,
+  "value": 
+"leaf
+"
+,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 36`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 37`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 38`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 39`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 40`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 41`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 42`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 43`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 44`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 45`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 46`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 47`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 48`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 49`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 50`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 51`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 52`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 53`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 54`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 55`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 56`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 57`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 58`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 59`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 60`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 61`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 62`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 63`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 64`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 65`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 66`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 67`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 68`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 69`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 70`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 71`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 72`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 73`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 74`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 75`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 76`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 77`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 78`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 79`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 80`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 81`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 82`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 83`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 84`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 85`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 86`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 87`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 88`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 89`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 90`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 91`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 92`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 93`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 94`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 95`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 96`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 97`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 98`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 99`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads return the same content or refusal for every scope and relative path 100`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads reject a file replaced between open and read, by a file or by a symlink 1`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`safe policy reads reject a file replaced between open and read, by a file or by a symlink 2`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 1`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 2`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 3`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 4`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 5`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 6`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 7`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 8`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 9`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 10`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 11`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 12`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 13`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 14`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 15`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 16`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 17`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 18`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 19`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 20`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 21`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 22`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 23`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 24`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 25`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 26`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 27`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 28`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 29`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 30`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 31`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 32`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 33`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 34`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 35`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 36`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 37`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 38`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 39`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 40`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 41`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 42`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 43`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 44`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 45`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 46`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 47`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 48`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 49`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 50`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 51`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 52`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 53`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 54`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 55`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 56`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 57`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 58`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 59`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 60`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 61`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 62`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 63`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 64`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 65`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 66`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 67`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 68`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 69`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 70`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 71`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 72`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 73`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 74`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 75`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 76`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 77`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 78`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 79`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 80`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 81`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 82`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 83`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 84`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 85`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 86`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 87`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 88`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 89`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 90`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 91`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 92`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 93`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 94`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 95`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 96`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 97`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 98`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 99`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes leave the same tree and outcome for every scope and relative path 100`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`atomic policy writes create missing parents and hand the renamed path to the callback 1`] = `
+[
+  {
+    "kind": "symlink",
+    "mode": 511,
+    "path": "alias",
+    "target": "root",
+  },
+  {
+    "kind": "directory",
+    "mode": 448,
+    "path": "fresh",
+  },
+  {
+    "kind": "directory",
+    "mode": 448,
+    "path": "fresh/home",
+  },
+  {
+    "kind": "directory",
+    "mode": 448,
+    "path": "fresh/home/rules",
+  },
+  {
+    "kind": "directory",
+    "mode": 448,
+    "path": "fresh/home/rules/new",
+  },
+  {
+    "content": 
+"created
+"
+,
+    "kind": "file",
+    "mode": 384,
+    "path": "fresh/home/rules/new/rule.json",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "outside",
+  },
+  {
+    "content": 
+"TOPSECRET
+"
+,
+    "kind": "file",
+    "mode": 420,
+    "path": "outside/secret.json",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "root",
+  },
+  {
+    "kind": "symlink",
+    "mode": 511,
+    "path": "root/linked-dir",
+    "target": "../outside",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "root/nested",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "root/nested/deeper",
+  },
+  {
+    "content": 
+"leaf
+"
+,
+    "kind": "file",
+    "mode": 420,
+    "path": "root/nested/deeper/leaf.json",
+  },
+  {
+    "content": 
+"other
+"
+,
+    "kind": "file",
+    "mode": 420,
+    "path": "root/nested/other.txt",
+  },
+  {
+    "content": 
+"plain text
+"
+,
+    "kind": "file",
+    "mode": 420,
+    "path": "root/not-a-dir",
+  },
+  {
+    "content": 
+"{"level":"standard"}
+"
+,
+    "kind": "file",
+    "mode": 420,
+    "path": "root/policy.json",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "root/rules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "root/rules/empty",
+  },
+  {
+    "kind": "symlink",
+    "mode": 511,
+    "path": "root/rules/link.json",
+    "target": "../../outside/secret.json",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "root/rules/team",
+  },
+  {
+    "content": 
+"{"rules":[]}
+"
+,
+    "kind": "file",
+    "mode": 420,
+    "path": "root/rules/team/rule.json",
+  },
+]
+`;
+
+exports[`atomic policy writes stage through an exclusive sibling temp file and clean it up when the rename fails 1`] = `
+{
+  "outcome": {
+    "error": {
+      "message": "Unable to access rules policy filesystem safely.",
+      "name": "PolicyFilesystemError",
+    },
+    "ok": false,
+  },
+  "remaining": [
+    [
+      "linked-dir",
+      undefined,
+    ],
+    [
+      "nested",
+      undefined,
+    ],
+    [
+      "nested/deeper",
+      undefined,
+    ],
+    [
+      "nested/deeper/leaf.json",
+      
+"leaf
+"
+,
+    ],
+    [
+      "nested/other.txt",
+      
+"other
+"
+,
+    ],
+    [
+      "not-a-dir",
+      
+"plain text
+"
+,
+    ],
+    [
+      "policy.json",
+      
+"{"level":"standard"}
+"
+,
+    ],
+    [
+      "rules",
+      undefined,
+    ],
+    [
+      "rules/empty",
+      undefined,
+    ],
+    [
+      "rules/link.json",
+      undefined,
+    ],
+    [
+      "rules/team",
+      undefined,
+    ],
+    [
+      "rules/team/rule.json",
+      
+"{"rules":[]}
+"
+,
+    ],
+  ],
+  "seen": [
+    {
+      "destination": 
+"{"level":"standard"}
+"
+,
+      "listing": [
+        "linked-dir",
+        "nested",
+        "not-a-dir",
+        "policy.json",
+        "policy.json.HEX.tmp",
+        "rules",
+      ],
+      "sameDirectory": true,
+      "staged": 
+"{"level":"strict"}
+"
+,
+      "stagedMode": 384,
+      "tempName": "policy.json.HEX.tmp",
+    },
+  ],
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 1`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 2`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 3`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 4`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 5`] = `
+{
+  "ok": true,
+  "value": [
+    {
+      "kind": "file",
+      "name": "rule.json",
+    },
+  ],
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 6`] = `
+{
+  "ok": true,
+  "value": true,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 7`] = `
+{
+  "ok": true,
+  "value": [],
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 8`] = `
+{
+  "ok": true,
+  "value": true,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 9`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 10`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 11`] = `
+{
+  "ok": true,
+  "value": [
+    {
+      "kind": "file",
+      "name": "other.txt",
+    },
+    {
+      "kind": "file",
+      "name": "hardlink.json",
+    },
+    {
+      "kind": "directory",
+      "name": "deeper",
+    },
+  ],
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 12`] = `
+{
+  "ok": true,
+  "value": true,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 13`] = `
+{
+  "ok": true,
+  "value": null,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 14`] = `
+{
+  "ok": true,
+  "value": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 15`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 16`] = `
+{
+  "error": {
+    "message": "Unable to access user policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 17`] = `
+{
+  "ok": true,
+  "value": true,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 18`] = `
+{
+  "ok": true,
+  "value": true,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 19`] = `
+{
+  "ok": true,
+  "value": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 20`] = `
+{
+  "ok": true,
+  "value": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 21`] = `
+{
+  "ok": true,
+  "value": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 22`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 23`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 24`] = `
+{
+  "ok": true,
+  "value": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 25`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 26`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 27`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 28`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 29`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 30`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 31`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 32`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 33`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 34`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 35`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 36`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 37`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 38`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 39`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 40`] = `
+{
+  "ok": true,
+  "value": undefined,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 41`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity list, compare, and remove entries identically 42`] = `
+{
+  "error": {
+    "message": "Unable to access rules policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 1`] = `
+{
+  "ok": true,
+  "value": {
+    "label": "rules policy",
+    "path": "root/policy.json",
+    "relativePath": "policy.json",
+    "root": "root",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 2`] = `
+{
+  "ok": true,
+  "value": {
+    "path": "root/policy.json",
+    "relativePath": "policy.json",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 3`] = `
+{
+  "ok": true,
+  "value": {
+    "label": "rules policy",
+    "path": "root/rules/team/rule.json",
+    "relativePath": "rule.json",
+    "root": "root/rules/team",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 4`] = `
+{
+  "ok": true,
+  "value": {
+    "path": "root/rules/team/rule.json",
+    "relativePath": "rules/team/rule.json",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 5`] = `
+{
+  "ok": true,
+  "value": {
+    "label": "rules policy",
+    "path": "outside/secret.json",
+    "relativePath": "secret.json",
+    "root": "outside",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 6`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 7`] = `
+{
+  "ok": true,
+  "value": {
+    "label": "rules policy",
+    "path": "nowhere/deep/rule.json",
+    "relativePath": "rule.json",
+    "root": "nowhere/deep",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 8`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 9`] = `
+{
+  "ok": true,
+  "value": {
+    "label": "rules policy",
+    "path": "outside/secret.json",
+    "relativePath": "secret.json",
+    "root": "outside",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 10`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 11`] = `
+{
+  "ok": true,
+  "value": {
+    "label": "rules policy",
+    "path": "root",
+    "relativePath": "root",
+    "root": "",
+  },
+}
+`;
+
+exports[`policy directories and target identity bind delegated and absolute paths to the same scopes 12`] = `
+{
+  "error": {
+    "message": "Unable to access project policy filesystem safely.",
+    "name": "PolicyFilesystemError",
+  },
+  "ok": false,
+}
+`;

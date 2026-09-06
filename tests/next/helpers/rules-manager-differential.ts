@@ -10,6 +10,7 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   withProcessEnv,
 } from './temp-home';
 
@@ -75,6 +76,7 @@ export async function runManagerDifferential<T>(
     run(sides.ported, environmentFor(sides.ported.home, sides.ported.values)),
   );
   expect(ported).toStrictEqual(shipped);
+  recordPorted(ported);
   expect(shipped.tree.filter((entry) => POLICY_TEMP_NAME_RE.test(entry.path))).toEqual([]);
   return { results: shipped.results, tree: shipped.tree, sides };
 }
@@ -105,6 +107,7 @@ export function expectGateView(sides: Sides, scope: 'user' | 'project', result: 
     sides.ported.root,
   );
   expect(ported).toStrictEqual(shipped);
+  recordPorted(ported);
   if (!result.ok) {
     for (const error of result.errors) expect(shipped.warnings).toContain(error);
     return;

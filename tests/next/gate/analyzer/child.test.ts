@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import type { PolicyRule } from '@next/core/rules/types';
 import {
@@ -20,7 +19,9 @@ import {
 } from '@/analyzer/child-command';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, FUZZ_SEED, fuzzShellSources } from '../../helpers/shell-inputs';
+import { createTempRoot, removeTempRoots } from '../../helpers/temp-home';
 
 /**
  * A child command reaches the rule sets only after the wrapper prelude, the transparent
@@ -33,15 +34,13 @@ let home = '';
 let workspace = '';
 
 beforeAll(() => {
-  root = realpathSync(mkdtempSync(join(tmpdir(), 'next-child-')));
+  root = realpathSync(createTempRoot('next-child-'));
   home = join(root, 'home');
   workspace = join(root, 'work');
   writeTree(root, { 'home/notes': null, 'work/build': null, elsewhere: null });
 });
 
-afterAll(() => {
-  rmSync(root, { recursive: true, force: true });
-});
+afterAll(removeTempRoots);
 
 const CUSTOM_RULES: readonly PolicyRule[] = [
   {
@@ -147,32 +146,31 @@ function shippedOutcome<T>(run: () => T) {
 
 describe('child command normalization', () => {
   test('yields the same candidates as the shipped normalizer', () => {
+    const recorded: [string, unknown][] = [];
     for (const useEnv of [false, true]) {
       const context = normalizationContext(useEnv);
       for (const tokens of WRAPPED_COMMANDS) {
         const label = `${tokens.join(' ')} (env: ${useEnv})`;
-        expect(
-          portedOutcome(
-            () => [...normalizeChildCommands(tokens, context.next)].map(readableCandidate),
-            label,
-          ),
+        const all = portedOutcome(
+          () => [...normalizeChildCommands(tokens, context.next)].map(readableCandidate),
           label,
-        ).toStrictEqual(
+        );
+        expect(all, label).toStrictEqual(
           shippedOutcome(() =>
             [...shippedNormalizeAll(tokens, context.shipped)].map(readableCandidate),
           ),
         );
-        expect(
-          portedOutcome(
-            () => readableCandidate(normalizeChildCommand(tokens, context.next)),
-            label,
-          ),
+        const one = portedOutcome(
+          () => readableCandidate(normalizeChildCommand(tokens, context.next)),
           label,
-        ).toStrictEqual(
+        );
+        expect(one, label).toStrictEqual(
           shippedOutcome(() => readableCandidate(shippedNormalizeOne(tokens, context.shipped))),
         );
+        recorded.push([label, { all, one }]);
       }
     }
+    expectRecordedDigest('analyzer-child/normalization', recorded, root);
   });
 
   test('the peel is bounded and a transparent wrapper offers every protectable child', () => {
@@ -194,6 +192,7 @@ describe('child command normalization', () => {
   });
 
   test('a parallel command template stops at the argument marker', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of [
       ['parallel', 'rm', '-rf', '{}', ':::', 'a', 'b'],
       ['parallel', 'rm', '-rf', '{}'],
@@ -201,11 +200,14 @@ describe('child command normalization', () => {
       [],
     ]) {
       for (const start of [0, 1, 2]) {
-        expect(collectCommandTemplate(tokens, start), `${tokens.join(' ')}@${start}`).toStrictEqual(
+        const template = collectCommandTemplate(tokens, start);
+        expect(template, `${tokens.join(' ')}@${start}`).toStrictEqual(
           shippedCollectTemplate(tokens, start),
         );
+        recorded.push([`${tokens.join(' ')}@${start}`, template]);
       }
     }
+    expectRecordedDigest('analyzer-child/command-template', recorded, root);
   });
 });
 
@@ -351,6 +353,7 @@ function dispatchPair(
 
 describe('child command analysis', () => {
   test('dispatches every head to the same rule as the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of ANALYSIS_CASES) {
       for (const options of ANALYSIS_OPTIONS) {
         for (const tokens of CHILD_COMMANDS) {
@@ -358,9 +361,11 @@ describe('child command analysis', () => {
           const label = `${row.label}: ${tokens.join(' ')}`;
           expect(pair.next.match, label).toStrictEqual(pair.shipped.match);
           expect(pair.next.nested, label).toStrictEqual(pair.shipped.nested);
+          recorded.push([label, pair.next]);
         }
       }
     }
+    expectRecordedDigest('analyzer-child/dispatch', recorded, root);
   });
 
   test('the table reaches the interpreter, rm, find, git, custom and dynamic reasons', () => {
@@ -401,6 +406,7 @@ describe('child command analysis', () => {
   });
 
   test('the corpus commands split into tokens agree with the shipped dispatch', () => {
+    const recorded: [string, unknown][] = [];
     for (const source of [...corpusCommands(), ...fuzzShellSources(250, FUZZ_SEED)]) {
       const tokens = source.split(/\s+/).filter((token) => token !== '');
       const pair = dispatchPair(
@@ -410,6 +416,8 @@ describe('child command analysis', () => {
       );
       expect(pair.next.match, source).toStrictEqual(pair.shipped.match);
       expect(pair.next.nested, source).toStrictEqual(pair.shipped.nested);
+      recorded.push([source, pair.next]);
     }
+    expectRecordedDigest('analyzer-child/corpus-dispatch', recorded, root);
   });
 });

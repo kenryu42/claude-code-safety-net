@@ -1,0 +1,78 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`running a host CLI merges both streams, or narrows the success value to stdout on request 1`] = `
+{
+  "calls": [
+    "tool go",
+    "tool go",
+  ],
+  "value": {
+    "merged": 
+"out
+
+err
+"
+,
+    "stdoutOnly": 
+"out
+"
+,
+  },
+}
+`;
+
+exports[`running a host CLI reports the exit status and everything the command printed 1`] = `
+{
+  "calls": [
+    "tool fail",
+  ],
+  "value": {
+    "kind": "threw",
+    "message": 
+"Failed to run tool fail (exit 2).
+out
+err"
+,
+  },
+}
+`;
+
+exports[`running a host CLI gives up on a stalled command after the timeout it was given 1`] = `
+{
+  "calls": [
+    "tool slow",
+  ],
+  "value": {
+    "kind": "threw",
+    "message": 
+"Failed to run tool slow.
+Timed out after 200ms."
+,
+  },
+}
+`;
+
+exports[`running a host CLI runs a list of commands one after the other 1`] = `
+{
+  "calls": [
+    "tool go",
+    "other ok",
+  ],
+  "value": undefined,
+}
+`;
+
+exports[`running a host CLI warns about a failed cleanup command and keeps going 1`] = `
+{
+  "calls": [
+    "tool gone",
+    "tool go",
+  ],
+  "value": [
+    
+"Failed to run tool gone (exit 3).
+nothing to remove"
+,
+  ],
+}
+`;

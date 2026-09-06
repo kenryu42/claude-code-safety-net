@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import * as next from '@next/core/redaction';
 import * as shipped from '@/engine/sanitize';
+import { expectRecordedDigest } from '../helpers/gate-differential';
 import { corpusStrings, seededRandom } from './differential-inputs';
 
 /** Each exported sanitizer beside its shipped reference. */
@@ -163,11 +164,15 @@ function fuzzTexts(count: number, seed: number): readonly string[] {
 describe('redaction', () => {
   test('every sanitizer agrees with the shipped one on fixed, corpus, and fuzzed text', () => {
     const texts = [...FIXED, ...corpusStrings(), ...fuzzTexts(3_000, 0x5afe_0003)];
-    for (const [port, reference] of PAIRS) {
-      for (const text of texts) {
-        expect(port(text)).toEqual(reference(text));
+    const recorded: (readonly [string, unknown])[] = [];
+    for (const [index, [port, reference]] of PAIRS.entries()) {
+      for (const [row, text] of texts.entries()) {
+        const sanitized = port(text);
+        expect(sanitized).toEqual(reference(text));
+        recorded.push([`${index}-${row}`, sanitized]);
       }
     }
+    expectRecordedDigest('core-redaction/sanitizers', recorded);
   });
 
   test('the fixed table both redacts and leaves text alone', () => {

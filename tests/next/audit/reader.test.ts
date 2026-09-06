@@ -228,6 +228,7 @@ describe('audit reader record parity', () => {
 
       const entries = readAuditLogEntries(file, nextSkips);
       expect(entries).toStrictEqual(shippedReadAuditLogEntries(file, srcSkips));
+      expect(entries).toMatchSnapshot();
       expect(entries.map((entry) => entry.command)).toStrictEqual(readCase.commands);
       expect(nextSkips.count).toBe(srcSkips.count);
       expect(nextSkips.count).toBe(readCase.skips);

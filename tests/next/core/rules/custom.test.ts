@@ -3,6 +3,7 @@ import { checkPolicyRuleMatch as checkWithNext } from '@next/core/rules/custom';
 import type { PolicyRule } from '@next/core/rules/types';
 import { checkPolicyRuleMatch as checkWithSrc } from '@/rules/custom';
 import { behavioralContractCases } from '../../../analyzer/behavioral-contract-cases';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, createSeededRandom, FUZZ_SEED } from '../../helpers/shell-inputs';
 
 /**
@@ -404,16 +405,18 @@ describe('checkPolicyRuleMatch parity', () => {
       ...fuzzTokenLists(400, FUZZ_SEED),
     ];
     expect(lists.length).toBeGreaterThanOrEqual(200);
-    const outcomes = lists.flatMap((tokens) =>
-      RULE_TABLES.map((rules) => {
+    const recorded = lists.flatMap((tokens, row) =>
+      RULE_TABLES.map((rules, table) => {
         const next = checkWithNext(tokens, rules);
         expect(next).toEqual(checkWithSrc(tokens, rules));
-        return next;
+        return [`${row}-${table}`, next] as const;
       }),
     );
+    const outcomes = recorded.map((entry) => entry[1]);
     const matched = new Set(outcomes.flatMap((match) => (match === null ? [] : [match.id])));
     expect(outcomes.some((match) => match === null)).toBe(true);
     // The tables must actually fire: a rule set no input matches proves nothing.
     expect(matched.size).toBeGreaterThan(20);
+    expectRecordedDigest('core-rules-custom/rule-matches', recorded);
   });
 });

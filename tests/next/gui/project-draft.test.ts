@@ -49,7 +49,10 @@ const baseline = (): Policy => ({
 
 describe('the project draft block on the served page', () => {
   test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toBe(block(pages.shipped));
+    const draftBlock = block(pages.ported);
+
+    expect(draftBlock).toBe(block(pages.shipped));
+    expect(draftBlock).toMatchSnapshot();
   });
 
   test('proposes the marked fields and nothing else', () => {

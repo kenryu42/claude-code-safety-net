@@ -42,15 +42,21 @@ test('the OpenCode builtin command carries the same template on both sides', () 
   const ported = portedLoad();
 
   expect(ported).toStrictEqual(shippedLoad());
+  expect(ported).toMatchSnapshot();
   expect(Object.keys(ported)).toStrictEqual(['cc-safety-net']);
   expect(ported['cc-safety-net']?.template).toStartWith('# CC Safety Net');
 });
 
 test('the Pi prompt is the same for an empty and for a filled request', () => {
-  expect(portedPrompt('')).toBe(shippedPrompt(''));
-  expect(portedPrompt('explain rm')).toBe(shippedPrompt('explain rm'));
-  expect(portedPrompt('')).toEndWith(`## User request\n\n${DEFAULT_REQUEST}`);
-  expect(portedPrompt('explain rm')).toEndWith('## User request\n\nexplain rm');
+  const empty = portedPrompt('');
+  const filled = portedPrompt('explain rm');
+
+  expect(empty).toBe(shippedPrompt(''));
+  expect(empty).toMatchSnapshot();
+  expect(filled).toBe(shippedPrompt('explain rm'));
+  expect(filled).toMatchSnapshot();
+  expect(empty).toEndWith(`## User request\n\n${DEFAULT_REQUEST}`);
+  expect(filled).toEndWith('## User request\n\nexplain rm');
 });
 
 test.each([
@@ -60,6 +66,7 @@ test.each([
   const ported = await recordPiCommand(portedRegister, 'explain rm', isIdle);
 
   expect(ported).toStrictEqual(await recordPiCommand(shippedRegister, 'explain rm', isIdle));
+  expect(ported).toMatchSnapshot();
   expect(ported.commands).toStrictEqual([
     ['cc-safety-net', 'Operate CC Safety Net: explain blocks, rules, integrations, diagnostics'],
   ]);

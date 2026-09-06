@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 import { atomicWriteFile as writeWithNext } from '@next/core/io/atomic-write';
 import { atomicWriteFile as writeWithSrc } from '@/integrations/install/atomic-write';
 import { describeOutcome, snapshotTree } from '../../helpers/fixture-tree';
+import { recordPorted } from '../../helpers/temp-home';
 
 const WRITERS = [
   ['next', writeWithNext],
@@ -79,6 +80,7 @@ describe('atomic write', () => {
     });
 
     expect(captures[0]).toEqual(captures[1]);
+    recordPorted(captures[0], [[`.${process.pid}.tmp`, '.<pid>.tmp']]);
     expect(captures[0]?.seen).toEqual([
       {
         sameDirectory: true,

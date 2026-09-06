@@ -105,7 +105,9 @@ describe('clearing the npx cache', () => {
         testCase.platform,
       );
 
-      expect(snapshotHome(portedHome)).toEqual(snapshotHome(shippedHome));
+      const swept = snapshotHome(portedHome);
+      expect(swept).toEqual(snapshotHome(shippedHome));
+      expect(swept).toMatchSnapshot();
       expect(cacheEntries(shippedHome, testCase.cacheDir)).toEqual(testCase.remaining);
     });
   }

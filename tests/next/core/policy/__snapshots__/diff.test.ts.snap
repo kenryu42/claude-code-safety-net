@@ -1,0 +1,954 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the policy diff port describes a proposal as the shipped diff does flattens every policy with includeAudit true 1`] = `
+{
+  "audit.retention_days": "30",
+  "destructive_command_protection.allow_paths": "(none)",
+  "destructive_command_protection.enabled": "true",
+  "safety.level": "standard",
+  "secret_protection.allow_paths": "(none)",
+  "secret_protection.deny_paths": "(none)",
+  "secret_protection.enabled": "true",
+  "workflow.worktree_mode": "false",
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does flattens every policy with includeAudit true 2`] = `
+{
+  "audit.retention_days": "5",
+  "destructive_command_protection.allow_paths": "/srv/scratch, /srv/build",
+  "destructive_command_protection.enabled": "true",
+  "destructive_command_protection.overrides.git.reset-hard": "off",
+  "safety.level": "strict",
+  "safety.overrides.fail_closed": "true",
+  "safety.overrides.paranoid_rm": "false",
+  "secret_protection.allow_paths": "/srv/public",
+  "secret_protection.deny_paths": "/srv/vault",
+  "secret_protection.enabled": "false",
+  "secret_protection.overrides.secret.basename.env": "off",
+  "workflow.worktree_mode": "true",
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does flattens every policy with includeAudit true 3`] = `
+{
+  "audit.retention_days": "90",
+  "destructive_command_protection.allow_paths": "(none)",
+  "destructive_command_protection.enabled": "false",
+  "safety.level": "paranoid",
+  "safety.overrides.paranoid_interpreters": "true",
+  "secret_protection.allow_paths": "(none)",
+  "secret_protection.deny_paths": "(none)",
+  "secret_protection.enabled": "true",
+  "workflow.worktree_mode": "false",
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does flattens every policy with includeAudit false 1`] = `
+{
+  "destructive_command_protection.allow_paths": "(none)",
+  "destructive_command_protection.enabled": "true",
+  "safety.level": "standard",
+  "secret_protection.allow_paths": "(none)",
+  "secret_protection.deny_paths": "(none)",
+  "secret_protection.enabled": "true",
+  "workflow.worktree_mode": "false",
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does flattens every policy with includeAudit false 2`] = `
+{
+  "destructive_command_protection.allow_paths": "/srv/scratch, /srv/build",
+  "destructive_command_protection.enabled": "true",
+  "destructive_command_protection.overrides.git.reset-hard": "off",
+  "safety.level": "strict",
+  "safety.overrides.fail_closed": "true",
+  "safety.overrides.paranoid_rm": "false",
+  "secret_protection.allow_paths": "/srv/public",
+  "secret_protection.deny_paths": "/srv/vault",
+  "secret_protection.enabled": "false",
+  "secret_protection.overrides.secret.basename.env": "off",
+  "workflow.worktree_mode": "true",
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does flattens every policy with includeAudit false 3`] = `
+{
+  "destructive_command_protection.allow_paths": "(none)",
+  "destructive_command_protection.enabled": "false",
+  "safety.level": "paranoid",
+  "safety.overrides.paranoid_interpreters": "true",
+  "secret_protection.allow_paths": "(none)",
+  "secret_protection.deny_paths": "(none)",
+  "secret_protection.enabled": "true",
+  "workflow.worktree_mode": "false",
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 1`] = `[]`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 2`] = `[]`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 3`] = `
+[
+  {
+    "after": "strict",
+    "before": "standard",
+    "field": "safety.level",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": "/srv/scratch, /srv/build",
+    "before": "(none)",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": "/srv/vault",
+    "before": "(none)",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "/srv/public",
+    "before": "(none)",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "5",
+    "before": "30",
+    "field": "audit.retention_days",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": "false",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 4`] = `
+[
+  {
+    "after": "strict",
+    "before": "standard",
+    "field": "safety.level",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": "/srv/scratch, /srv/build",
+    "before": "(none)",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": "/srv/vault",
+    "before": "(none)",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "/srv/public",
+    "before": "(none)",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": "false",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 5`] = `
+[
+  {
+    "after": "paranoid",
+    "before": "standard",
+    "field": "safety.level",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": "90",
+    "before": "30",
+    "field": "audit.retention_days",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 6`] = `
+[
+  {
+    "after": "paranoid",
+    "before": "standard",
+    "field": "safety.level",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 7`] = `
+[
+  {
+    "after": "standard",
+    "before": "strict",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": undefined,
+    "before": "false",
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/scratch, /srv/build",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/vault",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/public",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "30",
+    "before": "5",
+    "field": "audit.retention_days",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 8`] = `
+[
+  {
+    "after": "standard",
+    "before": "strict",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": undefined,
+    "before": "false",
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/scratch, /srv/build",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/vault",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/public",
+    "field": "secret_protection.allow_paths",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 9`] = `[]`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 10`] = `[]`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 11`] = `
+[
+  {
+    "after": "paranoid",
+    "before": "strict",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": undefined,
+    "before": "false",
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/scratch, /srv/build",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/vault",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/public",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "90",
+    "before": "5",
+    "field": "audit.retention_days",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 12`] = `
+[
+  {
+    "after": "paranoid",
+    "before": "strict",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": undefined,
+    "before": "false",
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/scratch, /srv/build",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": undefined,
+    "before": "off",
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/vault",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "(none)",
+    "before": "/srv/public",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 13`] = `
+[
+  {
+    "after": "standard",
+    "before": "paranoid",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": "30",
+    "before": "90",
+    "field": "audit.retention_days",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 14`] = `
+[
+  {
+    "after": "standard",
+    "before": "paranoid",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "destructive_command_protection.enabled",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 15`] = `
+[
+  {
+    "after": "strict",
+    "before": "paranoid",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": "/srv/scratch, /srv/build",
+    "before": "(none)",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": "/srv/vault",
+    "before": "(none)",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "/srv/public",
+    "before": "(none)",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "5",
+    "before": "90",
+    "field": "audit.retention_days",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": "false",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 16`] = `
+[
+  {
+    "after": "strict",
+    "before": "paranoid",
+    "field": "safety.level",
+  },
+  {
+    "after": undefined,
+    "before": "true",
+    "field": "safety.overrides.paranoid_interpreters",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "workflow.worktree_mode",
+  },
+  {
+    "after": "true",
+    "before": "false",
+    "field": "destructive_command_protection.enabled",
+  },
+  {
+    "after": "/srv/scratch, /srv/build",
+    "before": "(none)",
+    "field": "destructive_command_protection.allow_paths",
+  },
+  {
+    "after": "false",
+    "before": "true",
+    "field": "secret_protection.enabled",
+  },
+  {
+    "after": "/srv/vault",
+    "before": "(none)",
+    "field": "secret_protection.deny_paths",
+  },
+  {
+    "after": "/srv/public",
+    "before": "(none)",
+    "field": "secret_protection.allow_paths",
+  },
+  {
+    "after": "true",
+    "before": undefined,
+    "field": "safety.overrides.fail_closed",
+  },
+  {
+    "after": "false",
+    "before": undefined,
+    "field": "safety.overrides.paranoid_rm",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "destructive_command_protection.overrides.git.reset-hard",
+  },
+  {
+    "after": "off",
+    "before": undefined,
+    "field": "secret_protection.overrides.secret.basename.env",
+  },
+]
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 17`] = `[]`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does reports the same changed rows for every ordered pair of policies 18`] = `[]`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does writes the same sparse project file for a proposal that sets one section 1`] = `
+{
+  "safety": {
+    "level": "strict",
+  },
+  "version": 1,
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does writes the same sparse project file for a proposal that sets one section 2`] = `
+{
+  "version": 1,
+  "workflow": {
+    "worktree_mode": true,
+  },
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does writes the same sparse project file for a proposal that sets one section 3`] = `
+{
+  "version": 1,
+}
+`;
+
+exports[`the policy diff port describes a proposal as the shipped diff does writes the same sparse project file for a proposal that sets one section 4`] = `
+{
+  "version": 1,
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does reads a valid policy the same way 1`] = `
+{
+  "errors": [],
+  "value": {
+    "safety": {
+      "level": "strict",
+    },
+    "version": 1,
+  },
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does reads malformed JSON the same way 1`] = `
+{
+  "errors": [
+    "<root>/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Property name must be a string literal",
+  ],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does reads a policy the schema rejects the same way 1`] = `
+{
+  "errors": [],
+  "value": {
+    "safety": {
+      "level": "nope",
+    },
+    "tier": "gold",
+    "version": 1,
+  },
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does reads an empty file the same way 1`] = `
+{
+  "errors": [
+    "<root>/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Unexpected EOF",
+  ],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does reads no file at all the same way 1`] = `
+{
+  "errors": [
+    "<root>/.cc-safety-net/policy.json: file not found",
+  ],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does takes a valid policy as the same baseline and diagnostics 1`] = `
+{
+  "baseline": {
+    "audit": {
+      "retention_days": 30,
+    },
+    "destructive_command_protection": {
+      "allow_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "safety": {
+      "level": "strict",
+      "overrides": {},
+    },
+    "secret_protection": {
+      "allow_paths": [],
+      "deny_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "version": 1,
+    "workflow": {
+      "worktree_mode": false,
+    },
+  },
+  "diagnostics": [],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does takes malformed JSON as the same baseline and diagnostics 1`] = `
+{
+  "baseline": {
+    "audit": {
+      "retention_days": 30,
+    },
+    "destructive_command_protection": {
+      "allow_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "safety": {
+      "level": "standard",
+      "overrides": {},
+    },
+    "secret_protection": {
+      "allow_paths": [],
+      "deny_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "version": 1,
+    "workflow": {
+      "worktree_mode": false,
+    },
+  },
+  "diagnostics": [
+    "<root>/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Property name must be a string literal",
+  ],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does takes a policy the schema rejects as the same baseline and diagnostics 1`] = `
+{
+  "baseline": {
+    "audit": {
+      "retention_days": 30,
+    },
+    "destructive_command_protection": {
+      "allow_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "safety": {
+      "level": "standard",
+      "overrides": {},
+    },
+    "secret_protection": {
+      "allow_paths": [],
+      "deny_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "version": 1,
+    "workflow": {
+      "worktree_mode": false,
+    },
+  },
+  "diagnostics": [
+    "unknown field "tier"",
+    "safety.level must be "standard", "strict", or "paranoid"",
+  ],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does takes an empty file as the same baseline and diagnostics 1`] = `
+{
+  "baseline": {
+    "audit": {
+      "retention_days": 30,
+    },
+    "destructive_command_protection": {
+      "allow_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "safety": {
+      "level": "standard",
+      "overrides": {},
+    },
+    "secret_protection": {
+      "allow_paths": [],
+      "deny_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "version": 1,
+    "workflow": {
+      "worktree_mode": false,
+    },
+  },
+  "diagnostics": [
+    "<root>/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Unexpected EOF",
+  ],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does takes no file at all as the same baseline and diagnostics 1`] = `
+{
+  "baseline": {
+    "audit": {
+      "retention_days": 30,
+    },
+    "destructive_command_protection": {
+      "allow_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "safety": {
+      "level": "standard",
+      "overrides": {},
+    },
+    "secret_protection": {
+      "allow_paths": [],
+      "deny_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "version": 1,
+    "workflow": {
+      "worktree_mode": false,
+    },
+  },
+  "diagnostics": [],
+}
+`;
+
+exports[`the policy diff port reads a file as the shipped diff does falls back to the embedded snapshot an Amp install stamped in 1`] = `
+{
+  "baseline": {
+    "audit": {
+      "retention_days": 30,
+    },
+    "destructive_command_protection": {
+      "allow_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "safety": {
+      "level": "paranoid",
+      "overrides": {},
+    },
+    "secret_protection": {
+      "allow_paths": [],
+      "deny_paths": [],
+      "enabled": true,
+      "overrides": {},
+    },
+    "version": 1,
+    "workflow": {
+      "worktree_mode": false,
+    },
+  },
+  "diagnostics": [],
+}
+`;

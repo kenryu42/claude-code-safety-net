@@ -11,6 +11,7 @@ import {
   createTempRoot,
   describeAsyncOutcome,
   normalize,
+  recordPorted,
   removeTempRoots,
 } from '../helpers/temp-home';
 
@@ -106,6 +107,7 @@ async function agree<T>(run: (side: Side, configDir: string) => Promise<T>, spec
   const shipped = await observe(SIDES[0], run, spec);
   const ported = await observe(SIDES[1], run, spec);
   expect(ported).toStrictEqual(shipped);
+  recordPorted(ported, [[github.origin, '<github>']]);
   return ported;
 }
 

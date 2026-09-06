@@ -224,6 +224,7 @@ describe('deriveDoctorFindings', () => {
     test(row.name, () => {
       const ported = derivePorted(row.facts);
       expect(ported).toEqual(deriveShipped(row.facts));
+      expect(ported).toMatchSnapshot();
       expect(ported.map((finding) => finding.checkId)).toEqual(row.ids);
     });
   }

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { homedir } from 'node:os';
 import { createProcessEnvironment } from '@next/core/environment';
 import {
   createSemanticFactStore,
@@ -17,7 +18,9 @@ import {
   projectSensitiveShellText as shippedProjectSensitiveShellText,
 } from '@/guards/semantic-facts';
 import { createToolInvocation as shippedCreateToolInvocation } from '@/ir/invocation';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, corpusToolInputs, FIXED_COMMANDS } from '../../helpers/shell-inputs';
+import { normalize, withProcessEnv } from '../../helpers/temp-home';
 
 /**
  * Every guard reads the call through these facts, so a divergence here moves a decision even
@@ -25,6 +28,26 @@ import { corpusCommands, corpusToolInputs, FIXED_COMMANDS } from '../../helpers/
  */
 
 const CONTEXT = { configCwd: '/work/project', executionCwd: '/work/project/repo' };
+
+/** The path variables the projection expands besides `HOME` and `TMPDIR`, pinned to unset. */
+const UNSET_PATH_VARIABLES = Object.fromEntries(
+  [
+    'CC_SAFETY_NET_HOME',
+    'CLAUDE_CONFIG_DIR',
+    'CODEX_HOME',
+    'COPILOT_HOME',
+    'GEMINI_CLI_HOME',
+    'GROK_HOME',
+    'KIMI_CODE_HOME',
+    'KIMI_SHARE_DIR',
+    'OPENCODE_CONFIG',
+    'OPENCODE_CONFIG_DIR',
+    'PI_CODING_AGENT_DIR',
+    'ProgramData',
+    'XDG_CONFIG_HOME',
+    'XDG_DATA_HOME',
+  ].map((name) => [name, undefined]),
+);
 
 const ROUTES: readonly ToolRoute[] = [
   { kind: 'command', shell: 'posix' },
@@ -66,6 +89,9 @@ type FactRow = {
   command: string | null;
 };
 
+/** Names one row in a digest: the tool, the route and both command sources. */
+const rowKey = (row: FactRow) => JSON.stringify([row.toolName, row.route, row.command, row.input]);
+
 /** One row's facts from both implementations. */
 function factsPair(row: FactRow) {
   return {
@@ -103,38 +129,49 @@ describe('next/gate/guards/semantic-facts against src/guards/semantic-facts', ()
 
   test('builds the same facts for every corpus input on every route', () => {
     expect(rows.length).toBeGreaterThan(1_000);
+    const recorded: [string, unknown][] = [];
     for (const row of rows) {
       const pair = factsPair(row);
-      expect(comparable(pair.next)).toStrictEqual(comparable(pair.shipped));
+      const facts = comparable(pair.next);
+      expect(facts).toStrictEqual(comparable(pair.shipped));
+      recorded.push([rowKey(row), facts]);
     }
+    expectRecordedDigest('guards-semantic-facts/corpus-facts', recorded);
   });
 
   test('selects the same fact for each usage', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of rows) {
       const pair = factsPair(row);
       for (const usage of ['input-candidate', 'declared-command'] as const) {
-        expect(getCommandSyntaxFact(pair.next, usage)?.source).toStrictEqual(
-          shippedGetCommandSyntaxFact(pair.shipped, usage)?.source,
-        );
+        const source = getCommandSyntaxFact(pair.next, usage)?.source;
+        expect(source).toStrictEqual(shippedGetCommandSyntaxFact(pair.shipped, usage)?.source);
+        recorded.push([`${usage} ${rowKey(row)}`, source ?? null]);
       }
     }
+    expectRecordedDigest('guards-semantic-facts/usage-facts', recorded);
   });
 
   test('the store parses and projects every corpus command identically', () => {
     const store = createSemanticFactStore();
     const shipped = shippedCreateSemanticFactStore();
+    const recorded: [string, unknown][] = [];
     for (const source of [...corpusCommands(), ...FIXED_COMMANDS]) {
       for (const dialect of ['posix', 'powershell', 'auto'] as const) {
-        expect(store.getCommandProgram(source, dialect)).toStrictEqual(
-          shipped.getCommandProgram(source, dialect),
-        );
+        const parsed = store.getCommandProgram(source, dialect);
+        expect(parsed).toStrictEqual(shipped.getCommandProgram(source, dialect));
+        recorded.push([`${dialect} ${source}`, parsed]);
       }
-      expect(store.getShellSyntax(source)).toStrictEqual(shipped.getShellSyntax(source));
+      const syntax = store.getShellSyntax(source);
+      expect(syntax).toStrictEqual(shipped.getShellSyntax(source));
       const program = store.getCommandProgram(source, 'posix');
-      expect(store.getShellSyntax(source, program)).toStrictEqual(
+      const reused = store.getShellSyntax(source, program);
+      expect(reused).toStrictEqual(
         shipped.getShellSyntax(source, shipped.getCommandProgram(source, 'posix')),
       );
+      recorded.push([`syntax ${source}`, { syntax, reused }]);
     }
+    expectRecordedDigest('guards-semantic-facts/store-programs', recorded);
   });
 
   test('the store rejects a program built from another source the same way', () => {
@@ -150,7 +187,6 @@ describe('next/gate/guards/semantic-facts against src/guards/semantic-facts', ()
   });
 
   test('expands the same path variables in sensitive text', () => {
-    const environment = createProcessEnvironment();
     const words = [
       ...new Set(
         [...corpusCommands(), ...FIXED_COMMANDS].flatMap((command) => command.split(/\s+/)),
@@ -164,16 +200,29 @@ describe('next/gate/guards/semantic-facts against src/guards/semantic-facts', ()
       '$',
       '$$',
     ];
-    for (const word of words) {
-      expect(projectSensitiveShellText(word, environment)).toStrictEqual(
-        shippedProjectSensitiveShellText(word),
-      );
-    }
+    const recorded: [string, unknown][] = [];
+    // The shipped projection reads `process.env` itself, so `$TMPDIR` would expand to whatever
+    // temp directory the host runs under and every other supported path variable to whatever the
+    // host exports. Both sides run over a pinned `TMPDIR` with the rest unset, and the ported
+    // environment is snapshotted inside the pinned window so it reads the same values.
+    withProcessEnv({ ...UNSET_PATH_VARIABLES, TMPDIR: '/tmp' }, () => {
+      const environment = createProcessEnvironment();
+      for (const word of words) {
+        const projected = projectSensitiveShellText(word, environment);
+        expect(projected).toStrictEqual(shippedProjectSensitiveShellText(word));
+        // `$HOME` expands to this machine's home, which the record cannot carry.
+        recorded.push([word, normalize(projected, [[homedir(), '<home>']])]);
+      }
+    });
+    expectRecordedDigest('guards-semantic-facts/sensitive-text', recorded);
   });
 
   test('raises the same structural limit error', () => {
     const error = new StructuralShellSyntaxLimitError();
     const shipped = new ShippedStructuralShellSyntaxLimitError();
     expect([error.name, error.message]).toStrictEqual([shipped.name, shipped.message]);
+    expectRecordedDigest('guards-semantic-facts/limit-error', [
+      ['structural', [error.name, error.message]],
+    ]);
   });
 });

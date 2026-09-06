@@ -174,9 +174,9 @@ describe('ported command trace recorder', () => {
   test('produces the shipped trace for every option set and terminal', () => {
     OPTION_SETS.forEach((options) => {
       TERMINALS.forEach((terminal) => {
-        expect(recordAll(createPortedRecorder, options, terminal)).toStrictEqual(
-          recordAll(createShippedRecorder, options, terminal),
-        );
+        const ported = recordAll(createPortedRecorder, options, terminal);
+        expect(ported).toStrictEqual(recordAll(createShippedRecorder, options, terminal));
+        expect(ported).toMatchSnapshot();
       });
     });
   });
@@ -192,6 +192,7 @@ describe('ported command trace recorder', () => {
         recordAll(createShippedRecorder, undefined, TERMINALS[2] as CommandTraceTerminal).trace,
       ),
     );
+    expect(serialized).toMatchSnapshot();
   });
 
   test('freezes the trace and its events as shipped', () => {
@@ -202,20 +203,24 @@ describe('ported command trace recorder', () => {
       TERMINALS[1] as CommandTraceTerminal,
     ).trace;
 
-    expect([
+    const frozen = [
       Object.isFrozen(ported),
       Object.isFrozen(ported.events),
       Object.isFrozen(ported.events[0]?.step),
       Object.isFrozen(ported.terminal),
-    ]).toStrictEqual([
+    ];
+    expect(frozen).toStrictEqual([
       Object.isFrozen(shipped),
       Object.isFrozen(shipped.events),
       Object.isFrozen(shipped.events[0]?.step),
       Object.isFrozen(shipped.terminal),
     ]);
+    expect(frozen).toMatchSnapshot();
   });
 
   test('allocates segments and routes steps like the shipped context', () => {
-    expect(walkContext(PORTED)).toStrictEqual(walkContext(SHIPPED));
+    const walked = walkContext(PORTED);
+    expect(walked).toStrictEqual(walkContext(SHIPPED));
+    expect(walked).toMatchSnapshot();
   });
 });

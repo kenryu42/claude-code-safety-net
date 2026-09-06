@@ -19,8 +19,11 @@ import {
 describe('cli/commands/install', () => {
   test('the three definitions are identical on both implementations', () => {
     expect(portedInstallCommand).toEqual(shippedInstallCommand);
+    expect(portedInstallCommand).toMatchSnapshot();
     expect(portedUninstallCommand).toEqual(shippedUninstallCommand);
+    expect(portedUninstallCommand).toMatchSnapshot();
     expect(portedUpdateCommand).toEqual(shippedUpdateCommand);
+    expect(portedUpdateCommand).toMatchSnapshot();
   });
 
   test('each definition keeps its name, usage and help option', () => {
@@ -46,9 +49,9 @@ describe('cli/commands/install', () => {
   test('every install target reaches the help on both implementations', () => {
     const targetOptions = portedInstallCommand.options.slice(0, -1);
     expect(targetOptions.length).toBeGreaterThan(0);
-    expect(targetOptions.map((option) => option.flags)).toEqual(
-      shippedInstallCommand.options.slice(0, -1).map((option) => option.flags),
-    );
+    const flags = targetOptions.map((option) => option.flags);
+    expect(flags).toEqual(shippedInstallCommand.options.slice(0, -1).map((option) => option.flags));
+    expect(flags).toMatchSnapshot();
     expect(portedInstallCommand.examples.slice(1)).toEqual(
       targetOptions.map((option) => `cc-safety-net install ${option.flags}`),
     );

@@ -4,7 +4,12 @@ import { join } from 'node:path';
 import { runAmpCommand } from '@next/hosts/amp/run';
 import { runAmpCommand as shippedRunAmpCommand } from '@/integrations/amp/run';
 import { createFakeBin, type FakeScriptEntry } from '../../helpers/fake-bin';
-import { createTempRoot, removeTempRoots, withProcessEnv } from '../../helpers/temp-home';
+import {
+  createTempRoot,
+  recordPorted,
+  removeTempRoots,
+  withProcessEnv,
+} from '../../helpers/temp-home';
 
 /**
  * The one subprocess boundary of the Amp integration. What the installer reads off it is the exit
@@ -17,6 +22,9 @@ const SCRIPT: readonly FakeScriptEntry[] = [
   { command: 'amp', args: ['clone'], stdout: 'partial', stderr: 'clone refused', exit: 3 },
   { command: 'git', args: ['status'], stdout: ' M cc-safety-net/index.ts\n' },
 ];
+
+/** The directory a command without a workdir runs in: the checkout the suite itself runs in. */
+const CWD_FOLD = [[process.cwd(), '<cwd>']] as const;
 
 /** The same call against both implementations, each with its own fake `amp`, `git` and log. */
 async function bothSides(command: readonly [string, ...string[]], workdir?: string) {
@@ -38,7 +46,9 @@ afterEach(removeTempRoots);
 
 describe('running an amp or git command', () => {
   test('hands back the exit status and both streams', async () => {
-    expect((await bothSides(['amp', 'plugins', 'list'])).result).toEqual({
+    const listed = await bothSides(['amp', 'plugins', 'list']);
+    recordPorted(listed, CWD_FOLD);
+    expect(listed.result).toEqual({
       status: 0,
       errorCode: undefined,
       stdout: 'listed\n',
@@ -47,7 +57,9 @@ describe('running an amp or git command', () => {
   });
 
   test('keeps what a failing command printed before it gave up', async () => {
-    expect((await bothSides(['amp', 'clone', 'user-plugins', '/nowhere'])).result).toEqual({
+    const refused = await bothSides(['amp', 'clone', 'user-plugins', '/nowhere']);
+    recordPorted(refused, CWD_FOLD);
+    expect(refused.result).toEqual({
       status: 3,
       errorCode: undefined,
       stdout: 'partial',
@@ -65,8 +77,8 @@ describe('running an amp or git command', () => {
   });
 
   test('runs the command in the directory it was given', async () => {
-    expect((await bothSides(['git', 'status', '--porcelain'], 'checkout')).log).toEqual([
-      'git status --porcelain\t<root>/checkout',
-    ]);
+    const inCheckout = await bothSides(['git', 'status', '--porcelain'], 'checkout');
+    recordPorted(inCheckout, CWD_FOLD);
+    expect(inCheckout.log).toEqual(['git status --porcelain\t<root>/checkout']);
   });
 });

@@ -1,0 +1,3276 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`rule catalogs destructive records and the id set are identical 1`] = `
+[
+  {
+    "category": "Git",
+    "description": "Blocks Git network operations with SSH environment overrides.",
+    "example": "GIT_SSH_COMMAND="./ssh-wrapper" git push",
+    "id": "git.ssh-env",
+    "intent": "manual_only",
+    "label": "Git SSH environment override",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks command-line Git aliases that cannot be safely resolved.",
+    "example": "git -c alias.wipe='!rm -rf /' wipe",
+    "id": "git.alias-config",
+    "intent": "manual_only",
+    "label": "Git command-line alias",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks forced checkout operations that discard local changes.",
+    "example": "git checkout --force main",
+    "id": "git.checkout-force",
+    "intent": "use_alternative",
+    "label": "Git checkout force",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks checkout path restores after --.",
+    "example": "git checkout -- src/app.ts",
+    "id": "git.checkout-double-dash",
+    "intent": "use_alternative",
+    "label": "Git checkout path restore",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks checkout forms that mix a ref and path restore.",
+    "example": "git checkout HEAD -- src/app.ts",
+    "id": "git.checkout-ref-path",
+    "intent": "use_alternative",
+    "label": "Git checkout ref and path",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks checkout pathspec loading from a file.",
+    "example": "git checkout --pathspec-from-file=paths.txt",
+    "id": "git.checkout-pathspec-from-file",
+    "intent": "use_alternative",
+    "label": "Git checkout pathspec file",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks ambiguous checkout arguments that may restore paths.",
+    "example": "git checkout main src/app.ts",
+    "id": "git.checkout-ambiguous",
+    "intent": "use_alternative",
+    "label": "Git checkout ambiguous targets",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks branch switches that explicitly discard local changes.",
+    "example": "git switch --discard-changes main",
+    "id": "git.switch-discard-changes",
+    "intent": "use_alternative",
+    "label": "Git switch discard changes",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks forced branch switches.",
+    "example": "git switch --force main",
+    "id": "git.switch-force",
+    "intent": "use_alternative",
+    "label": "Git switch force",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks worktree restore operations.",
+    "example": "git restore --worktree src/app.ts",
+    "id": "git.restore-worktree",
+    "intent": "use_alternative",
+    "label": "Git restore worktree",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks unstaged restore operations.",
+    "example": "git restore src/app.ts",
+    "id": "git.restore-unstaged",
+    "intent": "use_alternative",
+    "label": "Git restore unstaged",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks hard resets.",
+    "example": "git reset --hard",
+    "id": "git.reset-hard",
+    "intent": "use_alternative",
+    "label": "Git reset hard",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks merge resets.",
+    "example": "git reset --merge",
+    "id": "git.reset-merge",
+    "intent": "use_alternative",
+    "label": "Git reset merge",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks forced clean operations.",
+    "example": "git clean -fd",
+    "id": "git.clean-force",
+    "intent": "use_alternative",
+    "label": "Git clean force",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks forced removal of tracked files from the working tree.",
+    "example": "git rm -rf .",
+    "id": "git.rm-force",
+    "intent": "use_alternative",
+    "label": "Git rm force",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks force pushes.",
+    "example": "git push --force origin main",
+    "id": "git.push-force",
+    "intent": "use_alternative",
+    "label": "Git push force",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks remote ref deletion through push.",
+    "example": "git push --delete origin old-branch",
+    "id": "git.push-delete",
+    "intent": "manual_only",
+    "label": "Git push delete",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks mirror pushes that can force-update or delete remote refs.",
+    "example": "git push --mirror origin",
+    "id": "git.push-mirror",
+    "intent": "manual_only",
+    "label": "Git push mirror",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks forced branch deletion.",
+    "example": "git branch -D old-branch",
+    "id": "git.branch-force-delete",
+    "intent": "use_alternative",
+    "label": "Git branch force delete",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks rebase abort operations.",
+    "example": "git rebase --abort",
+    "id": "git.rebase-abort",
+    "intent": "use_alternative",
+    "label": "Git rebase abort",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks merge abort operations.",
+    "example": "git merge --abort",
+    "id": "git.merge-abort",
+    "intent": "use_alternative",
+    "label": "Git merge abort",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks tag deletion.",
+    "example": "git tag --delete v1.0.0",
+    "id": "git.tag-delete",
+    "intent": "manual_only",
+    "label": "Git tag delete",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks reflog deletion.",
+    "example": "git reflog delete HEAD@{1}",
+    "id": "git.reflog-delete",
+    "intent": "manual_only",
+    "label": "Git reflog delete",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks dropping stash entries.",
+    "example": "git stash drop stash@{0}",
+    "id": "git.stash-drop",
+    "intent": "use_alternative",
+    "label": "Git stash drop",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks clearing all stash entries.",
+    "example": "git stash clear",
+    "id": "git.stash-clear",
+    "intent": "manual_only",
+    "label": "Git stash clear",
+  },
+  {
+    "category": "Git",
+    "description": "Blocks forced worktree removal.",
+    "example": "git worktree remove --force ../feature",
+    "id": "git.worktree-remove-force",
+    "intent": "use_alternative",
+    "label": "Git worktree force remove",
+  },
+  {
+    "catastrophic": true,
+    "category": "Filesystem",
+    "description": "Blocks recursive forced removal of root or home paths.",
+    "example": "rm -rf /",
+    "id": "rm.recursive-force-root-or-home",
+    "intent": "hard_stop",
+    "label": "rm -rf root or home",
+  },
+  {
+    "catastrophic": true,
+    "category": "Filesystem",
+    "description": "Blocks removal of protected Git metadata and hooks.",
+    "example": "rm -rf .git",
+    "id": "rm.git-metadata",
+    "intent": "hard_stop",
+    "label": "rm Git metadata",
+  },
+  {
+    "activationCapability": "fail_closed",
+    "category": "Filesystem",
+    "description": "Blocks recursive forced removal with dynamic targets in strict mode.",
+    "example": "rm -rf "$target"",
+    "id": "rm.recursive-force-dynamic-target",
+    "intent": "scope_down",
+    "label": "rm -rf dynamic target",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks recursive forced removal while working in home.",
+    "example": "cd "$HOME" && rm -rf build",
+    "id": "rm.recursive-force-home-cwd",
+    "intent": "scope_down",
+    "label": "rm -rf from home cwd",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks recursive forced removal of the current directory.",
+    "example": "rm -rf .",
+    "id": "rm.recursive-force-cwd-self",
+    "intent": "scope_down",
+    "label": "rm -rf current directory",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks recursive forced removal outside the original cwd.",
+    "example": "rm -rf ../outside",
+    "id": "rm.recursive-force-outside-cwd",
+    "intent": "scope_down",
+    "label": "rm -rf outside cwd",
+  },
+  {
+    "activationCapability": "paranoid_rm",
+    "category": "Filesystem",
+    "description": "Blocks non-temp recursive forced removal when paranoid rm is enabled.",
+    "example": "rm -rf ./cache",
+    "id": "rm.recursive-force-paranoid",
+    "intent": "scope_down",
+    "label": "rm -rf paranoid mode",
+  },
+  {
+    "catastrophic": true,
+    "category": "PowerShell",
+    "description": "Blocks PowerShell Remove-Item targeting root or home paths.",
+    "example": "Remove-Item C:\\",
+    "id": "powershell.remove-item-root-or-home",
+    "intent": "hard_stop",
+    "label": "Remove-Item root or home",
+  },
+  {
+    "catastrophic": true,
+    "category": "PowerShell",
+    "description": "Blocks recursive forced PowerShell removal of root or home paths.",
+    "example": "Remove-Item C:\\ -Recurse -Force",
+    "id": "powershell.remove-item-recursive-force-root-or-home",
+    "intent": "hard_stop",
+    "label": "Remove-Item recursive force root or home",
+  },
+  {
+    "catastrophic": true,
+    "category": "PowerShell",
+    "description": "Blocks PowerShell removal of protected Git metadata and hooks.",
+    "example": "Remove-Item .git -Recurse -Force",
+    "id": "powershell.remove-item-git-metadata",
+    "intent": "hard_stop",
+    "label": "Remove-Item Git metadata",
+  },
+  {
+    "activationCapability": "fail_closed",
+    "category": "PowerShell",
+    "description": "Blocks recursive forced PowerShell removal with dynamic targets in strict mode.",
+    "example": "Remove-Item $target -Recurse -Force",
+    "id": "powershell.remove-item-recursive-force-dynamic-target",
+    "intent": "scope_down",
+    "label": "Remove-Item recursive force dynamic target",
+  },
+  {
+    "category": "PowerShell",
+    "description": "Blocks recursive forced PowerShell removal while working in home.",
+    "example": "Set-Location $HOME; Remove-Item ./build -Recurse -Force",
+    "id": "powershell.remove-item-recursive-force-home-cwd",
+    "intent": "scope_down",
+    "label": "Remove-Item recursive force from home cwd",
+  },
+  {
+    "category": "PowerShell",
+    "description": "Blocks recursive forced PowerShell removal of the current directory.",
+    "example": "Remove-Item . -Recurse -Force",
+    "id": "powershell.remove-item-recursive-force-cwd-self",
+    "intent": "scope_down",
+    "label": "Remove-Item recursive force current directory",
+  },
+  {
+    "category": "PowerShell",
+    "description": "Blocks recursive forced PowerShell removal outside the original cwd.",
+    "example": "Remove-Item ../outside -Recurse -Force",
+    "id": "powershell.remove-item-recursive-force-outside-cwd",
+    "intent": "scope_down",
+    "label": "Remove-Item recursive force outside cwd",
+  },
+  {
+    "activationCapability": "paranoid_rm",
+    "category": "PowerShell",
+    "description": "Blocks non-temp recursive forced PowerShell removal when paranoid rm is enabled.",
+    "example": "Remove-Item ./cache -Recurse -Force",
+    "id": "powershell.remove-item-recursive-force-paranoid",
+    "intent": "scope_down",
+    "label": "Remove-Item recursive force paranoid mode",
+  },
+  {
+    "activationCapability": "fail_closed",
+    "category": "PowerShell",
+    "description": "Blocks PowerShell Remove-Item with unverifiable pipeline input in strict mode.",
+    "example": "Get-ChildItem . -Recurse | Remove-Item -Force",
+    "id": "powershell.remove-item-pipeline-dynamic-target",
+    "intent": "scope_down",
+    "label": "Remove-Item pipeline dynamic target",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks unsafe find -delete operations.",
+    "example": "find . -delete",
+    "id": "find.delete",
+    "intent": "scope_down",
+    "label": "find delete",
+  },
+  {
+    "catastrophic": true,
+    "category": "Filesystem",
+    "description": "Blocks find -delete operations selecting protected Git metadata and hooks.",
+    "example": "find .git -delete",
+    "id": "find.delete-git-metadata",
+    "intent": "hard_stop",
+    "label": "find delete Git metadata",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks find -exec rm -rf operations.",
+    "example": "find . -exec rm -rf {} +",
+    "id": "find.exec-rm-recursive-force",
+    "intent": "scope_down",
+    "label": "find exec rm -rf",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks dd writing to a /dev device.",
+    "example": "dd if=/dev/zero of=/dev/sda",
+    "id": "dd.device-write",
+    "intent": "manual_only",
+    "label": "dd device write",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks mkfs formatting a /dev device.",
+    "example": "mkfs.ext4 /dev/sda1",
+    "id": "mkfs.device",
+    "intent": "manual_only",
+    "label": "mkfs device format",
+  },
+  {
+    "category": "Filesystem",
+    "description": "Blocks shred against any target, including shred --help and shred --version.",
+    "example": "shred -u secret.txt",
+    "id": "shred.target",
+    "intent": "use_alternative",
+    "label": "shred target",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks interpreter one-liners containing dangerous commands.",
+    "example": "python -c "import os; os.system('rm -rf /')"",
+    "id": "interpreter.dangerous-command",
+    "intent": "use_alternative",
+    "label": "Interpreter dangerous command",
+  },
+  {
+    "activationCapability": "paranoid_interpreters",
+    "category": "Execution",
+    "description": "Blocks interpreter one-liners when paranoid interpreters is enabled.",
+    "example": "python -c "print(1)"",
+    "id": "interpreter.one-liner-paranoid",
+    "intent": "use_alternative",
+    "label": "Interpreter one-liner paranoid mode",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks awk system calls that cannot be safely analyzed.",
+    "example": "awk '{ system($0) }'",
+    "id": "awk.system-dynamic",
+    "intent": "stop_and_explain",
+    "label": "Awk dynamic system call",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks xargs rm -rf with dynamic input.",
+    "example": "printf / | xargs rm -rf",
+    "id": "xargs.rm-recursive-force-dynamic",
+    "intent": "scope_down",
+    "label": "xargs dynamic rm -rf",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks xargs shell execution with dynamic input.",
+    "example": "xargs r$(printf m) -rf",
+    "id": "xargs.shell-dynamic",
+    "intent": "scope_down",
+    "label": "xargs dynamic shell",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks parallel rm -rf with dynamic input.",
+    "example": "printf / | parallel rm -rf",
+    "id": "parallel.rm-recursive-force-dynamic",
+    "intent": "scope_down",
+    "label": "parallel dynamic rm -rf",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks parallel shell execution with dynamic input.",
+    "example": "parallel r$(printf m) -rf ::: child",
+    "id": "parallel.shell-dynamic",
+    "intent": "scope_down",
+    "label": "parallel dynamic shell",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks parallel command streams from dynamic input.",
+    "example": "parallel --dry-run",
+    "id": "parallel.command-stream-dynamic",
+    "intent": "scope_down",
+    "label": "parallel dynamic command stream",
+  },
+  {
+    "activationCapability": "fail_closed",
+    "category": "Execution",
+    "description": "Blocks guarded subcommands and options assembled from substitution output in strict mode.",
+    "example": "git reset $(printf --hard)",
+    "id": "shell.dynamic-structure",
+    "intent": "stop_and_explain",
+    "label": "Dynamic command structure",
+  },
+  {
+    "activationCapability": "fail_closed",
+    "category": "Execution",
+    "description": "Blocks executable names assembled from command substitution output in strict mode.",
+    "example": "$(printf r)m -rf /",
+    "id": "shell.dynamic-executable",
+    "intent": "manual_only",
+    "label": "Dynamic executable name",
+  },
+  {
+    "category": "Execution",
+    "description": "Blocks dangerous commands detected in raw command text.",
+    "example": "git reset --hard 'unterminated",
+    "id": "raw-text.dangerous-command",
+    "intent": "stop_and_explain",
+    "label": "Raw text dangerous command",
+  },
+]
+`;
+
+exports[`rule catalogs destructive records and the id set are identical 2`] = `
+Set {
+  "git.ssh-env",
+  "git.alias-config",
+  "git.checkout-force",
+  "git.checkout-double-dash",
+  "git.checkout-ref-path",
+  "git.checkout-pathspec-from-file",
+  "git.checkout-ambiguous",
+  "git.switch-discard-changes",
+  "git.switch-force",
+  "git.restore-worktree",
+  "git.restore-unstaged",
+  "git.reset-hard",
+  "git.reset-merge",
+  "git.clean-force",
+  "git.rm-force",
+  "git.push-force",
+  "git.push-delete",
+  "git.push-mirror",
+  "git.branch-force-delete",
+  "git.rebase-abort",
+  "git.merge-abort",
+  "git.tag-delete",
+  "git.reflog-delete",
+  "git.stash-drop",
+  "git.stash-clear",
+  "git.worktree-remove-force",
+  "rm.recursive-force-root-or-home",
+  "rm.git-metadata",
+  "rm.recursive-force-dynamic-target",
+  "rm.recursive-force-home-cwd",
+  "rm.recursive-force-cwd-self",
+  "rm.recursive-force-outside-cwd",
+  "rm.recursive-force-paranoid",
+  "powershell.remove-item-root-or-home",
+  "powershell.remove-item-recursive-force-root-or-home",
+  "powershell.remove-item-git-metadata",
+  "powershell.remove-item-recursive-force-dynamic-target",
+  "powershell.remove-item-recursive-force-home-cwd",
+  "powershell.remove-item-recursive-force-cwd-self",
+  "powershell.remove-item-recursive-force-outside-cwd",
+  "powershell.remove-item-recursive-force-paranoid",
+  "powershell.remove-item-pipeline-dynamic-target",
+  "find.delete",
+  "find.delete-git-metadata",
+  "find.exec-rm-recursive-force",
+  "dd.device-write",
+  "mkfs.device",
+  "shred.target",
+  "interpreter.dangerous-command",
+  "interpreter.one-liner-paranoid",
+  "awk.system-dynamic",
+  "xargs.rm-recursive-force-dynamic",
+  "xargs.shell-dynamic",
+  "parallel.rm-recursive-force-dynamic",
+  "parallel.shell-dynamic",
+  "parallel.command-stream-dynamic",
+  "shell.dynamic-structure",
+  "shell.dynamic-executable",
+  "raw-text.dangerous-command",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 1`] = `
+{
+  "id": "git.ssh-env",
+  "intent": "manual_only",
+  "reason": "reason for git.ssh-env",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 2`] = `
+{
+  "id": "git.alias-config",
+  "intent": "manual_only",
+  "reason": "reason for git.alias-config",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 3`] = `
+{
+  "id": "git.checkout-force",
+  "intent": "use_alternative",
+  "reason": "reason for git.checkout-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 4`] = `
+{
+  "id": "git.checkout-double-dash",
+  "intent": "use_alternative",
+  "reason": "reason for git.checkout-double-dash",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 5`] = `
+{
+  "id": "git.checkout-ref-path",
+  "intent": "use_alternative",
+  "reason": "reason for git.checkout-ref-path",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 6`] = `
+{
+  "id": "git.checkout-pathspec-from-file",
+  "intent": "use_alternative",
+  "reason": "reason for git.checkout-pathspec-from-file",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 7`] = `
+{
+  "id": "git.checkout-ambiguous",
+  "intent": "use_alternative",
+  "reason": "reason for git.checkout-ambiguous",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 8`] = `
+{
+  "id": "git.switch-discard-changes",
+  "intent": "use_alternative",
+  "reason": "reason for git.switch-discard-changes",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 9`] = `
+{
+  "id": "git.switch-force",
+  "intent": "use_alternative",
+  "reason": "reason for git.switch-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 10`] = `
+{
+  "id": "git.restore-worktree",
+  "intent": "use_alternative",
+  "reason": "reason for git.restore-worktree",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 11`] = `
+{
+  "id": "git.restore-unstaged",
+  "intent": "use_alternative",
+  "reason": "reason for git.restore-unstaged",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 12`] = `
+{
+  "id": "git.reset-hard",
+  "intent": "use_alternative",
+  "reason": "reason for git.reset-hard",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 13`] = `
+{
+  "id": "git.reset-merge",
+  "intent": "use_alternative",
+  "reason": "reason for git.reset-merge",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 14`] = `
+{
+  "id": "git.clean-force",
+  "intent": "use_alternative",
+  "reason": "reason for git.clean-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 15`] = `
+{
+  "id": "git.rm-force",
+  "intent": "use_alternative",
+  "reason": "reason for git.rm-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 16`] = `
+{
+  "id": "git.push-force",
+  "intent": "use_alternative",
+  "reason": "reason for git.push-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 17`] = `
+{
+  "id": "git.push-delete",
+  "intent": "manual_only",
+  "reason": "reason for git.push-delete",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 18`] = `
+{
+  "id": "git.push-mirror",
+  "intent": "manual_only",
+  "reason": "reason for git.push-mirror",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 19`] = `
+{
+  "id": "git.branch-force-delete",
+  "intent": "use_alternative",
+  "reason": "reason for git.branch-force-delete",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 20`] = `
+{
+  "id": "git.rebase-abort",
+  "intent": "use_alternative",
+  "reason": "reason for git.rebase-abort",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 21`] = `
+{
+  "id": "git.merge-abort",
+  "intent": "use_alternative",
+  "reason": "reason for git.merge-abort",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 22`] = `
+{
+  "id": "git.tag-delete",
+  "intent": "manual_only",
+  "reason": "reason for git.tag-delete",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 23`] = `
+{
+  "id": "git.reflog-delete",
+  "intent": "manual_only",
+  "reason": "reason for git.reflog-delete",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 24`] = `
+{
+  "id": "git.stash-drop",
+  "intent": "use_alternative",
+  "reason": "reason for git.stash-drop",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 25`] = `
+{
+  "id": "git.stash-clear",
+  "intent": "manual_only",
+  "reason": "reason for git.stash-clear",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 26`] = `
+{
+  "id": "git.worktree-remove-force",
+  "intent": "use_alternative",
+  "reason": "reason for git.worktree-remove-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 27`] = `
+{
+  "id": "rm.recursive-force-root-or-home",
+  "intent": "hard_stop",
+  "reason": "reason for rm.recursive-force-root-or-home",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 28`] = `
+{
+  "id": "rm.git-metadata",
+  "intent": "hard_stop",
+  "reason": "reason for rm.git-metadata",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 29`] = `
+{
+  "id": "rm.recursive-force-dynamic-target",
+  "intent": "scope_down",
+  "reason": "reason for rm.recursive-force-dynamic-target",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 30`] = `
+{
+  "id": "rm.recursive-force-home-cwd",
+  "intent": "scope_down",
+  "reason": "reason for rm.recursive-force-home-cwd",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 31`] = `
+{
+  "id": "rm.recursive-force-cwd-self",
+  "intent": "scope_down",
+  "reason": "reason for rm.recursive-force-cwd-self",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 32`] = `
+{
+  "id": "rm.recursive-force-outside-cwd",
+  "intent": "scope_down",
+  "reason": "reason for rm.recursive-force-outside-cwd",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 33`] = `
+{
+  "id": "rm.recursive-force-paranoid",
+  "intent": "scope_down",
+  "reason": "reason for rm.recursive-force-paranoid",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 34`] = `
+{
+  "id": "powershell.remove-item-root-or-home",
+  "intent": "hard_stop",
+  "reason": "reason for powershell.remove-item-root-or-home",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 35`] = `
+{
+  "id": "powershell.remove-item-recursive-force-root-or-home",
+  "intent": "hard_stop",
+  "reason": "reason for powershell.remove-item-recursive-force-root-or-home",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 36`] = `
+{
+  "id": "powershell.remove-item-git-metadata",
+  "intent": "hard_stop",
+  "reason": "reason for powershell.remove-item-git-metadata",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 37`] = `
+{
+  "id": "powershell.remove-item-recursive-force-dynamic-target",
+  "intent": "scope_down",
+  "reason": "reason for powershell.remove-item-recursive-force-dynamic-target",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 38`] = `
+{
+  "id": "powershell.remove-item-recursive-force-home-cwd",
+  "intent": "scope_down",
+  "reason": "reason for powershell.remove-item-recursive-force-home-cwd",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 39`] = `
+{
+  "id": "powershell.remove-item-recursive-force-cwd-self",
+  "intent": "scope_down",
+  "reason": "reason for powershell.remove-item-recursive-force-cwd-self",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 40`] = `
+{
+  "id": "powershell.remove-item-recursive-force-outside-cwd",
+  "intent": "scope_down",
+  "reason": "reason for powershell.remove-item-recursive-force-outside-cwd",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 41`] = `
+{
+  "id": "powershell.remove-item-recursive-force-paranoid",
+  "intent": "scope_down",
+  "reason": "reason for powershell.remove-item-recursive-force-paranoid",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 42`] = `
+{
+  "id": "powershell.remove-item-pipeline-dynamic-target",
+  "intent": "scope_down",
+  "reason": "reason for powershell.remove-item-pipeline-dynamic-target",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 43`] = `
+{
+  "id": "find.delete",
+  "intent": "scope_down",
+  "reason": "reason for find.delete",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 44`] = `
+{
+  "id": "find.delete-git-metadata",
+  "intent": "hard_stop",
+  "reason": "reason for find.delete-git-metadata",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 45`] = `
+{
+  "id": "find.exec-rm-recursive-force",
+  "intent": "scope_down",
+  "reason": "reason for find.exec-rm-recursive-force",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 46`] = `
+{
+  "id": "dd.device-write",
+  "intent": "manual_only",
+  "reason": "reason for dd.device-write",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 47`] = `
+{
+  "id": "mkfs.device",
+  "intent": "manual_only",
+  "reason": "reason for mkfs.device",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 48`] = `
+{
+  "id": "shred.target",
+  "intent": "use_alternative",
+  "reason": "reason for shred.target",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 49`] = `
+{
+  "id": "interpreter.dangerous-command",
+  "intent": "use_alternative",
+  "reason": "reason for interpreter.dangerous-command",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 50`] = `
+{
+  "id": "interpreter.one-liner-paranoid",
+  "intent": "use_alternative",
+  "reason": "reason for interpreter.one-liner-paranoid",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 51`] = `
+{
+  "id": "awk.system-dynamic",
+  "intent": "stop_and_explain",
+  "reason": "reason for awk.system-dynamic",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 52`] = `
+{
+  "id": "xargs.rm-recursive-force-dynamic",
+  "intent": "scope_down",
+  "reason": "reason for xargs.rm-recursive-force-dynamic",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 53`] = `
+{
+  "id": "xargs.shell-dynamic",
+  "intent": "scope_down",
+  "reason": "reason for xargs.shell-dynamic",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 54`] = `
+{
+  "id": "parallel.rm-recursive-force-dynamic",
+  "intent": "scope_down",
+  "reason": "reason for parallel.rm-recursive-force-dynamic",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 55`] = `
+{
+  "id": "parallel.shell-dynamic",
+  "intent": "scope_down",
+  "reason": "reason for parallel.shell-dynamic",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 56`] = `
+{
+  "id": "parallel.command-stream-dynamic",
+  "intent": "scope_down",
+  "reason": "reason for parallel.command-stream-dynamic",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 57`] = `
+{
+  "id": "shell.dynamic-structure",
+  "intent": "stop_and_explain",
+  "reason": "reason for shell.dynamic-structure",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 58`] = `
+{
+  "id": "shell.dynamic-executable",
+  "intent": "manual_only",
+  "reason": "reason for shell.dynamic-executable",
+}
+`;
+
+exports[`rule catalogs destructiveCommandMatch carries the same intent for every id 59`] = `
+{
+  "id": "raw-text.dangerous-command",
+  "intent": "stop_and_explain",
+  "reason": "reason for raw-text.dangerous-command",
+}
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 1`] = `
+[
+  {
+    "category": "Basename",
+    "description": "Blocks exact .env files.",
+    "id": "secret.basename.env",
+    "label": ".env",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks npm credential config files.",
+    "id": "secret.basename.npmrc",
+    "label": ".npmrc",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks Python package index credential files.",
+    "id": "secret.basename.pypirc",
+    "label": ".pypirc",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks machine login credential files.",
+    "id": "secret.basename.netrc",
+    "label": ".netrc",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks Git credential storage files.",
+    "id": "secret.basename.git-credentials",
+    "label": ".git-credentials",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks RSA private key basenames.",
+    "id": "secret.basename.id-rsa",
+    "label": "id_rsa",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks Ed25519 private key basenames.",
+    "id": "secret.basename.id-ed25519",
+    "label": "id_ed25519",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks ECDSA private key basenames.",
+    "id": "secret.basename.id-ecdsa",
+    "label": "id_ecdsa",
+  },
+  {
+    "category": "Basename",
+    "description": "Blocks generic credentials file basenames.",
+    "id": "secret.basename.credentials",
+    "label": "credentials",
+  },
+  {
+    "category": "Pattern",
+    "description": "Blocks environment-specific .env variants.",
+    "id": "secret.pattern.env-variant",
+    "label": ".env.*",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home SSH configuration and key paths.",
+    "id": "secret.home.ssh",
+    "label": "~/.ssh",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home AWS credential and config paths.",
+    "id": "secret.home.aws",
+    "label": "~/.aws",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home GCP credential paths.",
+    "id": "secret.home.gcp",
+    "label": "~/.gcp",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home Google Cloud SDK credential paths.",
+    "id": "secret.home.gcloud-config",
+    "label": "~/.config/gcloud",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home Kubernetes config files.",
+    "id": "secret.home.kube-config",
+    "label": "~/.kube/config",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home Docker credential config files.",
+    "id": "secret.home.docker-config",
+    "label": "~/.docker/config.json",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.bak credential backup files.",
+    "id": "secret.home.kube-config.bak",
+    "label": "~/.kube/config.bak",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.backup credential backup files.",
+    "id": "secret.home.kube-config.backup",
+    "label": "~/.kube/config.backup",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.copy credential backup files.",
+    "id": "secret.home.kube-config.copy",
+    "label": "~/.kube/config.copy",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.disabled credential backup files.",
+    "id": "secret.home.kube-config.disabled",
+    "label": "~/.kube/config.disabled",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.old credential backup files.",
+    "id": "secret.home.kube-config.old",
+    "label": "~/.kube/config.old",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.orig credential backup files.",
+    "id": "secret.home.kube-config.orig",
+    "label": "~/.kube/config.orig",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.save credential backup files.",
+    "id": "secret.home.kube-config.save",
+    "label": "~/.kube/config.save",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.tmp credential backup files.",
+    "id": "secret.home.kube-config.tmp",
+    "label": "~/.kube/config.tmp",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.bak credential backup files.",
+    "id": "secret.home.docker-config.bak",
+    "label": "~/.docker/config.json.bak",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.backup credential backup files.",
+    "id": "secret.home.docker-config.backup",
+    "label": "~/.docker/config.json.backup",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.copy credential backup files.",
+    "id": "secret.home.docker-config.copy",
+    "label": "~/.docker/config.json.copy",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.disabled credential backup files.",
+    "id": "secret.home.docker-config.disabled",
+    "label": "~/.docker/config.json.disabled",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.old credential backup files.",
+    "id": "secret.home.docker-config.old",
+    "label": "~/.docker/config.json.old",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.orig credential backup files.",
+    "id": "secret.home.docker-config.orig",
+    "label": "~/.docker/config.json.orig",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.save credential backup files.",
+    "id": "secret.home.docker-config.save",
+    "label": "~/.docker/config.json.save",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.tmp credential backup files.",
+    "id": "secret.home.docker-config.tmp",
+    "label": "~/.docker/config.json.tmp",
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks GitHub CLI host credential files.",
+    "id": "secret.home.gh-hosts",
+    "label": "~/.config/gh/hosts.yml",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-rsa.separator",
+    "label": "id_rsa-* / id_rsa_*",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-dsa.separator",
+    "label": "id_dsa-* / id_dsa_*",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519 variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-ed25519.separator",
+    "label": "id_ed25519-* / id_ed25519_*",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-ecdsa.separator",
+    "label": "id_ecdsa-* / id_ecdsa_*",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials variants with dash or underscore suffixes.",
+    "id": "secret.variant.credentials.separator",
+    "label": "credentials-* / credentials_*",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.bak private credential variants.",
+    "id": "secret.variant.id-rsa.bak",
+    "label": "id_rsa.bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.backup private credential variants.",
+    "id": "secret.variant.id-rsa.backup",
+    "label": "id_rsa.backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.copy private credential variants.",
+    "id": "secret.variant.id-rsa.copy",
+    "label": "id_rsa.copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.disabled private credential variants.",
+    "id": "secret.variant.id-rsa.disabled",
+    "label": "id_rsa.disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.key private credential variants.",
+    "id": "secret.variant.id-rsa.key",
+    "label": "id_rsa.key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.old private credential variants.",
+    "id": "secret.variant.id-rsa.old",
+    "label": "id_rsa.old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.orig private credential variants.",
+    "id": "secret.variant.id-rsa.orig",
+    "label": "id_rsa.orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.pem private credential variants.",
+    "id": "secret.variant.id-rsa.pem",
+    "label": "id_rsa.pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.save private credential variants.",
+    "id": "secret.variant.id-rsa.save",
+    "label": "id_rsa.save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.tmp private credential variants.",
+    "id": "secret.variant.id-rsa.tmp",
+    "label": "id_rsa.tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.bak private credential variants.",
+    "id": "secret.variant.id-dsa.bak",
+    "label": "id_dsa.bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.backup private credential variants.",
+    "id": "secret.variant.id-dsa.backup",
+    "label": "id_dsa.backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.copy private credential variants.",
+    "id": "secret.variant.id-dsa.copy",
+    "label": "id_dsa.copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.disabled private credential variants.",
+    "id": "secret.variant.id-dsa.disabled",
+    "label": "id_dsa.disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.key private credential variants.",
+    "id": "secret.variant.id-dsa.key",
+    "label": "id_dsa.key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.old private credential variants.",
+    "id": "secret.variant.id-dsa.old",
+    "label": "id_dsa.old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.orig private credential variants.",
+    "id": "secret.variant.id-dsa.orig",
+    "label": "id_dsa.orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.pem private credential variants.",
+    "id": "secret.variant.id-dsa.pem",
+    "label": "id_dsa.pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.save private credential variants.",
+    "id": "secret.variant.id-dsa.save",
+    "label": "id_dsa.save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.tmp private credential variants.",
+    "id": "secret.variant.id-dsa.tmp",
+    "label": "id_dsa.tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.bak private credential variants.",
+    "id": "secret.variant.id-ed25519.bak",
+    "label": "id_ed25519.bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.backup private credential variants.",
+    "id": "secret.variant.id-ed25519.backup",
+    "label": "id_ed25519.backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.copy private credential variants.",
+    "id": "secret.variant.id-ed25519.copy",
+    "label": "id_ed25519.copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.disabled private credential variants.",
+    "id": "secret.variant.id-ed25519.disabled",
+    "label": "id_ed25519.disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.key private credential variants.",
+    "id": "secret.variant.id-ed25519.key",
+    "label": "id_ed25519.key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.old private credential variants.",
+    "id": "secret.variant.id-ed25519.old",
+    "label": "id_ed25519.old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.orig private credential variants.",
+    "id": "secret.variant.id-ed25519.orig",
+    "label": "id_ed25519.orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.pem private credential variants.",
+    "id": "secret.variant.id-ed25519.pem",
+    "label": "id_ed25519.pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.save private credential variants.",
+    "id": "secret.variant.id-ed25519.save",
+    "label": "id_ed25519.save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.tmp private credential variants.",
+    "id": "secret.variant.id-ed25519.tmp",
+    "label": "id_ed25519.tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.bak private credential variants.",
+    "id": "secret.variant.id-ecdsa.bak",
+    "label": "id_ecdsa.bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.backup private credential variants.",
+    "id": "secret.variant.id-ecdsa.backup",
+    "label": "id_ecdsa.backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.copy private credential variants.",
+    "id": "secret.variant.id-ecdsa.copy",
+    "label": "id_ecdsa.copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.disabled private credential variants.",
+    "id": "secret.variant.id-ecdsa.disabled",
+    "label": "id_ecdsa.disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.key private credential variants.",
+    "id": "secret.variant.id-ecdsa.key",
+    "label": "id_ecdsa.key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.old private credential variants.",
+    "id": "secret.variant.id-ecdsa.old",
+    "label": "id_ecdsa.old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.orig private credential variants.",
+    "id": "secret.variant.id-ecdsa.orig",
+    "label": "id_ecdsa.orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.pem private credential variants.",
+    "id": "secret.variant.id-ecdsa.pem",
+    "label": "id_ecdsa.pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.save private credential variants.",
+    "id": "secret.variant.id-ecdsa.save",
+    "label": "id_ecdsa.save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.tmp private credential variants.",
+    "id": "secret.variant.id-ecdsa.tmp",
+    "label": "id_ecdsa.tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.bak private credential variants.",
+    "id": "secret.variant.credentials.bak",
+    "label": "credentials.bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.backup private credential variants.",
+    "id": "secret.variant.credentials.backup",
+    "label": "credentials.backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.copy private credential variants.",
+    "id": "secret.variant.credentials.copy",
+    "label": "credentials.copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.disabled private credential variants.",
+    "id": "secret.variant.credentials.disabled",
+    "label": "credentials.disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.key private credential variants.",
+    "id": "secret.variant.credentials.key",
+    "label": "credentials.key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.old private credential variants.",
+    "id": "secret.variant.credentials.old",
+    "label": "credentials.old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.orig private credential variants.",
+    "id": "secret.variant.credentials.orig",
+    "label": "credentials.orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.pem private credential variants.",
+    "id": "secret.variant.credentials.pem",
+    "label": "credentials.pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.save private credential variants.",
+    "id": "secret.variant.credentials.save",
+    "label": "credentials.save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.tmp private credential variants.",
+    "id": "secret.variant.credentials.tmp",
+    "label": "credentials.tmp",
+  },
+  {
+    "category": "Pattern",
+    "description": "Blocks extensionless SSH private key-like basenames.",
+    "id": "secret.pattern.ssh-key-basename",
+    "label": "*_(rsa|dsa|ed25519|ecdsa)",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .agilekeychain extension.",
+    "id": "secret.ext.agilekeychain",
+    "label": ".agilekeychain",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .asc extension.",
+    "id": "secret.ext.asc",
+    "label": ".asc",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .bek extension.",
+    "id": "secret.ext.bek",
+    "label": ".bek",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .cscfg extension.",
+    "id": "secret.ext.cscfg",
+    "label": ".cscfg",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .fve extension.",
+    "id": "secret.ext.fve",
+    "label": ".fve",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .gnucash extension.",
+    "id": "secret.ext.gnucash",
+    "label": ".gnucash",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .jks extension.",
+    "id": "secret.ext.jks",
+    "label": ".jks",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .keychain extension.",
+    "id": "secret.ext.keychain",
+    "label": ".keychain",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .kwallet extension.",
+    "id": "secret.ext.kwallet",
+    "label": ".kwallet",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .mdf extension.",
+    "id": "secret.ext.mdf",
+    "label": ".mdf",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .ovpn extension.",
+    "id": "secret.ext.ovpn",
+    "label": ".ovpn",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .p12 extension.",
+    "id": "secret.ext.p12",
+    "label": ".p12",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pcap extension.",
+    "id": "secret.ext.pcap",
+    "label": ".pcap",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pem extension.",
+    "id": "secret.ext.pem",
+    "label": ".pem",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pfx extension.",
+    "id": "secret.ext.pfx",
+    "label": ".pfx",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pkcs12 extension.",
+    "id": "secret.ext.pkcs12",
+    "label": ".pkcs12",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .psafe3 extension.",
+    "id": "secret.ext.psafe3",
+    "label": ".psafe3",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .rdp extension.",
+    "id": "secret.ext.rdp",
+    "label": ".rdp",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .sdf extension.",
+    "id": "secret.ext.sdf",
+    "label": ".sdf",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .tblk extension.",
+    "id": "secret.ext.tblk",
+    "label": ".tblk",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .tpm extension.",
+    "id": "secret.ext.tpm",
+    "label": ".tpm",
+  },
+  {
+    "category": "Extension pattern",
+    "description": "Blocks key and keypair extension patterns.",
+    "id": "secret.ext-pattern.key",
+    "label": ".key / .keypair",
+  },
+  {
+    "category": "Extension pattern",
+    "description": "Blocks keystore and keyring extension patterns.",
+    "id": "secret.ext-pattern.keystore",
+    "label": ".keystore / .keyring",
+  },
+  {
+    "category": "Extension pattern",
+    "description": "Blocks KeePass database extension patterns.",
+    "id": "secret.ext-pattern.kdbx",
+    "label": ".kdb / .kdbx",
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.claude-code",
+    "label": "Claude Code credentials",
+    "paths": [
+      "~/.claude/.credentials.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.claude-code.config",
+    "label": "Claude Code config",
+    "paths": [
+      "~/.claude/settings.json",
+      "~/.claude/settings.local.json",
+      "~/.claude.json",
+      "<project>/.claude/settings.local.json",
+      "<project>/.mcp.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.antigravity",
+    "label": "Antigravity CLI hook config",
+    "paths": [
+      "~/.gemini/config/hooks.json",
+      "~/.gemini/config/mcp_config.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.codex",
+    "label": "Codex credentials",
+    "paths": [
+      "~/.codex/auth.json",
+      "~/.codex/.credentials.json",
+      "~/.codex/secrets",
+      "~/.codex/.sandbox-secrets",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.codex.config",
+    "label": "Codex config",
+    "paths": [
+      "~/.codex/config.toml",
+      "~/.codex/<name>.config.toml",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.gemini",
+    "label": "Gemini CLI credentials",
+    "paths": [
+      "~/.gemini/oauth_creds.json",
+      "~/.gemini/mcp-oauth-tokens.json",
+      "~/.gemini/a2a-oauth-tokens.json",
+      "~/.gemini/gemini-credentials.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.gemini.config",
+    "label": "Gemini CLI config",
+    "paths": [
+      "~/.gemini/settings.json",
+      "~/.gemini/google_accounts.json",
+      "<project>/.gemini/settings.json",
+      "/Library/Application Support/GeminiCli/settings.json",
+      "/etc/gemini-cli/settings.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.copilot-cli",
+    "label": "GitHub Copilot CLI credentials",
+    "paths": [
+      "~/.copilot/config.json",
+      "~/.copilot/mcp-oauth-config",
+      "~/.copilot/mcp-secrets",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.copilot-cli.config",
+    "label": "GitHub Copilot CLI config",
+    "paths": [
+      "~/.copilot/mcp-config.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.kimi-code",
+    "label": "Kimi Code credentials",
+    "paths": [
+      "~/.kimi-code/server.token",
+      "~/.kimi-code/credentials",
+      "~/.kimi/credentials",
+      "~/.kimi/mcp-oauth",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.kimi-code.config",
+    "label": "Kimi Code config",
+    "paths": [
+      "~/.kimi-code/config.toml",
+      "~/.kimi-code/mcp.json",
+      "~/.kimi/config.toml",
+      "~/.kimi/config.json",
+      "~/.kimi/config.json.bak",
+      "~/.kimi/mcp.json",
+      "<project>/.kimi-code/mcp.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.opencode",
+    "label": "OpenCode credentials",
+    "paths": [
+      "~/.local/share/opencode/auth.json",
+      "~/.local/share/opencode/mcp-auth.json",
+      "~/.local/share/opencode/opencode.db",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.opencode.config",
+    "label": "OpenCode config",
+    "paths": [
+      "~/.config/opencode/opencode.json",
+      "~/.config/opencode/opencode.jsonc",
+      "/Library/Application Support/opencode/opencode.json",
+      "/etc/opencode/opencode.json",
+      "<project>/opencode.json",
+      "<project>/opencode.jsonc",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.pi",
+    "label": "Pi credentials",
+    "paths": [
+      "~/.pi/agent/auth.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.pi.config",
+    "label": "Pi config",
+    "paths": [
+      "~/.pi/agent/models.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.amp",
+    "label": "Amp Code credentials",
+    "paths": [
+      "~/.local/share/amp/secrets.json",
+      "~/.amp/oauth",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.amp.config",
+    "label": "Amp Code config",
+    "paths": [
+      "~/.config/amp/settings.json",
+      "~/.config/amp/settings.jsonc",
+      "<project>/.amp/settings.json",
+      "<project>/.amp/settings.jsonc",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.cursor",
+    "label": "Cursor CLI credentials",
+    "paths": [
+      "~/.cursor/auth.json",
+      "~/.config/cursor/auth.json",
+      "~/.cursor/projects/<name>/mcp-auth.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.cursor.config",
+    "label": "Cursor CLI config",
+    "paths": [
+      "~/.cursor/mcp.json",
+      "<project>/.cursor/mcp.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.grok-build",
+    "label": "Grok Build credentials",
+    "paths": [
+      "~/.grok/auth.json",
+      "~/.grok/mcp_credentials.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "defaultOff": true,
+    "id": "secret.cli.grok-build.config",
+    "label": "Grok Build config",
+    "paths": [
+      "~/.grok/config.toml",
+      "~/.grok/managed_config.toml",
+      "~/.grok/requirements.toml",
+      "<project>/.grok/config.toml",
+      "/etc/grok/managed_config.toml",
+      "/etc/grok/requirements.toml",
+    ],
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 2`] = `
+[
+  {
+    "basename": ".env",
+    "category": "Basename",
+    "description": "Blocks exact .env files.",
+    "id": "secret.basename.env",
+    "label": ".env",
+  },
+  {
+    "basename": ".npmrc",
+    "category": "Basename",
+    "description": "Blocks npm credential config files.",
+    "id": "secret.basename.npmrc",
+    "label": ".npmrc",
+  },
+  {
+    "basename": ".pypirc",
+    "category": "Basename",
+    "description": "Blocks Python package index credential files.",
+    "id": "secret.basename.pypirc",
+    "label": ".pypirc",
+  },
+  {
+    "basename": ".netrc",
+    "category": "Basename",
+    "description": "Blocks machine login credential files.",
+    "id": "secret.basename.netrc",
+    "label": ".netrc",
+  },
+  {
+    "basename": ".git-credentials",
+    "category": "Basename",
+    "description": "Blocks Git credential storage files.",
+    "id": "secret.basename.git-credentials",
+    "label": ".git-credentials",
+  },
+  {
+    "basename": "id_rsa",
+    "category": "Basename",
+    "description": "Blocks RSA private key basenames.",
+    "id": "secret.basename.id-rsa",
+    "label": "id_rsa",
+  },
+  {
+    "basename": "id_ed25519",
+    "category": "Basename",
+    "description": "Blocks Ed25519 private key basenames.",
+    "id": "secret.basename.id-ed25519",
+    "label": "id_ed25519",
+  },
+  {
+    "basename": "id_ecdsa",
+    "category": "Basename",
+    "description": "Blocks ECDSA private key basenames.",
+    "id": "secret.basename.id-ecdsa",
+    "label": "id_ecdsa",
+  },
+  {
+    "basename": "credentials",
+    "category": "Basename",
+    "description": "Blocks generic credentials file basenames.",
+    "id": "secret.basename.credentials",
+    "label": "credentials",
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 3`] = `
+{
+  "category": "Pattern",
+  "description": "Blocks environment-specific .env variants.",
+  "id": "secret.pattern.env-variant",
+  "label": ".env.*",
+}
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 4`] = `
+[
+  {
+    "category": "Home path",
+    "description": "Blocks home SSH configuration and key paths.",
+    "id": "secret.home.ssh",
+    "label": "~/.ssh",
+    "suffixParts": [
+      ".ssh",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home AWS credential and config paths.",
+    "id": "secret.home.aws",
+    "label": "~/.aws",
+    "suffixParts": [
+      ".aws",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home GCP credential paths.",
+    "id": "secret.home.gcp",
+    "label": "~/.gcp",
+    "suffixParts": [
+      ".gcp",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home Google Cloud SDK credential paths.",
+    "id": "secret.home.gcloud-config",
+    "label": "~/.config/gcloud",
+    "suffixParts": [
+      ".config",
+      "gcloud",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home Kubernetes config files.",
+    "id": "secret.home.kube-config",
+    "label": "~/.kube/config",
+    "suffixParts": [
+      ".kube",
+      "config",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home Docker credential config files.",
+    "id": "secret.home.docker-config",
+    "label": "~/.docker/config.json",
+    "suffixParts": [
+      ".docker",
+      "config.json",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.bak credential backup files.",
+    "id": "secret.home.kube-config.bak",
+    "label": "~/.kube/config.bak",
+    "suffixParts": [
+      ".kube",
+      "config.bak",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.backup credential backup files.",
+    "id": "secret.home.kube-config.backup",
+    "label": "~/.kube/config.backup",
+    "suffixParts": [
+      ".kube",
+      "config.backup",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.copy credential backup files.",
+    "id": "secret.home.kube-config.copy",
+    "label": "~/.kube/config.copy",
+    "suffixParts": [
+      ".kube",
+      "config.copy",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.disabled credential backup files.",
+    "id": "secret.home.kube-config.disabled",
+    "label": "~/.kube/config.disabled",
+    "suffixParts": [
+      ".kube",
+      "config.disabled",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.old credential backup files.",
+    "id": "secret.home.kube-config.old",
+    "label": "~/.kube/config.old",
+    "suffixParts": [
+      ".kube",
+      "config.old",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.orig credential backup files.",
+    "id": "secret.home.kube-config.orig",
+    "label": "~/.kube/config.orig",
+    "suffixParts": [
+      ".kube",
+      "config.orig",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.save credential backup files.",
+    "id": "secret.home.kube-config.save",
+    "label": "~/.kube/config.save",
+    "suffixParts": [
+      ".kube",
+      "config.save",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.kube/config.tmp credential backup files.",
+    "id": "secret.home.kube-config.tmp",
+    "label": "~/.kube/config.tmp",
+    "suffixParts": [
+      ".kube",
+      "config.tmp",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.bak credential backup files.",
+    "id": "secret.home.docker-config.bak",
+    "label": "~/.docker/config.json.bak",
+    "suffixParts": [
+      ".docker",
+      "config.json.bak",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.backup credential backup files.",
+    "id": "secret.home.docker-config.backup",
+    "label": "~/.docker/config.json.backup",
+    "suffixParts": [
+      ".docker",
+      "config.json.backup",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.copy credential backup files.",
+    "id": "secret.home.docker-config.copy",
+    "label": "~/.docker/config.json.copy",
+    "suffixParts": [
+      ".docker",
+      "config.json.copy",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.disabled credential backup files.",
+    "id": "secret.home.docker-config.disabled",
+    "label": "~/.docker/config.json.disabled",
+    "suffixParts": [
+      ".docker",
+      "config.json.disabled",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.old credential backup files.",
+    "id": "secret.home.docker-config.old",
+    "label": "~/.docker/config.json.old",
+    "suffixParts": [
+      ".docker",
+      "config.json.old",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.orig credential backup files.",
+    "id": "secret.home.docker-config.orig",
+    "label": "~/.docker/config.json.orig",
+    "suffixParts": [
+      ".docker",
+      "config.json.orig",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.save credential backup files.",
+    "id": "secret.home.docker-config.save",
+    "label": "~/.docker/config.json.save",
+    "suffixParts": [
+      ".docker",
+      "config.json.save",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks home ~/.docker/config.json.tmp credential backup files.",
+    "id": "secret.home.docker-config.tmp",
+    "label": "~/.docker/config.json.tmp",
+    "suffixParts": [
+      ".docker",
+      "config.json.tmp",
+    ],
+  },
+  {
+    "category": "Home path",
+    "description": "Blocks GitHub CLI host credential files.",
+    "id": "secret.home.gh-hosts",
+    "label": "~/.config/gh/hosts.yml",
+    "suffixParts": [
+      ".config",
+      "gh",
+      "hosts.yml",
+    ],
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 5`] = `
+[
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.claude-code",
+    "label": "Claude Code credentials",
+    "paths": [
+      "~/.claude/.credentials.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.claude-code.config",
+    "label": "Claude Code config",
+    "paths": [
+      "~/.claude/settings.json",
+      "~/.claude/settings.local.json",
+      "~/.claude.json",
+      "<project>/.claude/settings.local.json",
+      "<project>/.mcp.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.antigravity",
+    "label": "Antigravity CLI hook config",
+    "paths": [
+      "~/.gemini/config/hooks.json",
+      "~/.gemini/config/mcp_config.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.codex",
+    "label": "Codex credentials",
+    "paths": [
+      "~/.codex/auth.json",
+      "~/.codex/.credentials.json",
+      "~/.codex/secrets",
+      "~/.codex/.sandbox-secrets",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.codex.config",
+    "label": "Codex config",
+    "paths": [
+      "~/.codex/config.toml",
+      "~/.codex/<name>.config.toml",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.gemini",
+    "label": "Gemini CLI credentials",
+    "paths": [
+      "~/.gemini/oauth_creds.json",
+      "~/.gemini/mcp-oauth-tokens.json",
+      "~/.gemini/a2a-oauth-tokens.json",
+      "~/.gemini/gemini-credentials.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.gemini.config",
+    "label": "Gemini CLI config",
+    "paths": [
+      "~/.gemini/settings.json",
+      "~/.gemini/google_accounts.json",
+      "<project>/.gemini/settings.json",
+      "/Library/Application Support/GeminiCli/settings.json",
+      "/etc/gemini-cli/settings.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.copilot-cli",
+    "label": "GitHub Copilot CLI credentials",
+    "paths": [
+      "~/.copilot/config.json",
+      "~/.copilot/mcp-oauth-config",
+      "~/.copilot/mcp-secrets",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.copilot-cli.config",
+    "label": "GitHub Copilot CLI config",
+    "paths": [
+      "~/.copilot/mcp-config.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.kimi-code",
+    "label": "Kimi Code credentials",
+    "paths": [
+      "~/.kimi-code/server.token",
+      "~/.kimi-code/credentials",
+      "~/.kimi/credentials",
+      "~/.kimi/mcp-oauth",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.kimi-code.config",
+    "label": "Kimi Code config",
+    "paths": [
+      "~/.kimi-code/config.toml",
+      "~/.kimi-code/mcp.json",
+      "~/.kimi/config.toml",
+      "~/.kimi/config.json",
+      "~/.kimi/config.json.bak",
+      "~/.kimi/mcp.json",
+      "<project>/.kimi-code/mcp.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.opencode",
+    "label": "OpenCode credentials",
+    "paths": [
+      "~/.local/share/opencode/auth.json",
+      "~/.local/share/opencode/mcp-auth.json",
+      "~/.local/share/opencode/opencode.db",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.opencode.config",
+    "label": "OpenCode config",
+    "paths": [
+      "~/.config/opencode/opencode.json",
+      "~/.config/opencode/opencode.jsonc",
+      "/Library/Application Support/opencode/opencode.json",
+      "/etc/opencode/opencode.json",
+      "<project>/opencode.json",
+      "<project>/opencode.jsonc",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.pi",
+    "label": "Pi credentials",
+    "paths": [
+      "~/.pi/agent/auth.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.pi.config",
+    "label": "Pi config",
+    "paths": [
+      "~/.pi/agent/models.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.amp",
+    "label": "Amp Code credentials",
+    "paths": [
+      "~/.local/share/amp/secrets.json",
+      "~/.amp/oauth",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.amp.config",
+    "label": "Amp Code config",
+    "paths": [
+      "~/.config/amp/settings.json",
+      "~/.config/amp/settings.jsonc",
+      "<project>/.amp/settings.json",
+      "<project>/.amp/settings.jsonc",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.cursor",
+    "label": "Cursor CLI credentials",
+    "paths": [
+      "~/.cursor/auth.json",
+      "~/.config/cursor/auth.json",
+      "~/.cursor/projects/<name>/mcp-auth.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.cursor.config",
+    "label": "Cursor CLI config",
+    "paths": [
+      "~/.cursor/mcp.json",
+      "<project>/.cursor/mcp.json",
+    ],
+  },
+  {
+    "category": "Coding CLI credential",
+    "id": "secret.cli.grok-build",
+    "label": "Grok Build credentials",
+    "paths": [
+      "~/.grok/auth.json",
+      "~/.grok/mcp_credentials.json",
+    ],
+  },
+  {
+    "category": "Coding CLI config",
+    "id": "secret.cli.grok-build.config",
+    "label": "Grok Build config",
+    "paths": [
+      "~/.grok/config.toml",
+      "~/.grok/managed_config.toml",
+      "~/.grok/requirements.toml",
+      "<project>/.grok/config.toml",
+      "/etc/grok/managed_config.toml",
+      "/etc/grok/requirements.toml",
+    ],
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 6`] = `
+[
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-rsa.separator",
+    "label": "id_rsa-* / id_rsa_*",
+    "prefix": "id_rsa",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-dsa.separator",
+    "label": "id_dsa-* / id_dsa_*",
+    "prefix": "id_dsa",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519 variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-ed25519.separator",
+    "label": "id_ed25519-* / id_ed25519_*",
+    "prefix": "id_ed25519",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa variants with dash or underscore suffixes.",
+    "id": "secret.variant.id-ecdsa.separator",
+    "label": "id_ecdsa-* / id_ecdsa_*",
+    "prefix": "id_ecdsa",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials variants with dash or underscore suffixes.",
+    "id": "secret.variant.credentials.separator",
+    "label": "credentials-* / credentials_*",
+    "prefix": "credentials",
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 7`] = `
+[
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.bak private credential variants.",
+    "id": "secret.variant.id-rsa.bak",
+    "label": "id_rsa.bak",
+    "prefix": "id_rsa",
+    "suffix": ".bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.backup private credential variants.",
+    "id": "secret.variant.id-rsa.backup",
+    "label": "id_rsa.backup",
+    "prefix": "id_rsa",
+    "suffix": ".backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.copy private credential variants.",
+    "id": "secret.variant.id-rsa.copy",
+    "label": "id_rsa.copy",
+    "prefix": "id_rsa",
+    "suffix": ".copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.disabled private credential variants.",
+    "id": "secret.variant.id-rsa.disabled",
+    "label": "id_rsa.disabled",
+    "prefix": "id_rsa",
+    "suffix": ".disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.key private credential variants.",
+    "id": "secret.variant.id-rsa.key",
+    "label": "id_rsa.key",
+    "prefix": "id_rsa",
+    "suffix": ".key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.old private credential variants.",
+    "id": "secret.variant.id-rsa.old",
+    "label": "id_rsa.old",
+    "prefix": "id_rsa",
+    "suffix": ".old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.orig private credential variants.",
+    "id": "secret.variant.id-rsa.orig",
+    "label": "id_rsa.orig",
+    "prefix": "id_rsa",
+    "suffix": ".orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.pem private credential variants.",
+    "id": "secret.variant.id-rsa.pem",
+    "label": "id_rsa.pem",
+    "prefix": "id_rsa",
+    "suffix": ".pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.save private credential variants.",
+    "id": "secret.variant.id-rsa.save",
+    "label": "id_rsa.save",
+    "prefix": "id_rsa",
+    "suffix": ".save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_rsa.tmp private credential variants.",
+    "id": "secret.variant.id-rsa.tmp",
+    "label": "id_rsa.tmp",
+    "prefix": "id_rsa",
+    "suffix": ".tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.bak private credential variants.",
+    "id": "secret.variant.id-dsa.bak",
+    "label": "id_dsa.bak",
+    "prefix": "id_dsa",
+    "suffix": ".bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.backup private credential variants.",
+    "id": "secret.variant.id-dsa.backup",
+    "label": "id_dsa.backup",
+    "prefix": "id_dsa",
+    "suffix": ".backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.copy private credential variants.",
+    "id": "secret.variant.id-dsa.copy",
+    "label": "id_dsa.copy",
+    "prefix": "id_dsa",
+    "suffix": ".copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.disabled private credential variants.",
+    "id": "secret.variant.id-dsa.disabled",
+    "label": "id_dsa.disabled",
+    "prefix": "id_dsa",
+    "suffix": ".disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.key private credential variants.",
+    "id": "secret.variant.id-dsa.key",
+    "label": "id_dsa.key",
+    "prefix": "id_dsa",
+    "suffix": ".key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.old private credential variants.",
+    "id": "secret.variant.id-dsa.old",
+    "label": "id_dsa.old",
+    "prefix": "id_dsa",
+    "suffix": ".old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.orig private credential variants.",
+    "id": "secret.variant.id-dsa.orig",
+    "label": "id_dsa.orig",
+    "prefix": "id_dsa",
+    "suffix": ".orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.pem private credential variants.",
+    "id": "secret.variant.id-dsa.pem",
+    "label": "id_dsa.pem",
+    "prefix": "id_dsa",
+    "suffix": ".pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.save private credential variants.",
+    "id": "secret.variant.id-dsa.save",
+    "label": "id_dsa.save",
+    "prefix": "id_dsa",
+    "suffix": ".save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_dsa.tmp private credential variants.",
+    "id": "secret.variant.id-dsa.tmp",
+    "label": "id_dsa.tmp",
+    "prefix": "id_dsa",
+    "suffix": ".tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.bak private credential variants.",
+    "id": "secret.variant.id-ed25519.bak",
+    "label": "id_ed25519.bak",
+    "prefix": "id_ed25519",
+    "suffix": ".bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.backup private credential variants.",
+    "id": "secret.variant.id-ed25519.backup",
+    "label": "id_ed25519.backup",
+    "prefix": "id_ed25519",
+    "suffix": ".backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.copy private credential variants.",
+    "id": "secret.variant.id-ed25519.copy",
+    "label": "id_ed25519.copy",
+    "prefix": "id_ed25519",
+    "suffix": ".copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.disabled private credential variants.",
+    "id": "secret.variant.id-ed25519.disabled",
+    "label": "id_ed25519.disabled",
+    "prefix": "id_ed25519",
+    "suffix": ".disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.key private credential variants.",
+    "id": "secret.variant.id-ed25519.key",
+    "label": "id_ed25519.key",
+    "prefix": "id_ed25519",
+    "suffix": ".key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.old private credential variants.",
+    "id": "secret.variant.id-ed25519.old",
+    "label": "id_ed25519.old",
+    "prefix": "id_ed25519",
+    "suffix": ".old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.orig private credential variants.",
+    "id": "secret.variant.id-ed25519.orig",
+    "label": "id_ed25519.orig",
+    "prefix": "id_ed25519",
+    "suffix": ".orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.pem private credential variants.",
+    "id": "secret.variant.id-ed25519.pem",
+    "label": "id_ed25519.pem",
+    "prefix": "id_ed25519",
+    "suffix": ".pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.save private credential variants.",
+    "id": "secret.variant.id-ed25519.save",
+    "label": "id_ed25519.save",
+    "prefix": "id_ed25519",
+    "suffix": ".save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ed25519.tmp private credential variants.",
+    "id": "secret.variant.id-ed25519.tmp",
+    "label": "id_ed25519.tmp",
+    "prefix": "id_ed25519",
+    "suffix": ".tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.bak private credential variants.",
+    "id": "secret.variant.id-ecdsa.bak",
+    "label": "id_ecdsa.bak",
+    "prefix": "id_ecdsa",
+    "suffix": ".bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.backup private credential variants.",
+    "id": "secret.variant.id-ecdsa.backup",
+    "label": "id_ecdsa.backup",
+    "prefix": "id_ecdsa",
+    "suffix": ".backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.copy private credential variants.",
+    "id": "secret.variant.id-ecdsa.copy",
+    "label": "id_ecdsa.copy",
+    "prefix": "id_ecdsa",
+    "suffix": ".copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.disabled private credential variants.",
+    "id": "secret.variant.id-ecdsa.disabled",
+    "label": "id_ecdsa.disabled",
+    "prefix": "id_ecdsa",
+    "suffix": ".disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.key private credential variants.",
+    "id": "secret.variant.id-ecdsa.key",
+    "label": "id_ecdsa.key",
+    "prefix": "id_ecdsa",
+    "suffix": ".key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.old private credential variants.",
+    "id": "secret.variant.id-ecdsa.old",
+    "label": "id_ecdsa.old",
+    "prefix": "id_ecdsa",
+    "suffix": ".old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.orig private credential variants.",
+    "id": "secret.variant.id-ecdsa.orig",
+    "label": "id_ecdsa.orig",
+    "prefix": "id_ecdsa",
+    "suffix": ".orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.pem private credential variants.",
+    "id": "secret.variant.id-ecdsa.pem",
+    "label": "id_ecdsa.pem",
+    "prefix": "id_ecdsa",
+    "suffix": ".pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.save private credential variants.",
+    "id": "secret.variant.id-ecdsa.save",
+    "label": "id_ecdsa.save",
+    "prefix": "id_ecdsa",
+    "suffix": ".save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks id_ecdsa.tmp private credential variants.",
+    "id": "secret.variant.id-ecdsa.tmp",
+    "label": "id_ecdsa.tmp",
+    "prefix": "id_ecdsa",
+    "suffix": ".tmp",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.bak private credential variants.",
+    "id": "secret.variant.credentials.bak",
+    "label": "credentials.bak",
+    "prefix": "credentials",
+    "suffix": ".bak",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.backup private credential variants.",
+    "id": "secret.variant.credentials.backup",
+    "label": "credentials.backup",
+    "prefix": "credentials",
+    "suffix": ".backup",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.copy private credential variants.",
+    "id": "secret.variant.credentials.copy",
+    "label": "credentials.copy",
+    "prefix": "credentials",
+    "suffix": ".copy",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.disabled private credential variants.",
+    "id": "secret.variant.credentials.disabled",
+    "label": "credentials.disabled",
+    "prefix": "credentials",
+    "suffix": ".disabled",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.key private credential variants.",
+    "id": "secret.variant.credentials.key",
+    "label": "credentials.key",
+    "prefix": "credentials",
+    "suffix": ".key",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.old private credential variants.",
+    "id": "secret.variant.credentials.old",
+    "label": "credentials.old",
+    "prefix": "credentials",
+    "suffix": ".old",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.orig private credential variants.",
+    "id": "secret.variant.credentials.orig",
+    "label": "credentials.orig",
+    "prefix": "credentials",
+    "suffix": ".orig",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.pem private credential variants.",
+    "id": "secret.variant.credentials.pem",
+    "label": "credentials.pem",
+    "prefix": "credentials",
+    "suffix": ".pem",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.save private credential variants.",
+    "id": "secret.variant.credentials.save",
+    "label": "credentials.save",
+    "prefix": "credentials",
+    "suffix": ".save",
+  },
+  {
+    "category": "Variant",
+    "description": "Blocks credentials.tmp private credential variants.",
+    "id": "secret.variant.credentials.tmp",
+    "label": "credentials.tmp",
+    "prefix": "credentials",
+    "suffix": ".tmp",
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 8`] = `
+{
+  "category": "Pattern",
+  "description": "Blocks extensionless SSH private key-like basenames.",
+  "id": "secret.pattern.ssh-key-basename",
+  "label": "*_(rsa|dsa|ed25519|ecdsa)",
+  "pattern": /^.*_(rsa|dsa|ed25519|ecdsa)$/,
+}
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 9`] = `
+[
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .agilekeychain extension.",
+    "extension": "agilekeychain",
+    "id": "secret.ext.agilekeychain",
+    "label": ".agilekeychain",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .asc extension.",
+    "extension": "asc",
+    "id": "secret.ext.asc",
+    "label": ".asc",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .bek extension.",
+    "extension": "bek",
+    "id": "secret.ext.bek",
+    "label": ".bek",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .cscfg extension.",
+    "extension": "cscfg",
+    "id": "secret.ext.cscfg",
+    "label": ".cscfg",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .fve extension.",
+    "extension": "fve",
+    "id": "secret.ext.fve",
+    "label": ".fve",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .gnucash extension.",
+    "extension": "gnucash",
+    "id": "secret.ext.gnucash",
+    "label": ".gnucash",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .jks extension.",
+    "extension": "jks",
+    "id": "secret.ext.jks",
+    "label": ".jks",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .keychain extension.",
+    "extension": "keychain",
+    "id": "secret.ext.keychain",
+    "label": ".keychain",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .kwallet extension.",
+    "extension": "kwallet",
+    "id": "secret.ext.kwallet",
+    "label": ".kwallet",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .mdf extension.",
+    "extension": "mdf",
+    "id": "secret.ext.mdf",
+    "label": ".mdf",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .ovpn extension.",
+    "extension": "ovpn",
+    "id": "secret.ext.ovpn",
+    "label": ".ovpn",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .p12 extension.",
+    "extension": "p12",
+    "id": "secret.ext.p12",
+    "label": ".p12",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pcap extension.",
+    "extension": "pcap",
+    "id": "secret.ext.pcap",
+    "label": ".pcap",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pem extension.",
+    "extension": "pem",
+    "id": "secret.ext.pem",
+    "label": ".pem",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pfx extension.",
+    "extension": "pfx",
+    "id": "secret.ext.pfx",
+    "label": ".pfx",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .pkcs12 extension.",
+    "extension": "pkcs12",
+    "id": "secret.ext.pkcs12",
+    "label": ".pkcs12",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .psafe3 extension.",
+    "extension": "psafe3",
+    "id": "secret.ext.psafe3",
+    "label": ".psafe3",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .rdp extension.",
+    "extension": "rdp",
+    "id": "secret.ext.rdp",
+    "label": ".rdp",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .sdf extension.",
+    "extension": "sdf",
+    "id": "secret.ext.sdf",
+    "label": ".sdf",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .tblk extension.",
+    "extension": "tblk",
+    "id": "secret.ext.tblk",
+    "label": ".tblk",
+  },
+  {
+    "category": "Extension",
+    "description": "Blocks files with the .tpm extension.",
+    "extension": "tpm",
+    "id": "secret.ext.tpm",
+    "label": ".tpm",
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 10`] = `
+[
+  {
+    "category": "Extension pattern",
+    "description": "Blocks key and keypair extension patterns.",
+    "id": "secret.ext-pattern.key",
+    "label": ".key / .keypair",
+    "pattern": /^key(pair)?$/,
+  },
+  {
+    "category": "Extension pattern",
+    "description": "Blocks keystore and keyring extension patterns.",
+    "id": "secret.ext-pattern.keystore",
+    "label": ".keystore / .keyring",
+    "pattern": /^key(store|ring)$/,
+  },
+  {
+    "category": "Extension pattern",
+    "description": "Blocks KeePass database extension patterns.",
+    "id": "secret.ext-pattern.kdbx",
+    "label": ".kdb / .kdbx",
+    "pattern": /^kdbx?$/,
+  },
+]
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 11`] = `
+Set {
+  "secret.cli.claude-code.config",
+  "secret.cli.antigravity",
+  "secret.cli.codex.config",
+  "secret.cli.gemini.config",
+  "secret.cli.copilot-cli.config",
+  "secret.cli.kimi-code.config",
+  "secret.cli.opencode.config",
+  "secret.cli.pi.config",
+  "secret.cli.amp.config",
+  "secret.cli.cursor.config",
+  "secret.cli.grok-build.config",
+}
+`;
+
+exports[`rule catalogs secret records, matcher data, and tiers are identical 12`] = `
+Set {
+  "secret.basename.env",
+  "secret.basename.npmrc",
+  "secret.basename.pypirc",
+  "secret.basename.netrc",
+  "secret.basename.git-credentials",
+  "secret.basename.id-rsa",
+  "secret.basename.id-ed25519",
+  "secret.basename.id-ecdsa",
+  "secret.basename.credentials",
+  "secret.pattern.env-variant",
+  "secret.home.ssh",
+  "secret.home.aws",
+  "secret.home.gcp",
+  "secret.home.gcloud-config",
+  "secret.home.kube-config",
+  "secret.home.docker-config",
+  "secret.home.kube-config.bak",
+  "secret.home.kube-config.backup",
+  "secret.home.kube-config.copy",
+  "secret.home.kube-config.disabled",
+  "secret.home.kube-config.old",
+  "secret.home.kube-config.orig",
+  "secret.home.kube-config.save",
+  "secret.home.kube-config.tmp",
+  "secret.home.docker-config.bak",
+  "secret.home.docker-config.backup",
+  "secret.home.docker-config.copy",
+  "secret.home.docker-config.disabled",
+  "secret.home.docker-config.old",
+  "secret.home.docker-config.orig",
+  "secret.home.docker-config.save",
+  "secret.home.docker-config.tmp",
+  "secret.home.gh-hosts",
+  "secret.variant.id-rsa.separator",
+  "secret.variant.id-dsa.separator",
+  "secret.variant.id-ed25519.separator",
+  "secret.variant.id-ecdsa.separator",
+  "secret.variant.credentials.separator",
+  "secret.variant.id-rsa.bak",
+  "secret.variant.id-rsa.backup",
+  "secret.variant.id-rsa.copy",
+  "secret.variant.id-rsa.disabled",
+  "secret.variant.id-rsa.key",
+  "secret.variant.id-rsa.old",
+  "secret.variant.id-rsa.orig",
+  "secret.variant.id-rsa.pem",
+  "secret.variant.id-rsa.save",
+  "secret.variant.id-rsa.tmp",
+  "secret.variant.id-dsa.bak",
+  "secret.variant.id-dsa.backup",
+  "secret.variant.id-dsa.copy",
+  "secret.variant.id-dsa.disabled",
+  "secret.variant.id-dsa.key",
+  "secret.variant.id-dsa.old",
+  "secret.variant.id-dsa.orig",
+  "secret.variant.id-dsa.pem",
+  "secret.variant.id-dsa.save",
+  "secret.variant.id-dsa.tmp",
+  "secret.variant.id-ed25519.bak",
+  "secret.variant.id-ed25519.backup",
+  "secret.variant.id-ed25519.copy",
+  "secret.variant.id-ed25519.disabled",
+  "secret.variant.id-ed25519.key",
+  "secret.variant.id-ed25519.old",
+  "secret.variant.id-ed25519.orig",
+  "secret.variant.id-ed25519.pem",
+  "secret.variant.id-ed25519.save",
+  "secret.variant.id-ed25519.tmp",
+  "secret.variant.id-ecdsa.bak",
+  "secret.variant.id-ecdsa.backup",
+  "secret.variant.id-ecdsa.copy",
+  "secret.variant.id-ecdsa.disabled",
+  "secret.variant.id-ecdsa.key",
+  "secret.variant.id-ecdsa.old",
+  "secret.variant.id-ecdsa.orig",
+  "secret.variant.id-ecdsa.pem",
+  "secret.variant.id-ecdsa.save",
+  "secret.variant.id-ecdsa.tmp",
+  "secret.variant.credentials.bak",
+  "secret.variant.credentials.backup",
+  "secret.variant.credentials.copy",
+  "secret.variant.credentials.disabled",
+  "secret.variant.credentials.key",
+  "secret.variant.credentials.old",
+  "secret.variant.credentials.orig",
+  "secret.variant.credentials.pem",
+  "secret.variant.credentials.save",
+  "secret.variant.credentials.tmp",
+  "secret.pattern.ssh-key-basename",
+  "secret.ext.agilekeychain",
+  "secret.ext.asc",
+  "secret.ext.bek",
+  "secret.ext.cscfg",
+  "secret.ext.fve",
+  "secret.ext.gnucash",
+  "secret.ext.jks",
+  "secret.ext.keychain",
+  "secret.ext.kwallet",
+  "secret.ext.mdf",
+  "secret.ext.ovpn",
+  "secret.ext.p12",
+  "secret.ext.pcap",
+  "secret.ext.pem",
+  "secret.ext.pfx",
+  "secret.ext.pkcs12",
+  "secret.ext.psafe3",
+  "secret.ext.rdp",
+  "secret.ext.sdf",
+  "secret.ext.tblk",
+  "secret.ext.tpm",
+  "secret.ext-pattern.key",
+  "secret.ext-pattern.keystore",
+  "secret.ext-pattern.kdbx",
+  "secret.cli.claude-code",
+  "secret.cli.claude-code.config",
+  "secret.cli.antigravity",
+  "secret.cli.codex",
+  "secret.cli.codex.config",
+  "secret.cli.gemini",
+  "secret.cli.gemini.config",
+  "secret.cli.copilot-cli",
+  "secret.cli.copilot-cli.config",
+  "secret.cli.kimi-code",
+  "secret.cli.kimi-code.config",
+  "secret.cli.opencode",
+  "secret.cli.opencode.config",
+  "secret.cli.pi",
+  "secret.cli.pi.config",
+  "secret.cli.amp",
+  "secret.cli.amp.config",
+  "secret.cli.cursor",
+  "secret.cli.cursor.config",
+  "secret.cli.grok-build",
+  "secret.cli.grok-build.config",
+}
+`;
+
+exports[`rule catalogs regular-expression matchers compile to the same source and flags 1`] = `
+[
+  [
+    "^.*_(rsa|dsa|ed25519|ecdsa)$",
+    "",
+  ],
+  [
+    "^key(pair)?$",
+    "",
+  ],
+  [
+    "^key(store|ring)$",
+    "",
+  ],
+  [
+    "^kdbx?$",
+    "",
+  ],
+]
+`;

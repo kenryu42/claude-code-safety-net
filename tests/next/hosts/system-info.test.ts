@@ -15,7 +15,12 @@ import {
 } from '@/integrations/system-info';
 import { createFakeBin, type FakeScriptEntry } from '../helpers/fake-bin';
 import { writeTree } from '../helpers/fixture-tree';
-import { createTempRoot, removeTempRoots, withProcessEnv } from '../helpers/temp-home';
+import {
+  createTempRoot,
+  recordPorted,
+  removeTempRoots,
+  withProcessEnv,
+} from '../helpers/temp-home';
 
 /**
  * The version probes doctor and the install picker run. Two things are contract here: a
@@ -111,6 +116,8 @@ describe('the system report', () => {
     };
     const ported = await record(getSystemInfo);
     expect(ported).toEqual(await record(shippedGetSystemInfo));
+    // The report names the machine it ran on.
+    recordPorted(ported, [[`${process.platform} ${process.arch}`, '<platform>']]);
 
     expect(Object.keys(ported.info.versions)).toEqual(
       installIntegrationMetadata.map((integration) => integration.id),

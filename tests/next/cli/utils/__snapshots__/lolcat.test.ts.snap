@@ -1,0 +1,85 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`cli/utils/lolcat renderLolcat paints the same bytes on both implementations 1`] = `
+"\x1B[38;2;233;137;54ma\x1B[38;2;229;141;42mb\x1B[22m\x1B[39m
+\x1B[38;2;224;144;29mc\x1B[38;2;219;148;13md\x1B[22m\x1B[39m\x1B[0m"
+`;
+
+exports[`cli/utils/lolcat renderLolcat paints the same bytes on both implementations 2`] = `""`;
+
+exports[`cli/utils/lolcat createLolcatAnimationFrames walks the seed the same way on both implementations 1`] = `
+[
+  
+"\x1B[38;2;240;131;77ma\x1B[38;2;239;132;73mb\x1B[22m\x1B[39m
+\x1B[38;2;237;134;66mc\x1B[38;2;236;135;62md\x1B[22m\x1B[39m\x1B[0m"
+,
+  
+"\x1B[38;2;229;141;42ma\x1B[38;2;228;142;38mb\x1B[22m\x1B[39m
+\x1B[38;2;224;144;29mc\x1B[38;2;223;146;24md\x1B[22m\x1B[39m\x1B[0m"
+,
+  
+"\x1B[38;2;213;152;0ma\x1B[38;2;211;153;0mb\x1B[22m\x1B[39m
+\x1B[38;2;206;156;0mc\x1B[38;2;204;157;0md\x1B[22m\x1B[39m\x1B[0m"
+,
+]
+`;
+
+exports[`cli/utils/lolcat writeAnimatedLolcat writes the same frames to a TTY on both implementations 1`] = `
+[
+  
+"\x1B[?25l
+\x1B[1A\x1B7"
+,
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;253;244;234m░\x1B[38;2;252;244;234m░\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;252;244;233m┏\x1B[38;2;252;244;232m▒\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;253;243;235m┛┃\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;253;244;234m╱\x1B[38;2;252;244;234m┓\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;254;243;237m░\x1B[38;2;253;243;237m┓\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;253;243;236m┏▒\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;254;242;239m╲┏\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;254;242;238m┗\x1B[38;2;254;243;238m┃\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;251;213;207ma\x1B[38;2;254;238;236mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;253;228;222mc\x1B[38;2;251;218;208md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;250;197;191ma\x1B[38;2;252;223;218mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;251;213;204mc\x1B[38;2;250;203;190md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[38;2;244;124;109ma\x1B[38;2;244;125;105mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[38;2;243;126;98mc\x1B[38;2;243;127;95md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B8",
+  "\x1B[1B",
+  
+"
+\x1B[0m\x1B[?25h"
+,
+]
+`;
+
+exports[`cli/utils/lolcat an aborted signal stops both implementations before the first frame 1`] = `
+[
+  
+"\x1B[?25l
+\x1B[1A\x1B7"
+,
+  "\x1B[?2026h\x1B8\x1B[38;2;244;124;109ma\x1B[38;2;244;125;105mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[38;2;243;126;98mc\x1B[38;2;243;127;95md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B8",
+  "\x1B[1B",
+  
+"
+\x1B[0m\x1B[?25h"
+,
+]
+`;
+
+exports[`cli/utils/lolcat a non-TTY sink receives the same bytes as a TTY on both implementations 1`] = `
+[
+  
+"\x1B[?25l
+\x1B[1A\x1B7"
+,
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;253;244;234m░\x1B[38;2;252;244;234m░\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;252;244;233m┏\x1B[38;2;252;244;232m▒\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;253;243;235m┛┃\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;253;244;234m╱\x1B[38;2;252;244;234m┓\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;254;243;237m░\x1B[38;2;253;243;237m┓\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;253;243;236m┏▒\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;254;242;239m╲┏\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;254;242;238m┗\x1B[38;2;254;243;238m┃\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;251;213;207ma\x1B[38;2;254;238;236mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;253;228;222mc\x1B[38;2;251;218;208md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[1m\x1B[38;2;250;197;191ma\x1B[38;2;252;223;218mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[1m\x1B[38;2;251;213;204mc\x1B[38;2;250;203;190md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B[?2026h\x1B8\x1B[38;2;244;124;109ma\x1B[38;2;244;125;105mb\x1B[22m\x1B[39m\x1B8\x1B[1B\x1B[38;2;243;126;98mc\x1B[38;2;243;127;95md\x1B[22m\x1B[39m\x1B[?2026l",
+  "\x1B8",
+  "\x1B[1B",
+  
+"
+\x1B[0m\x1B[?25h"
+,
+]
+`;

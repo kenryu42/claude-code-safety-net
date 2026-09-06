@@ -24,6 +24,7 @@ import {
 import { createParallelAnalysisBudget as shippedParallelBudget } from '@/analyzer/parallel-budget';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands, FUZZ_SEED, fuzzShellSources } from '../../helpers/shell-inputs';
 
 /**
@@ -313,12 +314,17 @@ const ALL_SHAPES = [...ARGUMENT_SHAPES, ...TEMPLATE_SHAPES];
 
 describe('parallel command parsing', () => {
   test('finds the same child start as the shipped parser', () => {
+    const recorded: [string, unknown][] = [];
     for (const tokens of [...ALL_SHAPES, [], ['-j4']]) {
-      expect(extractParallelChildStart(tokens), tokens.join(' ')).toBe(shippedChildStart(tokens));
+      const start = extractParallelChildStart(tokens);
+      expect(start, tokens.join(' ')).toBe(shippedChildStart(tokens));
+      recorded.push([tokens.join(' '), start]);
     }
+    expectRecordedDigest('analyzer-parallel/child-start', recorded, root);
   });
 
   test('replaces placeholders exactly as the shipped helper does', () => {
+    const recorded: [string, unknown][] = [];
     for (const template of [
       '{}',
       'a{}b',
@@ -331,26 +337,36 @@ describe('parallel command parsing', () => {
       '{=x=}',
     ]) {
       for (const argument of ['x', '', 'a b', '{}']) {
-        expect(replaceParallelPlaceholder(template, argument), `${template} <- ${argument}`).toBe(
+        const replaced = replaceParallelPlaceholder(template, argument);
+        expect(replaced, `${template} <- ${argument}`).toBe(
           shippedReplacePlaceholder(template, argument),
         );
+        recorded.push([`${template} <- ${argument}`, replaced]);
       }
     }
+    expectRecordedDigest('analyzer-parallel/placeholders', recorded, root);
   });
 });
 
 describe('parallel analysis', () => {
   test('reports the same rule, reserved work and nested jobs as the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     for (const row of ROWS) {
       for (const tokens of ALL_SHAPES) {
         const pair = bothAnalyzers(tokens, row);
         const label = `${row.label}: ${tokens.join(' ')}`;
         expect(pair.next.match, label).toStrictEqual(pair.shipped.match);
         expect(pair.next.jobs, label).toStrictEqual(pair.shipped.jobs);
-        expect(parallelWork(pair.next.budget), label).toStrictEqual(pair.shipped.budget);
+        const budget = parallelWork(pair.next.budget);
+        expect(budget, label).toStrictEqual(pair.shipped.budget);
         expect(pair.next.scan, label).toStrictEqual(pair.shipped.scan);
+        recorded.push([
+          label,
+          { match: pair.next.match, jobs: pair.next.jobs, budget, scan: pair.next.scan },
+        ]);
       }
     }
+    expectRecordedDigest('analyzer-parallel/analysis', recorded, root);
   });
 
   test('the shapes reach the shell, rm, command-stream and unsupported verdicts', () => {
@@ -391,6 +407,11 @@ describe('parallel analysis', () => {
       'parallel.command-stream-dynamic',
     );
     expect(ambient.next.match).toStrictEqual(ambient.shipped.match);
+    expectRecordedDigest(
+      'analyzer-parallel/ambient-value',
+      [['ambient', ambient.next.match]],
+      root,
+    );
     // A shell assignment shadows the environment, so an empty one restores the plain verdict.
     const shadowed = bothAnalyzers(['parallel', 'echo', ':::', 'a'], {
       label: 'shadowed',
@@ -399,6 +420,11 @@ describe('parallel analysis', () => {
     });
     expect(shadowed.next.match).toStrictEqual({ ok: true, value: null });
     expect(shadowed.next.match).toStrictEqual(shadowed.shipped.match);
+    expectRecordedDigest(
+      'analyzer-parallel/shadowed-value',
+      [['shadowed', shadowed.next.match]],
+      root,
+    );
   });
 
   test('an argument product past the child-analysis cap breaches the parallel budget', () => {
@@ -420,15 +446,26 @@ describe('parallel analysis', () => {
     });
     expect(within.next.match).toStrictEqual({ ok: true, value: null });
     expect(within.next.budget.counters.get('parallelChildAnalyses')).toBe(1000);
-    expect(parallelWork(within.next.budget)).toStrictEqual(within.shipped.budget);
+    const budget = parallelWork(within.next.budget);
+    expect(budget).toStrictEqual(within.shipped.budget);
+    expectRecordedDigest('analyzer-parallel/child-analysis-cap', [['within', budget]], root);
   });
 
   test('the reason strings are the shipped strings', () => {
     expect(REASON_PARALLEL_RM).toBe(SHIPPED_REASON_RM);
     expect(REASON_PARALLEL_SHELL).toBe(SHIPPED_REASON_SHELL);
+    expectRecordedDigest(
+      'analyzer-parallel/reasons',
+      [
+        ['rm', REASON_PARALLEL_RM],
+        ['shell', REASON_PARALLEL_SHELL],
+      ],
+      root,
+    );
   });
 
   test('corpus and fuzz sources placed after parallel agree with the shipped analyzer', () => {
+    const recorded: [string, unknown][] = [];
     for (const source of [...corpusCommands(), ...fuzzShellSources(1_000, FUZZ_SEED)]) {
       const words = source.split(/\s+/).filter((token) => token !== '');
       for (const suffix of [[], [':::', 'a', 'b']]) {
@@ -436,8 +473,14 @@ describe('parallel analysis', () => {
         const pair = bothAnalyzers(tokens, { label: 'fuzz', rules: RULES, strict: true });
         expect(pair.next.match, source).toStrictEqual(pair.shipped.match);
         expect(pair.next.jobs, source).toStrictEqual(pair.shipped.jobs);
-        expect(parallelWork(pair.next.budget), source).toStrictEqual(pair.shipped.budget);
+        const budget = parallelWork(pair.next.budget);
+        expect(budget, source).toStrictEqual(pair.shipped.budget);
+        recorded.push([
+          `${source} ${suffix.join(' ')}`,
+          { match: pair.next.match, jobs: pair.next.jobs, budget },
+        ]);
       }
     }
+    expectRecordedDigest('analyzer-parallel/corpus-and-fuzz', recorded, root);
   });
 });

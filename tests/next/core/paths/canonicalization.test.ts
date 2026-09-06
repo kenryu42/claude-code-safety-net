@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { AnalysisLimit, createBudget } from '@next/core/budget';
 import { processPathResolver } from '@next/core/environment';
 import {
@@ -26,6 +26,7 @@ import {
   normalizeMsysDrivePath as shippedNormalizeMsysDrivePath,
   processPathResolver as shippedPaths,
 } from '@/ir/environment';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 import {
   corpusWords,
   expectSameOutcome,
@@ -69,6 +70,33 @@ const FRAGMENTS = [
 
 let root = '';
 let home = '';
+
+/**
+ * Every machine-specific prefix a recorded path can carry: a relative target resolves against the
+ * checkout, so the cwd and its parent are folded first — on a CI runner they sit under the home.
+ */
+const pathFolds = () => [
+  [process.cwd(), '<cwd>'] as const,
+  [dirname(process.cwd()), '<cwd>/..'] as const,
+  ...rootFolds(root),
+  [homedir(), '<home>'] as const,
+];
+
+/**
+ * The one target that resolves above the checkout's parent, which no fold can hide: the
+ * grandparent is `/home` here, a substring of `<root>/home` and of the corpus's
+ * `/srv/home/tester`, and on a runner it is a different directory again. It is compared like every
+ * other target and left out of the record.
+ */
+const ABOVE_PARENT = '../..';
+
+/**
+ * A relative target that climbs out of the fixture root lands in the temp directory or above it:
+ * `/tmp` here, `/var/folders/…` on macOS, a value no fold can hide because a fold of the temp
+ * directory would rewrite the literal `/tmp` rows instead. Such a target is compared, not recorded.
+ */
+const climbsOut = (cwd: string, target: string) =>
+  !isAbsolute(target) && relative(root, resolve(cwd, target)).startsWith('..');
 
 function targets(): string[] {
   return [
@@ -162,6 +190,7 @@ describe('supported path variable expansion', () => {
         const thrown = expectSameOutcome(
           () => expandSupportedPathEnvironmentVariables(target, pair.next),
           () => shippedExpand(target, pair.shipped),
+          pathFolds(),
         );
         if (thrown !== undefined) {
           expect(thrown).toBeInstanceOf(AnalysisLimit);
@@ -178,6 +207,7 @@ describe('supported path variable expansion', () => {
       const thrown = expectSameOutcome(
         () => expandSupportedPathEnvironmentVariables(nested, pair.next),
         () => shippedExpand(nested, pair.shipped),
+        pathFolds(),
       );
       expect(thrown === undefined).toBe(depth <= 64);
     }
@@ -192,6 +222,8 @@ describe('protected path candidates', () => {
         const thrown = expectSameOutcome(
           () => normalizeProtectedPathCandidate(target, cwd, pair.next, createBudget()),
           () => shippedNormalize(target, cwd, createPathCanonicalizationContext(pair.shipped)),
+          pathFolds(),
+          !climbsOut(cwd, target),
         );
         if (thrown !== undefined) expect(thrown).toBeInstanceOf(AnalysisLimit);
       }
@@ -208,6 +240,8 @@ describe('protected path candidates', () => {
       const thrown = expectSameOutcome(
         () => normalizeProtectedPathCandidate(target, root, pair.next, createBudget()),
         () => shippedNormalize(target, root, createPathCanonicalizationContext(pair.shipped)),
+        pathFolds(),
+        !climbsOut(root, target),
       );
       if (thrown !== undefined) expect(thrown).toBeInstanceOf(AnalysisLimit);
     }
@@ -219,18 +253,23 @@ describe('existing-prefix resolution', () => {
     const budget = createBudget();
     const shippedBudget = createPathCanonicalizationBudget();
     for (const target of targets()) {
-      expect(resolveExistingPath(target, processPathResolver, budget)).toBe(
-        shippedResolve(target, shippedPaths, shippedBudget),
-      );
-      expect(probeExistingPath(target, processPathResolver, budget)).toBe(
-        shippedProbe(target, shippedPaths, shippedBudget),
-      );
+      const resolved = resolveExistingPath(target, processPathResolver, budget);
+      expect(resolved).toBe(shippedResolve(target, shippedPaths, shippedBudget));
+      const probed = probeExistingPath(target, processPathResolver, budget);
+      expect(probed).toBe(shippedProbe(target, shippedPaths, shippedBudget));
+      if (target === ABOVE_PARENT) continue;
+      recordPorted(resolved, pathFolds());
+      recordPorted(probed, pathFolds());
     }
     expect(budget.counters.get('realpathAttempts')).toBe(shippedBudget.realpathAttempts);
     expect(budget.counters.get('processedCandidateBytes')).toBe(
       shippedBudget.processedCandidateBytes,
     );
     expect(budget.resolvedPaths).toEqual(shippedBudget.resolvedPaths);
+    recordPorted(
+      [...budget.resolvedPaths].filter(([target]) => target !== ABOVE_PARENT),
+      pathFolds(),
+    );
   });
 
   test('breaches the attempt counter on the same call as the shipped budget', () => {
@@ -254,12 +293,12 @@ describe('platform path forms', () => {
   test('detect Windows namespaces and MSYS drives like the shipped helpers', () => {
     for (const target of targets()) {
       for (const platform of PLATFORMS) {
-        expect(isUnsupportedWindowsNamespacePath(target, platform)).toBe(
-          shippedIsUnsupportedWindowsNamespacePath(target, platform),
-        );
-        expect(normalizeMsysDrivePath(target, platform)).toBe(
-          shippedNormalizeMsysDrivePath(target, platform),
-        );
+        const unsupported = isUnsupportedWindowsNamespacePath(target, platform);
+        expect(unsupported).toBe(shippedIsUnsupportedWindowsNamespacePath(target, platform));
+        expect(unsupported).toMatchSnapshot();
+        const msys = normalizeMsysDrivePath(target, platform);
+        expect(msys).toBe(shippedNormalizeMsysDrivePath(target, platform));
+        recordPorted(msys, pathFolds());
       }
       expect(isUnsupportedWindowsNamespacePath(target)).toBe(
         shippedIsUnsupportedWindowsNamespacePath(target),

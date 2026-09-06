@@ -1,0 +1,3081 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`logs selection the default window lists the denials newest first and warns once 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection two unreadable sources pluralize the warning 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 2 audit log sources could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "content": 
+"not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/second-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection a regular file where the logs directory is expected is one unreadable source, not an empty history 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"No audit log entries found.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --all admits the allowed entry the default window hides 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f40516273a  <time>  allow  claude-code      -                     git status  [<root>/project]
+a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --limit truncates after the sort, keeping the newest 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --since drops the denial recorded two days ago 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --agent and --rule each select one entry 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --agent and --rule each select one entry 2`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --session matches the recorded id, then the legacy file name 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --session matches the recorded id, then the legacy file name 2`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --project admits the directory it names and nothing beside it 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --project admits the directory it names and nothing beside it 2`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --suspect keeps the repeated signature and the fail-closed denial 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection an unknown option is refused before the tree is read 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"Unknown option for logs: --nope
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection a stray positional is refused the same way 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"Unexpected argument for logs: extra
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs selection --json prints the selected entries as read 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"[
+  {
+    "ts": "<time>",
+    "id": "a1c2e3f405162738",
+    "v": "dev",
+    "decision": "deny",
+    "agent": "claude-code",
+    "level": "standard",
+    "toolName": "Bash",
+    "sessionId": "sess1",
+    "cwd": "<root>/project",
+    "ruleId": "git.reset-hard",
+    "command": "git reset --hard && echo done",
+    "segment": "git reset --hard",
+    "reason": "Discards uncommitted work irreversibly."
+  },
+  {
+    "ts": "<time>",
+    "id": "a1c2e3f405162739",
+    "v": "dev",
+    "decision": "deny",
+    "agent": "cursor",
+    "level": "standard",
+    "toolName": "Bash",
+    "sessionId": "sess1",
+    "cwd": "/home/agent/other",
+    "ruleId": "git.clean-force",
+    "command": "git clean -fd",
+    "segment": "git clean -fd",
+    "reason": "Removes untracked files."
+  },
+  {
+    "ts": "<time>",
+    "id": "b1c2e3f405162740",
+    "v": "dev",
+    "decision": "deny",
+    "agent": "claude-code",
+    "level": "standard",
+    "toolName": "Bash",
+    "sessionId": "sess2",
+    "cwd": "/home/agent/legacy",
+    "ruleId": "rm.recursive-force",
+    "command": "rm -rf build",
+    "segment": "rm -rf build",
+    "reason": "Recursive force delete."
+  },
+  {
+    "ts": "<time>",
+    "id": "b1c2e3f405162741",
+    "v": "dev",
+    "decision": "deny",
+    "agent": "claude-code",
+    "level": "standard",
+    "toolName": "Bash",
+    "sessionId": "sess2",
+    "cwd": "/home/agent/legacy",
+    "ruleId": "rm.recursive-force",
+    "command": "rm -rf build",
+    "segment": "rm -rf build",
+    "reason": "Recursive force delete."
+  },
+  {
+    "ts": "<time>",
+    "id": "b1c2e3f405162740",
+    "v": "dev",
+    "decision": "deny",
+    "agent": "claude-code",
+    "level": "standard",
+    "toolName": "Bash",
+    "sessionId": "sess2",
+    "cwd": "/home/agent/legacy",
+    "ruleId": "git.reset-hard",
+    "command": "git reset --hard origin/main",
+    "segment": "git reset --hard origin/main",
+    "reason": "Discards uncommitted work irreversibly."
+  },
+  {
+    "ts": "<time>",
+    "id": "b1c2e3f405162742",
+    "v": "dev",
+    "decision": "deny",
+    "agent": "claude-code",
+    "level": "standard",
+    "toolName": "Bash",
+    "sessionId": "sess2",
+    "cwd": "/home/agent/legacy",
+    "failureStage": "command-analysis",
+    "errorCode": "analysis-failed",
+    "command": "tar xf payload.tar",
+    "segment": "tar xf payload.tar",
+    "reason": "Command analysis failed; denying to stay safe."
+  }
+]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --id a single match renders the detail block 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"id:        a1c2e3f405162738
+ts:        <time>
+decision:  deny
+agent:     claude-code
+level:     standard
+tool:      Bash
+rule:      git.reset-hard
+intent:    -
+stage:     -
+error:     -
+session:   sess1
+cwd:       <root>/project
+version:   dev
+truncated: -
+reason:    Discards uncommitted work irreversibly.
+command:   git reset --hard && echo done
+segment:   git reset --hard
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --id an id nothing recorded is reported as retained history having none 1`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"No retained audit log entry found for id ffffffffffffffff.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --id an id two entries share is an error rather than a choice 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+Multiple audit log entries found for id b1c2e3f405162740.
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --id a malformed id is refused before the tree is read 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--id must be 16 hexadecimal characters
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --id --id refuses to be narrowed further 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--id cannot be combined with --agent, --rule, --session, --project, --suspect, --since, or --limit
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --prune-legacy --dry-run names the root files and deletes nothing 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"Would remove 1 legacy audit log file (1.3 KiB).
+Nested v2 audit logs are not included.
+Run the same command without --dry-run to delete them.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --prune-legacy --dry-run --json reports the same set as counts 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"{"dryRun":true,"files":1,"bytes":1350}
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --prune-legacy the deletion removes the root file and leaves the nested tree 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"Removed 1 legacy audit log file (1.3 KiB).
+Nested v2 audit logs were not changed.
+This deletion cannot be undone.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --prune-legacy --json reports the deletion as counts and bytes 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"{"removedFiles":1,"removedBytes":1350,"failedFiles":0}
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --prune-legacy --dry-run alone has nothing to preview 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--dry-run requires --prune-legacy
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the configured retention is the ceiling --since cannot pass 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--since must be a positive number of days no greater than 5
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "audit": {
+    "retention_days": 5
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the configured retention is the ceiling --since cannot pass 2`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "mode": 384,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "audit": {
+    "retention_days": 5
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the default ceiling is thirty days, and a window has to be positive 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--since must be a positive number of days no greater than 30
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the default ceiling is thirty days, and a window has to be positive 2`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--limit must be a positive number
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window a home with no audit tree reports an empty history 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"No audit log entries found.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs --prune-legacy failure a legacy file the filesystem refuses to unlink is reported and kept 1`] = `
+{
+  "error": [
+    "Could not remove legacy-sess.jsonl: EPERM: operation not permitted, unlink",
+  ],
+  "log": [
+    "Removed 0 legacy audit log files (0 B).",
+    "Nested v2 audit logs were not changed.",
+  ],
+  "returned": 1,
+}
+`;
+
+exports[`logs --prune-legacy failure --json reports the refusal as a failed file rather than a removed one 1`] = `
+{
+  "error": [],
+  "log": [
+    "{"removedFiles":0,"removedBytes":0,"failedFiles":1}",
+  ],
+  "returned": 1,
+}
+`;

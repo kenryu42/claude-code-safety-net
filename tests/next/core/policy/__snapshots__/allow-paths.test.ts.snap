@@ -1,0 +1,628 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`allow path validators parity unknown values against <home> 1`] = `
+[
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot contain the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot cover the guard's own configuration",
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot cover the guard's own configuration",
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot cover the guard's own configuration",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+]
+`;
+
+exports[`allow path validators parity path strings against <home> 1`] = `
+[
+  {
+    "conflict": null,
+    "expanded": " ",
+  },
+  {
+    "conflict": null,
+    "expanded": "",
+  },
+  {
+    "conflict": null,
+    "expanded": "rel/path",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/scratch",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME",
+  },
+  {
+    "conflict": null,
+    "expanded": "\${HOME}",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME/..",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME/x",
+  },
+  {
+    "conflict": "cannot contain the home directory",
+    "expanded": "/",
+  },
+  {
+    "conflict": null,
+    "expanded": "/opt/x",
+  },
+  {
+    "conflict": "cannot be the home directory",
+    "expanded": "<home>",
+  },
+  {
+    "conflict": "cannot be the home directory",
+    "expanded": "<home>/",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net/policy.json",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net",
+  },
+  {
+    "conflict": null,
+    "expanded": "**",
+  },
+  {
+    "conflict": null,
+    "expanded": "apps/*/.env",
+  },
+  {
+    "conflict": null,
+    "expanded": ".env.v?",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/**/.ssh/config",
+  },
+]
+`;
+
+exports[`allow path validators parity unknown values against /srv/home/tester 1`] = `
+[
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot contain the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot cover the guard's own configuration",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+]
+`;
+
+exports[`allow path validators parity path strings against /srv/home/tester 1`] = `
+[
+  {
+    "conflict": null,
+    "expanded": " ",
+  },
+  {
+    "conflict": null,
+    "expanded": "",
+  },
+  {
+    "conflict": null,
+    "expanded": "rel/path",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester/",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester/scratch",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME",
+  },
+  {
+    "conflict": null,
+    "expanded": "\${HOME}",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME/..",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME/x",
+  },
+  {
+    "conflict": "cannot contain the home directory",
+    "expanded": "/",
+  },
+  {
+    "conflict": null,
+    "expanded": "/opt/x",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net/policy.json",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester/.cc-safety-net",
+  },
+  {
+    "conflict": null,
+    "expanded": "**",
+  },
+  {
+    "conflict": null,
+    "expanded": "apps/*/.env",
+  },
+  {
+    "conflict": null,
+    "expanded": ".env.v?",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester/**/.ssh/config",
+  },
+]
+`;
+
+exports[`allow path validators parity unknown values against /srv/home/tester/ 1`] = `
+[
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be a non-empty path string",
+    "secretAllow": "must be a non-empty path string",
+    "secretDeny": "must be a non-empty path string",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "cannot be the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": "cannot contain the home directory",
+    "secretAllow": "cannot cover the home directory or a path above it (this would disable secret protection everywhere)",
+    "secretDeny": "cannot be the home directory or a path above it (this would block every command the agent runs)",
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": null,
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot cover the guard's own configuration",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": "must be an absolute path or start with ~/",
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+  {
+    "destructive": null,
+    "secretAllow": "cannot contain glob characters (* or ?); list the exact file or directory",
+    "secretDeny": null,
+  },
+]
+`;
+
+exports[`allow path validators parity path strings against /srv/home/tester/ 1`] = `
+[
+  {
+    "conflict": null,
+    "expanded": " ",
+  },
+  {
+    "conflict": null,
+    "expanded": "",
+  },
+  {
+    "conflict": null,
+    "expanded": "rel/path",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester/",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester//",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester//scratch",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME",
+  },
+  {
+    "conflict": null,
+    "expanded": "\${HOME}",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME/..",
+  },
+  {
+    "conflict": null,
+    "expanded": "$HOME/x",
+  },
+  {
+    "conflict": "cannot contain the home directory",
+    "expanded": "/",
+  },
+  {
+    "conflict": null,
+    "expanded": "/opt/x",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net",
+  },
+  {
+    "conflict": null,
+    "expanded": "<home>/.cc-safety-net/policy.json",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester//.cc-safety-net",
+  },
+  {
+    "conflict": null,
+    "expanded": "**",
+  },
+  {
+    "conflict": null,
+    "expanded": "apps/*/.env",
+  },
+  {
+    "conflict": null,
+    "expanded": ".env.v?",
+  },
+  {
+    "conflict": null,
+    "expanded": "/srv/home/tester//**/.ssh/config",
+  },
+]
+`;

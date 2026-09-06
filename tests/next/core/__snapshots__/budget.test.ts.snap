@@ -1,0 +1,67 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`analysis budget carries a kind for the refusals without a numeric cap 1`] = `"CC Safety Net could not analyze the command because it exceeds safe analysis limits. Simplify or split the command and retry."`;
+
+exports[`analysis budget carries a kind for the refusals without a numeric cap 2`] = `"Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 1`] = `16384`;
+
+exports[`analysis budget keeps the shipped caps and wordings 2`] = `4194304`;
+
+exports[`analysis budget keeps the shipped caps and wordings 3`] = `64`;
+
+exports[`analysis budget keeps the shipped caps and wordings 4`] = `10`;
+
+exports[`analysis budget keeps the shipped caps and wordings 5`] = `16384`;
+
+exports[`analysis budget keeps the shipped caps and wordings 6`] = `64`;
+
+exports[`analysis budget keeps the shipped caps and wordings 7`] = `20`;
+
+exports[`analysis budget keeps the shipped caps and wordings 8`] = `1024`;
+
+exports[`analysis budget keeps the shipped caps and wordings 9`] = `16384`;
+
+exports[`analysis budget keeps the shipped caps and wordings 10`] = `1048576`;
+
+exports[`analysis budget keeps the shipped caps and wordings 11`] = `16384`;
+
+exports[`analysis budget keeps the shipped caps and wordings 12`] = `64`;
+
+exports[`analysis budget keeps the shipped caps and wordings 13`] = `10000`;
+
+exports[`analysis budget keeps the shipped caps and wordings 14`] = `10000`;
+
+exports[`analysis budget keeps the shipped caps and wordings 15`] = `1048576`;
+
+exports[`analysis budget keeps the shipped caps and wordings 16`] = `4194304`;
+
+exports[`analysis budget keeps the shipped caps and wordings 17`] = `"Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 18`] = `"Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 19`] = `"Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 20`] = `"Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 21`] = `"Command analysis exceeds CC Safety Net's derived-command work limit. Reduce nested or embedded command complexity and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 22`] = `"Parallel command expands beyond CC Safety Net's analysis limits. Reduce the template or explicit argument list and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 23`] = `"Parallel command expands beyond CC Safety Net's analysis limits. Reduce the template or explicit argument list and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 24`] = `"Parallel command expands beyond CC Safety Net's analysis limits. Reduce the template or explicit argument list and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 25`] = `"Parallel command expands beyond CC Safety Net's analysis limits. Reduce the template or explicit argument list and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 26`] = `"CC Safety Net could not analyze the command because it exceeds safe analysis limits. Simplify or split the command and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 27`] = `"CC Safety Net could not analyze the command because it exceeds safe analysis limits. Simplify or split the command and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 28`] = `"CC Safety Net could not analyze the command because it exceeds safe analysis limits. Simplify or split the command and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 29`] = `"CC Safety Net could not analyze the command because it exceeds safe analysis limits. Simplify or split the command and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 30`] = `"Command exceeds maximum recursion depth and cannot be safely analyzed. Flatten the nesting and retry."`;
+
+exports[`analysis budget keeps the shipped caps and wordings 31`] = `"CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user."`;

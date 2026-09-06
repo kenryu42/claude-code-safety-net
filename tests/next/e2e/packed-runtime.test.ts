@@ -8,7 +8,13 @@ import { PORTED_LAYOUT, SHIPPED_LAYOUT } from '../../../scripts/build-layout';
 import { buildRuntimeBundles } from '../../../scripts/build-runtime';
 import { normalizeDoctorJson } from '../helpers/doctor-json';
 import { repairBundlerDirectoryCache } from '../helpers/gui-bundle-repair';
-import { createTempRoot, isolatedSpawnEnv, normalize, removeTempRoots } from '../helpers/temp-home';
+import {
+  createTempRoot,
+  isolatedSpawnEnv,
+  normalize,
+  recordPorted,
+  removeTempRoots,
+} from '../helpers/temp-home';
 
 /**
  * The two runtime bundles the same layout-taking build emits — `src/` into one temp outdir,
@@ -207,8 +213,10 @@ function runSide(outdir: string, journey: Journey, label: string): Outcome {
 for (const journey of JOURNEYS) {
   test(journey.name, () => {
     const shipped = runSide(join(buildRoot, 'shipped'), journey, 'shipped');
+    const ported = runSide(join(buildRoot, 'ported'), journey, 'ported');
 
-    expect(runSide(join(buildRoot, 'ported'), journey, 'ported')).toStrictEqual(shipped);
+    expect(ported).toStrictEqual(shipped);
+    recordPorted(ported, [[pkg.version, '<version>']]);
     journey.check(shipped);
   }, 60_000);
 }

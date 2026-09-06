@@ -13,6 +13,7 @@ import { withEnv } from '../../helpers';
 import { bashCall, createGateTree } from '../helpers/gate-differential';
 import { clearAuditLogs, readAuditEntries } from '../helpers/hook-capture';
 import { STRUCTURAL_LIMIT_COMMAND } from '../helpers/hook-hosts';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The runner's one call into the gate: evaluate, then record. Each row runs the same invocation
@@ -23,6 +24,12 @@ import { STRUCTURAL_LIMIT_COMMAND } from '../helpers/hook-hosts';
  */
 
 const tree = createGateTree('next-hosts-runtime-');
+
+/**
+ * The workspace the invocation ran in, as the audit line spells it and as the writer spells it in
+ * the log directory it names after that directory, with every separator replaced by `-`.
+ */
+const FOLDS = [...rootFolds(tree.root), [tree.root.replaceAll('/', '-'), '<root>']] as const;
 
 afterAll(() => {
   tree.remove();
@@ -173,6 +180,7 @@ for (const row of ROWS) {
     });
 
     expect(ported).toStrictEqual(shipped);
+    recordPorted(ported, FOLDS);
     expect(shipped.entries).toHaveLength(row.lines);
     expect(shipped.outcome.thrown).toBe(
       row.breach || row.throws ? 'GuardEvaluationError' : undefined,

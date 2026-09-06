@@ -121,7 +121,9 @@ for (const row of ROWS) {
       () => {
         const transcript = row.transcript(home);
         const shipped = shippedDetect(transcript);
-        expect(portedDetect(transcript, createProcessEnvironment())).toBe(shipped);
+        const ported = portedDetect(transcript, createProcessEnvironment());
+        expect(ported).toBe(shipped);
+        expect(ported).toMatchSnapshot();
         if (row.expected) expect<string>(shipped).toBe(row.expected);
       },
     );

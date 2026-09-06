@@ -20,6 +20,7 @@ import {
   type TreeSpec,
   writeTree,
 } from '../../helpers/fixture-tree';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * Both implementations run against their own copy of one fixture tree; every call is compared
@@ -102,6 +103,7 @@ function sideSnapshot(name: string) {
 function expectSameOnBothSides<T>(run: (side: Side) => T) {
   const outcomes = SIDES.map((side) => describeOutcome(() => run(side)));
   expect(outcomes[0]).toEqual(outcomes[1]);
+  recordPorted(outcomes[0], rootFolds(base));
   expect(sideSnapshot('next')).toEqual(sideSnapshot('shipped'));
   return outcomes[0];
 }
@@ -240,7 +242,9 @@ describe('atomic policy writes', () => {
     });
     expect(paths[0]).toEqual(paths[1]);
     expect(paths[0]).toEqual(['fresh/home/rules/new/rule.json']);
-    expect(sideSnapshot('next')).toEqual(sideSnapshot('shipped'));
+    const tree = sideSnapshot('next');
+    expect(tree).toEqual(sideSnapshot('shipped'));
+    recordPorted(tree, rootFolds(base));
   });
 
   test('stage through an exclusive sibling temp file and clean it up when the rename fails', () => {
@@ -273,6 +277,7 @@ describe('atomic policy writes', () => {
 
     const [port, reference] = captures;
     expect(port).toEqual(reference);
+    recordPorted(port, rootFolds(base));
     expect(port?.seen).toEqual([
       {
         sameDirectory: true,
@@ -409,6 +414,7 @@ describe('policy directories and target identity', () => {
         }),
       );
       expect(bound[0]).toEqual(bound[1]);
+      recordPorted(bound[0], rootFolds(base));
       const rebound = SIDES.map(([name, implementation]) =>
         describeOutcome(() => {
           const target = implementation.getPolicyFilesystemTargetForPath(
@@ -422,6 +428,7 @@ describe('policy directories and target identity', () => {
         }),
       );
       expect(rebound[0]).toEqual(rebound[1]);
+      recordPorted(rebound[0], rootFolds(base));
     }
     for (const [, implementation] of SIDES) {
       expect(

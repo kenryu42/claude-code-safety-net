@@ -16,6 +16,7 @@ const SELECTION: readonly InstallTarget[] = ['pi', 'cursor', 'amp', 'cursor'];
 describe('install targets', () => {
   test('the table is the catalog row for row', () => {
     expect(INSTALL_TARGETS).toEqual(SHIPPED_INSTALL_TARGETS);
+    expect(INSTALL_TARGETS).toMatchSnapshot();
   });
 
   test('a selection is deduplicated and put back into catalog order', () => {
@@ -31,8 +32,8 @@ describe('install targets', () => {
       });
       return visited;
     };
-    expect(await record(runInstallTargetsInOrder)).toEqual(
-      await record(shippedRunInstallTargetsInOrder),
-    );
+    const visited = await record(runInstallTargetsInOrder);
+    expect(visited).toEqual(await record(shippedRunInstallTargetsInOrder));
+    expect(visited).toMatchSnapshot();
   });
 });

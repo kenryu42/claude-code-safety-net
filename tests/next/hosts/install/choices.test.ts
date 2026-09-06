@@ -89,9 +89,9 @@ describe('probing a host CLI', () => {
 describe('the install picker rows', () => {
   test('mark availability the same way for every action', async () => {
     for (const options of OPTIONS) {
-      expect(await buildInstallTargetChoicesAsync(scriptedProbe, options)).toEqual(
-        await shippedBuildInstallTargetChoicesAsync(scriptedProbe, options),
-      );
+      const rows = await buildInstallTargetChoicesAsync(scriptedProbe, options);
+      expect(rows).toEqual(await shippedBuildInstallTargetChoicesAsync(scriptedProbe, options));
+      expect(rows).toMatchSnapshot();
     }
   });
 
@@ -110,9 +110,9 @@ describe('the install picker rows', () => {
   test('re-decide an existing row from the state it already carries', async () => {
     const base = await buildInstallTargetChoicesAsync(scriptedProbe);
     for (const options of OPTIONS) {
-      expect(applyInstallTargetState(base, options)).toEqual(
-        shippedApplyInstallTargetState(base, options),
-      );
+      const redecided = applyInstallTargetState(base, options);
+      expect(redecided).toEqual(shippedApplyInstallTargetState(base, options));
+      expect(redecided).toMatchSnapshot();
       expect(applyInstallTargetState(base, options)).toEqual(
         await buildInstallTargetChoicesAsync(scriptedProbe, options),
       );

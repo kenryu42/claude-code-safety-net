@@ -1,0 +1,573 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`an evaluation projected as an audit descriptor git status (allowed true, command true, failure false) 1`] = `
+{
+  "command": "git status",
+  "cwd": "<root>/workspace",
+  "decision": "allow",
+  "level": "standard",
+  "reason": "allowed",
+  "segment": "git status",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed true, command true, failure true) 1`] = `
+{
+  "command": "git status",
+  "cwd": "<root>/workspace",
+  "decision": "allow",
+  "level": "standard",
+  "reason": "allowed",
+  "segment": "git status",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed true, command false, failure false) 1`] = `
+{
+  "command": "git status",
+  "cwd": "<root>/workspace",
+  "decision": "allow",
+  "level": "standard",
+  "reason": "allowed",
+  "segment": "git status",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed true, command false, failure true) 1`] = `
+{
+  "command": "git status",
+  "cwd": "<root>/workspace",
+  "decision": "allow",
+  "level": "standard",
+  "reason": "allowed",
+  "segment": "git status",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed false, command true, failure false) 1`] = `undefined`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed false, command true, failure true) 1`] = `undefined`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed false, command false, failure false) 1`] = `undefined`;
+
+exports[`an evaluation projected as an audit descriptor git status (allowed false, command false, failure true) 1`] = `undefined`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command true, failure false) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command true, failure true) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command false, failure false) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command false, failure true) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command true, failure false) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command true, failure true) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command false, failure false) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command false, failure true) 1`] = `
+{
+  "command": "rm -rf /",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": undefined,
+  "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  "ruleId": undefined,
+  "segment": "/",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed true, command true, failure false) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed true, command true, failure true) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed true, command false, failure false) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed true, command false, failure true) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed false, command true, failure false) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed false, command true, failure true) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed false, command false, failure false) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor cat ~/.ssh/id_rsa (allowed false, command false, failure true) 1`] = `
+{
+  "command": "cat ~/.ssh/id_rsa",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "hard_stop",
+  "level": "standard",
+  "reason": "Access to a sensitive path is not allowed.",
+  "ruleId": "secret.home.ssh",
+  "segment": "~/.ssh/id_rsa",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed true, command true, failure false) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed true, command true, failure true) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed true, command false, failure false) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed true, command false, failure true) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed false, command true, failure false) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed false, command true, failure true) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed false, command false, failure false) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": undefined,
+  "failureStage": undefined,
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`an evaluation projected as an audit descriptor echo ok (allowed false, command false, failure true) 1`] = `
+{
+  "command": "echo ok",
+  "cwd": "<root>/workspace",
+  "decision": "deny",
+  "errorCode": "unexpected-error",
+  "failureStage": "command-analysis",
+  "intent": "stop_and_explain",
+  "level": undefined,
+  "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  "ruleId": undefined,
+  "segment": "echo ok",
+  "toolName": "Bash",
+}
+`;
+
+exports[`a descriptor written to the audit log guard audit for git status 1`] = `
+[
+  {
+    "entry": {
+      "agent": "hosts-test",
+      "command": "git status",
+      "cwd": "<root>/workspace",
+      "decision": "allow",
+      "level": "standard",
+      "reason": "allowed",
+      "segment": "git status",
+      "sessionId": "hosts-audit-1",
+      "shape": "claude-code",
+      "toolName": "Bash",
+      "v": "dev",
+    },
+    "file": "<root>-workspace/<month>/<date>-hosts-audit-1.jsonl",
+  },
+]
+`;
+
+exports[`a descriptor written to the audit log guard audit for rm -rf / 1`] = `
+[
+  {
+    "entry": {
+      "agent": "hosts-test",
+      "command": "rm -rf /",
+      "cwd": "<root>/workspace",
+      "decision": "deny",
+      "intent": "hard_stop",
+      "reason": "This path contains the protected policy config and you must not modify or delete it.",
+      "segment": "/",
+      "sessionId": "hosts-audit-1",
+      "shape": "claude-code",
+      "toolName": "Bash",
+      "v": "dev",
+    },
+    "file": "<root>-workspace/<month>/<date>-hosts-audit-1.jsonl",
+  },
+]
+`;
+
+exports[`a descriptor written to the audit log guard audit for cat ~/.ssh/id_rsa 1`] = `
+[
+  {
+    "entry": {
+      "agent": "hosts-test",
+      "command": "cat ~/.ssh/id_rsa",
+      "cwd": "<root>/workspace",
+      "decision": "deny",
+      "intent": "hard_stop",
+      "level": "standard",
+      "reason": "Access to a sensitive path is not allowed.",
+      "ruleId": "secret.home.ssh",
+      "segment": "~/.ssh/id_rsa",
+      "sessionId": "hosts-audit-1",
+      "shape": "claude-code",
+      "toolName": "Bash",
+      "v": "dev",
+    },
+    "file": "<root>-workspace/<month>/<date>-hosts-audit-1.jsonl",
+  },
+]
+`;
+
+exports[`a descriptor written to the audit log guard audit for echo ok 1`] = `
+[
+  {
+    "entry": {
+      "agent": "hosts-test",
+      "command": "echo ok",
+      "cwd": "<root>/workspace",
+      "decision": "deny",
+      "errorCode": "unexpected-error",
+      "failureStage": "command-analysis",
+      "intent": "stop_and_explain",
+      "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+      "segment": "echo ok",
+      "sessionId": "hosts-audit-1",
+      "shape": "claude-code",
+      "toolName": "Bash",
+      "v": "dev",
+    },
+    "file": "<root>-workspace/<month>/<date>-hosts-audit-1.jsonl",
+  },
+]
+`;
+
+exports[`a descriptor written to the audit log preflight denial without a cwd 1`] = `
+[
+  {
+    "entry": {
+      "agent": "hosts-test",
+      "command": "rm -rf /",
+      "cwd": null,
+      "decision": "deny",
+      "intent": "hard_stop",
+      "reason": "Blocked by a preflight check.",
+      "ruleId": "rm.recursive-force-root",
+      "segment": "rm -rf /",
+      "sessionId": "hosts-audit-1",
+      "toolName": "Bash",
+      "v": "dev",
+    },
+    "file": "no-cwd/<month>/<date>-hosts-audit-1.jsonl",
+  },
+]
+`;
+
+exports[`a descriptor written to the audit log preflight denial under a shape and a cwd 1`] = `
+[
+  {
+    "entry": {
+      "agent": "codex",
+      "command": "",
+      "cwd": "<root>/workspace",
+      "decision": "deny",
+      "reason": "Blocked by a preflight check.",
+      "segment": "",
+      "sessionId": "hosts-audit-1",
+      "shape": "claude-code",
+      "v": "dev",
+    },
+    "file": "<root>-workspace/<month>/<date>-hosts-audit-1.jsonl",
+  },
+]
+`;
+
+exports[`a descriptor written to the audit log a session lookup that throws 1`] = `[]`;
+
+exports[`a descriptor written to the audit log a blank or missing session id 1`] = `[]`;

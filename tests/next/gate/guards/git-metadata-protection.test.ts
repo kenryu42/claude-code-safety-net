@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
+import { realpathSync } from 'node:fs';
 import { join } from 'node:path';
 import { createBudget } from '@next/core/budget';
 import {
@@ -28,6 +29,7 @@ import {
 } from '../../../helpers';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   corpusCommands,
   FIXED_COMMANDS,
@@ -35,6 +37,7 @@ import {
   FUZZ_SEED,
   fuzzShellSources,
 } from '../../helpers/shell-inputs';
+import { normalize, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The Git control plane is protected by three different shapes of test — an exact or ancestor
@@ -76,6 +79,16 @@ afterAll(() => {
   submodule.cleanup();
 });
 
+/** One digest row, with both fixture roots folded out of the label and out of the value. */
+function digestRow(label: string, value: unknown): [string, unknown] {
+  const folds = [
+    ...rootFolds(worktrees.rootDir),
+    [realpathSync(submodule.rootDir), '<submodule-root>'] as const,
+    [submodule.rootDir, '<submodule-root>'] as const,
+  ];
+  return [normalize(label, folds), normalize(value, folds)];
+}
+
 function deleteTargets(cwd: string): readonly string[] {
   return [
     '.git',
@@ -115,6 +128,11 @@ function deleteTargets(cwd: string): readonly string[] {
 
 describe('protected git delete targets', () => {
   test('matches the shipped delete test for every repository shape and glob form', () => {
+    const recorded: [string, unknown][] = [];
+    // The one target no fold reaches: `join(cwd, '..')` taken from the fixture root is the temp
+    // directory the host chose, and folding that would rewrite the literal `/tmp` targets the
+    // corpora spell. The row is compared like every other and left out of the record.
+    const temporaryDirectory = join(submodule.rootDir, '..');
     for (const repository of repositories) {
       const paired = environments();
       const context = createPathCanonicalizationContext(paired.shipped);
@@ -122,16 +140,24 @@ describe('protected git delete targets', () => {
       for (const target of deleteTargets(repository.cwd)) {
         for (const recursive of [true, false]) {
           for (const dotEntryGlobs of [true, false]) {
+            const protectedTarget = isProtectedGitDeleteTarget(
+              target,
+              repository.cwd,
+              repository.metadata,
+              recursive,
+              paired.next,
+              budget,
+              dotEntryGlobs,
+            );
+            if (target !== temporaryDirectory)
+              recorded.push(
+                digestRow(
+                  `${repository.label}: ${target} recursive=${recursive} dot=${dotEntryGlobs}`,
+                  protectedTarget,
+                ),
+              );
             expect(
-              isProtectedGitDeleteTarget(
-                target,
-                repository.cwd,
-                repository.metadata,
-                recursive,
-                paired.next,
-                budget,
-                dotEntryGlobs,
-              ),
+              protectedTarget,
               `${repository.label}: ${target} recursive=${recursive} dot=${dotEntryGlobs}`,
             ).toBe(
               shippedIsDeleteTarget(
@@ -147,6 +173,7 @@ describe('protected git delete targets', () => {
         }
       }
     }
+    expectRecordedDigest('guards-git-metadata/delete-targets', recorded);
   });
 
   test('the table separates protected targets from the rest', () => {
@@ -195,25 +222,28 @@ describe('protected git hook name selection', () => {
       ['$HOME'],
       ['', '.'],
     ];
+    const recorded: [string, unknown][] = [];
     for (const repository of repositories) {
       const paired = environments();
       const context = createPathCanonicalizationContext(paired.shipped);
       const budget = createBudget();
       for (const startingPoints of startingPointLists) {
-        expect(
-          isProtectedGitHookNameSelection(
-            startingPoints,
-            repository.cwd,
-            repository.metadata,
-            paired.next,
-            budget,
-          ),
-          `${repository.label}: ${JSON.stringify(startingPoints)}`,
-        ).toBe(
+        const selected = isProtectedGitHookNameSelection(
+          startingPoints,
+          repository.cwd,
+          repository.metadata,
+          paired.next,
+          budget,
+        );
+        expect(selected, `${repository.label}: ${JSON.stringify(startingPoints)}`).toBe(
           shippedIsHookNameSelection(startingPoints, repository.cwd, repository.metadata, context),
+        );
+        recorded.push(
+          digestRow(`${repository.label}: ${JSON.stringify(startingPoints)}`, selected),
         );
       }
     }
+    expectRecordedDigest('guards-git-metadata/hook-selection', recorded);
   });
 
   test('a selection rooted at or above the hooks directory is protected', () => {
@@ -329,49 +359,59 @@ function shippedMutation(
 
 describe('git metadata mutation targets in semantic facts', () => {
   test('matches the shipped guard over the command table', () => {
+    const recorded: [string, unknown][] = [];
     for (const repository of repositories) {
       for (const command of MUTATION_COMMANDS) {
         for (const shell of ['posix', 'powershell'] as const) {
           const route: ToolRoute = { kind: 'command', shell };
-          expect(
-            nextMutation('Bash', { command }, route, command, repository),
-            `${repository.label}: ${command} (${shell})`,
-          ).toStrictEqual(shippedMutation('Bash', { command }, route, command, repository));
+          const target = nextMutation('Bash', { command }, route, command, repository);
+          expect(target, `${repository.label}: ${command} (${shell})`).toStrictEqual(
+            shippedMutation('Bash', { command }, route, command, repository),
+          );
+          recorded.push(digestRow(`${repository.label}: ${command} (${shell})`, target));
         }
       }
     }
+    expectRecordedDigest('guards-git-metadata/command-table', recorded);
   });
 
   test('matches the shipped guard over the non-command routes and tool inputs', () => {
+    const recorded: [string, unknown][] = [];
     for (const repository of repositories) {
       for (const route of NON_COMMAND_ROUTES) {
         for (const row of TOOL_INPUTS) {
           const input = { ...row.input, file_path: row.input.file_path ?? '' };
-          expect(
-            nextMutation(row.toolName, input, route, null, repository),
-            `${repository.label}: ${row.toolName} ${route.kind} ${JSON.stringify(input)}`,
-          ).toStrictEqual(shippedMutation(row.toolName, input, route, null, repository));
+          const label = `${repository.label}: ${row.toolName} ${route.kind} ${JSON.stringify(input)}`;
+          const target = nextMutation(row.toolName, input, route, null, repository);
+          expect(target, label).toStrictEqual(
+            shippedMutation(row.toolName, input, route, null, repository),
+          );
+          recorded.push(digestRow(label, target));
         }
       }
     }
+    expectRecordedDigest('guards-git-metadata/tool-inputs', recorded);
   });
 
   test('matches the shipped guard over the corpus and the seeded fuzz', () => {
     const repository = repositories[0];
     if (!repository) throw new Error('missing fixture');
     const route: ToolRoute = { kind: 'command', shell: 'posix' };
+    const recorded: [string, unknown][] = [];
     for (const command of [
       ...corpusCommands(),
       ...FIXED_COMMANDS,
       ...fuzzShellSources(FUZZ_SAMPLE_COUNT, FUZZ_SEED),
     ]) {
-      expect(
-        describeOutcome(() => nextMutation('Bash', { command }, route, command, repository)),
-        command,
-      ).toStrictEqual(
+      const outcome = describeOutcome(() =>
+        nextMutation('Bash', { command }, route, command, repository),
+      );
+      expect(outcome, command).toStrictEqual(
         describeOutcome(() => shippedMutation('Bash', { command }, route, command, repository)),
       );
+      recorded.push(digestRow(command, outcome));
     }
+    expectRecordedDigest('guards-git-metadata/corpus-fuzz', recorded);
   });
 
   test('the command table denies the control plane and allows ordinary files', () => {
@@ -415,5 +455,8 @@ describe('git metadata mutation targets in semantic facts', () => {
 
   test('the denial reason is the shipped wording', () => {
     expect(REASON_GIT_METADATA_PROTECTION).toBe(SHIPPED_REASON);
+    expectRecordedDigest('guards-git-metadata/reason', [
+      ['REASON_GIT_METADATA_PROTECTION', REASON_GIT_METADATA_PROTECTION],
+    ]);
   });
 });

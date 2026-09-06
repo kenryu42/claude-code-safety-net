@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { isAbsolute, join, relative, resolve } from 'node:path';
 import type { IntegrationDenial } from '@next/core/denial';
 import { processPathResolver } from '@next/core/environment';
 import {
@@ -33,6 +33,7 @@ import {
   readBoundedHookInput as shippedReadBoundedHookInput,
   resolveStandardHookContext as shippedResolveStandardHookContext,
 } from '@/integrations/hook/common';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * Intake is where the gate reads the process: the stdin document, the tool name, and the
@@ -91,6 +92,14 @@ beforeAll(() => {
 afterAll(() => {
   rmSync(root, { recursive: true, force: true });
 });
+
+/**
+ * Whether a requested directory canonicalizes above the fixture root, where the only answer is
+ * the temp directory the host chose. It cannot be folded away — the fold would rewrite the
+ * literal `/tmp` a corpus row spells — so the row is compared and left out of the record.
+ */
+const climbsOut = (base: string, requested: string) =>
+  !isAbsolute(requested) && relative(root, resolve(base, requested)).startsWith('..');
 
 function requestedPaths(): string[] {
   return [
@@ -151,16 +160,19 @@ function deepInput(depth: number): unknown {
 describe('next/gate/intake tool routing against src/integrations/hook/common', () => {
   test('caps hook input at the same size', () => {
     expect(HOOK_INPUT_MAX_BYTES).toBe(SHIPPED_HOOK_INPUT_MAX_BYTES);
+    expect(HOOK_INPUT_MAX_BYTES).toMatchSnapshot();
   });
 
   test('routes every tool name src knows the same way, under every host table', () => {
     for (const table of COMMAND_TOOL_TABLES) {
       const commandTools = new Map(table);
       for (const toolName of TOOL_NAMES) {
-        expect({ toolName, route: getToolRoute(toolName, commandTools) }).toStrictEqual({
+        const routed = { toolName, route: getToolRoute(toolName, commandTools) };
+        expect(routed).toStrictEqual({
           toolName,
           route: shippedGetToolRoute(toolName, commandTools),
         });
+        expect(routed).toMatchSnapshot();
       }
     }
   });
@@ -169,9 +181,9 @@ describe('next/gate/intake tool routing against src/integrations/hook/common', (
 describe('next/gate/intake stdin reading', () => {
   test('concatenates string and byte chunks identically', async () => {
     const values = ['{"a":', new TextEncoder().encode('1}'), '', '\n'];
-    expect(await readBoundedHookInput(chunks(values))).toBe(
-      await shippedReadBoundedHookInput(chunks(values)),
-    );
+    const read = await readBoundedHookInput(chunks(values));
+    expect(read).toBe(await shippedReadBoundedHookInput(chunks(values)));
+    expect(read).toMatchSnapshot();
   });
 
   test('rejects input over the cap and stops the stream, as src does', async () => {
@@ -191,10 +203,13 @@ describe('next/gate/intake stdin reading', () => {
     for (const text of ['{"a":1}', '[]', 'null', '"text"', '', '{', '{"a":}', 'undefined']) {
       const nextDenials: IntegrationDenial[] = [];
       const shippedDenials: IntegrationDenial[] = [];
-      expect(parseHookJson(text, (denial) => nextDenials.push(denial), 'bad json')).toStrictEqual(
+      const parsed = parseHookJson(text, (denial) => nextDenials.push(denial), 'bad json');
+      expect(parsed).toStrictEqual(
         shippedParseHookJson(text, (denial) => shippedDenials.push(denial), 'bad json'),
       );
+      expect(parsed).toMatchSnapshot();
       expect(nextDenials).toStrictEqual(shippedDenials);
+      expect(nextDenials).toMatchSnapshot();
     }
   });
 });
@@ -203,43 +218,51 @@ describe('next/gate/intake containment against src/integrations/cwd-containment'
   test('resolves the same contained directory in every containment mode', () => {
     for (const roots of rootSets()) {
       for (const requested of requestedPaths()) {
-        expect({
+        const contained = {
           roots,
           requested,
           contained: resolveContainedCwd(requested, roots, processPathResolver),
-        }).toStrictEqual({
+        };
+        expect(contained).toStrictEqual({
           roots,
           requested,
           contained: shippedResolveContainedCwd(requested, roots),
         });
+        recordPorted(contained, rootFolds(root));
       }
-      expect(firstTrustedRoot(roots, processPathResolver)).toStrictEqual(
-        shippedFirstTrustedRoot(roots),
-      );
+      const trusted = firstTrustedRoot(roots, processPathResolver);
+      expect(trusted).toStrictEqual(shippedFirstTrustedRoot(roots));
+      recordPorted(trusted, rootFolds(root));
     }
   });
 
   test('canonicalizes outside the roots the same way', () => {
     for (const base of [tree.workspace, tree.outside, root]) {
       for (const requested of requestedPaths()) {
-        expect({
+        const canonical = {
           base,
           requested,
           canonical: resolveCanonicalCwd(requested, base, processPathResolver),
-        }).toStrictEqual({
+        };
+        expect(canonical).toStrictEqual({
           base,
           requested,
           canonical: shippedResolveCanonicalCwd(requested, base),
         });
+        if (!climbsOut(base, requested)) recordPorted(canonical, rootFolds(root));
       }
     }
   });
 
   test('agrees on usable directories and containment arithmetic', () => {
     for (const path of requestedPaths()) {
-      expect(isUsableDirectory(path)).toBe(shippedIsUsableDirectory(path));
+      const usable = isUsableDirectory(path);
+      expect(usable).toBe(shippedIsUsableDirectory(path));
+      expect(usable).toMatchSnapshot();
       for (const other of [tree.workspace, tree.outside, root]) {
-        expect(isSameOrInsidePath(path, other)).toBe(shippedIsSameOrInsidePath(path, other));
+        const inside = isSameOrInsidePath(path, other);
+        expect(inside).toBe(shippedIsSameOrInsidePath(path, other));
+        expect(inside).toMatchSnapshot();
       }
     }
   });
@@ -286,7 +309,9 @@ describe('next/gate/intake execution-directory resolution', () => {
           shippedDenials.push(denial),
         ),
       );
+      recordPorted(context, [...rootFolds(root), [process.cwd(), '<cwd>']]);
       expect(nextDenials).toStrictEqual(shippedDenials);
+      recordPorted(nextDenials, [...rootFolds(root), [process.cwd(), '<cwd>']]);
     }
   });
 
@@ -314,6 +339,7 @@ describe('next/gate/intake execution-directory resolution', () => {
           segment,
         );
         expect(nextDenials).toStrictEqual(shippedDenials);
+        expect(nextDenials).toMatchSnapshot();
       }
     }
   });

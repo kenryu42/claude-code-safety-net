@@ -1,0 +1,95 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`getScopePaths resolves the scope the shipped module resolves the project scope under the working directory 1`] = `
+{
+  "configDir": "<root>/project/.cc-safety-net/rules",
+  "configPath": "<root>/project/.cc-safety-net/rules/rule.json",
+  "configTarget": "<root>/project/.cc-safety-net/rules/rule.json",
+  "label": "project policy",
+  "lockPath": "<root>/project/.cc-safety-net/rules/rule.lock",
+  "lockTarget": "<root>/project/.cc-safety-net/rules/rule.lock",
+  "root": "<root>/project",
+}
+`;
+
+exports[`getScopePaths resolves the scope the shipped module resolves the user scope under the relocated safety-net home 1`] = `
+{
+  "configDir": "<root>/home/.cc-safety-net/rules",
+  "configPath": "<root>/home/.cc-safety-net/rules/rule.json",
+  "configTarget": "<root>/home/.cc-safety-net/rules/rule.json",
+  "label": "user policy",
+  "lockPath": "<root>/home/.cc-safety-net/rules/rule.lock",
+  "lockTarget": "<root>/home/.cc-safety-net/rules/rule.lock",
+  "root": "<root>/home/.cc-safety-net",
+}
+`;
+
+exports[`getScopePaths resolves the scope the shipped module resolves an explicit user config path 1`] = `
+{
+  "configDir": "<root>/elsewhere/rules",
+  "configPath": "<root>/elsewhere/rules/rule.json",
+  "configTarget": "<root>/elsewhere/rules/rule.json",
+  "label": "user policy",
+  "lockPath": "<root>/elsewhere/rules/rule.lock",
+  "lockTarget": "<root>/elsewhere/rules/rule.lock",
+  "root": "<root>/elsewhere",
+}
+`;
+
+exports[`getScopePaths resolves the scope the shipped module resolves an explicit user config directory 1`] = `
+{
+  "configDir": "<root>/elsewhere/rules",
+  "configPath": "<root>/elsewhere/rules/rule.json",
+  "configTarget": "<root>/elsewhere/rules/rule.json",
+  "label": "user policy",
+  "lockPath": "<root>/elsewhere/rules/rule.lock",
+  "lockTarget": "<root>/elsewhere/rules/rule.lock",
+  "root": "<root>/elsewhere",
+}
+`;
+
+exports[`getScopePaths resolves the scope the shipped module resolves a project config inside the working directory 1`] = `
+{
+  "configDir": "<root>/project/nested/rules",
+  "configPath": "<root>/project/nested/rules/rule.json",
+  "configTarget": "<root>/project/nested/rules/rule.json",
+  "label": "project policy",
+  "lockPath": "<root>/project/nested/rules/rule.lock",
+  "lockTarget": "<root>/project/nested/rules/rule.lock",
+  "root": "<root>/project",
+}
+`;
+
+exports[`getScopePaths resolves the scope the shipped module resolves a project config outside the working directory 1`] = `
+{
+  "configDir": "<root>/sibling/.cc-safety-net/rules",
+  "configPath": "<root>/sibling/.cc-safety-net/rules/rule.json",
+  "configTarget": "<root>/sibling/.cc-safety-net/rules/rule.json",
+  "label": "project policy",
+  "lockPath": "<root>/sibling/.cc-safety-net/rules/rule.lock",
+  "lockTarget": "<root>/sibling/.cc-safety-net/rules/rule.lock",
+  "root": "<root>/sibling/.cc-safety-net",
+}
+`;
+
+exports[`getScopePaths resolves the scope the shipped module resolves an omitted working directory falls back to the process one 1`] = `
+{
+  "configDir": "<root>/project/.cc-safety-net/rules",
+  "configPath": "<root>/project/.cc-safety-net/rules/rule.json",
+  "configTarget": "<root>/project/.cc-safety-net/rules/rule.json",
+  "label": "project policy",
+  "lockPath": "<root>/project/.cc-safety-net/rules/rule.lock",
+  "lockTarget": "<root>/project/.cc-safety-net/rules/rule.lock",
+  "root": "<root>/project",
+}
+`;
+
+exports[`the retired lock and legacy paths resolve where the shipped ones resolve the user lockfile follows the relocated safety-net home 1`] = `"<root>/home/.cc-safety-net/rules/rule.lock"`;
+
+exports[`the retired lock and legacy paths resolve where the shipped ones resolve an explicit user config directory moves the user lockfile 1`] = `"<root>/elsewhere/rules/rule.lock"`;
+
+exports[`the retired lock and legacy paths resolve where the shipped ones resolve the project lockfile sits beside the project rule config 1`] = `"<root>/project/.cc-safety-net/rules/rule.lock"`;
+
+exports[`the retired lock and legacy paths resolve where the shipped ones resolve the legacy project config sits at the working directory root 1`] = `"<root>/project/.safety-net.json"`;
+
+exports[`the retired lock and legacy paths resolve where the shipped ones resolve an omitted working directory falls back to the process one for the legacy config 1`] = `"<root>/project/.safety-net.json"`;

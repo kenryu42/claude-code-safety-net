@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { processPathResolver } from '@next/core/environment';
 import { GIT_GLOBAL_OPTS_WITH_VALUE } from '@next/core/rules/constants';
 import { getGitExecutionContext, hasGitContextEnvOverride } from '@next/gate/analyzer/git/worktree';
@@ -10,6 +10,8 @@ import {
   getGitExecutionContext as shippedGetGitExecutionContext,
   hasGitContextEnvOverride as shippedHasGitContextEnvOverride,
 } from '@/analyzer/git/worktree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
+import { normalize } from '../../helpers/temp-home';
 
 /**
  * Worktree relaxation only applies to the directory Git would actually run in, so the ported
@@ -96,21 +98,41 @@ const ENV_ROWS: readonly (readonly [string, string])[][] = [
 
 describe('next/gate/analyzer/git/worktree against src/analyzer/git/worktree', () => {
   test('carries the same global-option table', () => {
-    expect([...GIT_GLOBAL_OPTS_WITH_VALUE].sort()).toStrictEqual(
-      [...SHIPPED_GIT_GLOBAL_OPTS_WITH_VALUE].sort(),
-    );
+    const options = [...GIT_GLOBAL_OPTS_WITH_VALUE].sort();
+    expect(options).toStrictEqual([...SHIPPED_GIT_GLOBAL_OPTS_WITH_VALUE].sort());
+    expectRecordedDigest('analyzer-git-worktree/global-options', [['options', options]], root);
   });
 
   test('resolves the same execution directory for every -C and context form', () => {
+    const recorded: [string, unknown][] = [];
     for (const cwd of cwdRows()) {
       for (const tokens of TOKEN_ROWS) {
-        expect({
+        const resolved = {
           cwd,
           tokens,
           context: getGitExecutionContext(tokens, cwd, processPathResolver),
-        }).toStrictEqual({ cwd, tokens, context: shippedGetGitExecutionContext(tokens, cwd) });
+        };
+        expect(resolved).toStrictEqual({
+          cwd,
+          tokens,
+          context: shippedGetGitExecutionContext(tokens, cwd),
+        });
+        // The `undefined`, `''` and `'.'` cwd rows resolve against the checkout, which the
+        // digest's own `root` fold does not reach; `-C ..` from one of them lands on its parent.
+        // A `-C ..` taken from the fixture root instead lands on the temp directory the host
+        // chose, which no fold can hide — folding it would rewrite the literal `/tmp` the tables
+        // spell — so that row is compared like every other and left out of the record.
+        if (cwd !== root || !tokens.includes('..'))
+          recorded.push([
+            tokens.join(' '),
+            normalize(resolved, [
+              [process.cwd(), '<cwd>'],
+              [dirname(process.cwd()), '<cwd>/..'],
+            ]),
+          ]);
       }
     }
+    expectRecordedDigest('analyzer-git-worktree/execution-context', recorded, root);
   });
 
   test('the table reaches a resolved directory and an explicit context', () => {
@@ -123,20 +145,24 @@ describe('next/gate/analyzer/git/worktree against src/analyzer/git/worktree', ()
   });
 
   test('reads the same Git context environment overrides', () => {
+    const recorded: [string, unknown][] = [];
     for (const env of ENV_ROWS) {
       for (const assignments of [...ENV_ROWS, undefined]) {
         const envMap = new Map(env);
         const assignmentMap = assignments === undefined ? undefined : new Map(assignments);
-        expect({
+        const read = {
           env,
           assignments,
           override: hasGitContextEnvOverride(envMap, assignmentMap),
-        }).toStrictEqual({
+        };
+        expect(read).toStrictEqual({
           env,
           assignments,
           override: shippedHasGitContextEnvOverride(envMap, assignmentMap),
         });
+        recorded.push([`${JSON.stringify(env)} ${JSON.stringify(assignments)}`, read]);
       }
     }
+    expectRecordedDigest('analyzer-git-worktree/env-overrides', recorded, root);
   });
 });

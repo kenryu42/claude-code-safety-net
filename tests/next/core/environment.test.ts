@@ -16,6 +16,7 @@ import {
 } from '@/ir/environment';
 import { createLinkedWorktreeFixture } from '../../helpers';
 import { runGit } from '../../helpers/git-worktree';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 import { expectSameOutcome, writeSymlinkLoopTree } from './differential-inputs';
 
 let root = '';
@@ -49,10 +50,12 @@ describe('process environment', () => {
       expectSameOutcome(
         () => processPathResolver.realpath(path),
         () => shippedPathResolver.realpath(path),
+        rootFolds(root),
       );
       expectSameOutcome(
         () => processPathResolver.entryKind(path),
         () => shippedPathResolver.entryKind(path),
+        rootFolds(root),
       );
     }
   });
@@ -111,7 +114,9 @@ describe('git facts through the seam', () => {
   test('gitMetadata agrees with the shipped resolver and is memoized per cwd', () => {
     const environment = createProcessEnvironment();
     for (const cwd of [join(root, 'repo'), join(root, 'repo', 'nested'), join(root, 'dir'), root]) {
-      expect(environment.gitMetadata(cwd)).toEqual(resolveProtectedGitMetadata([cwd]));
+      const metadata = environment.gitMetadata(cwd);
+      expect(metadata).toEqual(resolveProtectedGitMetadata([cwd]));
+      recordPorted(metadata, rootFolds(root));
     }
     expect(environment.gitMetadata(join(root, 'repo'))).not.toBeNull();
     expect(environment.gitMetadata(join(root, 'repo'))).toBe(
@@ -136,6 +141,7 @@ describe('git facts through the seam', () => {
           realpathSync(fixture.linkedWorktree),
         ),
       );
+      expect(facts?.recursiveSubmodules).toMatchSnapshot();
       expect(environment.worktreeFacts(fixture.linkedWorktree)).toBe(facts);
     } finally {
       fixture.cleanup();

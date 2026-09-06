@@ -19,6 +19,7 @@ import {
 import { withEnv } from '../../helpers';
 import { bashCall, createGateTree } from '../helpers/gate-differential';
 import { clearAuditLogs, readAuditEntries } from '../helpers/hook-capture';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The host audit projection: what an evaluation becomes as an audit descriptor, and what that
@@ -28,6 +29,12 @@ import { clearAuditLogs, readAuditEntries } from '../helpers/hook-capture';
  */
 
 const tree = createGateTree('next-hosts-audit-');
+
+/**
+ * The workspace an evaluation ran in, as a descriptor spells it and as the audit writer spells it
+ * in the log directory it names after that directory, with every separator replaced by `-`.
+ */
+const FOLDS = [...rootFolds(tree.root), [tree.root.replaceAll('/', '-'), '<root>']] as const;
 
 afterAll(() => {
   tree.remove();
@@ -84,9 +91,14 @@ describe('an evaluation projected as an audit descriptor', () => {
       for (const includeCommand of [true, false]) {
         for (const failure of [undefined, FAILURE]) {
           test(`${row.command} (allowed ${auditAllowed}, command ${includeCommand}, failure ${failure !== undefined})`, () => {
-            expect(
-              portedProjectGuardAudit(row.call, row.ported, auditAllowed, includeCommand, failure),
-            ).toStrictEqual(
+            const projected = portedProjectGuardAudit(
+              row.call,
+              row.ported,
+              auditAllowed,
+              includeCommand,
+              failure,
+            );
+            expect(projected).toStrictEqual(
               shippedProjectGuardAudit(
                 row.call,
                 row.shipped,
@@ -95,6 +107,7 @@ describe('an evaluation projected as an audit descriptor', () => {
                 failure,
               ),
             );
+            recordPorted(projected, FOLDS);
           });
         }
       }
@@ -204,6 +217,7 @@ describe('a descriptor written to the audit log', () => {
 
       expect(shipped.length).toBe(row.lines);
       expect(written).toStrictEqual(shipped);
+      recordPorted(written, FOLDS);
     });
   }
 });

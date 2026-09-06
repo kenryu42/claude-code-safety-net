@@ -20,6 +20,7 @@ import {
   createTempRoot,
   isolationEnv,
   normalize,
+  recordPorted,
   removeTempRoots,
   snapshotHome,
   withProcessEnv,
@@ -180,6 +181,7 @@ describe('the GUI installer wrapper', () => {
     const shipped = await run(shippedRunIntegration, homeFor('shipped'));
     const ported = await run(portedRunIntegration, homeFor('ported'));
     expect(ported).toStrictEqual(shipped);
+    recordPorted(ported);
     return shipped;
   };
 

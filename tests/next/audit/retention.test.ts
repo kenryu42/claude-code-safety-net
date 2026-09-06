@@ -89,6 +89,7 @@ describe('audit retention parity', () => {
 
       const survivors = snapshotTree(next.tree);
       expect(survivors).toStrictEqual(snapshotTree(src.tree));
+      expect(survivors).toMatchSnapshot();
       expect(before.filter((path) => !survivors.some((node) => node.path === path))).toStrictEqual(
         policy.removed,
       );
@@ -126,7 +127,9 @@ describe('audit retention throttle', () => {
     expect(statSync(marker).mtimeMs).toBe(NOW_MS);
 
     sweep(NOW_MS + DAY_MS);
-    expect(snapshotTree(nextSide.logs)).toStrictEqual(snapshotTree(srcSide.logs));
+    const swept = snapshotTree(nextSide.logs);
+    expect(swept).toStrictEqual(snapshotTree(srcSide.logs));
+    expect(swept).toMatchSnapshot();
     expect(existsSync(join(nextSide.logs, expired))).toBeFalse();
     expect(statSync(marker).mtimeMs).toBe(NOW_MS + DAY_MS);
   });

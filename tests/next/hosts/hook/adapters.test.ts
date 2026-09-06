@@ -9,6 +9,7 @@ import {
   type HookRow,
   hostEnv,
 } from '../../helpers/hook-hosts';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * Every stdin host, driven twice over the same bytes: the shipped adapter and the ported one read
@@ -50,6 +51,18 @@ const DENY_DOCUMENT_KEYS: Record<string, readonly string[]> = {
 };
 
 const fixture = createHookFixture('next-hook-adapters-');
+
+/**
+ * Every machine path a recorded row can spell: the fixture, and the checkout the suite runs in,
+ * which a payload without a cwd of its own falls back to. Both are also spelled with `-` for every
+ * separator, the way the audit writer names the log directory after the directory the call ran in.
+ */
+const FOLDS = [
+  ...rootFolds(fixture.root),
+  [fixture.root.replaceAll('/', '-'), '<root>'],
+  [process.cwd(), '<cwd>'],
+  [process.cwd().replaceAll('/', '-'), '<cwd>'],
+] as const;
 
 afterAll(() => {
   fixture.remove();
@@ -94,10 +107,12 @@ for (const host of HOOK_HOSTS) {
     test(`${host.id}: ${row.name}`, async () => {
       const shipped = await runSide(host, row, 'shipped');
       const ported = await runSide(host, row, 'ported');
-      expect({ ...ported, stderr: ported.stderr.map(debugStage) }).toStrictEqual({
+      const compared = { ...ported, stderr: ported.stderr.map(debugStage) };
+      expect(compared).toStrictEqual({
         ...shipped,
         stderr: shipped.stderr.map(debugStage),
       });
+      recordPorted(compared, FOLDS);
     }, 30_000);
   }
 

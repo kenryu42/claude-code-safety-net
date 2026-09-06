@@ -12,6 +12,7 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   withProcessEnv,
 } from './temp-home';
 
@@ -255,7 +256,9 @@ export async function runGuiRow(row: {
   const portedResponses = await drive(portedServer, row.requests).finally(portedServer.close);
 
   const shipped = observe(shippedSide, shippedResponses);
-  expect(observe(portedSide, portedResponses)).toStrictEqual(shipped);
+  const ported = observe(portedSide, portedResponses);
+  expect(ported).toStrictEqual(shipped);
+  recordPorted(ported);
   // An atomic write that failed halfway leaves its scratch file behind, which no row spells.
   expect(shipped.tree.filter((entry) => /\.[0-9a-f]{16}\.tmp$/.test(entry.path))).toStrictEqual([]);
   return shipped;

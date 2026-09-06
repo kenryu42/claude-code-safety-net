@@ -12,6 +12,7 @@ import {
   shippedVerdict,
   toolCall,
 } from '../helpers/gate-differential';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * Hosts hand the gate more than shell commands: a file to read, a patch to apply, a directory to
@@ -49,11 +50,18 @@ function agreedVerdict(
   const call = toolCall(toolName, input, route, cwd);
   const dependencies = { loadPolicySnapshot: () => LEVELS[level] };
   const ported = portedVerdict(call, environment, dependencies);
-  expect({ name, level, verdict: ported }).toStrictEqual({
+  const compared = { name, level, verdict: ported };
+  expect(compared).toStrictEqual({
     name,
     level,
     verdict: shippedVerdict(call, dependencies),
   });
+  recordPorted(compared, [
+    ...rootFolds(tree.root),
+    [home, '<home>'],
+    // The ambient `CC_SAFETY_NET_HOME` the suite's preload points at a fresh temp directory.
+    [dirname(userPolicyPath), '<safety-net-home>'],
+  ]);
   return ported;
 }
 

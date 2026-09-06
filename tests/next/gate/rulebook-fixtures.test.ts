@@ -85,10 +85,12 @@ const VERSION_ONE_RULEBOOK: Rulebook = {
 
 describe('the rulebook fixture evaluator', () => {
   test('reports the diagnostics the shipped evaluator reports', () => {
-    expect(evaluateRulebookFixtures(RULEBOOK)).toEqual(shippedEvaluateRulebookFixtures(RULEBOOK));
-    expect(evaluateRulebookFixtures(VERSION_ONE_RULEBOOK)).toEqual(
-      shippedEvaluateRulebookFixtures(VERSION_ONE_RULEBOOK),
-    );
+    const reported = evaluateRulebookFixtures(RULEBOOK);
+    expect(reported).toEqual(shippedEvaluateRulebookFixtures(RULEBOOK));
+    expect(reported).toMatchSnapshot();
+    const versionOne = evaluateRulebookFixtures(VERSION_ONE_RULEBOOK);
+    expect(versionOne).toEqual(shippedEvaluateRulebookFixtures(VERSION_ONE_RULEBOOK));
+    expect(versionOne).toMatchSnapshot();
   });
 
   test('names the failing fixture, its verdict and why', () => {

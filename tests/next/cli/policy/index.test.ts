@@ -213,6 +213,7 @@ async function applyBothWays(extra: readonly string[], answer: (input: PassThrou
     }),
   );
   expect(ported).toStrictEqual(shipped);
+  expect(ported).toMatchSnapshot();
   return shipped;
 }
 

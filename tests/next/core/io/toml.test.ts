@@ -113,11 +113,13 @@ describe('toml surgical edit', () => {
       const next = describeOutcome(() => installWithNext(content));
       if (!next.ok) {
         expect(shipped.error).toEqual(next.error);
+        expect(next.error).toMatchSnapshot();
         expect(shipped.content).toBe(content);
         continue;
       }
       expect(shipped.error).toBeUndefined();
       expect(next.value).toBe(shipped.content ?? '');
+      expect(next.value).toMatchSnapshot();
       const array =
         content === undefined ? undefined : findTopLevelTomlArray(content, 'hooks', ERRORS);
       if (
@@ -144,10 +146,12 @@ describe('toml surgical edit', () => {
         const next = describeOutcome(() => uninstallWithNext(candidate));
         if (!next.ok) {
           expect(shipped.error).toEqual(next.error);
+          expect(next.error).toMatchSnapshot();
           continue;
         }
         expect(shipped.error).toBeUndefined();
         expect(next.value).toBe(shipped.content);
+        expect(next.value).toMatchSnapshot();
         if (candidate !== undefined && next.value !== candidate) removed++;
       }
     }

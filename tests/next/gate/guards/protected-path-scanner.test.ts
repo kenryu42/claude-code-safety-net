@@ -31,6 +31,7 @@ import { parseCommand as shippedParseCommand } from '@/parser/command';
 import { projectShellSyntax as shippedProjectShellSyntax } from '@/parser/shell/entry-projection';
 import { pairedEnvironments } from '../../core/differential-inputs';
 import { describeOutcome, type Outcome, writeTree } from '../../helpers/fixture-tree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   corpusCommands,
   FIXED_COMMANDS,
@@ -207,12 +208,15 @@ afterAll(() => {
 describe('protected path scanner walk', () => {
   test('records the same segments, states and redirections as the shipped walk', () => {
     const sources = [...CD_SOURCES, ...SEGMENT_SOURCES];
+    const recorded: [string, unknown][] = [];
     for (const source of sources) {
       for (const stop of [null, 'rm', MARKER]) {
         const [next, shipped] = walkPair(source, workspace, stop);
         expect(next, `${source} (stop=${stop})`).toStrictEqual(shipped);
+        recorded.push([`${source} (stop=${stop})`, next]);
       }
     }
+    expectRecordedDigest('guards-protected-path/walk-table', recorded, root);
   });
 
   test('the fixed table moves the tracked cwd and returns targets', () => {
@@ -240,6 +244,7 @@ describe('protected path scanner walk', () => {
   });
 
   test('matches the shipped walk over the corpus and the seeded fuzz', () => {
+    const recorded: [string, unknown][] = [];
     for (const source of [
       ...corpusCommands(),
       ...FIXED_COMMANDS,
@@ -247,7 +252,9 @@ describe('protected path scanner walk', () => {
     ]) {
       const [next, shipped] = walkPair(source, workspace, 'rm');
       expect(next, source).toStrictEqual(shipped);
+      recorded.push([source, next]);
     }
+    expectRecordedDigest('guards-protected-path/corpus-fuzz', recorded, root);
   });
 
   test('a structural-limit projection throws on both sides, an incomplete one is malformed', () => {
@@ -280,6 +287,7 @@ describe('protected path scanner walk', () => {
     const [next, shipped] = walkPair(`echo "unclosed ${MARKER}`, workspace, null);
     expect(completedWalk(next).observations[0]).toStartWith('malformed ');
     expect(next).toStrictEqual(shipped);
+    expectRecordedDigest('guards-protected-path/malformed', [['unclosed quote', next]], root);
   });
 });
 
@@ -305,11 +313,12 @@ const VARIABLE_TABLE: readonly (readonly [string, readonly [string, string][]])[
 
 describe('tracked shell variable expansion', () => {
   test('expands the fixed table and the corpus words identically', () => {
+    const recorded: [string, unknown][] = [];
     for (const [text, entries] of VARIABLE_TABLE) {
       const variables = new Map(entries);
-      expect(expandTrackedShellVariables(text, variables), text).toBe(
-        shippedExpandTrackedShellVariables(text, variables),
-      );
+      const expanded = expandTrackedShellVariables(text, variables);
+      expect(expanded, text).toBe(shippedExpandTrackedShellVariables(text, variables));
+      recorded.push([`${text} ${JSON.stringify(entries)}`, expanded]);
     }
     const variables = new Map([
       ['HOME', home],
@@ -320,10 +329,11 @@ describe('tracked shell variable expansion', () => {
     for (const word of [...corpusCommands(), ...FIXED_COMMANDS].flatMap((command) =>
       command.split(/\s+/),
     )) {
-      expect(expandTrackedShellVariables(word, variables), word).toBe(
-        shippedExpandTrackedShellVariables(word, variables),
-      );
+      const expanded = expandTrackedShellVariables(word, variables);
+      expect(expanded, word).toBe(shippedExpandTrackedShellVariables(word, variables));
+      recorded.push([`word ${word}`, expanded]);
     }
+    expectRecordedDigest('guards-protected-path/variable-expansion', recorded, root);
   });
 
   test('an unset name is left as written and a set one is substituted', () => {
@@ -374,21 +384,25 @@ const MV_TABLE: readonly (readonly string[])[] = [
 
 describe('segment and mv operand parsing', () => {
   test('classifies assignment-only segments identically', () => {
+    const recorded: [string, unknown][] = [];
     for (const segment of SEGMENT_TABLE) {
-      expect(isAssignmentOnlySegment(segment), JSON.stringify(segment)).toBe(
-        shippedIsAssignmentOnlySegment(segment),
-      );
+      const assignmentOnly = isAssignmentOnlySegment(segment);
+      expect(assignmentOnly, JSON.stringify(segment)).toBe(shippedIsAssignmentOnlySegment(segment));
+      recorded.push([JSON.stringify(segment), assignmentOnly]);
     }
+    expectRecordedDigest('guards-protected-path/assignment-segments', recorded);
     expect(isAssignmentOnlySegment(['A=1'])).toBeTrue();
     expect(isAssignmentOnlySegment(['echo'])).toBeFalse();
   });
 
   test('extracts the same mv sources and destination', () => {
+    const recorded: [string, unknown][] = [];
     for (const args of MV_TABLE) {
-      expect(extractMvOperandPaths(args), JSON.stringify(args)).toStrictEqual(
-        shippedExtractMvOperandPaths(args),
-      );
+      const operands = extractMvOperandPaths(args);
+      expect(operands, JSON.stringify(args)).toStrictEqual(shippedExtractMvOperandPaths(args));
+      recorded.push([JSON.stringify(args), operands]);
     }
+    expectRecordedDigest('guards-protected-path/mv-operands', recorded);
     expect(extractMvOperandPaths(['a', 'b', 'c'])).toStrictEqual({
       sources: ['a', 'b'],
       destination: 'c',
@@ -437,34 +451,45 @@ describe('protected candidate canonicalization', () => {
     );
     const context = createPathCanonicalizationContext(environments.shipped);
     const budget = createBudget();
+    const recorded: [string, unknown][] = [];
     for (const cwd of [workspace, join(root, 'policy'), join(root, 'missing')]) {
       for (const candidate of CANDIDATE_TABLE) {
-        expect(
-          normalizeProtectedPathCandidate(candidate, cwd, environments.next, budget),
-          `${candidate} @ ${cwd}`,
-        ).toBe(shippedNormalizePath(candidate, cwd, context));
+        const normalized = normalizeProtectedPathCandidate(
+          candidate,
+          cwd,
+          environments.next,
+          budget,
+        );
+        expect(normalized, `${candidate} @ ${cwd}`).toBe(
+          shippedNormalizePath(candidate, cwd, context),
+        );
+        recorded.push([`${candidate} @ ${cwd}`, normalized]);
       }
     }
+    expectRecordedDigest('guards-protected-path/path-candidates', recorded, root);
   });
 
   test('normalizes file candidates like the shipped guard, per basename predicate', () => {
     const environments = pairedEnvironments({ HOME: home, TMPDIR: join(root, 'tmp') }, home);
+    const recorded: [string, unknown][] = [];
     for (const [label, isPlausibleBasename] of BASENAME_PREDICATES) {
       const context = createPathCanonicalizationContext(environments.shipped);
       const budget: Budget = createBudget();
       for (const candidate of CANDIDATE_TABLE) {
-        expect(
-          normalizeProtectedFileCandidate(
-            candidate,
-            workspace,
-            environments.next,
-            budget,
-            isPlausibleBasename,
-          ),
-          `${candidate} (${label})`,
-        ).toBe(shippedNormalizeFile(candidate, workspace, context, isPlausibleBasename));
+        const normalized = normalizeProtectedFileCandidate(
+          candidate,
+          workspace,
+          environments.next,
+          budget,
+          isPlausibleBasename,
+        );
+        expect(normalized, `${candidate} (${label})`).toBe(
+          shippedNormalizeFile(candidate, workspace, context, isPlausibleBasename),
+        );
+        recorded.push([`${candidate} (${label})`, normalized]);
       }
     }
+    expectRecordedDigest('guards-protected-path/file-candidates', recorded, root);
   });
 
   test('the file candidate skips the ancestor walk only for implausible basenames', () => {

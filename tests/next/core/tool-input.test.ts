@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import * as next from '@next/core/tool-input';
 import * as src from '@/parser/tool-input';
+import { expectRecordedDigest } from '../helpers/gate-differential';
 import { corpusToolInputs, createSeededRandom, FUZZ_SEED } from '../helpers/shell-inputs';
 
 const TOOL_NAMES = [
@@ -156,60 +157,68 @@ describe('next/core/tool-input against src/parser/tool-input', () => {
 
   test('ships the same traversal limits and error identity', () => {
     expect(next.TOOL_INPUT_LIMITS).toStrictEqual(src.TOOL_INPUT_LIMITS);
+    expect(next.TOOL_INPUT_LIMITS).toMatchSnapshot();
     const error = new next.ToolInputLimitError();
     const srcError = new src.ToolInputLimitError();
-    expect({ name: error.name, message: error.message }).toStrictEqual({
-      name: srcError.name,
-      message: srcError.message,
-    });
+    const identity = { name: error.name, message: error.message };
+    expect(identity).toStrictEqual({ name: srcError.name, message: srcError.message });
+    expect(identity).toMatchSnapshot();
   });
 
   test('normalizes, classifies, and marks read-only tools identically', () => {
     for (const toolName of TOOL_NAMES) {
-      expect({
+      const classified = {
         toolName,
         normalized: next.normalizeToolName(toolName),
         kind: next.getNonCommandToolInputKind(toolName),
         readOnly: next.isReadOnlyTool(toolName),
-      }).toStrictEqual({
+      };
+      expect(classified).toStrictEqual({
         toolName,
         normalized: src.normalizeToolName(toolName),
         kind: src.getNonCommandToolInputKind(toolName),
         readOnly: src.isReadOnlyTool(toolName),
       });
+      expect(classified).toMatchSnapshot();
     }
   });
 
   test('reads commands, path-like values, and patch targets identically from safe inputs', () => {
     for (const input of inputs) {
-      expect({
+      const read = {
         input,
         command: next.getCommandFromToolInput(input),
         paths: next.extractPathLikeToolValues(input, PATH_LIKE_KEYS),
         targets: next.extractPatchTargetsFromToolInput(input),
-      }).toStrictEqual({
+      };
+      expect(read).toStrictEqual({
         input,
         command: src.getCommandFromToolInput(input),
         paths: src.extractPathLikeToolValues(input, PATH_LIKE_KEYS),
         targets: src.extractPatchTargetsFromToolInput(input),
       });
+      expect(read).toMatchSnapshot();
     }
   });
 
   test('extracts the same patch targets from fuzzed diff headers', () => {
     const random = createSeededRandom(FUZZ_SEED ^ 0x7001);
     const pieces = ['a/', 'b/', 'x y', '"', "'", '\\303', '\\n', '\\', '/', ' ', '\t', 'f.ts', ''];
+    const recorded: (readonly [string, unknown])[] = [];
     for (let sample = 0; sample < 1_000; sample++) {
       const header = Array.from(
         { length: 1 + Math.floor(random() * 10) },
         () => pieces[Math.floor(random() * pieces.length)] ?? '',
       ).join('');
       const text = `diff --git ${header}\n--- ${header}\n+++ ${header}\nrename to ${header}`;
-      expect({ text, targets: next.extractPatchTargetsFromToolInput(text) }).toStrictEqual({
+      const targets = next.extractPatchTargetsFromToolInput(text);
+      expect({ text, targets }).toStrictEqual({
         text,
         targets: src.extractPatchTargetsFromToolInput(text),
       });
+      recorded.push([text, targets]);
     }
+    expectRecordedDigest('core-tool-input/fuzzed-patch-targets', recorded);
   });
 
   test('rejects unsafe and oversized shapes with the same limit error', () => {

@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { withEnv } from '../../helpers';
 import { clearAuditLogs, readAuditEntries } from './hook-capture';
 import { type HookFixture, hostEnv } from './hook-hosts';
+import { recordPorted, rootFolds } from './temp-home';
 
 /**
  * The harness the four in-process host entries share: one call into a handler, captured whole, and
@@ -56,13 +57,24 @@ export function describeDifferential<Row extends { name: string }, Outcome>(
   rows: readonly Row[],
   run: (row: Row, side: Side) => Promise<Outcome>,
   check: (row: Row, agreed: Outcome) => void,
+  /** The fixture root every path in an outcome sits under, read when the row runs because the
+   *  fixtures are rebuilt per test. */
+  root: () => string,
 ): void {
   describe(title, () => {
     for (const row of rows) {
       test(row.name, async () => {
         const shipped = await run(row, 'shipped');
+        const ported = await run(row, 'ported');
 
-        expect(await run(row, 'ported')).toStrictEqual(shipped);
+        expect(ported).toStrictEqual(shipped);
+        const fixtureRoot = root();
+        // The audit writer names a project's log file after the directory the call ran in, with
+        // every separator spelled `-`, which neither path fold reaches.
+        recordPorted(ported, [
+          ...rootFolds(fixtureRoot),
+          [fixtureRoot.replaceAll('/', '-'), '<root>'],
+        ]);
         check(row, shipped);
       });
     }

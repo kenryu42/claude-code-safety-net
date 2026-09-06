@@ -9,6 +9,7 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   removeTempRoots,
   withProcessEnv,
 } from '../helpers/temp-home';
@@ -83,6 +84,7 @@ const feedOverBothSides = (
     folded(shippedFeed(days, join(shippedHome, 'logs')), join(shippedHome, 'logs'), homedir()),
   );
   expect(ported).toStrictEqual(shipped);
+  recordPorted(ported);
   return ported;
 };
 

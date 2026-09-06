@@ -1,0 +1,1875 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`publishing the plugin to the hosted repository writes the artifact into a fresh checkout, commits it and pushes 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository appends the user policy so the plugin still has it on an Orb 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+;globalThis.__CC_SAFETY_NET_EMBEDDED_POLICY__ = {"version":1,"safety":{"level":"strict","overrides":{}},"workflow":{"worktree_mode":false},"destructive_command_protection":{"enabled":true,"overrides":{},"allow_paths":[]},"secret_protection":{"enabled":true,"overrides":{},"deny_paths":["~/vault"],"allow_paths":[]},"audit":{"retention_days":30}};
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cc-safety-net",
+    },
+    {
+      "content": "{"version":1,"safety":{"level":"strict"},"secret_protection":{"deny_paths":["~/vault"]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository publishes the artifact alone with a policy file that is not JSON at all 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cc-safety-net",
+    },
+    {
+      "content": "not json",
+      "kind": "file",
+      "mode": 420,
+      "path": ".cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository publishes the artifact alone with a policy file holding a JSON array 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cc-safety-net",
+    },
+    {
+      "content": "[]",
+      "kind": "file",
+      "mode": 420,
+      "path": ".cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository touches no git command when the hosted copy already matches 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": true,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository migrates a managed legacy root file into the directory plugin 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+            "cc-safety-net.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts cc-safety-net.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository reports the repository as up to date when staging changed nothing 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": true,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`publishing the plugin to the hosted repository surfaces the failing step, so a rejected push is not reported as installed 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": 
+"Failed to run git push origin HEAD (exit 1).
+scripted failure"
+,
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`refusing a hosted repository that holds something else leaves an unmanaged legacy root file alone 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": "Refusing to overwrite unmanaged file cc-safety-net.ts in your Amp personal plugins repository. Remove it there and rerun install --amp.",
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`refusing a hosted repository that holds something else leaves a symlink where the plugin directory belongs alone 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": "Refusing to overwrite cc-safety-net in your Amp personal plugins repository: not a regular directory. Remove it there and rerun install --amp.",
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`refusing a hosted repository that holds something else leaves an unmanaged entry inside the plugin directory alone 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": "Refusing to overwrite unmanaged file cc-safety-net/index.ts in your Amp personal plugins repository. Remove it there and rerun install --amp.",
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading which repository to clone stops at no amp CLI on PATH 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": 
+"Amp CLI not found. Install the amp CLI, sign in with "amp login", and rerun install --amp.
+spawn amp ENOENT"
+,
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading which repository to clone stops at a signed-out CLI 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": 
+"Failed to run amp plugins repositories --json (exit 1). Sign in with "amp login" and rerun install --amp.
+x"
+,
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading which repository to clone stops at an account whose personal repository is read-only 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": "Your Amp account has no writable Personal Plugins repository. Sign in with "amp login", open Amp once to create it, and rerun install --amp.",
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`clearing a local plugin that masks the personal one names the same system-scope path on both sides 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": "<home>/.config/amp/plugins/cc-safety-net.ts",
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`clearing a local plugin that masks the personal one removes a managed copy of the legacy file once the personal plugin is published 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`clearing a local plugin that masks the personal one removes a managed copy of the directory plugin once the personal plugin is published 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`clearing a local plugin that masks the personal one fails the install on a hand-written local file and keeps it 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": "Local Amp plugin <home>/.config/amp/plugins/cc-safety-net.ts is not a managed copy and masks the personal plugin. Remove it and rerun install --amp.",
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp/plugins",
+    },
+    {
+      "content": 
+"export default function mine() {}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".config/amp/plugins/cc-safety-net.ts",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`clearing a local plugin that masks the personal one fails the install on a local directory holding more than our entry and keeps it 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "add",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: update cc-safety-net plugin to vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "threw",
+        "message": "Local Amp plugin <home>/.config/amp/plugins/cc-safety-net is not a managed copy and masks the personal plugin. Remove it and rerun install --amp.",
+      },
+      "snapshots": {
+        "git add -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp/plugins",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp/plugins/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".config/amp/plugins/cc-safety-net/index.ts",
+    },
+    {
+      "content": 
+"notes
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".config/amp/plugins/cc-safety-net/README.md",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`clearing a local plugin that masks the personal one keeps an unmanaged local plugin on uninstall, with nothing left to mask 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".config/amp/plugins",
+    },
+    {
+      "content": 
+"export default function mine() {}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".config/amp/plugins/cc-safety-net.ts",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`removing the plugin from the hosted repository removes only our entry from the directory plugin 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "rm",
+            "--",
+            "cc-safety-net/index.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: remove cc-safety-net plugin vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": true,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {
+        "git rm -- cc-safety-net/index.ts": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "cc-safety-net",
+          },
+          {
+            "content": 
+"notes
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/README.md",
+          },
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net/index.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`removing the plugin from the hosted repository names the legacy root file when the checkout never migrated 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "git",
+            "rm",
+            "--",
+            "cc-safety-net.ts",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "status",
+            "--porcelain",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "-c",
+            "commit.gpgsign=false",
+            "-c",
+            "user.name=cc-safety-net",
+            "-c",
+            "user.email=cc-safety-net@localhost",
+            "commit",
+            "-m",
+            "chore: remove cc-safety-net plugin vdev",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+        {
+          "command": [
+            "git",
+            "push",
+            "origin",
+            "HEAD",
+          ],
+          "cwd": "<home>/tmp/cc-safety-net-amp-<id>",
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": true,
+          "path": "amp://user-plugins/cc-safety-net.ts",
+        },
+      },
+      "snapshots": {
+        "git rm -- cc-safety-net.ts": [
+          {
+            "content": 
+"// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp
+// version: dev
+export default function plugin() {}
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "cc-safety-net.ts",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`removing the plugin from the hosted repository commits nothing when the repository holds no plugin of ours 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "calls": [
+        {
+          "command": [
+            "amp",
+            "plugins",
+            "repositories",
+            "--json",
+          ],
+          "cwd": undefined,
+        },
+        {
+          "command": [
+            "amp",
+            "clone",
+            "user-plugins",
+            "<home>/tmp/cc-safety-net-amp-<id>",
+          ],
+          "cwd": undefined,
+        },
+      ],
+      "result": {
+        "kind": "returned",
+        "value": {
+          "alreadyInstalled": false,
+          "path": "amp://user-plugins/cc-safety-net",
+        },
+      },
+      "snapshots": {},
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

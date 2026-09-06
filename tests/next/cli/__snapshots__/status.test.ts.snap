@@ -1,0 +1,467 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`status a fresh home reports the disabled plugin and points at doctor 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        standard
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`status an enabled plugin leaves nothing inactive 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        standard
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+
+  Everything configured is active.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.claude",
+    },
+    {
+      "content": 
+"{
+  "enabledPlugins": {
+    "cc-safety-net@cc-marketplace": true
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`status a malformed user policy renders the degraded verdict 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — degraded
+
+  Protection   destructive ok   secrets ok
+  Level        standard
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+    - <root>/home/.cc-safety-net/policy.json: Invalid JSON
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": "not json",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`status the level environment override reaches the Level row 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        strict
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`status worktree mode adds its own row 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        standard
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+  Worktree     relaxations active
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`status a project policy that weakens the user policy is named as such 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        standard
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+  Project      <root>/project/.cc-safety-net/policy.json
+
+  Project policy
+    project policy lowers level: strict -> standard
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "standard"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/policy.json",
+    },
+  ],
+}
+`;
+
+exports[`status a rule override that changes inherited behaviour marks the level customised 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        standard (customised)
+  Rules        none active
+  Policy       ~/.cc-safety-net/policy.json
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "destructive_command_protection": {
+    "overrides": {
+      "git.reset-hard": "off"
+    }
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`status an active project rulebook is counted 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"CC Safety Net — ready
+
+  Protection   destructive ok   secrets ok
+  Level        standard
+  Rules        1 active
+  Policy       ~/.cc-safety-net/policy.json
+
+  Not active
+    - plugin cc-safety-net@cc-marketplace is disabled in Claude Code; nothing is
+      enforced in Claude Code until it is re-enabled. Other integrations are not
+      affected.
+
+  Full report: cc-safety-net doctor
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net/rules/project-rules",
+    },
+    {
+      "content": 
+"{
+  "rulebook_version": 1,
+  "name": "project-rules",
+  "version": "1.0.0",
+  "allowed_commands": [
+    "docker"
+  ],
+  "rules": [
+    {
+      "name": "block-docker-system-prune",
+      "command": "docker",
+      "subcommand": "system",
+      "block_args": [
+        "prune"
+      ],
+      "reason": "Pruning the shared Docker host removes other work.",
+      "intent": "manual_only"
+    }
+  ]
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "rules": [
+    "project-rules"
+  ]
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/rules/rule.json",
+    },
+  ],
+}
+`;

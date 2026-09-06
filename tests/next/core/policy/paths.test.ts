@@ -25,6 +25,7 @@ import {
   getUserRulesDir as shippedGetUserRulesDir,
 } from '@/rules/policy/paths';
 import { withEnv } from '../../../helpers';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 const root = mkdtempSync(join(tmpdir(), 'next-policy-paths-'));
 const outside = join(dirname(root), 'policy-paths-sibling');
@@ -81,6 +82,9 @@ const SCOPES: Array<{
 
 const WORKING_DIRECTORIES = [root, nested, `${nested}${sep}`];
 
+/** Every real directory a resolved path can name. */
+const PATH_FOLDS = [[outside, '<outside>'], ...rootFolds(root), [homedir(), '<home>']] as const;
+
 describe('policy paths parity', () => {
   for (const scope of SCOPES) {
     for (const cwd of WORKING_DIRECTORIES) {
@@ -103,7 +107,7 @@ describe('policy paths parity', () => {
           env: new Map(scope.safetyNetHome ? [['CC_SAFETY_NET_HOME', scope.safetyNetHome]] : []),
           home: homedir(),
         });
-        expect({
+        const resolved = {
           policyPaths: comparablePolicyPaths(getPolicyPaths(environment, options)),
           userPolicyPath: getUserPolicyPath(environment, options),
           projectPolicyPath: getProjectPolicyPath(cwd),
@@ -115,7 +119,9 @@ describe('policy paths parity', () => {
             getUserRulesDir(environment, options),
             'team-rules',
           ),
-        }).toStrictEqual(shipped);
+        };
+        expect(resolved).toStrictEqual(shipped);
+        recordPorted(resolved, PATH_FOLDS);
       });
     }
   }

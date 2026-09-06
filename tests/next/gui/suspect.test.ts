@@ -38,7 +38,10 @@ const suspectCommands = (entries: readonly Entry[]) =>
 
 describe('the suspect block on the served page', () => {
   test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toBe(block(pages.shipped));
+    const suspectBlock = block(pages.ported);
+
+    expect(suspectBlock).toBe(block(pages.shipped));
+    expect(suspectBlock).toMatchSnapshot();
   });
 
   test('flags a denial that failed inside the gate on its own', () => {

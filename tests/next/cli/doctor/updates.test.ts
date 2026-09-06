@@ -65,6 +65,7 @@ describe('cli/doctor/updates', () => {
   test('a registry error reads the same on both implementations', async () => {
     const ported = await callWithRegistry(portedCheckForUpdates, unavailable);
     expect(ported).toEqual(await callWithRegistry(shippedCheckForUpdates, unavailable));
+    expect(ported).toMatchSnapshot();
     expect(ported.info).toEqual({
       currentVersion: 'dev',
       latestVersion: null,
@@ -76,6 +77,7 @@ describe('cli/doctor/updates', () => {
   test('a failed request reads the same on both implementations', async () => {
     const ported = await callWithRegistry(portedCheckForUpdates, offline);
     expect(ported).toEqual(await callWithRegistry(shippedCheckForUpdates, offline));
+    expect(ported).toMatchSnapshot();
     expect(ported.info).toEqual({
       currentVersion: 'dev',
       latestVersion: null,

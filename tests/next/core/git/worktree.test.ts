@@ -26,6 +26,7 @@ import {
   resolveDotGitFileTargets as shippedResolveDotGitFileTargets,
 } from '@/analyzer/git/worktree';
 import { createLinkedWorktreeFixture } from '../../../helpers';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 const fixture = createLinkedWorktreeFixture();
 let scratch = '';
@@ -60,6 +61,9 @@ function shippedRecursiveSubmodules(cwd: string): boolean {
   return hasRecursiveSubmoduleConfig(['git', 'checkout', '--', '.'], new Map(), undefined, cwd);
 }
 
+/** Both temp roots a recorded path can carry; `scratch` only exists once the suite starts. */
+const pathFolds = () => [...rootFolds(fixture.rootDir), ...rootFolds(scratch)];
+
 beforeAll(() => {
   scratch = mkdtempSync(join(tmpdir(), 'next-worktree-'));
   mkdirSync(join(fixture.linkedWorktree, 'nested'));
@@ -84,8 +88,12 @@ describe('linked worktree facts', () => {
       join(scratch, 'file'),
     ];
     for (const cwd of cwds) {
-      expect(isLinkedWorktree(cwd)).toBe(shippedIsLinkedWorktree(cwd));
-      expect(findDotGitInAncestors(cwd)).toBe(shippedFindDotGitInAncestors(cwd));
+      const linked = isLinkedWorktree(cwd);
+      expect(linked).toBe(shippedIsLinkedWorktree(cwd));
+      expect(linked).toMatchSnapshot();
+      const ancestor = findDotGitInAncestors(cwd);
+      expect(ancestor).toBe(shippedFindDotGitInAncestors(cwd));
+      recordPorted(ancestor, pathFolds());
     }
     for (const dotGit of [
       join(fixture.mainWorktree, '.git'),
@@ -93,7 +101,9 @@ describe('linked worktree facts', () => {
       join(scratch, 'file'),
       join(scratch, 'missing'),
     ]) {
-      expect(resolveDotGitFileTargets(dotGit)).toEqual(shippedResolveDotGitFileTargets(dotGit));
+      const targets = resolveDotGitFileTargets(dotGit);
+      expect(targets).toEqual(shippedResolveDotGitFileTargets(dotGit));
+      recordPorted(targets, pathFolds());
     }
     expect(isLinkedWorktree(fixture.linkedWorktree)).toBe(true);
   });
@@ -117,9 +127,9 @@ describe('linked worktree facts', () => {
     try {
       for (const value of values) {
         writeFileSync(configPath, `[core]\n\tworktree = ${value}\n`);
-        expect(isLinkedWorktree(fixture.linkedWorktree)).toBe(
-          shippedIsLinkedWorktree(fixture.linkedWorktree),
-        );
+        const linked = isLinkedWorktree(fixture.linkedWorktree);
+        expect(linked).toBe(shippedIsLinkedWorktree(fixture.linkedWorktree));
+        expect(linked).toMatchSnapshot();
       }
       // The odd link was written last: only a full decode of its name lands on the worktree's
       // inode, so a wrong escape table reads as "not a linked worktree" here.
@@ -140,7 +150,9 @@ describe('linked worktree facts', () => {
       '',
       fixture.linkedWorktree,
     ]) {
-      expect(normalizePathForComparison(path)).toBe(shippedNormalizePathForComparison(path));
+      const normalized = normalizePathForComparison(path);
+      expect(normalized).toBe(shippedNormalizePathForComparison(path));
+      recordPorted(normalized, pathFolds());
     }
   });
 
@@ -166,6 +178,7 @@ describe('linked worktree facts', () => {
         const facts = resolveWorktreeFacts(fixture.linkedWorktree);
         expect(facts).not.toBeNull();
         expect(facts?.recursiveSubmodules).toBe(shippedRecursiveSubmodules(linked));
+        expect(facts?.recursiveSubmodules).toMatchSnapshot();
       }
     } finally {
       writeFileSync(commonConfig, original);

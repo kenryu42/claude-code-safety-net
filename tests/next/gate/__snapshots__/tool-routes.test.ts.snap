@@ -1,0 +1,977 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 1`] = `
+{
+  "level": "standard",
+  "name": "denies a read tool targeting AWS credentials",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.aws/credentials",
+        "kind": "command",
+        "segment": "<home>/.aws/credentials",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.aws",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 2`] = `
+{
+  "level": "strict",
+  "name": "denies a read tool targeting AWS credentials",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.aws/credentials",
+        "kind": "command",
+        "segment": "<home>/.aws/credentials",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.aws",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 3`] = `
+{
+  "level": "standard",
+  "name": "allows a read tool targeting an ordinary file",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 4`] = `
+{
+  "level": "strict",
+  "name": "allows a read tool targeting an ordinary file",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 5`] = `
+{
+  "level": "standard",
+  "name": "allows a search tool over an ordinary directory",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 6`] = `
+{
+  "level": "strict",
+  "name": "allows a search tool over an ordinary directory",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 7`] = `
+{
+  "level": "standard",
+  "name": "denies a write tool targeting the project policy file",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<root>/workspace/.cc-safety-net/policy.json",
+        "kind": "command",
+        "segment": "<root>/workspace/.cc-safety-net/policy.json",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "This path contains the protected policy config and you must not modify or delete it.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 8`] = `
+{
+  "level": "strict",
+  "name": "denies a write tool targeting the project policy file",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<root>/workspace/.cc-safety-net/policy.json",
+        "kind": "command",
+        "segment": "<root>/workspace/.cc-safety-net/policy.json",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "This path contains the protected policy config and you must not modify or delete it.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 9`] = `
+{
+  "level": "standard",
+  "name": "denies a write tool targeting a Git hook",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".git/hooks/pre-commit",
+        "kind": "command",
+        "segment": ".git/hooks/pre-commit",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "Git metadata and hooks are protected. Ask the user before modifying them.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`the pipeline corpus rows that carry no command every non-command row is routed and decided identically 10`] = `
+{
+  "level": "strict",
+  "name": "denies a write tool targeting a Git hook",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".git/hooks/pre-commit",
+        "kind": "command",
+        "segment": ".git/hooks/pre-commit",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "Git metadata and hooks are protected. Ask the user before modifying them.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Read follows a tilde path 1`] = `
+{
+  "level": "standard",
+  "name": "Read follows a tilde path",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "~/.ssh/config",
+        "kind": "command",
+        "segment": "~/.ssh/config",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Read follows a tilde path 2`] = `
+{
+  "level": "strict",
+  "name": "Read follows a tilde path",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "~/.ssh/config",
+        "kind": "command",
+        "segment": "~/.ssh/config",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Read follows an absolute credential path 1`] = `
+{
+  "level": "standard",
+  "name": "Read follows an absolute credential path",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.aws/credentials",
+        "kind": "command",
+        "segment": "<home>/.aws/credentials",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.aws",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Read follows an absolute credential path 2`] = `
+{
+  "level": "strict",
+  "name": "Read follows an absolute credential path",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.aws/credentials",
+        "kind": "command",
+        "segment": "<home>/.aws/credentials",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.aws",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Read of an ordinary file 1`] = `
+{
+  "level": "standard",
+  "name": "Read of an ordinary file",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads Read of an ordinary file 2`] = `
+{
+  "level": "strict",
+  "name": "Read of an ordinary file",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write creates a dotenv file 1`] = `
+{
+  "level": "standard",
+  "name": "Write creates a dotenv file",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".env",
+        "kind": "command",
+        "segment": ".env",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.env",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write creates a dotenv file 2`] = `
+{
+  "level": "strict",
+  "name": "Write creates a dotenv file",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".env",
+        "kind": "command",
+        "segment": ".env",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.env",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write targets the user policy file 1`] = `
+{
+  "level": "standard",
+  "name": "Write targets the user policy file",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<safety-net-home>/policy.json",
+        "kind": "command",
+        "segment": "<safety-net-home>/policy.json",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "This path contains the protected policy config and you must not modify or delete it.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write targets the user policy file 2`] = `
+{
+  "level": "strict",
+  "name": "Write targets the user policy file",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<safety-net-home>/policy.json",
+        "kind": "command",
+        "segment": "<safety-net-home>/policy.json",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "This path contains the protected policy config and you must not modify or delete it.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write targets a Git hook 1`] = `
+{
+  "level": "standard",
+  "name": "Write targets a Git hook",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<root>/repository/.git/hooks/pre-push",
+        "kind": "command",
+        "segment": "<root>/repository/.git/hooks/pre-push",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "Git metadata and hooks are protected. Ask the user before modifying them.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write targets a Git hook 2`] = `
+{
+  "level": "strict",
+  "name": "Write targets a Git hook",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<root>/repository/.git/hooks/pre-push",
+        "kind": "command",
+        "segment": "<root>/repository/.git/hooks/pre-push",
+      },
+    ],
+    "intent": "hard_stop",
+    "outcome": "deny",
+    "reason": "Git metadata and hooks are protected. Ask the user before modifying them.",
+    "ruleId": undefined,
+    "stage": "policy-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write targets the Git config file 1`] = `
+{
+  "level": "standard",
+  "name": "Write targets the Git config file",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads Write targets the Git config file 2`] = `
+{
+  "level": "strict",
+  "name": "Write targets the Git config file",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads Edit rewrites a private key 1`] = `
+{
+  "level": "standard",
+  "name": "Edit rewrites a private key",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "deploy/id_rsa",
+        "kind": "command",
+        "segment": "deploy/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.id-rsa",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Edit rewrites a private key 2`] = `
+{
+  "level": "strict",
+  "name": "Edit rewrites a private key",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "deploy/id_rsa",
+        "kind": "command",
+        "segment": "deploy/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.id-rsa",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Edit rewrites source 1`] = `
+{
+  "level": "standard",
+  "name": "Edit rewrites source",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads Edit rewrites source 2`] = `
+{
+  "level": "strict",
+  "name": "Edit rewrites source",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads MultiEdit names the key in its path field 1`] = `
+{
+  "level": "standard",
+  "name": "MultiEdit names the key in its path field",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "keys/id_ed25519",
+        "kind": "command",
+        "segment": "keys/id_ed25519",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.id-ed25519",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads MultiEdit names the key in its path field 2`] = `
+{
+  "level": "strict",
+  "name": "MultiEdit names the key in its path field",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "keys/id_ed25519",
+        "kind": "command",
+        "segment": "keys/id_ed25519",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.id-ed25519",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads MultiEdit mentions a sensitive path only in replacement text 1`] = `
+{
+  "level": "standard",
+  "name": "MultiEdit mentions a sensitive path only in replacement text",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads MultiEdit mentions a sensitive path only in replacement text 2`] = `
+{
+  "level": "strict",
+  "name": "MultiEdit mentions a sensitive path only in replacement text",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads NotebookEdit follows its notebook path 1`] = `
+{
+  "level": "standard",
+  "name": "NotebookEdit follows its notebook path",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.ssh/id_rsa",
+        "kind": "command",
+        "segment": "<home>/.ssh/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads NotebookEdit follows its notebook path 2`] = `
+{
+  "level": "strict",
+  "name": "NotebookEdit follows its notebook path",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.ssh/id_rsa",
+        "kind": "command",
+        "segment": "<home>/.ssh/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Grep searches a credential directory 1`] = `
+{
+  "level": "standard",
+  "name": "Grep searches a credential directory",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.aws",
+        "kind": "command",
+        "segment": "<home>/.aws",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.aws",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Grep searches a credential directory 2`] = `
+{
+  "level": "strict",
+  "name": "Grep searches a credential directory",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.aws",
+        "kind": "command",
+        "segment": "<home>/.aws",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.aws",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Grep filters by a key glob 1`] = `
+{
+  "level": "standard",
+  "name": "Grep filters by a key glob",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "deploy/server.pem",
+        "kind": "command",
+        "segment": "deploy/server.pem",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.ext.pem",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Grep filters by a key glob 2`] = `
+{
+  "level": "strict",
+  "name": "Grep filters by a key glob",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "deploy/server.pem",
+        "kind": "command",
+        "segment": "deploy/server.pem",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.ext.pem",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Glob names the dotenv file in its pattern 1`] = `
+{
+  "level": "standard",
+  "name": "Glob names the dotenv file in its pattern",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".env",
+        "kind": "command",
+        "segment": ".env",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.env",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Glob names the dotenv file in its pattern 2`] = `
+{
+  "level": "strict",
+  "name": "Glob names the dotenv file in its pattern",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".env",
+        "kind": "command",
+        "segment": ".env",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.env",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads Glob searches source 1`] = `
+{
+  "level": "standard",
+  "name": "Glob searches source",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads Glob searches source 2`] = `
+{
+  "level": "strict",
+  "name": "Glob searches source",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads apply_patch updates a dotenv file through an apply-patch header 1`] = `
+{
+  "level": "standard",
+  "name": "apply_patch updates a dotenv file through an apply-patch header",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".env",
+        "kind": "command",
+        "segment": ".env",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.env",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads apply_patch updates a dotenv file through an apply-patch header 2`] = `
+{
+  "level": "strict",
+  "name": "apply_patch updates a dotenv file through an apply-patch header",
+  "verdict": {
+    "evidence": [
+      {
+        "command": ".env",
+        "kind": "command",
+        "segment": ".env",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.env",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads apply_patch adds a key through a git diff header 1`] = `
+{
+  "level": "standard",
+  "name": "apply_patch adds a key through a git diff header",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "deploy/id_rsa",
+        "kind": "command",
+        "segment": "deploy/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.id-rsa",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads apply_patch adds a key through a git diff header 2`] = `
+{
+  "level": "strict",
+  "name": "apply_patch adds a key through a git diff header",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "deploy/id_rsa",
+        "kind": "command",
+        "segment": "deploy/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.basename.id-rsa",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads apply_patch edits source through a unified diff header 1`] = `
+{
+  "level": "standard",
+  "name": "apply_patch edits source through a unified diff header",
+  "verdict": {
+    "level": "standard",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads apply_patch edits source through a unified diff header 2`] = `
+{
+  "level": "strict",
+  "name": "apply_patch edits source through a unified diff header",
+  "verdict": {
+    "level": "strict",
+    "outcome": "allow",
+    "stage": "non-command",
+  },
+}
+`;
+
+exports[`hand-built host payloads an unrouted tool still has its payload read as a command 1`] = `
+{
+  "level": "standard",
+  "name": "an unrouted tool still has its payload read as a command",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "cat ~/.ssh/config",
+        "kind": "command",
+        "segment": "~/.ssh/config",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads an unrouted tool still has its payload read as a command 2`] = `
+{
+  "level": "strict",
+  "name": "an unrouted tool still has its payload read as a command",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "cat ~/.ssh/config",
+        "kind": "command",
+        "segment": "~/.ssh/config",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads an unrouted tool names a private key in its path field 1`] = `
+{
+  "level": "standard",
+  "name": "an unrouted tool names a private key in its path field",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.ssh/id_rsa",
+        "kind": "command",
+        "segment": "<home>/.ssh/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "standard",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;
+
+exports[`hand-built host payloads an unrouted tool names a private key in its path field 2`] = `
+{
+  "level": "strict",
+  "name": "an unrouted tool names a private key in its path field",
+  "verdict": {
+    "evidence": [
+      {
+        "command": "<home>/.ssh/id_rsa",
+        "kind": "command",
+        "segment": "<home>/.ssh/id_rsa",
+      },
+    ],
+    "intent": "hard_stop",
+    "level": "strict",
+    "outcome": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+    "stage": "secret-protection",
+  },
+}
+`;

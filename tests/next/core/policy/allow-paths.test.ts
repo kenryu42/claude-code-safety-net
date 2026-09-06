@@ -15,8 +15,13 @@ import {
   getSecretAllowPathError as shippedGetSecretAllowPathError,
   getSecretDenyPathError as shippedGetSecretDenyPathError,
 } from '@/policy/allow-paths';
+import { recordPorted } from '../../helpers/temp-home';
 
 const HOMES = [homedir(), '/srv/home/tester', '/srv/home/tester/'];
+
+/** The real home never reaches a test name or a record; the two literal homes are already fixed. */
+const HOME_FOLDS = [[homedir(), '<home>']] as const;
+const named = (home: string) => (home === homedir() ? '<home>' : home);
 
 const VALUES: readonly unknown[] = [
   ' ',
@@ -47,34 +52,43 @@ const VALUES: readonly unknown[] = [
 
 describe('allow path validators parity', () => {
   for (const home of HOMES) {
-    test(`unknown values against ${home}`, () => {
-      expect(
-        VALUES.map((value) => ({
-          destructive: getDestructiveAllowPathError(value, home),
-          secretDeny: getSecretDenyPathError(value, home),
-          secretAllow: getSecretAllowPathError(value, home),
-        })),
-      ).toStrictEqual(
+    test(`unknown values against ${named(home)}`, () => {
+      const errors = VALUES.map((value) => ({
+        destructive: getDestructiveAllowPathError(value, home),
+        secretDeny: getSecretDenyPathError(value, home),
+        secretAllow: getSecretAllowPathError(value, home),
+      }));
+      expect(errors).toStrictEqual(
         VALUES.map((value) => ({
           destructive: shippedGetDestructiveAllowPathError(value, home),
           secretDeny: shippedGetSecretDenyPathError(value, home),
           secretAllow: shippedGetSecretAllowPathError(value, home),
         })),
       );
+      // VALUES[16] is `dirname(homedir())`, which every nested home answers differently and no fold
+      // reaches — `dirname('/root')` is `'/'`, the literal row above it. Compared, not recorded.
+      recordPorted(
+        errors.filter((_, index) => index !== 16),
+        HOME_FOLDS,
+      );
     });
 
-    test(`path strings against ${home}`, () => {
+    test(`path strings against ${named(home)}`, () => {
       const strings = VALUES.filter((value): value is string => typeof value === 'string');
-      expect(
-        strings.map((value) => ({
-          expanded: expandAllowPathHome(value, home),
-          conflict: getAllowPathHomeConflictError(value, home),
-        })),
-      ).toStrictEqual(
+      const expansions = strings.map((value) => ({
+        expanded: expandAllowPathHome(value, home),
+        conflict: getAllowPathHomeConflictError(value, home),
+      }));
+      expect(expansions).toStrictEqual(
         strings.map((value) => ({
           expanded: shippedExpandAllowPathHome(value, home),
           conflict: shippedGetAllowPathHomeConflictError(value, home),
         })),
+      );
+      // The same `dirname(homedir())` row, at index 14 once the two non-strings are dropped.
+      recordPorted(
+        expansions.filter((_, index) => index !== 14),
+        HOME_FOLDS,
       );
     });
   }

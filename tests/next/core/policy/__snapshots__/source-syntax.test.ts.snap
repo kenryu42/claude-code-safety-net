@@ -1,0 +1,1288 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`rulebook source syntax parity every spec reads the same on both implementations 1`] = `
+[
+  {
+    "bareName": {
+      "ok": true,
+      "value": undefined,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: team-rules",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": true,
+    "repositoryPath": ".cc-safety-net/rules/team-rules/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "team-rules",
+    "syntaxError": null,
+  },
+  {
+    "bareName": {
+      "ok": true,
+      "value": undefined,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: a",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": true,
+    "repositoryPath": ".cc-safety-net/rules/a/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "a",
+    "syntaxError": null,
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: 1bad",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: 1bad",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": true,
+    "repositoryPath": ".cc-safety-net/rules/1bad/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "1bad",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: 1bad",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: bad source!",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: bad source!",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/bad source!/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "bad source!",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: bad source!",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: ",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: ",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules//rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: ",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/:  ",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source:  ",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/ /rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": " ",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/:  ",
+  },
+  {
+    "bareName": {
+      "ok": true,
+      "value": undefined,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": true,
+    "repositoryPath": ".cc-safety-net/rules/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "syntaxError": null,
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": true,
+    "repositoryPath": ".cc-safety-net/rules/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#main/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "ok": true,
+      "value": {
+        "name": "team",
+        "owner": "owner",
+        "path": ".cc-safety-net/rules/team/rulebook.json",
+        "ref": "main",
+        "repo": "repo",
+      },
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#main/team/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#main/team",
+    "syntaxError": null,
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#release/v1/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "ok": true,
+      "value": {
+        "name": "team",
+        "owner": "owner",
+        "path": ".cc-safety-net/rules/team/rulebook.json",
+        "ref": "release/v1",
+        "repo": "repo",
+      },
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#release/v1/team/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#release/v1/team",
+    "syntaxError": null,
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#main/1bad",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "GitHub rulebook sources must be owner/repo#ref/<rulebook-name>: owner/repo#main/1bad",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#main/1bad/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#main/1bad",
+    "syntaxError": "GitHub rulebook sources must be owner/repo#ref/<rulebook-name>: owner/repo#main/1bad",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#main",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "GitHub rulebook sources must be owner/repo#ref/<rulebook-name>: owner/repo#main",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#main/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#main",
+    "syntaxError": "GitHub rulebook sources must be owner/repo#ref/<rulebook-name>: owner/repo#main",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "GitHub rulebook sources must be owner/repo#ref/<rulebook-name>: owner/repo#/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#/team/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#/team",
+    "syntaxError": "GitHub rulebook sources must be owner/repo#ref/<rulebook-name>: owner/repo#/team",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#bad ref/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "GitHub rulebook refs must use valid path segments: owner/repo#bad ref/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#bad ref/team/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#bad ref/team",
+    "syntaxError": "GitHub rulebook refs must use valid path segments: owner/repo#bad ref/team",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: github:owner/repo#main/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid rulebook source: github:owner/repo#main/team",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/github:owner/repo#main/team/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "github:owner/repo#main/team",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: github:owner/repo#main/team",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: gh:x",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: gh:x",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/gh:x/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "gh:x",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: gh:x",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: owner/repo",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": true,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo/rulebook.json",
+    "repositorySource": true,
+    "rulebookSource": false,
+    "spec": "owner/repo",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: https://github.com/o/r",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "error": {
+        "message": "Invalid GitHub rulebook source: https://github.com/o/r",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/https://github.com/o/r/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": false,
+    "spec": "https://github.com/o/r",
+    "syntaxError": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: https://github.com/o/r",
+  },
+  {
+    "bareName": {
+      "error": {
+        "message": "Local rulebook sources must be bare names matching /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/: owner/repo#main/team/extra",
+        "name": "Error",
+      },
+      "ok": false,
+    },
+    "parsed": {
+      "ok": true,
+      "value": {
+        "name": "extra",
+        "owner": "owner",
+        "path": ".cc-safety-net/rules/extra/rulebook.json",
+        "ref": "main/team",
+        "repo": "repo",
+      },
+    },
+    "ref": false,
+    "repositoryPath": ".cc-safety-net/rules/owner/repo#main/team/extra/rulebook.json",
+    "repositorySource": false,
+    "rulebookSource": true,
+    "spec": "owner/repo#main/team/extra",
+    "syntaxError": null,
+  },
+]
+`;
+
+exports[`rulebook source syntax parity the vendored rulebook path pattern is the same pattern 1`] = `
+{
+  "flags": "",
+  "source": "^\\.cc-safety-net\\/rules\\/([a-zA-Z][a-zA-Z0-9_-]{0,63})\\/rulebook\\.json$",
+}
+`;
+
+exports[`transparent wrapper vocabulary parity reserved names and interpreter names agree with the analyzer 1`] = `
+[
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": true,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": true,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+  {
+    "interpreter": false,
+    "reserved": false,
+  },
+]
+`;
+
+exports[`rulebook acceptance limit parity the limit tables and messages are the shipped ones 1`] = `
+{
+  "limitError": "Rulebook exceeds CC Safety Net's safe validation limits.",
+  "limits": {
+    "maxAggregateStringCodeUnits": 4194304,
+    "maxAllowedCommands": 1024,
+    "maxBlockArgsPerRule": 1024,
+    "maxFixtureCommandCodeUnits": 131072,
+    "maxRules": 1024,
+    "maxStringCodeUnits": 1048576,
+    "maxTests": 2048,
+    "maxTotalBlockArgs": 16384,
+    "maxValidationErrors": 64,
+  },
+  "sourceLimit": 64,
+  "sourceLimitError": "Rule config exceeds CC Safety Net's safe source limit.",
+  "truncated": "Additional rulebook validation errors were omitted.",
+}
+`;

@@ -10,4 +10,5 @@ import { RULE_DOC as SHIPPED_RULE_DOC } from '@/cli/rule/doc';
 
 test('the rulebook reference is the shipped document, byte for byte', () => {
   expect(RULE_DOC).toBe(SHIPPED_RULE_DOC);
+  expect(RULE_DOC).toMatchSnapshot();
 });

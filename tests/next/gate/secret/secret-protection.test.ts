@@ -25,6 +25,7 @@ import {
   FUZZ_SEED,
   fuzzShellSources,
 } from '../../helpers/shell-inputs';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The ported matcher must reach the same verdict as the shipped one for every carrier the
@@ -444,6 +445,7 @@ describe('secret protection through the shell', () => {
       for (const mode of MODES) {
         const pair = commandPair(command, mode);
         expect(pair.ported, `${JSON.stringify(mode)} ${command}`).toStrictEqual(pair.shipped);
+        recordPorted(pair.ported, rootFolds(fixture));
       }
     }
   });
@@ -515,21 +517,20 @@ describe('secret protection through the shell', () => {
   });
 
   test('the corpus commands and the seeded fuzz agree with the shipped matcher', () => {
-    const corpusWalk = corpusCommands().flatMap((command) => {
-      const pair = commandPair(command, { strict: false });
+    /** The command, when the shared walk decides it differently; nothing once both agreed. */
+    const divergences = (command: string, mode: { readonly strict?: boolean }) => {
+      const pair = commandPair(command, mode);
       const divergence = trackedCwdDivergence(command, pair);
       if (divergence !== null) return [divergence];
       expect(pair.ported, command).toStrictEqual(pair.shipped);
+      recordPorted(pair.ported, rootFolds(fixture));
       return [];
-    });
+    };
+    const corpusWalk = corpusCommands().flatMap((command) =>
+      divergences(command, { strict: false }),
+    );
     const fuzzWalk = fuzzShellSources(400, FUZZ_SEED).flatMap((command) =>
-      MODES.flatMap((mode) => {
-        const pair = commandPair(command, mode);
-        const divergence = trackedCwdDivergence(command, pair);
-        if (divergence !== null) return [divergence];
-        expect(pair.ported, command).toStrictEqual(pair.shipped);
-        return [];
-      }),
+      MODES.flatMap((mode) => divergences(command, mode)),
     );
     // The one input the shared guard walk decides differently, and nothing the fuzz reaches.
     expect([...new Set(corpusWalk)]).toStrictEqual(['cd ~ && cat .ssh/config']);
@@ -544,6 +545,7 @@ describe('secret protection through tool inputs', () => {
       expect(pair.ported, `${row.route.kind}: ${JSON.stringify(row.input)}`).toStrictEqual(
         pair.shipped,
       );
+      recordPorted(pair.ported, rootFolds(fixture));
     }
   });
 
@@ -583,6 +585,7 @@ describe('secret protection through tool inputs', () => {
         const divergence = command === undefined ? null : trackedCwdDivergence(command, pair);
         if (divergence !== null) return [divergence];
         expect(pair.ported, `${row.toolName} ${route.kind}`).toStrictEqual(pair.shipped);
+        recordPorted(pair.ported, rootFolds(fixture));
         return [];
       });
     });
@@ -597,9 +600,11 @@ describe('secret protection policy paths', () => {
       for (const target of sensitiveTargetSamples()) {
         const pair = pathPair([target], config);
         expect(pair.ported, `${JSON.stringify(config)} ${target}`).toStrictEqual(pair.shipped);
+        recordPorted(pair.ported, rootFolds(fixture));
       }
       const all = pathPair(sensitiveTargetSamples(), config);
       expect(all.ported, JSON.stringify(config)).toStrictEqual(all.shipped);
+      recordPorted(all.ported, rootFolds(fixture));
     }
   });
 
@@ -658,6 +663,7 @@ describe('secret protection policy paths', () => {
     for (const word of words) {
       const pair = pathPair([word]);
       expect(pair.ported, word).toStrictEqual(pair.shipped);
+      recordPorted(pair.ported, rootFolds(fixture));
     }
   });
 });

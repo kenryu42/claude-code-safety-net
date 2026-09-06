@@ -1,0 +1,1287 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`reading the installed OpenClaw plugin finds an enabled install of the running version 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": undefined,
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin reports an install stamped with another version as outdated 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "Installed OpenClaw plugin is outdated; run install --openclaw to update",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: 1.0.0
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin follows OPENCLAW_CONFIG_PATH to the state directory beside it 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/elsewhere/extensions/cc-safety-net",
+      "errors": undefined,
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "elsewhere",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "elsewhere/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "elsewhere/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "elsewhere/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "elsewhere/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "elsewhere/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": "elsewhere/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin refuses to call a home that never installed the plugin an install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "platform": "openclaw",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin refuses to call a symlink standing in for the extension directory an install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "<home>/.openclaw/extensions/cc-safety-net is a symlink or not a directory; move or remove it before installing",
+      ],
+      "platform": "openclaw",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "symlink",
+      "mode": 511,
+      "path": ".openclaw/extensions/cc-safety-net",
+      "target": "../../elsewhere",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin refuses to call an install whose manifest is gone an install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "openclaw.plugin.json is missing from <home>/.openclaw/extensions/cc-safety-net/openclaw.plugin.json; run install --openclaw",
+        "package.json is missing from <home>/.openclaw/extensions/cc-safety-net/package.json; run install --openclaw",
+      ],
+      "platform": "openclaw",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin refuses to call a manifest claiming another plugin an install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "<home>/.openclaw/extensions/cc-safety-net/openclaw.plugin.json is not a valid cc-safety-net manifest; run install --openclaw",
+      ],
+      "platform": "openclaw",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": "{"id":"other"}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin refuses to call a package manifest that points OpenClaw nowhere an install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "<home>/.openclaw/extensions/cc-safety-net/package.json does not point OpenClaw at index.js; run install --openclaw",
+      ],
+      "platform": "openclaw",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": "{"name":"cc-safety-net"}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading the installed OpenClaw plugin refuses to call an entry file without our header an install 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "Unmanaged index.js occupies <home>/.openclaw/extensions/cc-safety-net/index.js; move or remove it",
+      ],
+      "platform": "openclaw",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports a config that is not there as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "cc-safety-net is not enabled; run \`openclaw plugins enable cc-safety-net\`",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports a config it cannot parse as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "Failed to read <home>/.openclaw/openclaw.json; fix it, then run \`openclaw plugins enable cc-safety-net\`",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{ not json",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports the global plugin switch turned off as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "plugins.enabled is false in <home>/.openclaw/openclaw.json; no OpenClaw plugin loads",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"enabled":false,"entries":{"cc-safety-net":{"enabled":true}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports a deny list naming the plugin as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "cc-safety-net is disabled in <home>/.openclaw/openclaw.json; run \`openclaw plugins enable cc-safety-net\`",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"deny":["cc-safety-net"],"allow":["cc-safety-net"]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports a per-plugin entry turned off as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "cc-safety-net is disabled in <home>/.openclaw/openclaw.json; run \`openclaw plugins enable cc-safety-net\`",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":false}}}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports an allow list without the plugin as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "plugins.allow in <home>/.openclaw/openclaw.json does not list cc-safety-net; add it, then run \`openclaw plugins enable cc-safety-net\`",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"allow":["x"]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reports a config that mentions no plugin at all as disabled with the reason 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": [
+        "cc-safety-net is not enabled; run \`openclaw plugins enable cc-safety-net\`",
+      ],
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "disabled",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reads an allow list naming the plugin as enabled 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": undefined,
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": "{"plugins":{"allow":["cc-safety-net"]}}",
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`reading whether OpenClaw would load the plugin reads comments around the entry that enables it as enabled 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.openclaw/extensions/cc-safety-net",
+      "errors": undefined,
+      "method": "plugin directory",
+      "platform": "openclaw",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".openclaw/extensions/cc-safety-net",
+    },
+    {
+      "content": 
+"// cc-safety-net managed OpenClaw plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --openclaw
+// version: dev
+export default {};
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/index.js",
+    },
+    {
+      "content": 
+"{
+  "id": "cc-safety-net"
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
+    },
+    {
+      "content": 
+"{
+  "openclaw": { "extensions": ["./index.js"] }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/extensions/cc-safety-net/package.json",
+    },
+    {
+      "content": 
+"{
+  // our plugin
+  "plugins": { "entries": { "cc-safety-net": { "enabled": true } } }
+}"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".openclaw/openclaw.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`comparing an install against the packaged copy names the file an edited install would have to restore 1`] = `
+[
+  "Modified openclaw.plugin.json occupies <root>/installed/openclaw.plugin.json; run install --openclaw to restore it",
+]
+`;
+
+exports[`comparing an install against the packaged copy compares nothing when the packaged copy is from another release 1`] = `[]`;

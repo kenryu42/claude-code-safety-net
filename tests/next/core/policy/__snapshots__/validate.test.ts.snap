@@ -1,0 +1,780 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 1`] = `
+{
+  "document": "{"version":1}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 2`] = `
+{
+  "document": "{"version":1,"rules":[],"overrides":{},"transparent_wrappers":[]}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 3`] = `
+{
+  "document": "{"$schema":"./rule.schema.json","version":1,"rules":["infra-rules","acme/guardrails#main/deploy-rules"],"overrides":{"infra-rules/block-force-push":"off","infra-rules/block-reset":{"reason":"Ask the release owner first.","intent":"manual_only"}},"transparent_wrappers":["rtk","pnpm"],"editor_hint":tr",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 4`] = `
+{
+  "document": "{"$schema":42,"version":1,"rules":["infra-rules"]}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 5`] = `
+{
+  "document": "{"$schema":{"editor":"zed"},"version":1}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 6`] = `
+{
+  "document": "{"$schema":null,"version":1,"rules":["acme/guardrails#main/deploy-rules"]}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 7`] = `
+{
+  "document": "{}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 8`] = `
+{
+  "document": "{"version":2,"rules":["infra-rules"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 9`] = `
+{
+  "document": "{"version":1,"rules":"infra-rules"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 10`] = `
+{
+  "document": "{"version":1,"rules":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 11`] = `
+{
+  "document": "{"version":1,"rules":{"name":"infra-rules"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 12`] = `
+{
+  "document": "{"version":1,"rules":[7]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 13`] = `
+{
+  "document": "{"version":1,"rules":[""]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 14`] = `
+{
+  "document": "{"version":1,"rules":["   "]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 15`] = `
+{
+  "document": "{"version":1,"rules":["not a source!"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 16`] = `
+{
+  "document": "{"version":1,"rules":["infra-rules","infra-rules","infra-rules"," infra-rules"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 17`] = `
+{
+  "document": "{"version":1,"rules":["acme/guardrails#"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 18`] = `
+{
+  "document": "{"version":1,"rules":["acme/guardrails#main/deploy-rules","acme/guardrails#main/deploy-rules"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 19`] = `
+{
+  "document": "{"version":1,"rules":["bulk-rules-0","bulk-rules-1","bulk-rules-2","bulk-rules-3","bulk-rules-4","bulk-rules-5","bulk-rules-6","bulk-rules-7","bulk-rules-8","bulk-rules-9","bulk-rules-10","bulk-rules-11","bulk-rules-12","bulk-rules-13","bulk-rules-14","bulk-rules-15","bulk-rules-16","bulk-rules-17",",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 20`] = `
+{
+  "document": "{"version":1,"rules":["bulk-rules-0","bulk-rules-1","bulk-rules-2","bulk-rules-3","bulk-rules-4","bulk-rules-5","bulk-rules-6","bulk-rules-7","bulk-rules-8","bulk-rules-9","bulk-rules-10","bulk-rules-11","bulk-rules-12","bulk-rules-13","bulk-rules-14","bulk-rules-15","bulk-rules-16","bulk-rules-17",",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 21`] = `
+{
+  "document": "{"version":1,"rules":["bulk-rules-0","bulk-rules-1","bulk-rules-2","bulk-rules-3","bulk-rules-4","bulk-rules-5","bulk-rules-6","bulk-rules-7","bulk-rules-8","bulk-rules-9","bulk-rules-10","bulk-rules-11","bulk-rules-12","bulk-rules-13","bulk-rules-14","bulk-rules-15","bulk-rules-16","bulk-rules-17",",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 22`] = `
+{
+  "document": "{"version":1,"overrides":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 23`] = `
+{
+  "document": "{"version":1,"overrides":[]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 24`] = `
+{
+  "document": "{"version":1,"overrides":"off"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 25`] = `
+{
+  "document": "{"version":1,"overrides":{"a/b":true,"a/c":[],"a/d":{},"a/e":"on","a/f":{"reason":5},"a/g":{"reason":"ok","intent":null},"a/h":{"reason":"ok","extra":1}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 26`] = `
+{
+  "document": "{"version":1,"overrides":{"a/i":{"reason":""},"a/j":{"reason":"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 27`] = `
+{
+  "document": "{"version":1,"overrides":{"a/m":{"reason":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 28`] = `
+{
+  "document": "{"version":1,"overrides":{"a/k":{"reason":"ok","intent":"scope_down"}}}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 29`] = `
+{
+  "document": "{"version":1,"overrides":{"plain":"off","too/many/slashes":"off","/leading":"off"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 30`] = `
+{
+  "document": "{"version":1,"overrides":{"a/l":null}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 31`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 32`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":"rtk"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 33`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":[5]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 34`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":[""]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 35`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":["not a wrapper"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 36`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":["git"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 37`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":["python3","awk","busybox"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 38`] = `
+{
+  "document": "{"version":1,"transparent_wrappers":["rtk","rtk","rtk"]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 39`] = `
+{
+  "document": "{"version":2,"rules":["infra-rules",""],"overrides":{"nope":{"reason":""}},"transparent_wrappers":["bash",5]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 40`] = `
+{
+  "document": "null",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 41`] = `
+{
+  "document": "[]",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 42`] = `
+{
+  "document": ""rules"",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 43`] = `
+{
+  "document": "0",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 44`] = `
+{
+  "document": "{"version":1}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 45`] = `
+{
+  "document": "{"version":1,"safety":{"level":"strict","overrides":{"fail_closed":true,"paranoid_rm":false,"paranoid_interpreters":true}},"workflow":{"worktree_mode":true},"destructive_command_protection":{"enabled":true,"overrides":{"git.checkout-force":"off","git.alias-config":"on"},"allow_paths":["/srv/scratch"",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 46`] = `
+{
+  "document": "{"version":1,"safety":{"level":"standard"}}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 47`] = `
+{
+  "document": "{"version":1,"safety":{"level":"paranoid","overrides":{}}}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 48`] = `
+{
+  "document": "{}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 49`] = `
+{
+  "document": "{"version":2}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 50`] = `
+{
+  "document": "{"version":"1"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 51`] = `
+{
+  "document": "{"version":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 52`] = `
+{
+  "document": "{"version":1,"safety":"strict"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 53`] = `
+{
+  "document": "{"version":1,"safety":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 54`] = `
+{
+  "document": "{"version":1,"safety":[]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 55`] = `
+{
+  "document": "{"version":1,"safety":{"level":"lenient"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 56`] = `
+{
+  "document": "{"version":1,"safety":{"level":null,"overrides":null}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 57`] = `
+{
+  "document": "{"version":1,"safety":{"level":"strict","overrides":[]}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 58`] = `
+{
+  "document": "{"version":1,"safety":{"level":"strict","overrides":{"fail_closed":"yes"}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 59`] = `
+{
+  "document": "{"version":1,"safety":{"overrides":{"paranoid_rm":1,"paranoid_interpreters":null,"tighten":true}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 60`] = `
+{
+  "document": "{"version":1,"safety":{"level":"strict","tier":"gold"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 61`] = `
+{
+  "document": "{"version":1,"workflow":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 62`] = `
+{
+  "document": "{"version":1,"workflow":[]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 63`] = `
+{
+  "document": "{"version":1,"workflow":{"worktree_mode":"on","branch":"main"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 64`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 65`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":[]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 66`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":{"enabled":"true"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 67`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":{"overrides":null}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 68`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":{"overrides":{"git.no-such-rule":"on","git.alias-config":1}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 69`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":{"allow_paths":"/srv"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 70`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":{"allow_paths":["   ",42,"relative/dir","~","/"]}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 71`] = `
+{
+  "document": "{"version":1,"destructive_command_protection":{"allow_paths":["$HOME/scratch"],"keep":true}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 72`] = `
+{
+  "document": "{"version":1,"secret_protection":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 73`] = `
+{
+  "document": "{"version":1,"secret_protection":[]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 74`] = `
+{
+  "document": "{"version":1,"secret_protection":{"enabled":[],"overrides":"off"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 75`] = `
+{
+  "document": "{"version":1,"secret_protection":{"overrides":{"secret.nope":"off","secret.basename.env":[]}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 76`] = `
+{
+  "document": "{"version":1,"secret_protection":{"deny_paths":{"path":"~"}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 77`] = `
+{
+  "document": "{"version":1,"secret_protection":{"deny_paths":["~","/","\${HOME}","  ",null]}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 78`] = `
+{
+  "document": "{"version":1,"secret_protection":{"allow_paths":["~/**/config","~/.cc-safety-net/policy.json"]}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 79`] = `
+{
+  "document": "{"version":1,"secret_protection":{"allow_paths":["$HOME"],"deny_paths":["$HOME/keys"]}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 80`] = `
+{
+  "document": "{"version":1,"audit":null}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 81`] = `
+{
+  "document": "{"version":1,"audit":[]}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 82`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":0}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 83`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":1}}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 84`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":365}}",
+  "result": true,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 85`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":366}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 86`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":1.5}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 87`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":"5"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 88`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":null}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 89`] = `
+{
+  "document": "{"version":1,"audit":{"retention_days":30,"scope":"blocked"}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 90`] = `
+{
+  "document": "{"version":1,"telemetry":true,"notes":"ignored"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 91`] = `
+{
+  "document": "{"version":1,"secret_protection":{"deny_paths":["~"],"allow_paths":[1],"enabled":"x","extra":1},"destructive_command_protection":{"allow_paths":["relative"],"overrides":{"git.checkout-force":"maybe"}}}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 92`] = `
+{
+  "document": "{"version":0,"safety":{"level":3,"overrides":{"fail_closed":"no"}},"workflow":{"worktree_mode":[]},"destructive_command_protection":{"enabled":null,"allow_paths":[null]},"secret_protection":{"enabled":1,"deny_paths":"none"},"audit":{"retention_days":-1},"stray":"field"}",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 93`] = `
+{
+  "document": "null",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 94`] = `
+{
+  "document": "[]",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 95`] = `
+{
+  "document": "["version"]",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 96`] = `
+{
+  "document": ""policy"",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 97`] = `
+{
+  "document": "42",
+  "result": false,
+}
+`;
+
+exports[`the ported schema accepts and rejects the same documents as the shipped one 98`] = `
+{
+  "document": "true",
+  "result": false,
+}
+`;
+
+exports[`the ported schema generates the shipped rule config JSON schema 1`] = `
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": {},
+  "properties": {
+    "$schema": {
+      "description": "JSON Schema reference for IDE support",
+    },
+    "overrides": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "const": "off",
+            "type": "string",
+          },
+          {
+            "additionalProperties": {},
+            "properties": {
+              "intent": {
+                "enum": [
+                  "hard_stop",
+                  "use_alternative",
+                  "scope_down",
+                  "manual_only",
+                  "stop_and_explain",
+                ],
+                "type": "string",
+              },
+              "reason": {
+                "description": "Replacement block reason",
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string",
+              },
+            },
+            "required": [
+              "reason",
+            ],
+            "type": "object",
+          },
+        ],
+        "description": "Disable a rule or replace its block reason and intent.",
+      },
+      "default": {},
+      "description": "Rule overrides by id",
+      "propertyNames": {
+        "pattern": "^[^/]+\\/[^/]+$",
+        "type": "string",
+      },
+      "type": "object",
+    },
+    "rules": {
+      "default": [],
+      "description": "Rulebook source strings such as project-rules or owner/repo#main/team-rules",
+      "items": {
+        "minLength": 1,
+        "type": "string",
+      },
+      "maxItems": 64,
+      "type": "array",
+    },
+    "transparent_wrappers": {
+      "default": [],
+      "description": "Commands that transparently execute a visible protected child command",
+      "items": {
+        "description": "Command name such as 'git', 'docker', or 'rtk'.",
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+        "type": "string",
+      },
+      "type": "array",
+    },
+    "version": {
+      "const": 1,
+      "description": "Schema version (must be 1)",
+      "type": "number",
+    },
+  },
+  "required": [
+    "version",
+  ],
+  "type": "object",
+  "~standard": {
+    "jsonSchema": {
+      "input": [Function],
+      "output": [Function],
+    },
+    "validate": [Function],
+    "vendor": "zod",
+    "version": 1,
+  },
+}
+`;

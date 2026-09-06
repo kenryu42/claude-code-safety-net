@@ -1,0 +1,108 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the library API answers one input the same way on both implementations a null input 1`] = `
+{
+  "thrown": "TypeError: checkCommand requires an input object with command and cwd",
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations an input that is a string 1`] = `
+{
+  "thrown": "TypeError: checkCommand requires an input object with command and cwd",
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations an input with no command at all 1`] = `
+{
+  "thrown": "TypeError: command must be a non-empty string",
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a blank command 1`] = `
+{
+  "thrown": "TypeError: command must be a non-empty string",
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a relative cwd 1`] = `
+{
+  "thrown": "TypeError: cwd must be an absolute directory path",
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations an empty cwd 1`] = `
+{
+  "thrown": "TypeError: cwd must be an absolute directory path",
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a cwd that is a regular file 1`] = `
+{
+  "returned": {
+    "kind": "deny",
+    "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a cwd that does not exist 1`] = `
+{
+  "returned": {
+    "kind": "deny",
+    "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations an allowed command 1`] = `
+{
+  "returned": {
+    "kind": "allow",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a delete that reaches the protected policy config 1`] = `
+{
+  "returned": {
+    "kind": "deny",
+    "reason": "This path contains the protected policy config and you must not modify or delete it.",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a read of a private key 1`] = `
+{
+  "returned": {
+    "kind": "deny",
+    "reason": "Access to a sensitive path is not allowed.",
+    "ruleId": "secret.home.ssh",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a recursive delete from a directory the walk cannot follow 1`] = `
+{
+  "returned": {
+    "kind": "deny",
+    "reason": "rm -rf outside cwd is blocked. Retry deleting only explicit paths inside the current directory; escalate for anything outside it.",
+    "ruleId": "rm.recursive-force-outside-cwd",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a cwd with a trailing separator 1`] = `
+{
+  "returned": {
+    "kind": "allow",
+  },
+}
+`;
+
+exports[`the library API answers one input the same way on both implementations a cwd with a redundant segment 1`] = `
+{
+  "returned": {
+    "kind": "allow",
+  },
+}
+`;

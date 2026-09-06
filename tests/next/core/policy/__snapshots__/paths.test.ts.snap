@@ -1,0 +1,433 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`policy paths parity user config dir from root 1`] = `
+{
+  "localRulebookPath": "<root>/user/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>",
+    "projectTargetPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/user/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/user",
+    "userTargetPath": "<root>/user/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/user/policy.json",
+  "userRulesConfigPath": "<root>/user/rules/rule.json",
+  "userRulesDir": "<root>/user/rules",
+}
+`;
+
+exports[`policy paths parity user config dir from nested 1`] = `
+{
+  "localRulebookPath": "<root>/user/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/user/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/user",
+    "userTargetPath": "<root>/user/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/user/policy.json",
+  "userRulesConfigPath": "<root>/user/rules/rule.json",
+  "userRulesDir": "<root>/user/rules",
+}
+`;
+
+exports[`policy paths parity user config dir from nested with separator 1`] = `
+{
+  "localRulebookPath": "<root>/user/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/user/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/user",
+    "userTargetPath": "<root>/user/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/user/policy.json",
+  "userRulesConfigPath": "<root>/user/rules/rule.json",
+  "userRulesDir": "<root>/user/rules",
+}
+`;
+
+exports[`policy paths parity user config path from root 1`] = `
+{
+  "localRulebookPath": "<root>/custom/home/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>",
+    "projectTargetPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/custom/home/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/custom/home",
+    "userTargetPath": "<root>/custom/home/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/custom/home/policy.json",
+  "userRulesConfigPath": "<root>/custom/home/rules/rule.json",
+  "userRulesDir": "<root>/custom/home/rules",
+}
+`;
+
+exports[`policy paths parity user config path from nested 1`] = `
+{
+  "localRulebookPath": "<root>/custom/home/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/custom/home/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/custom/home",
+    "userTargetPath": "<root>/custom/home/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/custom/home/policy.json",
+  "userRulesConfigPath": "<root>/custom/home/rules/rule.json",
+  "userRulesDir": "<root>/custom/home/rules",
+}
+`;
+
+exports[`policy paths parity user config path from nested with separator 1`] = `
+{
+  "localRulebookPath": "<root>/custom/home/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/custom/home/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/custom/home",
+    "userTargetPath": "<root>/custom/home/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/custom/home/policy.json",
+  "userRulesConfigPath": "<root>/custom/home/rules/rule.json",
+  "userRulesDir": "<root>/custom/home/rules",
+}
+`;
+
+exports[`policy paths parity project config under cwd from root 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/config/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>",
+    "projectTargetPath": "<root>/config/rules/rule.json",
+    "projectTargetRelativePath": "config/rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity project config under cwd from nested 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/config/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/config/rules/rule.json",
+    "projectTargetRelativePath": "config/rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity project config under cwd from nested with separator 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/config/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/config/rules/rule.json",
+    "projectTargetRelativePath": "config/rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity project config outside cwd from root 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<outside>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<outside>/.cc-safety-net",
+    "projectTargetPath": "<outside>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": "rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity project config outside cwd from nested 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<outside>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<outside>/.cc-safety-net",
+    "projectTargetPath": "<outside>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": "rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity project config outside cwd from nested with separator 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<outside>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<outside>/.cc-safety-net",
+    "projectTargetPath": "<outside>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": "rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity safety net home set from root 1`] = `
+{
+  "localRulebookPath": "<root>/sn-home/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>",
+    "projectTargetPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/sn-home/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/sn-home",
+    "userTargetPath": "<root>/sn-home/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/sn-home/policy.json",
+  "userRulesConfigPath": "<root>/sn-home/rules/rule.json",
+  "userRulesDir": "<root>/sn-home/rules",
+}
+`;
+
+exports[`policy paths parity safety net home set from nested 1`] = `
+{
+  "localRulebookPath": "<root>/sn-home/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/sn-home/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/sn-home",
+    "userTargetPath": "<root>/sn-home/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/sn-home/policy.json",
+  "userRulesConfigPath": "<root>/sn-home/rules/rule.json",
+  "userRulesDir": "<root>/sn-home/rules",
+}
+`;
+
+exports[`policy paths parity safety net home set from nested with separator 1`] = `
+{
+  "localRulebookPath": "<root>/sn-home/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<root>/sn-home/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<root>/sn-home",
+    "userTargetPath": "<root>/sn-home/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<root>/sn-home/policy.json",
+  "userRulesConfigPath": "<root>/sn-home/rules/rule.json",
+  "userRulesDir": "<root>/sn-home/rules",
+}
+`;
+
+exports[`policy paths parity safety net home unset from root 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>",
+    "projectTargetPath": "<root>/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity safety net home unset from nested 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;
+
+exports[`policy paths parity safety net home unset from nested with separator 1`] = `
+{
+  "localRulebookPath": "<home>/.cc-safety-net/rules/team-rules/rulebook.json",
+  "policyPaths": {
+    "projectConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectScopeLabel": "project policy",
+    "projectScopeRoot": "<root>/workspaces/app",
+    "projectTargetPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+    "projectTargetRelativePath": ".cc-safety-net/rules/rule.json",
+    "userConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userScopeLabel": "user policy",
+    "userScopeRoot": "<home>/.cc-safety-net",
+    "userTargetPath": "<home>/.cc-safety-net/rules/rule.json",
+    "userTargetRelativePath": "rules/rule.json",
+  },
+  "projectPolicyPath": "<root>/workspaces/app/.cc-safety-net/policy.json",
+  "projectRulesConfigPath": "<root>/workspaces/app/.cc-safety-net/rules/rule.json",
+  "projectRulesDir": "<root>/workspaces/app/.cc-safety-net/rules",
+  "userPolicyPath": "<home>/.cc-safety-net/policy.json",
+  "userRulesConfigPath": "<home>/.cc-safety-net/rules/rule.json",
+  "userRulesDir": "<home>/.cc-safety-net/rules",
+}
+`;

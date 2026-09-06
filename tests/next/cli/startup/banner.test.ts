@@ -115,6 +115,7 @@ describe('cli/startup/banner', () => {
   test('a rejection propagates and still restores the cursor on both implementations', async () => {
     const ported = await driveSpinner(portedAwaitWithSpinner, { frames: 2, fail: true });
     expect(ported).toEqual(await driveSpinner(shippedAwaitWithSpinner, { frames: 2, fail: true }));
+    expect(ported).toMatchSnapshot();
     expect(ported.outcome).toEqual({ kind: 'threw', message: 'startup failed' });
     expect(ported.chunks.at(-1)).toBe(`${CLEAR_LINE}${SHOW_CURSOR}`);
   });

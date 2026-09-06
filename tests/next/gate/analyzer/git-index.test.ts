@@ -18,6 +18,7 @@ import {
 import { resolveEffectiveDestructiveCommandRules as shippedResolveRules } from '@/rules/destructive-command-rules';
 import { createLinkedWorktreeFixture, withLinkedWorktreeFixture } from '../../../helpers';
 import { runGit } from '../../../helpers/git-worktree';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands } from '../../helpers/shell-inputs';
 
 /**
@@ -158,6 +159,7 @@ function gitCorpusArgvs(): readonly (readonly string[])[] {
 describe('next/gate/analyzer/git versus src/analyzer/git', () => {
   // Spawns git once per environment row, so the default per-test timeout is too short.
   test('every Git command decides the same in and out of a linked worktree', () => {
+    const recorded: [string, unknown][] = [];
     const rows = [...GIT_ARGVS, ...gitCorpusArgvs()];
     let matches = 0;
     let relaxations = 0;
@@ -203,15 +205,15 @@ describe('next/gate/analyzer/git versus src/analyzer/git', () => {
                 );
                 expect(detailed.match).toStrictEqual(match);
 
-                expect(
-                  getGitWorktreeRelaxation(tokens, {
-                    ...shared,
-                    environment,
-                    policy: policy?.next,
-                  }),
-                ).toStrictEqual(
+                const relaxation = getGitWorktreeRelaxation(tokens, {
+                  ...shared,
+                  environment,
+                  policy: policy?.next,
+                });
+                expect(relaxation).toStrictEqual(
                   shippedGetRelaxation(tokens, { ...shared, env, policy: policy?.shipped }),
                 );
+                recorded.push([tokens.join(' '), { match, detailed, relaxation }]);
 
                 if (match) matches++;
                 if (detailed.relaxation) relaxations++;
@@ -224,6 +226,7 @@ describe('next/gate/analyzer/git versus src/analyzer/git', () => {
 
     expect(matches).toBeGreaterThan(100);
     expect(relaxations).toBeGreaterThan(10);
+    expectRecordedDigest('analyzer-git-index/every-git-command', recorded, fixture.rootDir);
   }, 60_000);
 
   test('dynamic arguments withhold the relaxation on both sides', () => {
@@ -233,6 +236,7 @@ describe('next/gate/analyzer/git versus src/analyzer/git', () => {
       home: fixture.rootDir,
       paths: processPathResolver,
     });
+    const recorded: [string, unknown][] = [];
     const shared = { cwd: fixture.linkedWorktree, worktreeMode: true };
     let relaxed = 0;
 
@@ -250,6 +254,7 @@ describe('next/gate/analyzer/git versus src/analyzer/git', () => {
             env,
           }),
         );
+        recorded.push([`${tokens.join(' ')} ${dynamicArguments}`, detailed]);
         if (detailed.relaxation) {
           relaxed++;
           expect(dynamicArguments).toBeFalse();
@@ -258,6 +263,7 @@ describe('next/gate/analyzer/git versus src/analyzer/git', () => {
     }
 
     expect(relaxed).toBeGreaterThan(3);
+    expectRecordedDigest('analyzer-git-index/dynamic-arguments', recorded, fixture.rootDir);
   });
 
   // The `-c` rows above stop at the command-line scan; only a repository that sets
@@ -282,6 +288,11 @@ describe('next/gate/analyzer/git versus src/analyzer/git', () => {
       });
       expect(detailed).toStrictEqual(
         shippedAnalyzeDetailed(shippedTextCommandWords(tokens), { ...shared, env }),
+      );
+      expectRecordedDigest(
+        'analyzer-git-index/configured-submodule-recurse',
+        [[tokens.join(' '), detailed]],
+        configured.rootDir,
       );
       expect(detailed.relaxation).toBeNull();
       expect(detailed.match?.id).toBe('git.checkout-double-dash');

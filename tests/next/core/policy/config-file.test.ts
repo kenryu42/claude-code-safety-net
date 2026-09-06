@@ -15,7 +15,9 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   removeTempRoots,
+  rootFolds,
   withProcessEnv,
 } from '../../helpers/temp-home';
 
@@ -88,16 +90,18 @@ describe('the legacy config validator reports what the shipped one reports', () 
 
   test.each(FILES)('validates %s as a rules config the same way', (file) => {
     const root = trees();
-    expect(reported(ported.validateRulesConfigFile(join(root.ported, file)), root.ported)).toEqual(
+    const rules = reported(ported.validateRulesConfigFile(join(root.ported, file)), root.ported);
+    expect(rules).toEqual(
       reported(validateRulesConfigFile(join(root.shipped, file)), root.shipped),
     );
+    expect(rules).toMatchSnapshot();
   });
 
   test.each(FILES)('validates %s as a legacy config the same way', (file) => {
     const root = trees();
-    expect(reported(ported.validateConfigFile(join(root.ported, file)), root.ported)).toEqual(
-      reported(validateConfigFile(join(root.shipped, file)), root.shipped),
-    );
+    const legacy = reported(ported.validateConfigFile(join(root.ported, file)), root.ported);
+    expect(legacy).toEqual(reported(validateConfigFile(join(root.shipped, file)), root.shipped));
+    expect(legacy).toMatchSnapshot();
   });
 
   test('names the same diagnostics for an inline rule of the wrong shape', () => {
@@ -115,15 +119,17 @@ describe('the legacy paths resolve where the shipped ones resolve', () => {
 
   test('the project config sits beside the project directory', () => {
     const root = createTempRoot('config-file-project-');
-    expect(ported.getLegacyProjectConfigPath(root)).toBe(getLegacyProjectConfigPath(root));
+    const path = ported.getLegacyProjectConfigPath(root);
+    expect(path).toBe(getLegacyProjectConfigPath(root));
+    recordPorted(path, rootFolds(root));
   });
 
   test('the user config sits under a relocated safety-net home', () => {
     const home = createTempRoot('config-file-home-');
     const env = isolationEnv(home);
-    expect(ported.getLegacyUserRulesConfigPath(environmentFor(home, env))).toBe(
-      withProcessEnv(env, () => getLegacyUserRulesConfigPath()),
-    );
+    const path = ported.getLegacyUserRulesConfigPath(environmentFor(home, env));
+    expect(path).toBe(withProcessEnv(env, () => getLegacyUserRulesConfigPath()));
+    recordPorted(path, rootFolds(home));
   });
 
   // Without the relocation both sides fall back to the process home, which `os.homedir()` reads
@@ -132,9 +138,9 @@ describe('the legacy paths resolve where the shipped ones resolve', () => {
   test('the user config sits under the default safety-net directory', () => {
     const home = createTempRoot('config-file-home-');
     const env = isolationEnv(home, { CC_SAFETY_NET_HOME: undefined });
-    expect(ported.getLegacyUserRulesConfigPath(environmentFor(homedir(), env))).toBe(
-      withProcessEnv(env, () => getLegacyUserRulesConfigPath()),
-    );
+    const path = ported.getLegacyUserRulesConfigPath(environmentFor(homedir(), env));
+    expect(path).toBe(withProcessEnv(env, () => getLegacyUserRulesConfigPath()));
+    recordPorted(path, [[homedir(), '<home>']]);
   });
 });
 
@@ -150,6 +156,8 @@ describe('the atomic writer leaves the same file behind', () => {
     const value = { version: 1, rules: ['project-rules'], overrides: {} };
     writeJsonAtomic(join(shipped, 'rule.json'), value, mode);
     ported.writeJsonAtomic(join(portedRoot, 'rule.json'), value, mode);
-    expect(snapshotTree(portedRoot)).toEqual(snapshotTree(shipped));
+    const tree = snapshotTree(portedRoot);
+    expect(tree).toEqual(snapshotTree(shipped));
+    expect(tree).toMatchSnapshot();
   });
 });

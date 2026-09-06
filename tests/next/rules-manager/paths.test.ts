@@ -18,7 +18,9 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   removeTempRoots,
+  rootFolds,
   withProcessEnv,
 } from '../helpers/temp-home';
 
@@ -121,9 +123,9 @@ describe('getScopePaths resolves the scope the shipped module resolves', () => {
     const portedScope = scopeOf(
       getScopePaths(environmentFor(ported.home, ported.values), row.options(ported.root)),
     );
-    expect(normalize(portedScope, [[ported.root, '<root>']])).toEqual(
-      normalize(shippedScope, [[shipped.root, '<root>']]),
-    );
+    const scope = normalize(portedScope, [[ported.root, '<root>']]);
+    expect(scope).toEqual(normalize(shippedScope, [[shipped.root, '<root>']]));
+    expect(scope).toMatchSnapshot();
   });
 
   test('an omitted working directory falls back to the process one', () => {
@@ -134,57 +136,64 @@ describe('getScopePaths resolves the scope the shipped module resolves', () => {
     const portedScope = withCwd(ported.project, () =>
       scopeOf(getScopePaths(environmentFor(ported.home, ported.values), {})),
     );
-    expect(normalize(portedScope, [[ported.root, '<root>']])).toEqual(
-      normalize(shippedScope, [[shipped.root, '<root>']]),
-    );
+    const scope = normalize(portedScope, [[ported.root, '<root>']]);
+    expect(scope).toEqual(normalize(shippedScope, [[shipped.root, '<root>']]));
     expect(portedScope.configPath).toBe(
       join(ported.project, '.cc-safety-net', 'rules', 'rule.json'),
     );
+    expect(scope).toMatchSnapshot();
   });
 });
 
 describe('the retired lock and legacy paths resolve where the shipped ones resolve', () => {
   test('the user lockfile follows the relocated safety-net home', () => {
     const { shipped, ported } = sides('lock-user');
-    expect(getUserRulesLockPath(environmentFor(ported.home, ported.values))).toBe(
+    const lock = getUserRulesLockPath(environmentFor(ported.home, ported.values));
+    expect(lock).toBe(
       withProcessEnv(shipped.values, () => shippedUserRulesLockPath()).replace(
         shipped.root,
         ported.root,
       ),
     );
+    recordPorted(lock, rootFolds(ported.root));
   });
 
   test('an explicit user config directory moves the user lockfile', () => {
     const { shipped, ported } = sides('lock-user-dir');
     const options = (root: string) => ({ userConfigDir: join(root, 'elsewhere', 'rules') });
-    expect(
-      getUserRulesLockPath(environmentFor(ported.home, ported.values), options(ported.root)),
-    ).toBe(
+    const lock = getUserRulesLockPath(
+      environmentFor(ported.home, ported.values),
+      options(ported.root),
+    );
+    expect(lock).toBe(
       withProcessEnv(shipped.values, () => shippedUserRulesLockPath(options(shipped.root))).replace(
         shipped.root,
         ported.root,
       ),
     );
+    recordPorted(lock, rootFolds(ported.root));
   });
 
   test('the project lockfile sits beside the project rule config', () => {
     const root = createTempRoot('lock-project-');
-    expect(getProjectRulesLockPath(join(root, 'project'))).toBe(
-      shippedProjectRulesLockPath(join(root, 'project')),
-    );
+    const lock = getProjectRulesLockPath(join(root, 'project'));
+    expect(lock).toBe(shippedProjectRulesLockPath(join(root, 'project')));
+    recordPorted(lock, rootFolds(root));
   });
 
   test('the legacy project config sits at the working directory root', () => {
     const root = createTempRoot('legacy-project-');
-    expect(getLegacyProjectRulesConfigPath({ cwd: join(root, 'project') })).toBe(
-      shippedLegacyProjectRulesConfigPath({ cwd: join(root, 'project') }),
-    );
+    const legacy = getLegacyProjectRulesConfigPath({ cwd: join(root, 'project') });
+    expect(legacy).toBe(shippedLegacyProjectRulesConfigPath({ cwd: join(root, 'project') }));
+    recordPorted(legacy, rootFolds(root));
   });
 
   test('an omitted working directory falls back to the process one for the legacy config', () => {
     const root = createTempRoot('legacy-project-cwd-');
-    expect(withCwd(join(root, 'project'), () => getLegacyProjectRulesConfigPath())).toBe(
+    const legacy = withCwd(join(root, 'project'), () => getLegacyProjectRulesConfigPath());
+    expect(legacy).toBe(
       withCwd(join(root, 'project'), () => shippedLegacyProjectRulesConfigPath()),
     );
+    recordPorted(legacy, rootFolds(root));
   });
 });

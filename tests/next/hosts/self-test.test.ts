@@ -39,6 +39,7 @@ describe('the engine self-test', () => {
     };
 
     expect(ported).toStrictEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.summary.passed).toBe(3);
     expect(ported.summary.failed).toBe(0);
     expect(ported.summary.results.map((result) => result.ruleId)).toEqual([

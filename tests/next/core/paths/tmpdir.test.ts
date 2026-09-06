@@ -1,9 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import * as next from '@next/core/paths/tmpdir';
 import * as shipped from '@/analyzer/tmpdir';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
+import { normalize, rootFolds } from '../../helpers/temp-home';
 import { corpusWords, pairedEnvironments, pickWord, seededRandom } from '../differential-inputs';
 
 const IFS_VALUES = [undefined, '', ' \t\n', ':', 'x'];
@@ -30,6 +32,18 @@ const FRAGMENTS = [
 let root = '';
 let outside = '';
 
+/**
+ * Every machine-specific temp path a recorded value carries: the two fixture roots, under their
+ * own names. The host's temp directory itself is not folded — it is `/tmp` here and
+ * `/var/folders/…` on a macOS runner, so folding it would rewrite every literal `/tmp…` row of the
+ * table on one host and none of them on the other.
+ */
+const tmpdirFolds = () => [
+  [realpathSync(outside), '<outside>'] as const,
+  [outside, '<outside>'] as const,
+  ...rootFolds(root),
+];
+
 function tmpdirValues(): (string | undefined)[] {
   return [
     undefined,
@@ -55,8 +69,6 @@ function tmpdirValues(): (string | undefined)[] {
     '/tmp/?',
     '/tmp/[a]',
     '/tmp\0x',
-    tmpdir(),
-    join(tmpdir(), 'x'),
     root,
     join(root, 'escape'),
     join(root, 'escape', 'x'),
@@ -67,37 +79,44 @@ function tmpdirValues(): (string | undefined)[] {
   ];
 }
 
+/** The six answers for one row, each proven equal to the shipped one, ready to be recorded. */
 function compare(
   envValue: string | undefined,
   assigned: string | undefined,
   ifs: string | undefined,
-): void {
+): readonly [string, unknown] {
   const env = {
     ...(envValue === undefined ? {} : { TMPDIR: envValue }),
     ...(ifs === undefined ? {} : { IFS: ifs }),
   };
   const pair = pairedEnvironments(env, '/srv/home/tester');
   const assignments = new Map(assigned === undefined ? [] : [['TMPDIR', assigned]]);
-  expect(next.isTmpdirOverriddenToNonTemp(assignments, pair.next)).toBe(
-    shipped.isTmpdirOverriddenToNonTemp(assignments, pair.shipped),
-  );
-  expect(next.isTmpdirValueTrusted(assignments, pair.next)).toBe(
-    shipped.isTmpdirValueTrusted(assignments, pair.shipped),
-  );
-  expect(next.getEffectiveTmpdirValue(assignments, pair.next)).toBe(
-    shipped.getEffectiveTmpdirValue(assignments, pair.shipped),
-  );
-  expect(next.hasUnsafeTmpdirWordSplitting(assignments, pair.next)).toBe(
-    shipped.hasUnsafeTmpdirWordSplitting(assignments, pair.shipped),
-  );
+  const overridden = next.isTmpdirOverriddenToNonTemp(assignments, pair.next);
+  expect(overridden).toBe(shipped.isTmpdirOverriddenToNonTemp(assignments, pair.shipped));
+  const trusted = next.isTmpdirValueTrusted(assignments, pair.next);
+  expect(trusted).toBe(shipped.isTmpdirValueTrusted(assignments, pair.shipped));
+  const effective = next.getEffectiveTmpdirValue(assignments, pair.next);
+  expect(effective).toBe(shipped.getEffectiveTmpdirValue(assignments, pair.shipped));
+  const splitting = next.hasUnsafeTmpdirWordSplitting(assignments, pair.next);
+  expect(splitting).toBe(shipped.hasUnsafeTmpdirWordSplitting(assignments, pair.shipped));
   const value = assigned ?? envValue ?? '';
-  expect(next.isTrustedTempPath(value, pair.next)).toBe(
-    shipped.isTrustedTempPath(value, pair.shipped),
-  );
-  expect(next.isTrustedTempRootPath(value, pair.next)).toBe(
-    shipped.isTrustedTempRootPath(value, pair.shipped),
-  );
+  const trustedPath = next.isTrustedTempPath(value, pair.next);
+  expect(trustedPath).toBe(shipped.isTrustedTempPath(value, pair.shipped));
+  const trustedRoot = next.isTrustedTempRootPath(value, pair.next);
+  expect(trustedRoot).toBe(shipped.isTrustedTempRootPath(value, pair.shipped));
+  return [
+    `${envValue} | ${assigned} | ${ifs}`,
+    { overridden, trusted, effective, splitting, trustedPath, trustedRoot },
+  ];
 }
+
+/** Every slot one value can occupy for one IFS: inherited, assigned, and each opposite `/tmp`. */
+const slots = (value: string | undefined, ifs: string | undefined) => [
+  compare(value, undefined, ifs),
+  compare(undefined, value, ifs),
+  compare('/tmp', value, ifs),
+  compare(value, '/tmp', ifs),
+];
 
 beforeAll(() => {
   root = mkdtempSync(join(tmpdir(), 'next-tmpdir-'));
@@ -114,31 +133,36 @@ afterAll(() => {
 
 describe('tmpdir trust', () => {
   test('agrees with the shipped checks over the table, as inherited and as assigned', () => {
-    for (const value of tmpdirValues()) {
-      for (const ifs of IFS_VALUES) {
-        compare(value, undefined, ifs);
-        compare(undefined, value, ifs);
-        compare('/tmp', value, ifs);
-        compare(value, '/tmp', ifs);
-      }
-    }
+    const recorded = tmpdirValues().flatMap((value) =>
+      IFS_VALUES.flatMap((ifs) => slots(value, ifs)),
+    );
+    // The host's own temp directory and a path under it decide like every other row and are spelled
+    // differently on every machine: compared in every slot, recorded in none.
+    for (const value of [tmpdir(), join(tmpdir(), 'x')])
+      for (const ifs of IFS_VALUES) slots(value, ifs);
+    expectRecordedDigest('core-tmpdir/table', normalize(recorded, tmpdirFolds()));
   });
 
   test('agrees with the shipped checks on a seeded fuzz of assigned values', () => {
     const random = seededRandom(0x7e3d_1201);
     const words = [...FRAGMENTS, ...corpusWords()];
+    const recorded: (readonly [string, unknown])[] = [];
     for (let sample = 0; sample < 300; sample++) {
       const length = 1 + Math.floor(random() * 6);
       const value = Array.from({ length }, () => pickWord(random, words)).join('');
-      compare(undefined, value, undefined);
-      compare(
-        value,
-        undefined,
-        pickWord(
-          random,
-          IFS_VALUES.filter((ifs) => ifs !== undefined),
+      recorded.push(compare(undefined, value, undefined));
+      recorded.push(
+        compare(
+          value,
+          undefined,
+          pickWord(
+            random,
+            IFS_VALUES.filter((ifs) => ifs !== undefined),
+          ),
         ),
       );
     }
+    // Every fuzzed value is built from FRAGMENTS and the corpus alone, so nothing here is folded.
+    expectRecordedDigest('core-tmpdir/fuzz', recorded);
   });
 });

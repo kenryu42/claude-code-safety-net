@@ -1,0 +1,1498 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the Kimi Code hook config differential writes the hook block when the host has no config 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential appends the block after the config the user wrote, and gives it back untouched 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"# top comment
+model = "x" # trailing
+
+[model]
+name = "y"
+
+[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"# top comment
+model = "x" # trailing
+
+[model]
+name = "y"
+
+[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"# top comment
+model = "x" # trailing
+
+[model]
+name = "y"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"# top comment
+model = "x" # trailing
+
+[model]
+name = "y"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential joins an inline hooks array as one more item, and takes only that item back out 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [
+  { event = "PostToolUse", command = "echo" }, # keep,
+     { event = "PreToolUse", command = "npx -y cc-safety-net hook --kimi-code" }]
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [
+  { event = "PostToolUse", command = "echo" }, # keep,
+     { event = "PreToolUse", command = "npx -y cc-safety-net hook --kimi-code" }]
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [
+  { event = "PostToolUse", command = "echo" }, # keep]
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"hooks = [
+  { event = "PostToolUse", command = "echo" }, # keep]
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential drops an empty inline hooks array so the block can take the key over 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[model]
+name = "y"
+
+[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[model]
+name = "y"
+
+[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[model]
+name = "y"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"[model]
+name = "y"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential reports a config that already runs the hook without touching it 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential refuses a string that never closes instead of rewriting the config 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "error": {
+            "message": "Unterminated string in Kimi Code config",
+            "name": "Error",
+          },
+          "ok": false,
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [ "abc
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "error": {
+            "message": "Unterminated string in Kimi Code config",
+            "name": "Error",
+          },
+          "ok": false,
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [ "abc
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [ "abc
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"hooks = [ "abc
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential refuses an array that never closes instead of rewriting the config 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "error": {
+            "message": "Unmatched hooks array in Kimi Code config",
+            "name": "Error",
+          },
+          "ok": false,
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [ { event = "PreToolUse" }
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "error": {
+            "message": "Unmatched hooks array in Kimi Code config",
+            "name": "Error",
+          },
+          "ok": false,
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [ { event = "PreToolUse" }
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"hooks = [ { event = "PreToolUse" }
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"hooks = [ { event = "PreToolUse" }
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential takes its own block back out and leaves the table that follows it 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/.kimi-code/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+
+[model]
+name = "y"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+
+[model]
+name = "y"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/.kimi-code/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/.kimi-code/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": ".kimi-code",
+          },
+          {
+            "content": 
+"
+[model]
+name = "y"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": ".kimi-code/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"
+[model]
+name = "y"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code hook config differential follows KIMI_CODE_HOME out of the home directory 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "finalUninstall": {
+        "ok": true,
+        "value": {
+          "alreadyInstalled": false,
+          "path": "<home>/kimi-home/config.toml",
+        },
+      },
+      "install": {
+        "detection": {
+          "configPath": "<home>/kimi-home/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": false,
+            "path": "<home>/kimi-home/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "kimi-home",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "kimi-home/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "reinstall": {
+        "detection": {
+          "configPath": "<home>/kimi-home/config.toml",
+          "method": "hook config",
+          "platform": "kimi-code",
+          "status": "configured",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/kimi-home/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "kimi-home",
+          },
+          {
+            "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "kimi-home/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+      "uninstall": {
+        "detection": {
+          "configPath": "<home>/kimi-home/config.toml",
+          "platform": "kimi-code",
+          "status": "n/a",
+        },
+        "result": {
+          "ok": true,
+          "value": {
+            "alreadyInstalled": true,
+            "path": "<home>/kimi-home/config.toml",
+          },
+        },
+        "tree": [
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "kimi-home",
+          },
+          {
+            "content": 
+"
+"
+,
+            "kind": "file",
+            "mode": 420,
+            "path": "kimi-home/config.toml",
+          },
+          {
+            "kind": "directory",
+            "mode": 493,
+            "path": "tmp",
+          },
+        ],
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "kimi-home",
+    },
+    {
+      "content": 
+"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "kimi-home/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code detector differential finds the managed hook 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.kimi-code/config.toml",
+      "method": "hook config",
+      "platform": "kimi-code",
+      "status": "configured",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"[[hooks]]
+event = "PreToolUse"
+command = "npx -y cc-safety-net hook --kimi-code"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code detector differential says nothing is installed for a foreign or absent config 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.kimi-code/config.toml",
+      "platform": "kimi-code",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "content": 
+"# top comment
+model = "x" # trailing
+
+[model]
+name = "y"
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code detector differential says nothing is installed for a foreign or absent config 2`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.kimi-code/config.toml",
+      "platform": "kimi-code",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the Kimi Code detector differential reports a config it cannot read instead of guessing 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "configPath": "<home>/.kimi-code/config.toml",
+      "errors": [
+        "Failed to read <home>/.kimi-code/config.toml: EISDIR: illegal operation on a directory, read",
+      ],
+      "platform": "kimi-code",
+      "status": "n/a",
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".kimi-code/config.toml",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;

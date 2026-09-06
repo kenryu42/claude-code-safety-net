@@ -39,7 +39,10 @@ const RULEBOOKS = [
 
 describe('the rule prompt block on the served page', () => {
   test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toBe(block(pages.shipped));
+    const promptBlock = block(pages.ported);
+
+    expect(promptBlock).toBe(block(pages.shipped));
+    expect(promptBlock).toMatchSnapshot();
   });
 
   test('names the directory in the field, not the one the listing was loaded for', () => {

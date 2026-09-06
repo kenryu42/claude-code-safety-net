@@ -14,6 +14,7 @@ import {
   runConfiguredHookAdapter as shippedRunAdapter,
 } from '@/integrations/hook/common';
 import { captureHookRun, readAuditEntries } from '../../helpers/hook-capture';
+import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The hook runner itself, driven through one fake host whose documents are `{deny}` and `{allow}`
@@ -277,8 +278,18 @@ describe('one payload through both runners', () => {
   for (const row of ROWS) {
     test(row.name, async () => {
       const shipped = await runSide(row, 'shipped');
+      const ported = await runSide(row, 'ported');
 
-      expect(await runSide(row, 'ported')).toStrictEqual(shipped);
+      expect(ported).toStrictEqual(shipped);
+      // The audit writer names a project's log directory after the directory the call ran in,
+      // with every separator spelled `-`, which neither path fold reaches; the row without a cwd
+      // of its own falls back to the checkout the suite runs in.
+      recordPorted(ported, [
+        ...rootFolds(fixture.home),
+        [fixture.home.replaceAll('/', '-'), '<home>'],
+        [process.cwd(), '<cwd>'],
+        [process.cwd().replaceAll('/', '-'), '<cwd>'],
+      ]);
       expect(shipped.entries).toHaveLength(row.lines);
       expect(shipped.stdout.join('\n')).toContain(row.contains ?? '');
       expect(shipped.stdout).toHaveLength(row.contains === undefined ? 0 : 1);

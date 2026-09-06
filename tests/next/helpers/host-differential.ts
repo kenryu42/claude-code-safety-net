@@ -17,6 +17,7 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
+  recordPorted,
   snapshotHome,
   withProcessEnv,
 } from './temp-home';
@@ -73,6 +74,8 @@ export async function differential<T>(options: {
 /** The two sides must be indistinguishable; the shipped one is what the contract is asserted on. */
 export function expectSameSides<T>(result: { shipped: T; ported: T }): T {
   expect(result.ported).toEqual(result.shipped);
+  // A probe that reports system information names the machine it ran on.
+  recordPorted(result.ported, [[`${process.platform} ${process.arch}`, '<platform>']]);
   return result.shipped;
 }
 

@@ -252,6 +252,7 @@ describeDifferential(
     expect(agreed.returned?.blockReason ?? '').toContain(row.contains ?? '');
     expect(agreed.returned === undefined).toBe(!row.blocked);
   },
+  () => fixture.root,
 );
 
 test('the debug line names the failing OpenClaw hook', async () => {

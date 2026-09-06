@@ -25,6 +25,7 @@ import {
   destructiveCommandRuleIsEnabled as ruleEnabledWithSrc,
 } from '@/rules/destructive-command-rules';
 import { withEnv } from '../../../helpers';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 
 /**
  * Rule activation is a pure function of the resolved capabilities and the policy
@@ -186,43 +187,59 @@ describe('effective destructive-command rules', () => {
   });
 
   test('resolveEffectiveDestructiveCommandRules agrees for every policy and capability set', () => {
-    for (const capabilities of CAPABILITIES) {
-      for (const policy of POLICIES) {
-        expect(resolveWithNext(policy, capabilities)).toStrictEqual(
-          resolveWithSrc(policy, capabilities),
-        );
+    const recorded: (readonly [string, unknown])[] = [];
+    for (const [set, capabilities] of CAPABILITIES.entries()) {
+      for (const [row, policy] of POLICIES.entries()) {
+        const resolved = resolveWithNext(policy, capabilities);
+        expect(resolved).toStrictEqual(resolveWithSrc(policy, capabilities));
+        recorded.push([`${set}-${row}`, resolved]);
       }
     }
+    expectRecordedDigest('core-effective-rules/resolved', recorded);
   });
 
   test('createCommandAnalysisPolicy agrees for every policy and capability set', () => {
     for (const pair of ANALYSIS_POLICIES) {
       expect(pair.next).toStrictEqual(pair.src);
     }
+    expectRecordedDigest(
+      'core-effective-rules/analysis-policies',
+      ANALYSIS_POLICIES.map((pair, row) => [`${row}`, pair.next] as const),
+    );
   });
 
   test('filterDestructiveCommandMatch agrees for every catalog id', () => {
-    expect(
-      filteredMatches(filterWithNext, [...ANALYSIS_POLICIES.map((pair) => pair.next), undefined]),
-    ).toStrictEqual(
+    const filtered = filteredMatches(filterWithNext, [
+      ...ANALYSIS_POLICIES.map((pair) => pair.next),
+      undefined,
+    ]);
+    expect(filtered).toStrictEqual(
       filteredMatches(filterWithSrc, [...ANALYSIS_POLICIES.map((pair) => pair.src), undefined]),
     );
+    expectRecordedDigest('core-effective-rules/filtered-matches', [['matches', filtered]]);
   });
 
   test('destructiveCommandRuleIsEnabled agrees for every catalog id and inherited value', () => {
-    expect(
-      enabledFlags(ruleEnabledWithNext, [...ANALYSIS_POLICIES.map((pair) => pair.next), undefined]),
-    ).toStrictEqual(
+    const flags = enabledFlags(ruleEnabledWithNext, [
+      ...ANALYSIS_POLICIES.map((pair) => pair.next),
+      undefined,
+    ]);
+    expect(flags).toStrictEqual(
       enabledFlags(ruleEnabledWithSrc, [...ANALYSIS_POLICIES.map((pair) => pair.src), undefined]),
     );
+    expectRecordedDigest('core-effective-rules/enabled-flags', [['flags', flags]]);
   });
 
   test('resolveCommandAnalysisContext agrees for every option and capability combination', () => {
-    for (const effectiveCapabilities of CAPABILITIES) {
-      for (const options of OPTION_COMBINATIONS) {
+    const recorded: (readonly [string, unknown])[] = [];
+    for (const [set, effectiveCapabilities] of CAPABILITIES.entries()) {
+      for (const [row, options] of OPTION_COMBINATIONS.entries()) {
         const input = { policySnapshot: SNAPSHOT, effectiveCapabilities, ...options };
-        expect(contextWithNext(input)).toStrictEqual(contextWithSrc(input));
+        const context = contextWithNext(input);
+        expect(context).toStrictEqual(contextWithSrc(input));
+        recorded.push([`${set}-${row}`, context]);
       }
     }
+    expectRecordedDigest('core-effective-rules/analysis-context', recorded);
   });
 });

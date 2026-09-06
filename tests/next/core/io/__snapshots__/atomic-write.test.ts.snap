@@ -1,0 +1,50 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`atomic write stages the content in a sibling temp file and only then renames it into place 1`] = `
+{
+  "after": [
+    {
+      "content": 
+"old
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "settings.json",
+    },
+    {
+      "content": 
+"new
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "settings.json.<pid>.tmp",
+    },
+  ],
+  "outcome": {
+    "error": {
+      "message": "rename refused",
+      "name": "Error",
+    },
+    "ok": false,
+  },
+  "seen": [
+    {
+      "destination": 
+"old
+"
+,
+      "listing": [
+        "settings.json",
+        "settings.json.<pid>.tmp",
+      ],
+      "sameDirectory": true,
+      "staged": 
+"new
+"
+,
+    },
+  ],
+}
+`;

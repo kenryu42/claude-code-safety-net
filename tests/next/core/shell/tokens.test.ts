@@ -17,6 +17,7 @@ import {
   advanceQuoteScanState as advanceQuoteScanStateWithSrc,
   hasUnclosedQuotes as hasUnclosedQuotesWithSrc,
 } from '@/parser/shell/shared';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import {
   createSeededRandom,
   differentialSources,
@@ -77,17 +78,21 @@ describe('next/core/shell/tokens against src/parser/shell', () => {
       'a/b/',
       'x.exe.exe',
     ];
+    const recorded: (readonly [string, unknown])[] = [];
     for (const token of [...tokens, ...paths]) {
-      expect({
+      const read = {
         token,
         basename: getBasename(token),
         normalized: normalizeCommandToken(token),
-      }).toStrictEqual({
+      };
+      expect(read).toStrictEqual({
         token,
         basename: getBasenameWithSrc(token),
         normalized: normalizeCommandTokenWithSrc(token),
       });
+      recorded.push([token, read]);
     }
+    expectRecordedDigest('core-shell-tokens/basenames', recorded);
   });
 
   test('extracts the same short options with and without value-taking options', () => {
@@ -102,36 +107,45 @@ describe('next/core/shell/tokens against src/parser/shell', () => {
         ),
       ),
     ];
+    const recorded: (readonly [string, unknown])[] = [];
     for (const argv of argvs) {
-      expect({
+      const read = {
         argv,
         plain: [...extractShortOpts(argv)],
         withValues: [...extractShortOpts(argv, { shortOptsWithValue: valueOptions })],
-      }).toStrictEqual({
+      };
+      expect(read).toStrictEqual({
         argv,
         plain: [...extractShortOptsWithSrc(argv)],
         withValues: [...extractShortOptsWithSrc(argv, { shortOptsWithValue: valueOptions })],
       });
+      recorded.push([argv.join(' '), read]);
     }
+    expectRecordedDigest('core-shell-tokens/short-opts', recorded);
   });
 
   test('selects the same -c command string for every shell and argv', () => {
     const random = createSeededRandom(FUZZ_SEED ^ 0xff);
+    const recorded: (readonly [string, unknown])[] = [];
     for (let sample = 0; sample < 3_000; sample++) {
       const shell = SHELLS[Math.floor(random() * SHELLS.length)] ?? 'bash';
       const args = Array.from(
         { length: Math.floor(random() * 6) },
         () => ARGV_ALPHABET[Math.floor(random() * ARGV_ALPHABET.length)] ?? '',
       );
-      expect({ shell, args, command: getShellCommandString(shell, args) }).toStrictEqual({
+      const read = { shell, args, command: getShellCommandString(shell, args) };
+      expect(read).toStrictEqual({
         shell,
         args,
         command: getShellCommandStringWithSrc(shell, args),
       });
+      recorded.push([`${shell} ${args.join(' ')}`, read]);
     }
+    expectRecordedDigest('core-shell-tokens/command-string', recorded);
   });
 
   test('scans quotes and comments identically over every source', () => {
+    const recorded: (readonly [string, unknown])[] = [];
     for (const source of [...sources, ...fuzzShellSources(500, FUZZ_SEED ^ 0xabcd)]) {
       const state = { inSingle: false, inDouble: false, escaped: false };
       const srcState = { inSingle: false, inDouble: false, escaped: false };
@@ -143,11 +157,14 @@ describe('next/core/shell/tokens against src/parser/shell', () => {
         consumed: advanceQuoteScanStateWithSrc(char, srcState),
         state: { ...srcState },
       }));
-      expect({ source, unclosed: hasUnclosedQuotes(source), steps }).toStrictEqual({
+      const read = { source, unclosed: hasUnclosedQuotes(source), steps };
+      expect(read).toStrictEqual({
         source,
         unclosed: hasUnclosedQuotesWithSrc(source),
         steps: srcSteps,
       });
+      recorded.push([source, read]);
     }
+    expectRecordedDigest('core-shell-tokens/quote-scan', recorded);
   });
 });

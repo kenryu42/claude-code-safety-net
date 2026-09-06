@@ -1,0 +1,131 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`install targets the table is the catalog row for row 1`] = `
+[
+  {
+    "flag": "--amp",
+    "label": "Amp Code",
+    "probeCommand": [
+      "amp",
+      "--version",
+    ],
+    "target": "amp",
+  },
+  {
+    "flag": "--agy-cli",
+    "label": "Antigravity CLI",
+    "probeCommand": [
+      "agy",
+      "--version",
+    ],
+    "target": "antigravity-cli",
+  },
+  {
+    "flag": "--claude-code",
+    "label": "Claude Code",
+    "probeCommand": [
+      "claude",
+      "--version",
+    ],
+    "target": "claude-code",
+  },
+  {
+    "flag": "--codex",
+    "label": "Codex",
+    "probeCommand": [
+      "codex",
+      "--version",
+    ],
+    "target": "codex",
+  },
+  {
+    "flag": "--cursor",
+    "label": "Cursor",
+    "probeCommand": [
+      "cursor",
+      "--version",
+    ],
+    "target": "cursor",
+  },
+  {
+    "flag": "--gemini-cli",
+    "label": "Gemini CLI",
+    "probeCommand": [
+      "gemini",
+      "--version",
+    ],
+    "target": "gemini-cli",
+  },
+  {
+    "flag": "--copilot-cli",
+    "label": "GitHub Copilot CLI",
+    "probeCommand": [
+      "copilot",
+      "--binary-version",
+    ],
+    "target": "copilot-cli",
+  },
+  {
+    "flag": "--grok-build",
+    "label": "Grok Build",
+    "probeCommand": [
+      "grok",
+      "--version",
+    ],
+    "target": "grok-build",
+  },
+  {
+    "flag": "--hermes-agent",
+    "label": "Hermes Agent",
+    "probeCommand": [
+      "hermes",
+      "--version",
+    ],
+    "target": "hermes-agent",
+  },
+  {
+    "flag": "--kimi-code",
+    "label": "Kimi Code",
+    "probeCommand": [
+      "kimi",
+      "--version",
+    ],
+    "target": "kimi-code",
+  },
+  {
+    "flag": "--openclaw",
+    "label": "OpenClaw",
+    "probeCommand": [
+      "openclaw",
+      "--version",
+    ],
+    "target": "openclaw",
+  },
+  {
+    "flag": "--opencode",
+    "label": "OpenCode",
+    "probeCommand": [
+      "opencode",
+      "--version",
+    ],
+    "target": "opencode",
+  },
+  {
+    "flag": "--pi",
+    "label": "Pi",
+    "probeCommand": [
+      "pi",
+      "--version",
+    ],
+    "target": "pi",
+  },
+]
+`;
+
+exports[`install targets the ordered run visits each target once, in the order it was handed 1`] = `
+[
+  "amp",
+  "cursor",
+  "pi",
+]
+`;

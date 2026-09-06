@@ -30,6 +30,7 @@ describe('the served GUI page', () => {
     const ported = normalizePage(pages.ported, TOKEN);
 
     expect(ported).toStrictEqual(shipped);
+    expect(ported).toMatchSnapshot();
     expect(ported.modules).toHaveLength(3);
     expect(shipped.modules).toHaveLength(3);
     // The one request-time value, in the empty tag the page script reads on load.

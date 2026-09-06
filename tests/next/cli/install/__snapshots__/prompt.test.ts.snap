@@ -1,0 +1,688 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`cli/install/prompt every row state renders identically on both implementations 1`] = `
+[
+  
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor
+> ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+> ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor
+  ◉ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor (not installed)
+  ◯ Gemini CLI (not installed)
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor (not installed)
+> ◯ Gemini CLI (not installed)
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+> ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor (not installed)
+  ◉ Gemini CLI (not installed)
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor
+> ◯ Gemini CLI
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+> ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor
+  ◉ Gemini CLI
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor (not installed)
+  ◯ Gemini CLI (not installed)
+
+No selectable integrations found for uninstall. q/Esc: close"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor (not installed)
+> ◯ Gemini CLI (not installed)
+
+No selectable integrations found for uninstall. q/Esc: close"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+> ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+  ◉ Cursor (not installed)
+  ◉ Gemini CLI (not installed)
+
+No selectable integrations found for uninstall. q/Esc: close"
+,
+]
+`;
+
+exports[`cli/install/prompt the colored rows render identically on both implementations 1`] = `
+[
+  
+"
+Install CC Safety Net into:
+
+  \x1B[2m◯ Claude Code (CLI not found)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+> \x1B[1m◯ Cursor\x1B[0m
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+  \x1B[2m◯ Claude Code (CLI not found)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[32m◉ Cursor\x1B[0m
+> \x1B[1m◯ Gemini CLI\x1B[0m
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+> \x1B[2m◯ Claude Code (CLI not found)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[32m◉ Cursor\x1B[0m
+  \x1B[32m◉ Gemini CLI\x1B[0m
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+  \x1B[2m◯ Claude Code (not installed)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+> \x1B[2m◯ Cursor (not installed)\x1B[0m
+  \x1B[2m◯ Gemini CLI (not installed)\x1B[0m
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+  \x1B[2m◯ Claude Code (not installed)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[2m◉ Cursor (not installed)\x1B[0m
+> \x1B[2m◯ Gemini CLI (not installed)\x1B[0m
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Install CC Safety Net into:
+
+> \x1B[2m◯ Claude Code (not installed)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[2m◉ Cursor (not installed)\x1B[0m
+  \x1B[2m◉ Gemini CLI (not installed)\x1B[0m
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  \x1B[2m◯ Claude Code (CLI not found)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+> \x1B[1m◯ Cursor\x1B[0m
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  \x1B[2m◯ Claude Code (CLI not found)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[32m◉ Cursor\x1B[0m
+> \x1B[1m◯ Gemini CLI\x1B[0m
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+> \x1B[2m◯ Claude Code (CLI not found)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[32m◉ Cursor\x1B[0m
+  \x1B[32m◉ Gemini CLI\x1B[0m
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  \x1B[2m◯ Claude Code (not installed)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+> \x1B[2m◯ Cursor (not installed)\x1B[0m
+  \x1B[2m◯ Gemini CLI (not installed)\x1B[0m
+
+No selectable integrations found for uninstall. q/Esc: close"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+  \x1B[2m◯ Claude Code (not installed)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[2m◉ Cursor (not installed)\x1B[0m
+> \x1B[2m◯ Gemini CLI (not installed)\x1B[0m
+
+No selectable integrations found for uninstall. q/Esc: close"
+,
+  
+"
+Uninstall CC Safety Net from:
+
+> \x1B[2m◯ Claude Code (not installed)\x1B[0m
+  \x1B[2m◯ Codex CLI (not installed)\x1B[0m
+  \x1B[2m◉ Cursor (not installed)\x1B[0m
+  \x1B[2m◉ Gemini CLI (not installed)\x1B[0m
+
+No selectable integrations found for uninstall. q/Esc: close"
+,
+]
+`;
+
+exports[`cli/install/prompt selection is returned in choice order on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+  ◯ Cursor
+> ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+  ◯ Cursor
+> ◉ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◉ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◉ Cursor
+  ◉ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"Installing selected integrations...
+"
+,
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": [
+    "cursor",
+    "gemini-cli",
+  ],
+}
+`;
+
+exports[`cli/install/prompt q cancels on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;
+
+exports[`cli/install/prompt u updates on install and is ignored on uninstall on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": "update",
+}
+`;
+
+exports[`cli/install/prompt u updates on install and is ignored on uninstall on both implementations 2`] = `
+{
+  "chunks": [
+    
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;
+
+exports[`cli/install/prompt confirming nothing beeps and redraws on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x07",
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;
+
+exports[`cli/install/prompt Ctrl-C reaches the caller and cancels on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install CC Safety Net into:
+
+  ◯ Claude Code (CLI not found)
+  ◯ Codex CLI (not installed)
+> ◯ Cursor
+  ◯ Gemini CLI
+
+Space: select  Enter: confirm  u: update installed  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [
+    "interrupt",
+  ],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;
+
+exports[`cli/install/prompt a list with no selectable row keeps the cursor put on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+  ◯ Cursor (not installed)
+  ◯ Gemini CLI (not installed)
+
+No selectable integrations found for uninstall. q/Esc: close
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Uninstall CC Safety Net from:
+
+  ◯ Claude Code (not installed)
+  ◯ Codex CLI (not installed)
+  ◯ Cursor (not installed)
+  ◯ Gemini CLI (not installed)
+
+No selectable integrations found for uninstall. q/Esc: close
+"
+,
+    "\x1B[9A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;
+
+exports[`cli/install/prompt the Kimi method picker answers the same keys on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install the Kimi Code integration as:
+
+> ◉ Global hook — write the hook into ~/.kimi-code/config.toml now
+  ◯ Native Kimi plugin — print the steps to run inside Kimi Code
+
+Enter: confirm  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[7A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": "global-hook",
+}
+`;
+
+exports[`cli/install/prompt the Kimi method picker answers the same keys on both implementations 2`] = `
+{
+  "chunks": [
+    
+"
+Install the Kimi Code integration as:
+
+> ◉ Global hook — write the hook into ~/.kimi-code/config.toml now
+  ◯ Native Kimi plugin — print the steps to run inside Kimi Code
+
+Enter: confirm  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[7A",
+    "\x1B[1G",
+    "\x1B[0J",
+    
+"
+Install the Kimi Code integration as:
+
+  ◯ Global hook — write the hook into ~/.kimi-code/config.toml now
+> ◉ Native Kimi plugin — print the steps to run inside Kimi Code
+
+Enter: confirm  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[7A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": "plugin",
+}
+`;
+
+exports[`cli/install/prompt the Kimi method picker answers the same keys on both implementations 3`] = `
+{
+  "chunks": [
+    
+"
+Install the Kimi Code integration as:
+
+> ◉ Global hook — write the hook into ~/.kimi-code/config.toml now
+  ◯ Native Kimi plugin — print the steps to run inside Kimi Code
+
+Enter: confirm  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[7A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;
+
+exports[`cli/install/prompt an installed global hook relabels the first Kimi row on both implementations 1`] = `
+{
+  "chunks": [
+    
+"
+Install the Kimi Code integration as:
+
+> ◉ Global hook — already installed; selecting it reports the current state
+  ◯ Native Kimi plugin — print the steps to run inside Kimi Code
+
+Enter: confirm  Up/Down: move  q/Esc: cancel
+"
+,
+    "\x1B[7A",
+    "\x1B[1G",
+    "\x1B[0J",
+  ],
+  "interrupts": [],
+  "rawModeCalls": [
+    true,
+    false,
+  ],
+  "result": null,
+}
+`;

@@ -69,18 +69,17 @@ const SPECS = [
 
 describe('rulebook source syntax parity', () => {
   test('every spec reads the same on both implementations', () => {
-    expect(
-      SPECS.map((spec) => ({
-        spec,
-        parsed: describeOutcome(() => parseGitHubSource(spec)),
-        rulebookSource: isGitHubRulebookSource(spec),
-        repositorySource: isGitHubRepositorySource(spec),
-        ref: isGitHubRef(spec),
-        syntaxError: getRulebookSourceSyntaxError(spec),
-        bareName: describeOutcome(() => assertBareRulebookName(spec)),
-        repositoryPath: getRepositoryRulebookPath(spec),
-      })),
-    ).toStrictEqual(
+    const read = SPECS.map((spec) => ({
+      spec,
+      parsed: describeOutcome(() => parseGitHubSource(spec)),
+      rulebookSource: isGitHubRulebookSource(spec),
+      repositorySource: isGitHubRepositorySource(spec),
+      ref: isGitHubRef(spec),
+      syntaxError: getRulebookSourceSyntaxError(spec),
+      bareName: describeOutcome(() => assertBareRulebookName(spec)),
+      repositoryPath: getRepositoryRulebookPath(spec),
+    }));
+    expect(read).toStrictEqual(
       SPECS.map((spec) => ({
         spec,
         parsed: describeOutcome(() => shippedParseGitHubSource(spec)),
@@ -92,16 +91,19 @@ describe('rulebook source syntax parity', () => {
         repositoryPath: shippedGetRepositoryRulebookPath(spec),
       })),
     );
+    expect(read).toMatchSnapshot();
   });
 
   test('the vendored rulebook path pattern is the same pattern', () => {
-    expect({
+    const pattern = {
       source: GITHUB_RULEBOOK_PATH_RE.source,
       flags: GITHUB_RULEBOOK_PATH_RE.flags,
-    }).toStrictEqual({
+    };
+    expect(pattern).toStrictEqual({
       source: shippedGitHubRulebookPathRe.source,
       flags: shippedGitHubRulebookPathRe.flags,
     });
+    expect(pattern).toMatchSnapshot();
   });
 });
 
@@ -140,17 +142,17 @@ const WRAPPER_COMMANDS = [
 describe('transparent wrapper vocabulary parity', () => {
   test('reserved names and interpreter names agree with the analyzer', () => {
     const commands = [...new Set([...corpusWords(), ...WRAPPER_COMMANDS])];
-    expect(
-      commands.map((command) => ({
-        reserved: isReservedTransparentWrapper(command),
-        interpreter: isInterpreterCommand(command),
-      })),
-    ).toStrictEqual(
+    const vocabulary = commands.map((command) => ({
+      reserved: isReservedTransparentWrapper(command),
+      interpreter: isInterpreterCommand(command),
+    }));
+    expect(vocabulary).toStrictEqual(
       commands.map((command) => ({
         reserved: shippedIsReservedTransparentWrapper(command),
         interpreter: shippedIsInterpreterCommand(command),
       })),
     );
+    expect(vocabulary).toMatchSnapshot();
   });
 });
 
@@ -284,18 +286,20 @@ describe('rulebook acceptance limit parity', () => {
   }
 
   test('the limit tables and messages are the shipped ones', () => {
-    expect({
+    const tables = {
       limits: RULEBOOK_LIMITS,
       limitError: RULEBOOK_LIMIT_ERROR,
       truncated: RULEBOOK_VALIDATION_TRUNCATED,
       sourceLimit: RULE_SOURCE_LIMIT,
       sourceLimitError: RULE_SOURCE_LIMIT_ERROR,
-    }).toStrictEqual({
+    };
+    expect(tables).toStrictEqual({
       limits: shippedRulebookLimits,
       limitError: shippedRulebookLimitError,
       truncated: shippedRulebookValidationTruncated,
       sourceLimit: shippedRuleSourceLimit,
       sourceLimitError: shippedRuleSourceLimitError,
     });
+    expect(tables).toMatchSnapshot();
   });
 });

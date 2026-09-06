@@ -1,0 +1,1128 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the GUI project draft follows the directory the picker chose and binds each write to its revision 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "strict",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/project",
+        "path": "<root>/project/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [],
+        "revision": 0,
+        "userPolicyDiagnostics": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "cancelled": false,
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "strict",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/picked",
+        "path": "<root>/picked/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [],
+        "revision": 1,
+        "userPolicyDiagnostics": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "errors": [
+          "The project draft directory changed; reload the draft before applying.",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 409,
+    },
+    {
+      "body": {
+        "errors": [],
+        "existingFileDiagnostics": [],
+        "rows": [
+          {
+            "after": "paranoid",
+            "before": "strict",
+            "field": "safety.level",
+          },
+        ],
+        "weakenings": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "errors": [],
+        "path": "<root>/picked/.cc-safety-net/policy.json",
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 448,
+      "path": "picked/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "paranoid"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 384,
+      "path": "picked/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft binds an apply to the revision it read at entry, not the one the pick left behind 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "errors": [],
+        "path": "<root>/project/.cc-safety-net/policy.json",
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "cancelled": false,
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 448,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "paranoid"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 384,
+      "path": "project/.cc-safety-net/policy.json",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft leaves the draft where it was when the dialog cancels or fails 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "cancelled": true,
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "strict",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/project",
+        "path": "<root>/project/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [],
+        "revision": 0,
+        "userPolicyDiagnostics": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft leaves the draft where it was when the dialog cancels or fails 2`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "cancelled": false,
+        "error": "boom",
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "strict",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/project",
+        "path": "<root>/project/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [],
+        "revision": 0,
+        "userPolicyDiagnostics": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft refuses a body with no revision, an audit section or a level the schema rejects 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "errors": [
+          "revision must be a number",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 400,
+    },
+    {
+      "body": {
+        "errors": [
+          "audit settings are user scope only; remove the audit section from a project proposal",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 400,
+    },
+    {
+      "body": {
+        "errors": [
+          "safety.level must be "standard", "strict", or "paranoid"",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 400,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft starts the draft empty over a project file it cannot read, then replaces it 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "strict",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/project",
+        "path": "<root>/project/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [
+          "<root>/project/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Unexpected identifier "nope"",
+        ],
+        "revision": 0,
+        "userPolicyDiagnostics": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "errors": [],
+        "existingFileDiagnostics": [
+          "<root>/project/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Unexpected identifier "nope"",
+        ],
+        "rows": [
+          {
+            "after": "paranoid",
+            "before": "strict",
+            "field": "safety.level",
+          },
+        ],
+        "weakenings": [],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+    {
+      "body": {
+        "errors": [],
+        "path": "<root>/project/.cc-safety-net/policy.json",
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "paranoid"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 384,
+      "path": "project/.cc-safety-net/policy.json",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft refuses to follow a .cc-safety-net symlink out of the project 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "errors": [
+          "Unable to access project policy filesystem safely.",
+        ],
+        "path": "<root>/project/.cc-safety-net/policy.json",
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 500,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "outside",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "picked",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "symlink",
+      "mode": 511,
+      "path": "project/.cc-safety-net",
+      "target": "../outside",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft carries the diagnostics of a user policy that cannot be parsed onto the draft 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "standard",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/project",
+        "path": "<root>/project/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [],
+        "revision": 0,
+        "userPolicyDiagnostics": [
+          "<root>/home/.cc-safety-net/policy.json: Invalid JSON: JSON Parse error: Expected '}'",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": "{ not json",
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft carries the diagnostics of a user policy that the schema refuses onto the draft 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "baseline": {
+          "audit": {
+            "retention_days": 30,
+          },
+          "destructive_command_protection": {
+            "allow_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "safety": {
+            "level": "standard",
+            "overrides": {},
+          },
+          "secret_protection": {
+            "allow_paths": [],
+            "deny_paths": [],
+            "enabled": true,
+            "overrides": {},
+          },
+          "version": 1,
+          "workflow": {
+            "worktree_mode": false,
+          },
+        },
+        "canPickDirectory": false,
+        "dir": "<root>/project",
+        "path": "<root>/project/.cc-safety-net/policy.json",
+        "projection": {},
+        "projectionDiagnostics": [],
+        "revision": 0,
+        "userPolicyDiagnostics": [
+          "safety.level must be "standard", "strict", or "paranoid"",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "bogus"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`the GUI project draft shows the rows \`policy check\` prints for the same proposal 1`] = `
+{
+  "responses": [
+    {
+      "body": {
+        "errors": [],
+        "existingFileDiagnostics": [],
+        "rows": [
+          {
+            "after": "true",
+            "before": "false",
+            "field": "workflow.worktree_mode",
+          },
+        ],
+        "weakenings": [
+          "project policy lowers level: strict -> standard",
+          "project policy enables worktree mode relaxations",
+        ],
+      },
+      "cacheControl": "no-store",
+      "contentType": "application/json; charset=utf-8",
+      "status": 200,
+    },
+  ],
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "strict",
+    "overrides": {}
+  },
+  "workflow": {
+    "worktree_mode": false
+  },
+  "destructive_command_protection": {
+    "enabled": true,
+    "overrides": {},
+    "allow_paths": []
+  },
+  "secret_protection": {
+    "enabled": true,
+    "overrides": {},
+    "deny_paths": [],
+    "allow_paths": []
+  },
+  "audit": {
+    "retention_days": 30
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "project/.cc-safety-net",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "safety": {
+    "level": "standard"
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": "project/.cc-safety-net/policy.json",
+    },
+  ],
+}
+`;

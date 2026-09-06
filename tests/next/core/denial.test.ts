@@ -113,8 +113,11 @@ describe('denial renderer', () => {
         const nextDenial = next.projectGuardDenial(evaluation, options);
         const shippedDenial = shipped.projectGuardDenial(evaluation, options);
         expect(nextDenial).toEqual(shippedDenial);
+        expect(nextDenial).toMatchSnapshot();
         if (nextDenial === undefined || shippedDenial === undefined) continue;
-        expect(next.formatDenial(nextDenial)).toBe(shipped.formatDenial(shippedDenial));
+        const rendered = next.formatDenial(nextDenial);
+        expect(rendered).toBe(shipped.formatDenial(shippedDenial));
+        expect(rendered).toMatchSnapshot();
         formatted++;
       }
     }
@@ -130,7 +133,9 @@ describe('denial renderer', () => {
         segment: command.slice(0, Math.ceil(command.length / 2)),
         toolName: 'Bash',
       };
-      expect(next.formatDenial(denial)).toBe(shipped.formatDenial(denial));
+      const rendered = next.formatDenial(denial);
+      expect(rendered).toBe(shipped.formatDenial(denial));
+      expect(rendered).toMatchSnapshot();
     }
   });
 
@@ -184,7 +189,9 @@ describe('denial renderer', () => {
       })),
     ];
     for (const input of inputs) {
-      expect(next.formatBlockedMessage(input)).toBe(formatWithSrc(input));
+      const message = next.formatBlockedMessage(input);
+      expect(message).toBe(formatWithSrc(input));
+      expect(message).toMatchSnapshot();
     }
   });
 
@@ -198,14 +205,16 @@ describe('denial renderer', () => {
       { command: SECRET_COMMAND },
     ];
     for (const option of options) {
-      expect(next.createFailedClosedDenial(option)).toEqual(
-        shipped.createFailedClosedDenial(option),
-      );
-      expect(next.formatDenial(next.createFailedClosedDenial(option))).toBe(
-        shipped.formatDenial(shipped.createFailedClosedDenial(option)),
-      );
+      const failedClosed = next.createFailedClosedDenial(option);
+      expect(failedClosed).toEqual(shipped.createFailedClosedDenial(option));
+      expect(failedClosed).toMatchSnapshot();
+      const failedClosedText = next.formatDenial(next.createFailedClosedDenial(option));
+      expect(failedClosedText).toBe(shipped.formatDenial(shipped.createFailedClosedDenial(option)));
+      expect(failedClosedText).toMatchSnapshot();
     }
-    expect(next.createFailedClosedDenial()).toEqual(shipped.createFailedClosedDenial());
+    const bareFailedClosed = next.createFailedClosedDenial();
+    expect(bareFailedClosed).toEqual(shipped.createFailedClosedDenial());
+    expect(bareFailedClosed).toMatchSnapshot();
     for (const cause of [
       new Error(`boom ${SECRET_COMMAND}`),
       new TypeError('typed'),
@@ -215,7 +224,9 @@ describe('denial renderer', () => {
       undefined,
       { message: 'object' },
     ]) {
-      expect(next.formatIntegrationError(cause)).toBe(shipped.formatIntegrationError(cause));
+      const errorText = next.formatIntegrationError(cause);
+      expect(errorText).toBe(shipped.formatIntegrationError(cause));
+      expect(errorText).toMatchSnapshot();
     }
   });
 });

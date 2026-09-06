@@ -6,7 +6,13 @@ import * as ported from '@next/core/policy/diff';
 import { processHomeDir } from '@/ir/environment';
 import * as shipped from '@/policy/diff';
 import { normalizeGuiPolicy } from '@/policy/store';
-import { createTempRoot, normalize, removeTempRoots } from '../../helpers/temp-home';
+import {
+  createTempRoot,
+  normalize,
+  recordPorted,
+  removeTempRoots,
+  rootFolds,
+} from '../../helpers/temp-home';
 
 /**
  * `policy check` prints these rows and `policy apply` writes what they describe, so the port has
@@ -16,6 +22,7 @@ import { createTempRoot, normalize, removeTempRoots } from '../../helpers/temp-h
  */
 
 const HOME = processHomeDir();
+const HOME_FOLDS = [[HOME, '<home>']] as const;
 const environment = createTestEnvironment({ home: HOME });
 const EMBEDDED = '__CC_SAFETY_NET_EMBEDDED_POLICY__';
 
@@ -64,9 +71,9 @@ function policyHome(file?: string) {
 describe('the policy diff port describes a proposal as the shipped diff does', () => {
   test.each([true, false])('flattens every policy with includeAudit %p', (includeAudit) => {
     for (const policy of POLICIES) {
-      expect(ported.flattenPolicy(policy, includeAudit)).toStrictEqual(
-        shipped.flattenPolicy(policy, includeAudit),
-      );
+      const flattened = ported.flattenPolicy(policy, includeAudit);
+      expect(flattened).toStrictEqual(shipped.flattenPolicy(policy, includeAudit));
+      recordPorted(flattened, HOME_FOLDS);
     }
   });
 
@@ -74,9 +81,9 @@ describe('the policy diff port describes a proposal as the shipped diff does', (
     for (const current of POLICIES) {
       for (const proposed of POLICIES) {
         for (const includeAudit of [true, false]) {
-          expect(ported.diffPolicyRows(current, proposed, includeAudit)).toStrictEqual(
-            shipped.diffPolicyRows(current, proposed, includeAudit),
-          );
+          const rows = ported.diffPolicyRows(current, proposed, includeAudit);
+          expect(rows).toStrictEqual(shipped.diffPolicyRows(current, proposed, includeAudit));
+          recordPorted(rows, HOME_FOLDS);
         }
       }
     }
@@ -89,9 +96,9 @@ describe('the policy diff port describes a proposal as the shipped diff does', (
       ['not an object'],
       'not an object either',
     ]) {
-      expect(ported.buildProjectPolicyFileValue(proposal, STRICT)).toStrictEqual(
-        shipped.buildProjectPolicyFileValue(proposal, STRICT),
-      );
+      const built = ported.buildProjectPolicyFileValue(proposal, STRICT);
+      expect(built).toStrictEqual(shipped.buildProjectPolicyFileValue(proposal, STRICT));
+      recordPorted(built, HOME_FOLDS);
     }
   });
 });
@@ -106,17 +113,22 @@ describe('the policy diff port reads a file as the shipped diff does', () => {
     const home = policyHome(file);
     const path = join(home.root, '.cc-safety-net', 'policy.json');
     const replacements = [[home.root, '<root>']] as const;
-    expect(normalize(ported.readPolicyJson(path), replacements)).toStrictEqual(
-      normalize(shipped.readPolicyJson(path), replacements),
-    );
+    const read = normalize(ported.readPolicyJson(path), replacements);
+    expect(read).toStrictEqual(normalize(shipped.readPolicyJson(path), replacements));
+    recordPorted(read, HOME_FOLDS);
   });
 
   test.each(FILES)('takes %s as the same baseline and diagnostics', (_label, file) => {
     const home = policyHome(file);
     const replacements = [[home.root, '<root>']] as const;
-    expect(
-      normalize(ported.readRuntimeUserBaseline(environment, home.options), replacements),
-    ).toStrictEqual(normalize(shipped.readRuntimeUserBaseline(home.options), replacements));
+    const baseline = normalize(
+      ported.readRuntimeUserBaseline(environment, home.options),
+      replacements,
+    );
+    expect(baseline).toStrictEqual(
+      normalize(shipped.readRuntimeUserBaseline(home.options), replacements),
+    );
+    recordPorted(baseline, HOME_FOLDS);
   });
 
   test('falls back to the embedded snapshot an Amp install stamped in', () => {
@@ -125,9 +137,9 @@ describe('the policy diff port reads a file as the shipped diff does', () => {
       version: 1,
       safety: { level: 'paranoid' },
     };
-    expect(ported.readRuntimeUserBaseline(environment, home.options)).toStrictEqual(
-      shipped.readRuntimeUserBaseline(home.options),
-    );
+    const embedded = ported.readRuntimeUserBaseline(environment, home.options);
+    expect(embedded).toStrictEqual(shipped.readRuntimeUserBaseline(home.options));
+    recordPorted(embedded, [...rootFolds(home.root), ...HOME_FOLDS]);
     expect(ported.readRuntimeUserBaseline(environment, home.options).baseline.safety.level).toBe(
       'paranoid',
     );

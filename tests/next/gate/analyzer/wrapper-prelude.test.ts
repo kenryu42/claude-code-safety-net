@@ -21,6 +21,7 @@ import {
   stripWrapperWords as shippedStripWrapperWords,
 } from '@/analyzer/wrapper-prelude';
 import { pairedEnvironments } from '../../core/differential-inputs';
+import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { corpusCommands } from '../../helpers/shell-inputs';
 
 /**
@@ -132,32 +133,43 @@ function withRoot(argv: readonly string[]): string[] {
 
 describe('env assignment words', () => {
   test('parseEnvAssignment agrees for every corpus word and prelude token', () => {
+    const recorded: [string, unknown][] = [];
     for (const argv of preludeArgvs()) {
       for (const token of argv) {
-        expect(parseEnvAssignment(token)).toStrictEqual(shippedParseEnvAssignment(token));
+        const assignment = parseEnvAssignment(token);
+        expect(assignment).toStrictEqual(shippedParseEnvAssignment(token));
+        recorded.push([token, assignment]);
       }
     }
+    expectRecordedDigest('analyzer-wrapper-prelude/env-assignment', recorded, root);
   });
 
   test('stripEnvAssignmentWords agrees for every prelude', () => {
+    const recorded: [string, unknown][] = [];
     for (const argv of preludeArgvs()) {
-      expect(stripEnvAssignmentWords(textCommandWords(argv))).toStrictEqual(
-        shippedStripEnvAssignmentWords(shippedTextCommandWords(argv)),
-      );
+      const stripped = stripEnvAssignmentWords(textCommandWords(argv));
+      expect(stripped).toStrictEqual(shippedStripEnvAssignmentWords(shippedTextCommandWords(argv)));
+      recorded.push([argv.join(' '), stripped]);
     }
+    expectRecordedDigest('analyzer-wrapper-prelude/strip-assignments', recorded, root);
   });
 });
 
 describe('wrapper peel', () => {
   test('stripWrapperWords agrees for every prelude, cwd and inherited assignment set', () => {
+    const recorded: [string, unknown][] = [];
     const environments = pairedEnvironments(VARIABLES, '/home/tester');
     for (const argv of preludeArgvs()) {
       const tokens = withRoot(argv);
       for (const cwd of [undefined, null, root, join(root, 'file'), '/nowhere']) {
         for (const inherited of [undefined, INHERITED]) {
-          expect(
-            stripWrapperWords(textCommandWords(tokens), environments.next, cwd, inherited),
-          ).toStrictEqual(
+          const peeled = stripWrapperWords(
+            textCommandWords(tokens),
+            environments.next,
+            cwd,
+            inherited,
+          );
+          expect(peeled).toStrictEqual(
             shippedStripWrapperWords(
               shippedTextCommandWords(tokens),
               environments.shipped,
@@ -165,22 +177,25 @@ describe('wrapper peel', () => {
               inherited,
             ),
           );
+          recorded.push([argv.join(' '), peeled]);
         }
       }
     }
+    expectRecordedDigest('analyzer-wrapper-prelude/strip-wrappers', recorded, root);
   });
 
   test('the token views agree for every prelude', () => {
+    const recorded: [string, unknown][] = [];
     const environments = pairedEnvironments(VARIABLES, '/home/tester');
     for (const argv of preludeArgvs()) {
       const tokens = withRoot(argv);
-      expect(stripWrappersWithInfo(tokens, environments.next, root)).toStrictEqual(
-        shippedStripWithInfo(tokens, environments.shipped, root),
-      );
-      expect(stripWrappersForPathScan(tokens, environments.next, root)).toStrictEqual(
-        shippedStripForPathScan(tokens, environments.shipped, root),
-      );
+      const info = stripWrappersWithInfo(tokens, environments.next, root);
+      expect(info).toStrictEqual(shippedStripWithInfo(tokens, environments.shipped, root));
+      const scanned = stripWrappersForPathScan(tokens, environments.next, root);
+      expect(scanned).toStrictEqual(shippedStripForPathScan(tokens, environments.shipped, root));
+      recorded.push([argv.join(' '), { info, scanned }]);
     }
+    expectRecordedDigest('analyzer-wrapper-prelude/token-views', recorded, root);
   });
 
   test('reconstructEnvSplitWords agrees on inert values and the splice budget', () => {
@@ -197,12 +212,14 @@ describe('wrapper peel', () => {
       ['has \\escape'],
       [Array.from({ length: 70 }, (_, index) => `w${index}`).join(' ')],
     ];
+    const recorded: [string, unknown][] = [];
     for (const values of cases) {
       for (const operands of [[], ['tail'], ['a', 'b']]) {
-        expect(reconstructEnvSplitWords(values, operands)).toStrictEqual(
-          shippedReconstructEnvSplitWords(values, operands),
-        );
+        const spliced = reconstructEnvSplitWords(values, operands);
+        expect(spliced).toStrictEqual(shippedReconstructEnvSplitWords(values, operands));
+        recorded.push([`${values.join('|')} ${operands.join('|')}`, spliced]);
       }
     }
+    expectRecordedDigest('analyzer-wrapper-prelude/env-split-words', recorded, root);
   });
 });

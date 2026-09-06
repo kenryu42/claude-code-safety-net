@@ -45,6 +45,7 @@ const MATCHES = [
 function removeMatches(match: string) {
   const ported = getRemoveMatches(CONFIGURED, match);
   expect(ported).toEqual(shippedRemoveMatches(CONFIGURED, match));
+  expect(ported).toMatchSnapshot();
   return ported;
 }
 
@@ -113,9 +114,9 @@ describe('a remove match selects what the shipped module selects', () => {
 
 describe('an update selection matches what the shipped module selects', () => {
   test.each(MATCHES)('resolves %s', (match) => {
-    expect(getSelectedUpdateSpecs(CONFIG, match)).toEqual(
-      shippedSelectedUpdateSpecs(CONFIG, match),
-    );
+    const selected = getSelectedUpdateSpecs(CONFIG, match);
+    expect(selected).toEqual(shippedSelectedUpdateSpecs(CONFIG, match));
+    expect(selected).toMatchSnapshot();
   });
 
   // `update` knows exact specs and rulebook names only: a repository is not a selection there,

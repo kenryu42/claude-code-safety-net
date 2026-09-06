@@ -1,0 +1,1654 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`next/core/tool-input against src/parser/tool-input ships the same traversal limits and error identity 1`] = `
+{
+  "maxAggregateStringBytes": 4194304,
+  "maxDepth": 64,
+  "maxKeys": 10000,
+  "maxNodes": 10000,
+  "maxStringBytes": 1048576,
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input ships the same traversal limits and error identity 2`] = `
+{
+  "message": "tool input traversal limit exceeded",
+  "name": "ToolInputLimitError",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 1`] = `
+{
+  "kind": "unknown",
+  "normalized": "bash",
+  "readOnly": false,
+  "toolName": "Bash",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 2`] = `
+{
+  "kind": "unknown",
+  "normalized": "powershell",
+  "readOnly": false,
+  "toolName": "PowerShell",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 3`] = `
+{
+  "kind": "path",
+  "normalized": "read",
+  "readOnly": true,
+  "toolName": "Read",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 4`] = `
+{
+  "kind": "path",
+  "normalized": "readfile",
+  "readOnly": true,
+  "toolName": "read_file",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 5`] = `
+{
+  "kind": "path",
+  "normalized": "readfile",
+  "readOnly": true,
+  "toolName": "Read-File",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 6`] = `
+{
+  "kind": "path",
+  "normalized": "readfile",
+  "readOnly": true,
+  "toolName": " Read File ",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 7`] = `
+{
+  "kind": "path",
+  "normalized": "readurlcontent",
+  "readOnly": true,
+  "toolName": "READ_URL_CONTENT",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 8`] = `
+{
+  "kind": "path",
+  "normalized": "write",
+  "readOnly": false,
+  "toolName": "Write",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 9`] = `
+{
+  "kind": "path",
+  "normalized": "writetofile",
+  "readOnly": false,
+  "toolName": "write_to_file",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 10`] = `
+{
+  "kind": "path",
+  "normalized": "edit",
+  "readOnly": false,
+  "toolName": "Edit",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 11`] = `
+{
+  "kind": "path",
+  "normalized": "multiedit",
+  "readOnly": false,
+  "toolName": "MultiEdit",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 12`] = `
+{
+  "kind": "path",
+  "normalized": "multireplacefilecontent",
+  "readOnly": false,
+  "toolName": "multi_replace_file_content",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 13`] = `
+{
+  "kind": "path",
+  "normalized": "notebookedit",
+  "readOnly": false,
+  "toolName": "NotebookEdit",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 14`] = `
+{
+  "kind": "path",
+  "normalized": "notebookedit",
+  "readOnly": false,
+  "toolName": "notebook-edit",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 15`] = `
+{
+  "kind": "path",
+  "normalized": "strreplaceeditor",
+  "readOnly": false,
+  "toolName": "str_replace_editor",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 16`] = `
+{
+  "kind": "path",
+  "normalized": "create",
+  "readOnly": false,
+  "toolName": "Create",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 17`] = `
+{
+  "kind": "path",
+  "normalized": "view",
+  "readOnly": true,
+  "toolName": "view",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 18`] = `
+{
+  "kind": "path",
+  "normalized": "viewfile",
+  "readOnly": true,
+  "toolName": "view_file",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 19`] = `
+{
+  "kind": "path",
+  "normalized": "listdir",
+  "readOnly": true,
+  "toolName": "list_dir",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 20`] = `
+{
+  "kind": "path",
+  "normalized": "listpermissions",
+  "readOnly": true,
+  "toolName": "list_permissions",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 21`] = `
+{
+  "kind": "path",
+  "normalized": "ls",
+  "readOnly": true,
+  "toolName": "ls",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 22`] = `
+{
+  "kind": "path",
+  "normalized": "searchweb",
+  "readOnly": true,
+  "toolName": "search_web",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 23`] = `
+{
+  "kind": "grep",
+  "normalized": "grep",
+  "readOnly": true,
+  "toolName": "Grep",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 24`] = `
+{
+  "kind": "grep",
+  "normalized": "grepsearch",
+  "readOnly": true,
+  "toolName": "grep_search",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 25`] = `
+{
+  "kind": "grep",
+  "normalized": "rg",
+  "readOnly": false,
+  "toolName": "rg",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 26`] = `
+{
+  "kind": "glob",
+  "normalized": "glob",
+  "readOnly": true,
+  "toolName": "Glob",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 27`] = `
+{
+  "kind": "glob",
+  "normalized": "find",
+  "readOnly": true,
+  "toolName": "find",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 28`] = `
+{
+  "kind": "glob",
+  "normalized": "findbyname",
+  "readOnly": true,
+  "toolName": "find_by_name",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 29`] = `
+{
+  "kind": "patch",
+  "normalized": "applypatch",
+  "readOnly": false,
+  "toolName": "apply_patch",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 30`] = `
+{
+  "kind": "patch",
+  "normalized": "applypatch",
+  "readOnly": false,
+  "toolName": "applyPatch",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 31`] = `
+{
+  "kind": "patch",
+  "normalized": "patch",
+  "readOnly": false,
+  "toolName": "patch",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 32`] = `
+{
+  "kind": "unknown",
+  "normalized": "executecommand",
+  "readOnly": false,
+  "toolName": "execute_command",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 33`] = `
+{
+  "kind": "unknown",
+  "normalized": "mcpshellrun",
+  "readOnly": false,
+  "toolName": "mcp__shell__run",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 34`] = `
+{
+  "kind": "unknown",
+  "normalized": "mcpfilesystemreadfile",
+  "readOnly": false,
+  "toolName": "mcp__filesystem__read_file",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 35`] = `
+{
+  "kind": "unknown",
+  "normalized": "webfetch",
+  "readOnly": false,
+  "toolName": "WebFetch",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 36`] = `
+{
+  "kind": "unknown",
+  "normalized": "",
+  "readOnly": false,
+  "toolName": "",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input normalizes, classifies, and marks read-only tools identically 37`] = `
+{
+  "kind": "path",
+  "normalized": "readfile",
+  "readOnly": true,
+  "toolName": "ReadFile ",
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 1`] = `
+{
+  "command": "cat ~/.ssh/config",
+  "input": {
+    "command": "cat ~/.ssh/config",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 2`] = `
+{
+  "command": "cd ~ && cat .ssh/config",
+  "input": {
+    "command": "cd ~ && cat .ssh/config",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 3`] = `
+{
+  "command": "rm -rf ~/.ssh",
+  "input": {
+    "command": "rm -rf ~/.ssh",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 4`] = `
+{
+  "command": "cd ~/.aws && cat credentials",
+  "input": {
+    "command": "cd ~/.aws && cat credentials",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 5`] = `
+{
+  "command": "f=~/.ssh/id_rsa; cat "$f"",
+  "input": {
+    "command": "f=~/.ssh/id_rsa; cat "$f"",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 6`] = `
+{
+  "command": undefined,
+  "input": {
+    "file_path": "/home/agent/.aws/credentials",
+  },
+  "paths": [
+    "/home/agent/.aws/credentials",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 7`] = `
+{
+  "command": undefined,
+  "input": {
+    "file_path": "README.md",
+  },
+  "paths": [
+    "README.md",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 8`] = `
+{
+  "command": undefined,
+  "input": {
+    "path": "src",
+    "pattern": "TODO",
+  },
+  "paths": [
+    "src",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 9`] = `
+{
+  "command": "ls -la ~/.ssh",
+  "input": {
+    "command": "ls -la ~/.ssh",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 10`] = `
+{
+  "command": "ls -la ~/.ssh",
+  "input": {
+    "command": "ls -la ~/.ssh",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 11`] = `
+{
+  "command": "echo x > /home/agent/.cc-safety-net/policy.json",
+  "input": {
+    "command": "echo x > /home/agent/.cc-safety-net/policy.json",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 12`] = `
+{
+  "command": "cd /home/agent/.cc-safety-net && rm policy.json",
+  "input": {
+    "command": "cd /home/agent/.cc-safety-net && rm policy.json",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 13`] = `
+{
+  "command": undefined,
+  "input": {
+    "content": "{}",
+    "file_path": "/work/project/.cc-safety-net/policy.json",
+  },
+  "paths": [
+    "/work/project/.cc-safety-net/policy.json",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 14`] = `
+{
+  "command": "npx -y cc-safety-net policy apply team.json",
+  "input": {
+    "command": "npx -y cc-safety-net policy apply team.json",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 15`] = `
+{
+  "command": "rm -rf .git",
+  "input": {
+    "command": "rm -rf .git",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 16`] = `
+{
+  "command": "echo x > .git/hooks/pre-commit",
+  "input": {
+    "command": "echo x > .git/hooks/pre-commit",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 17`] = `
+{
+  "command": undefined,
+  "input": {
+    "content": "",
+    "file_path": ".git/hooks/pre-commit",
+  },
+  "paths": [
+    ".git/hooks/pre-commit",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 18`] = `
+{
+  "command": "   ",
+  "input": {
+    "command": "   ",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 19`] = `
+{
+  "command": "git reset --hard",
+  "input": {
+    "command": "git reset --hard",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 20`] = `
+{
+  "command": undefined,
+  "input": undefined,
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 21`] = `
+{
+  "command": undefined,
+  "input": null,
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 22`] = `
+{
+  "command": undefined,
+  "input": 0,
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 23`] = `
+{
+  "command": undefined,
+  "input": "rm -rf /",
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 24`] = `
+{
+  "command": undefined,
+  "input": [
+    "git",
+    "status",
+  ],
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 25`] = `
+{
+  "command": undefined,
+  "input": {
+    "command": 123,
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 26`] = `
+{
+  "command": undefined,
+  "input": {
+    "command": "",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 27`] = `
+{
+  "command": "git status",
+  "input": {
+    "command": "git status",
+    "file_path": "x",
+  },
+  "paths": [
+    "x",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 28`] = `
+{
+  "command": undefined,
+  "input": {
+    "Command": "git status",
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 29`] = `
+{
+  "command": undefined,
+  "input": {
+    "nested": {
+      "command": "hidden",
+    },
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 30`] = `
+{
+  "command": undefined,
+  "input": {
+    "FILE_PATH": "upper.txt",
+    "file-path": "hyphen.txt",
+    "file_path": [
+      "array",
+      {
+        "path": "deep",
+      },
+    ],
+  },
+  "paths": [
+    "hyphen.txt",
+    "upper.txt",
+    "deep",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 31`] = `
+{
+  "command": undefined,
+  "input": {
+    "paths": [
+      {
+        "notebook_path": "n.ipynb",
+      },
+      [
+        "skip",
+        {
+          "absolutePath": "/abs",
+        },
+      ],
+    ],
+  },
+  "paths": [
+    "n.ipynb",
+    "/abs",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 32`] = `
+{
+  "command": undefined,
+  "input": {
+    "edits": [
+      {
+        "target_file": "a.ts",
+      },
+      {
+        "target_file": "b.ts",
+      },
+    ],
+    "file": null,
+    "path": 7,
+  },
+  "paths": [
+    "a.ts",
+    "b.ts",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 33`] = `
+{
+  "command": undefined,
+  "input": {
+    "path": "visible",
+    [Symbol(secret)]: "sym",
+  },
+  "paths": [
+    "visible",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 34`] = `
+{
+  "command": undefined,
+  "input": {
+    "file_path": "hidden",
+    "path": "shown",
+  },
+  "paths": [
+    "shown",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 35`] = `
+{
+  "command": "proto-less",
+  "input": {
+    "command": "proto-less",
+    "path": "p",
+  },
+  "paths": [
+    "p",
+  ],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 36`] = `
+{
+  "command": undefined,
+  "input": {
+    "input": 
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+  },
+  "paths": [],
+  "targets": [
+    "src/new.ts",
+    "src/quoted name.ts",
+    "docs/old.md",
+    "src/move.ts",
+    "src/moved.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 37`] = `
+{
+  "command": undefined,
+  "input": {
+    "patch": 
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+  },
+  "paths": [],
+  "targets": [
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 38`] = `
+{
+  "command": undefined,
+  "input": {
+    "diff": 
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+    "patchText": 
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+  },
+  "paths": [],
+  "targets": [
+    "src/new.ts",
+    "src/quoted name.ts",
+    "docs/old.md",
+    "src/move.ts",
+    "src/moved.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 39`] = `
+{
+  "command": undefined,
+  "input": {
+    "command": [
+      "apply_patch",
+      
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+    ],
+  },
+  "paths": [],
+  "targets": [
+    "src/new.ts",
+    "src/quoted name.ts",
+    "docs/old.md",
+    "src/move.ts",
+    "src/moved.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 40`] = `
+{
+  "command": undefined,
+  "input": {
+    "command": [
+      {
+        "diff": 
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+      },
+      
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+    ],
+  },
+  "paths": [],
+  "targets": [
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 41`] = `
+{
+  "command": undefined,
+  "input": {
+    "other": 
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+  },
+  "paths": [],
+  "targets": [],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 42`] = `
+{
+  "command": undefined,
+  "input": {
+    "patch": {
+      "diff": 
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+      "nested": 
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+    },
+  },
+  "paths": [],
+  "targets": [
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 43`] = `
+{
+  "command": undefined,
+  "input": 
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+  "paths": [],
+  "targets": [
+    "src/new.ts",
+    "src/quoted name.ts",
+    "docs/old.md",
+    "src/move.ts",
+    "src/moved.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 44`] = `
+{
+  "command": undefined,
+  "input": [
+    
+"*** Begin Patch
+*** Add File: src/new.ts
++export const x = 1;
+*** Update File: "src/quoted name.ts"
+@@ -1,2 +1,2 @@
+ context
+-old
++new
+*** Delete File: docs/old.md	note
+*** Update File: src/move.ts
+*** Move to: src/moved.ts
+*** End Patch"
+,
+    {
+      "input": 
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+    },
+  ],
+  "paths": [],
+  "targets": [
+    "src/new.ts",
+    "src/quoted name.ts",
+    "docs/old.md",
+    "src/move.ts",
+    "src/moved.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 45`] = `
+{
+  "command": undefined,
+  "input": {
+    "inner": {
+      "inner": {
+        "inner": {
+          "inner": {
+            "inner": {
+              "inner": {
+                "inner": {
+                  "inner": {
+                    "inner": {
+                      "inner": {
+                        "inner": {
+                          "inner": {
+                            "inner": {
+                              "inner": {
+                                "inner": {
+                                  "inner": {
+                                    "inner": {
+                                      "inner": {
+                                        "inner": {
+                                          "inner": {
+                                            "inner": {
+                                              "inner": {
+                                                "inner": {
+                                                  "inner": {
+                                                    "inner": {
+                                                      "inner": {
+                                                        "inner": {
+                                                          "inner": {
+                                                            "inner": {
+                                                              "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "inner": {
+                                                                "file_path": "deep.txt",
+                                                                "patch": 
+"diff --git a/src/a.ts b/src/a.ts
+index 111..222 100644
+--- a/src/a.ts
++++ b/src/a.ts
+@@ -1,3 +1,4 @@
+ keep
+-drop
++add
++add more
+ keep
+diff --git "a/sp ace.txt" "b/sp ace.txt"
+--- "a/sp ace.txt"	2024-01-01
++++ "b/sp ace.txt"
+@@ -0,0 +1 @@
++hello
+diff --git a/renamed.ts b/renamed-new.ts
+rename from renamed.ts
+rename to renamed-new.ts
+diff --git a/deleted.ts b/deleted.ts
+--- a/deleted.ts
++++ /dev/null
+@@ -1 +0,0 @@
+-gone
+diff --git x/one two/one two
+diff --git old/x new/x
+diff --git a/\\303\\251.txt b/\\303\\251.txt
+diff --git 'a/q.txt' 'b/q.txt'
+diff --git a/unbalanced "b/open
+copy from copied.ts
+copy to "copied copy.ts"
+--- solo
++++ solo
+--- /dev/null
++++ b/created.ts
+@@ malformed hunk
+ trailing"
+,
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                                },
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  "paths": [
+    "deep.txt",
+  ],
+  "targets": [
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "src/a.ts",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "sp ace.txt",
+    "renamed.ts",
+    "renamed-new.ts",
+    "renamed.ts",
+    "renamed-new.ts",
+    "deleted.ts",
+    "deleted.ts",
+    "a/deleted.ts",
+    "deleted.ts",
+    "old/x",
+    "new/x",
+    "x",
+    "\\303\\251.txt",
+    "\\303\\251.txt",
+    "q.txt",
+    "q.txt",
+    "copied.ts",
+    "copied copy.ts",
+    "solo",
+    "solo",
+    "b/created.ts",
+    "created.ts",
+  ],
+}
+`;
+
+exports[`next/core/tool-input against src/parser/tool-input reads commands, path-like values, and patch targets identically from safe inputs 46`] = `
+{
+  "command": undefined,
+  "input": {
+    "first": {
+      "file_path": "shared.txt",
+    },
+    "second": {
+      "file_path": "shared.txt",
+    },
+    "third": [
+      {
+        "file_path": "shared.txt",
+      },
+    ],
+  },
+  "paths": [
+    "shared.txt",
+    "shared.txt",
+    "shared.txt",
+  ],
+  "targets": [],
+}
+`;

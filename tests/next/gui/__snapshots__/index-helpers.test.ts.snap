@@ -1,0 +1,798 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`the GUI integrations probe lists every catalog target in order with its display name and this build 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "system": {
+        "nodeVersion": "22.0.0",
+        "platform": "<platform>",
+        "version": "dev",
+      },
+      "targets": [
+        {
+          "label": "Amp Code",
+          "status": "not-installed",
+          "target": "amp",
+          "version": null,
+        },
+        {
+          "label": "Antigravity CLI",
+          "status": "not-installed",
+          "target": "antigravity-cli",
+          "version": "2.0.0",
+        },
+        {
+          "label": "Claude Code",
+          "status": "not-installed",
+          "target": "claude-code",
+          "version": "1.0.0",
+        },
+        {
+          "label": "Codex",
+          "status": "active",
+          "target": "codex",
+          "version": "1.2.0",
+        },
+        {
+          "label": "Cursor",
+          "status": "not-installed",
+          "target": "cursor",
+          "version": null,
+        },
+        {
+          "label": "Gemini CLI",
+          "status": "not-installed",
+          "target": "gemini-cli",
+          "version": "0.20.0",
+        },
+        {
+          "label": "GitHub Copilot CLI",
+          "status": "not-installed",
+          "target": "copilot-cli",
+          "version": "1.0.9",
+        },
+        {
+          "label": "Grok Build",
+          "status": "not-installed",
+          "target": "grok-build",
+          "version": "1.1.0",
+        },
+        {
+          "label": "Hermes Agent",
+          "status": "not-installed",
+          "target": "hermes-agent",
+          "version": "1.5.0",
+        },
+        {
+          "label": "Kimi Code",
+          "status": "not-installed",
+          "target": "kimi-code",
+          "version": "0.3.0",
+        },
+        {
+          "label": "OpenClaw",
+          "status": "not-installed",
+          "target": "openclaw",
+          "version": "2026.8.1",
+        },
+        {
+          "label": "OpenCode",
+          "status": "not-installed",
+          "target": "opencode",
+          "version": "0.1.0",
+        },
+        {
+          "label": "Pi",
+          "status": "not-installed",
+          "target": "pi",
+          "version": "0.4.0",
+        },
+      ],
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI integrations probe reads the Claude Code plugin state off disk as active 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "system": {
+        "nodeVersion": "22.0.0",
+        "platform": "<platform>",
+        "version": "dev",
+      },
+      "targets": [
+        {
+          "label": "Amp Code",
+          "status": "not-installed",
+          "target": "amp",
+          "version": null,
+        },
+        {
+          "label": "Antigravity CLI",
+          "status": "not-installed",
+          "target": "antigravity-cli",
+          "version": "2.0.0",
+        },
+        {
+          "label": "Claude Code",
+          "status": "active",
+          "target": "claude-code",
+          "version": "1.0.0",
+        },
+        {
+          "label": "Codex",
+          "status": "active",
+          "target": "codex",
+          "version": "1.2.0",
+        },
+        {
+          "label": "Cursor",
+          "status": "not-installed",
+          "target": "cursor",
+          "version": null,
+        },
+        {
+          "label": "Gemini CLI",
+          "status": "not-installed",
+          "target": "gemini-cli",
+          "version": "0.20.0",
+        },
+        {
+          "label": "GitHub Copilot CLI",
+          "status": "not-installed",
+          "target": "copilot-cli",
+          "version": "1.0.9",
+        },
+        {
+          "label": "Grok Build",
+          "status": "not-installed",
+          "target": "grok-build",
+          "version": "1.1.0",
+        },
+        {
+          "label": "Hermes Agent",
+          "status": "not-installed",
+          "target": "hermes-agent",
+          "version": "1.5.0",
+        },
+        {
+          "label": "Kimi Code",
+          "status": "not-installed",
+          "target": "kimi-code",
+          "version": "0.3.0",
+        },
+        {
+          "label": "OpenClaw",
+          "status": "not-installed",
+          "target": "openclaw",
+          "version": "2026.8.1",
+        },
+        {
+          "label": "OpenCode",
+          "status": "not-installed",
+          "target": "opencode",
+          "version": "0.1.0",
+        },
+        {
+          "label": "Pi",
+          "status": "not-installed",
+          "target": "pi",
+          "version": "0.4.0",
+        },
+      ],
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": 
+"{"plugins":{"cc-safety-net@cc-marketplace":[{"scope":"user"}]}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": 
+"{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI integrations probe reads the Claude Code plugin state off disk as disabled 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "system": {
+        "nodeVersion": "22.0.0",
+        "platform": "<platform>",
+        "version": "dev",
+      },
+      "targets": [
+        {
+          "label": "Amp Code",
+          "status": "not-installed",
+          "target": "amp",
+          "version": null,
+        },
+        {
+          "label": "Antigravity CLI",
+          "status": "not-installed",
+          "target": "antigravity-cli",
+          "version": "2.0.0",
+        },
+        {
+          "label": "Claude Code",
+          "status": "disabled",
+          "target": "claude-code",
+          "version": "1.0.0",
+        },
+        {
+          "label": "Codex",
+          "status": "active",
+          "target": "codex",
+          "version": "1.2.0",
+        },
+        {
+          "label": "Cursor",
+          "status": "not-installed",
+          "target": "cursor",
+          "version": null,
+        },
+        {
+          "label": "Gemini CLI",
+          "status": "not-installed",
+          "target": "gemini-cli",
+          "version": "0.20.0",
+        },
+        {
+          "label": "GitHub Copilot CLI",
+          "status": "not-installed",
+          "target": "copilot-cli",
+          "version": "1.0.9",
+        },
+        {
+          "label": "Grok Build",
+          "status": "not-installed",
+          "target": "grok-build",
+          "version": "1.1.0",
+        },
+        {
+          "label": "Hermes Agent",
+          "status": "not-installed",
+          "target": "hermes-agent",
+          "version": "1.5.0",
+        },
+        {
+          "label": "Kimi Code",
+          "status": "not-installed",
+          "target": "kimi-code",
+          "version": "0.3.0",
+        },
+        {
+          "label": "OpenClaw",
+          "status": "not-installed",
+          "target": "openclaw",
+          "version": "2026.8.1",
+        },
+        {
+          "label": "OpenCode",
+          "status": "not-installed",
+          "target": "opencode",
+          "version": "0.1.0",
+        },
+        {
+          "label": "Pi",
+          "status": "not-installed",
+          "target": "pi",
+          "version": "0.4.0",
+        },
+      ],
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": 
+"{"plugins":{"cc-safety-net@cc-marketplace":[{"scope":"user"}]}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": 
+"{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI integrations probe reports a plugin record it cannot parse as uninspected, not as absent 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "system": {
+        "nodeVersion": "22.0.0",
+        "platform": "<platform>",
+        "version": "dev",
+      },
+      "targets": [
+        {
+          "label": "Amp Code",
+          "status": "not-installed",
+          "target": "amp",
+          "version": null,
+        },
+        {
+          "label": "Antigravity CLI",
+          "status": "not-installed",
+          "target": "antigravity-cli",
+          "version": "2.0.0",
+        },
+        {
+          "label": "Claude Code",
+          "status": "not-inspected",
+          "target": "claude-code",
+          "version": "1.0.0",
+        },
+        {
+          "label": "Codex",
+          "status": "active",
+          "target": "codex",
+          "version": "1.2.0",
+        },
+        {
+          "label": "Cursor",
+          "status": "not-installed",
+          "target": "cursor",
+          "version": null,
+        },
+        {
+          "label": "Gemini CLI",
+          "status": "not-installed",
+          "target": "gemini-cli",
+          "version": "0.20.0",
+        },
+        {
+          "label": "GitHub Copilot CLI",
+          "status": "not-installed",
+          "target": "copilot-cli",
+          "version": "1.0.9",
+        },
+        {
+          "label": "Grok Build",
+          "status": "not-installed",
+          "target": "grok-build",
+          "version": "1.1.0",
+        },
+        {
+          "label": "Hermes Agent",
+          "status": "not-installed",
+          "target": "hermes-agent",
+          "version": "1.5.0",
+        },
+        {
+          "label": "Kimi Code",
+          "status": "not-installed",
+          "target": "kimi-code",
+          "version": "0.3.0",
+        },
+        {
+          "label": "OpenClaw",
+          "status": "not-installed",
+          "target": "openclaw",
+          "version": "2026.8.1",
+        },
+        {
+          "label": "OpenCode",
+          "status": "not-installed",
+          "target": "opencode",
+          "version": "0.1.0",
+        },
+        {
+          "label": "Pi",
+          "status": "not-installed",
+          "target": "pi",
+          "version": "0.4.0",
+        },
+      ],
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": "nope",
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI integrations probe reports a plugin record it cannot parse as uninspected, not as absent 2`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "system": {
+        "nodeVersion": "22.0.0",
+        "platform": "<platform>",
+        "version": "dev",
+      },
+      "targets": [
+        {
+          "label": "Amp Code",
+          "status": "not-installed",
+          "target": "amp",
+          "version": null,
+        },
+        {
+          "label": "Antigravity CLI",
+          "status": "not-installed",
+          "target": "antigravity-cli",
+          "version": "2.0.0",
+        },
+        {
+          "label": "Claude Code",
+          "status": "not-installed",
+          "target": "claude-code",
+          "version": "1.0.0",
+        },
+        {
+          "label": "Codex",
+          "status": "active",
+          "target": "codex",
+          "version": "1.2.0",
+        },
+        {
+          "label": "Cursor",
+          "status": "not-installed",
+          "target": "cursor",
+          "version": null,
+        },
+        {
+          "label": "Gemini CLI",
+          "status": "not-installed",
+          "target": "gemini-cli",
+          "version": "0.20.0",
+        },
+        {
+          "label": "GitHub Copilot CLI",
+          "status": "not-installed",
+          "target": "copilot-cli",
+          "version": "1.0.9",
+        },
+        {
+          "label": "Grok Build",
+          "status": "not-installed",
+          "target": "grok-build",
+          "version": "1.1.0",
+        },
+        {
+          "label": "Hermes Agent",
+          "status": "not-installed",
+          "target": "hermes-agent",
+          "version": "1.5.0",
+        },
+        {
+          "label": "Kimi Code",
+          "status": "not-installed",
+          "target": "kimi-code",
+          "version": "0.3.0",
+        },
+        {
+          "label": "OpenClaw",
+          "status": "not-installed",
+          "target": "openclaw",
+          "version": "2026.8.1",
+        },
+        {
+          "label": "OpenCode",
+          "status": "not-installed",
+          "target": "opencode",
+          "version": "0.1.0",
+        },
+        {
+          "label": "Pi",
+          "status": "not-installed",
+          "target": "pi",
+          "version": "0.4.0",
+        },
+      ],
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI health probe lists only the runtimes it detected and passes the update check through 1`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "hooks": [
+        {
+          "configured": true,
+          "label": "Claude Code",
+          "platform": "claude-code",
+        },
+        {
+          "configured": true,
+          "label": "Codex",
+          "platform": "codex",
+        },
+      ],
+      "update": {
+        "currentVersion": "dev",
+        "latestVersion": "9.9.9",
+        "updateAvailable": true,
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".claude/plugins",
+    },
+    {
+      "content": 
+"{"plugins":{"cc-safety-net@cc-marketplace":[{"scope":"user"}]}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/plugins/installed_plugins.json",
+    },
+    {
+      "content": 
+"{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".claude/settings.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI health probe lists only the runtimes it detected and passes the update check through 2`] = `
+{
+  "outcome": {
+    "kind": "returned",
+    "value": {
+      "hooks": [
+        {
+          "configured": true,
+          "label": "Codex",
+          "platform": "codex",
+        },
+      ],
+      "update": {
+        "currentVersion": "dev",
+        "latestVersion": "9.9.9",
+        "updateAvailable": true,
+      },
+    },
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI installer wrapper installs and removes the target the GUI asked for, reporting what it wrote 1`] = `
+{
+  "install": {
+    "ok": true,
+    "output": "Installed Cursor hook in <home>/.cursor/hooks.json",
+  },
+  "installed": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "npx -y cc-safety-net hook --cursor",
+        "timeout": 30,
+        "failClosed": true
+      }
+    ]
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+  "removed": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": []
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+  "uninstall": {
+    "ok": true,
+    "output": "Uninstalled Cursor hook from <home>/.cursor/hooks.json",
+  },
+}
+`;
+
+exports[`the GUI installer wrapper reports a failed install with the error the installer printed 1`] = `
+{
+  "ok": false,
+  "output": "EEXIST: file already exists, mkdir '<home>/.cursor'",
+}
+`;
+
+exports[`the GUI installer wrapper serializes overlapping runs so neither captures the other output 1`] = `
+{
+  "first": {
+    "ok": true,
+    "output": "Installed Cursor hook in <home>/.cursor/hooks.json",
+  },
+  "second": {
+    "ok": true,
+    "output": "Uninstalled Cursor hook from <home>/.cursor/hooks.json",
+  },
+  "tree": [
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": ".cursor",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "hooks": {
+    "preToolUse": []
+  }
+}
+"
+,
+      "kind": "file",
+      "mode": 420,
+      "path": ".cursor/hooks.json",
+    },
+    {
+      "kind": "directory",
+      "mode": 493,
+      "path": "tmp",
+    },
+  ],
+}
+`;
+
+exports[`the GUI installer wrapper leaves the console it borrowed exactly as it found it 1`] = `
+{
+  "ok": true,
+  "output": "Installed Cursor hook in <home>/.cursor/hooks.json",
+}
+`;

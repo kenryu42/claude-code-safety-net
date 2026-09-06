@@ -1,0 +1,25 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`cli/startup/banner a rejection propagates and still restores the cursor on both implementations 1`] = `
+{
+  "chunks": [
+    "\x1B[?25l",
+    
+"
+\x1B[2K\x1B[38;2;238;121;161m⠋\x1B[39m Working…"
+,
+    
+"
+\x1B[2K\x1B[38;2;240;121;155m⠙\x1B[39m Working…"
+,
+    
+"
+\x1B[2K\x1B[?25h"
+,
+  ],
+  "outcome": {
+    "kind": "threw",
+    "message": "startup failed",
+  },
+}
+`;

@@ -12,6 +12,7 @@ import {
   portedVerdict,
   shippedVerdict,
 } from '../helpers/gate-differential';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * Every cap the analyzer used to enforce with a budget of its own now counts on the one Budget and
@@ -154,9 +155,9 @@ describe('one budget, one report per analyzer cap', () => {
 
     test(`${row.name}: the shipped gate reaches the same verdict, and not below the cap`, () => {
       const breach = bashCall(row.breaching, tree.workspace);
-      expect(portedVerdict(breach, environment, dependencies)).toStrictEqual(
-        shippedVerdict(breach, dependencies),
-      );
+      const verdict = portedVerdict(breach, environment, dependencies);
+      expect(verdict).toStrictEqual(shippedVerdict(breach, dependencies));
+      recordPorted(verdict, rootFolds(tree.root));
       const below = bashCall(row.below, tree.workspace);
       expect(portedVerdict(below, environment, dependencies).reason).not.toBe(
         LIMITS[row.kind].reason,

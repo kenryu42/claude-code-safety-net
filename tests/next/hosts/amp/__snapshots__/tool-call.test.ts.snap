@@ -1,0 +1,618 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`one Amp tool call through both handlers a destructive command 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "rm -rf /",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "hard_stop",
+        "level": "standard",
+        "reason": "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
+        "ruleId": "rm.recursive-force-root-or-home",
+        "segment": "rm -rf /",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: rm -rf targeting root or home directory is extremely dangerous and always blocked.
+
+Rule: rm.recursive-force-root-or-home
+
+Command: rm -rf /
+
+Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a safe command recorded as an allow 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "git status",
+        "cwd": "<root>/project",
+        "decision": "allow",
+        "level": "standard",
+        "reason": "allowed",
+        "segment": "git status",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "allow",
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a safe command under the blocked-only audit scope 1`] = `
+{
+  "entries": [],
+  "returned": {
+    "action": "allow",
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a directory inside the workspace 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "git status",
+        "cwd": "<root>/project/sub",
+        "decision": "allow",
+        "level": "standard",
+        "reason": "allowed",
+        "segment": "git status",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project-sub/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "allow",
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a directory outside the workspace 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "git status",
+        "cwd": "<root>/outside",
+        "decision": "allow",
+        "level": "standard",
+        "reason": "allowed",
+        "segment": "git status",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-outside/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "allow",
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a directory that does not exist 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "git status",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "use_alternative",
+        "reason": "CC Safety Net could not use the requested working directory because it does not exist, is inaccessible, is not a directory, or uses an unsupported path form. Use an existing accessible working directory. If the requested directory is missing, create it from an accessible location before retrying the command.",
+        "segment": "missing",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net could not use the requested working directory because it does not exist, is inaccessible, is not a directory, or uses an unsupported path form. Use an existing accessible working directory. If the requested directory is missing, create it from an accessible location before retrying the command.
+
+Tool: Bash
+
+Command: git status
+
+Segment: missing
+
+Do not retry the blocked form. Continue the task using the safer alternative described above."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a shell command without a directory 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "git status",
+        "cwd": "<root>/project",
+        "decision": "allow",
+        "level": "standard",
+        "reason": "allowed",
+        "segment": "git status",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "allow",
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a workspace without a root 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "",
+        "cwd": null,
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "no-cwd/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: Bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a workspace uri that cannot be resolved 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "",
+        "cwd": null,
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "no-cwd/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: Bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a shell extractor that throws 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: Bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a blank command 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: Bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a read of a file in the project 1`] = `
+{
+  "entries": [],
+  "returned": {
+    "action": "allow",
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a read of a private key 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "<root>/home/.ssh/id_rsa",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "intent": "hard_stop",
+        "level": "standard",
+        "reason": "Access to a sensitive path is not allowed.",
+        "ruleId": "secret.home.ssh",
+        "segment": "<root>/home/.ssh/id_rsa",
+        "sessionId": "amp-1",
+        "toolName": "Read",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: Access to a sensitive path is not allowed.
+
+Rule: secret.home.ssh
+
+Command: <root>/home/.ssh/id_rsa
+
+Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers an event that is null 1`] = `
+{
+  "entries": [],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers an event without a tool name 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "",
+        "cwd": null,
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "amp-1",
+        "v": "dev",
+      },
+      "file": "no-cwd/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers an event whose input is null 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "",
+        "cwd": null,
+        "decision": "deny",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "no-cwd/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Tool: Bash
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers an event without a thread id 1`] = `
+{
+  "entries": [],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: rm -rf targeting root or home directory is extremely dangerous and always blocked.
+
+Rule: rm.recursive-force-root-or-home
+
+Command: rm -rf /
+
+Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers an analyzer that fails 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "echo analyzed",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "errorCode": "unexpected-error",
+        "failureStage": "command-analysis",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "echo analyzed",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Command: echo analyzed
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers an analyzer that fails with debug output on 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "echo analyzed",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "errorCode": "unexpected-error",
+        "failureStage": "command-analysis",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "echo analyzed",
+        "sessionId": "amp-1",
+        "toolName": "Bash",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Command: echo analyzed
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [
+    "CC Safety Net debug: amp tool.call analysis failed: injected analyzer failure",
+  ],
+  "thrown": undefined,
+}
+`;
+
+exports[`one Amp tool call through both handlers a secret scan that fails on a read 1`] = `
+{
+  "entries": [
+    {
+      "entry": {
+        "agent": "amp",
+        "command": "cat README.md",
+        "cwd": "<root>/project",
+        "decision": "deny",
+        "errorCode": "unexpected-error",
+        "failureStage": "secret-protection",
+        "intent": "stop_and_explain",
+        "reason": "CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.",
+        "segment": "cat README.md",
+        "sessionId": "amp-1",
+        "toolName": "Read",
+        "v": "dev",
+      },
+      "file": "<root>-project/<month>/<date>-amp-1.jsonl",
+    },
+  ],
+  "returned": {
+    "action": "reject-and-continue",
+    "message": 
+"BLOCKED by CC Safety Net
+
+Reason: CC Safety Net failed closed because command analysis failed unexpectedly. This is not caused by your command. Report it to the user.
+
+Do not brute-force variants. Simplify or restructure the command so it can be analyzed, or report the block to the user."
+,
+  },
+  "stderr": [],
+  "thrown": undefined,
+}
+`;

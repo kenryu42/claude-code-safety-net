@@ -10,6 +10,7 @@ import {
   type HookRow,
   hostEnv,
 } from '../helpers/hook-hosts';
+import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The two bins over the same bytes. Each row is fed to `src/cli/cc-safety-net.ts` and to
@@ -27,6 +28,18 @@ const PORTED = 'next/entries/bin.ts';
 const CLAUDE_DENIAL = 'a denied command';
 
 const fixture = createHookFixture('bin-');
+
+/**
+ * Every machine path a recorded row can spell: the fixture, and the checkout the two bins ran in.
+ * Both are also spelled with `-` for every separator, the way the audit writer names the log
+ * directory after the directory the call ran in.
+ */
+const FOLDS = [
+  ...rootFolds(fixture.root),
+  [fixture.root.replaceAll('/', '-'), '<root>'],
+  [REPO_ROOT, '<repo>'],
+  [REPO_ROOT.replaceAll('/', '-'), '<repo>'],
+] as const;
 
 afterAll(() => {
   fixture.remove();
@@ -69,7 +82,9 @@ for (const host of HOOK_HOSTS) {
     for (const row of host.rows(fixture)) {
       test(row.name, () => {
         const argv = ['hook', host.flag];
-        expect(runEntry(PORTED, argv, row)).toStrictEqual(runEntry(SHIPPED, argv, row));
+        const ported = runEntry(PORTED, argv, row);
+        expect(ported).toStrictEqual(runEntry(SHIPPED, argv, row));
+        recordPorted(ported, FOLDS);
       }, 60_000);
     }
   });
@@ -85,7 +100,9 @@ describe('flag resolution', () => {
     ['-cc'],
   ]) {
     test(`\`${argv.join(' ')}\` runs the Claude Code hook`, () => {
-      expect(runEntry(PORTED, argv, denialRow)).toStrictEqual(runEntry(SHIPPED, argv, denialRow));
+      const ported = runEntry(PORTED, argv, denialRow);
+      expect(ported).toStrictEqual(runEntry(SHIPPED, argv, denialRow));
+      recordPorted(ported, FOLDS);
     }, 60_000);
   }
 
@@ -93,6 +110,7 @@ describe('flag resolution', () => {
     test(`\`${argv.join(' ')}\` names no integration`, () => {
       const ported = runEntry(PORTED, argv, denialRow);
       expect(ported).toStrictEqual(runEntry(SHIPPED, argv, denialRow));
+      recordPorted(ported, FOLDS);
       expect(ported.stdout).toBe('');
       expect(ported.exitCode).toBe(1);
     }, 60_000);

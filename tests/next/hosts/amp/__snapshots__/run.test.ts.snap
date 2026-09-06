@@ -1,0 +1,52 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`running an amp or git command hands back the exit status and both streams 1`] = `
+{
+  "log": [
+    "amp plugins list	<cwd>",
+  ],
+  "result": {
+    "errorCode": undefined,
+    "status": 0,
+    "stderr": 
+"notice
+"
+,
+    "stdout": 
+"listed
+"
+,
+  },
+}
+`;
+
+exports[`running an amp or git command keeps what a failing command printed before it gave up 1`] = `
+{
+  "log": [
+    "amp clone user-plugins /nowhere	<cwd>",
+  ],
+  "result": {
+    "errorCode": undefined,
+    "status": 3,
+    "stderr": "clone refused",
+    "stdout": "partial",
+  },
+}
+`;
+
+exports[`running an amp or git command runs the command in the directory it was given 1`] = `
+{
+  "log": [
+    "git status --porcelain	<root>/checkout",
+  ],
+  "result": {
+    "errorCode": undefined,
+    "status": 0,
+    "stderr": "",
+    "stdout": 
+" M cc-safety-net/index.ts
+"
+,
+  },
+}
+`;

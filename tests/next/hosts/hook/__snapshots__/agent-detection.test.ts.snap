@@ -1,0 +1,27 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`a transcript under the default Codex root 1`] = `"codex"`;
+
+exports[`a transcript under the default Copilot root 1`] = `"copilot-cli"`;
+
+exports[`a transcript under the default Claude Code root 1`] = `"claude-code"`;
+
+exports[`a transcript under a relocated Codex root 1`] = `"codex"`;
+
+exports[`a transcript inside two configured roots at once 1`] = `"unknown"`;
+
+exports[`a transcript reached through a symlinked root 1`] = `"codex"`;
+
+exports[`a transcript path that does not exist under a root 1`] = `"codex"`;
+
+exports[`a relative transcript path 1`] = `"unknown"`;
+
+exports[`a transcript path that is a number 1`] = `"unknown"`;
+
+exports[`a null transcript path 1`] = `"unknown"`;
+
+exports[`no transcript path at all 1`] = `"unknown"`;
+
+exports[`no transcript path inside a Claude Code session 1`] = `"claude-code"`;
+
+exports[`no transcript path with a Claude Code entrypoint 1`] = `"claude-code"`;

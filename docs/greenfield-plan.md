@@ -634,6 +634,44 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` done. Complexity: S, M, L
   knip entry with the harness; the remaining Windows-only gaps in `tests/next` (a `/`-spelled
   allowance literal, `<home>/`-spelled row-table constants, the `#!/bin/sh` fake bin) and the
   per-fixture `safety-net-worktree-*` leak are the portability items left.
+- Phase 11a landed (freeze before the cutover): every shipped-versus-ported comparison under
+  `tests/next` now records the ported outcome beside the untouched assertion. `recordPorted`
+  and `rootFolds` in `tests/next/helpers/temp-home.ts` snapshot the value the differential
+  compares after the helper's folds plus record-only folds of wall-clock text, the checkout
+  path and, on Windows, the path separator; `describeDifferential` takes the fixture root;
+  `expectSameOutcome` records its outcome except for a relative target that climbs out of the
+  fixture root into the temp directory (a lexical check, `climbsOut`, so the same rows are
+  skipped on every host); the CLI differential's two side roots have the same length;
+  `gate/pipeline`, `gate/contract` (corpus-pinned) and `gate/trace-parity`, `gate/trace-sink`
+  (deleted with the harness) carry no snapshot by design. 122 `.snap` files,
+  7,999,006 bytes, none over 1 MB.
+- Corpora too large to snapshot use `expectRecordedDigest` in
+  `tests/next/helpers/gate-differential.ts`: SHA-256 over canonical JSON of the sorted
+  `[input, value]` pairs (Map and Set contents included) per `<place>/<level>`, per fuzz batch
+  and per core corpus (parser programs, projections, tokens, sanitizers, validators) in
+  `tests/next/fixtures/gate/harvested-digests.json` (173 keys); written only when
+  absent and never under `CI`, re-recorded with `CC_SAFETY_NET_UPDATE_GOLDENS=1`, dumped with
+  `CC_SAFETY_NET_DUMP_VERDICTS=<dir>`. The harvested and fuzz batches run under a pinned
+  process environment (`HOME` and `TMPDIR` inside the fixture tree, fixed `USER`, `LOGNAME`,
+  `SHELL`, `PATH`) on both sides, and the sensitive-text projection under a pinned `TMPDIR`
+  with the other supported path variables unset, so a `$TMPDIR` literal decides the same
+  whether or not the host exports it.
+- `tests/next/e2e/hook-cold-start.test.ts` pins the budget: the ported bin's static import
+  closure at or under 400,000 bytes (measured 344,139) and its `hook --claude-code`
+  median over seven interleaved runs at or under node's median plus 150 ms (measured here:
+  node 30.0 ms, hook 98.8 ms; the byte cap is the sharp half, the time allowance a
+  coarse ceiling).
+- Verified: `bun test tests/next` twice with no snapshot added or updated and once under
+  `CI=true` (2,451 pass); the same suite with the temp directory moved to a longer path
+  and with the home moved passes except for the two `cli/status` rows below; `bun run check`
+  (7,688 of 7,727 pass, coverage 97.54% lines, the two root-only legacy failures unchanged).
+- Carried to the cutover: freeze `HARVESTED_LITERALS` into a fixture before the legacy suites
+  it scans are retired, or the digest corpus empties; two `cli/status` rows print a fixture
+  path that exceeds 80 columns on a host whose temp directory is long (macOS runners) and
+  truncate there, so the cutover pins a short `TMPDIR` on that runner (`createTempRoot` also
+  honours `CC_SAFETY_NET_TEST_TMPDIR`); confirm the digests on the macOS and Windows runners
+  (the dump names any differing pair); a thrown outcome records only its kind and name; the
+  snapshot record becomes the sole assertion once the shipped side is deleted.
 
 ## How to resume
 

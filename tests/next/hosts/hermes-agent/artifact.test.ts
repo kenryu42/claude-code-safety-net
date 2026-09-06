@@ -18,14 +18,17 @@ import {
 
 describe('the Hermes Agent plugin artifact', () => {
   test.each(['dev', '9.9.9'])('builds the shipped bytes at version %s', (version) => {
-    expect(buildHermesAgentPluginFiles(version)).toEqual(shippedBuildFiles(version));
+    const files = buildHermesAgentPluginFiles(version);
+
+    expect(files).toEqual(shippedBuildFiles(version));
+    expect(files).toMatchSnapshot();
   });
 
   test('keeps the ownership marker and the directory name the installer writes to', () => {
-    expect({ header: HERMES_AGENT_MANAGED_HEADER, name: HERMES_AGENT_PLUGIN_NAME }).toEqual({
-      header: SHIPPED_HEADER,
-      name: SHIPPED_NAME,
-    });
+    const markers = { header: HERMES_AGENT_MANAGED_HEADER, name: HERMES_AGENT_PLUGIN_NAME };
+
+    expect(markers).toEqual({ header: SHIPPED_HEADER, name: SHIPPED_NAME });
+    expect(markers).toMatchSnapshot();
   });
 
   test('spawns the analyzer through the argv the Hermes adapter answers on', () => {

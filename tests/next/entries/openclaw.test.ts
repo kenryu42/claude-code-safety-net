@@ -9,10 +9,9 @@ import shippedOpenClawEntry from '@/integrations/openclaw/index';
  */
 
 test('the OpenClaw entry declares the same extension, with a register hook to call', () => {
-  expect({ ...portedOpenClawEntry, register: typeof portedOpenClawEntry.register }).toEqual({
-    ...shippedOpenClawEntry,
-    register: 'function',
-  });
+  const declared = { ...portedOpenClawEntry, register: typeof portedOpenClawEntry.register };
+  expect(declared).toEqual({ ...shippedOpenClawEntry, register: 'function' });
+  expect(declared).toMatchSnapshot();
 });
 
 test('it registers under the id the shipped manifest names', () => {

@@ -1,0 +1,329 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`clearing the npx cache sweeps ~/.npm/_npx when npx set no cache path 1`] = `
+[
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b/node_modules/other",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": ".npm/_npx/b/node_modules/other/index.js",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/c",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "tmp",
+  },
+]
+`;
+
+exports[`clearing the npx cache sweeps the cache npx injected and nothing else 1`] = `
+[
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/a",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/a/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/a/node_modules/cc-safety-net",
+  },
+  {
+    "content": "{}",
+    "kind": "file",
+    "mode": 420,
+    "path": ".npm/_npx/a/node_modules/cc-safety-net/package.json",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b/node_modules/other",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": ".npm/_npx/b/node_modules/other/index.js",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/c",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "cache",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "cache/_npx",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "cache/_npx/b",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "cache/_npx/b/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "cache/_npx/b/node_modules/other",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": "cache/_npx/b/node_modules/other/index.js",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "cache/_npx/c",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "tmp",
+  },
+]
+`;
+
+exports[`clearing the npx cache falls back to the home when the injected cache path is empty 1`] = `
+[
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/b/node_modules/other",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": ".npm/_npx/b/node_modules/other/index.js",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_npx/c",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "tmp",
+  },
+]
+`;
+
+exports[`clearing the npx cache does nothing when no npx cache was ever written 1`] = `
+[
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": ".npm/_cacache",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": ".npm/_cacache/index",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "tmp",
+  },
+]
+`;
+
+exports[`clearing the npx cache reads LOCALAPPDATA for the Windows cache root 1`] = `
+[
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local/npm-cache",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local/npm-cache/_npx",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local/npm-cache/_npx/b",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local/npm-cache/_npx/b/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local/npm-cache/_npx/b/node_modules/other",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": "local/npm-cache/_npx/b/node_modules/other/index.js",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "local/npm-cache/_npx/c",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "tmp",
+  },
+]
+`;
+
+exports[`clearing the npx cache defaults the Windows cache root to AppData/Local under the home 1`] = `
+[
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local/npm-cache",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local/npm-cache/_npx",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local/npm-cache/_npx/b",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local/npm-cache/_npx/b/node_modules",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local/npm-cache/_npx/b/node_modules/other",
+  },
+  {
+    "content": "",
+    "kind": "file",
+    "mode": 420,
+    "path": "AppData/Local/npm-cache/_npx/b/node_modules/other/index.js",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "AppData/Local/npm-cache/_npx/c",
+  },
+  {
+    "kind": "directory",
+    "mode": 493,
+    "path": "tmp",
+  },
+]
+`;
