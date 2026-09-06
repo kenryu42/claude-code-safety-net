@@ -11,7 +11,6 @@ import type { RulesPolicyOptions } from '@/core/policy/paths';
 import { loadPolicySnapshot as loadPortedSnapshot } from '@/core/policy/snapshot';
 import type { PolicySnapshot } from '@/core/policy/types';
 import { snapshotTree, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The loader is the one reader behind the gate, the CLI, the GUI and audit retention, so every
@@ -760,10 +759,10 @@ describe('the policy loader port reproduces every configuration recovery row', (
         }),
         options,
       );
-      recordPorted(actual, [...rootFolds(root), [HOME, '<home>']]);
       expect(Object.isFrozen(actual)).toBeTrue();
       expect(Object.isFrozen(actual.policy)).toBeTrue();
       expect(Object.isFrozen(actual.policy.rules)).toBeTrue();
+      expect(Object.isFrozen(actual.ruleMetadata)).toBeTrue();
       if (actual.policyScopes) expect(Object.isFrozen(actual.policyScopes)).toBeTrue();
       row.check(actual);
     } finally {

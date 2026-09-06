@@ -1,7 +1,4 @@
-import { afterAll, describe, test } from 'bun:test';
-import { mkdtempSync, rmSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
-import { dirname, join, sep } from 'node:path';
+import { describe, expect, test } from 'bun:test';
 import { createTestEnvironment } from '@/core/environment';
 import {
   getLocalRulebookPath,
@@ -14,92 +11,171 @@ import {
   getUserRulesDir,
   type RulesPolicyOptions,
 } from '@/core/policy/paths';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
-const root = mkdtempSync(join(tmpdir(), 'next-policy-paths-'));
-const outside = join(dirname(root), 'policy-paths-sibling');
-const nested = join(root, 'workspaces', 'app');
+/**
+ * Path resolution is pure computation over the caller's options and the environment, so every row
+ * states the absolute path it must produce. The filesystem scope each config is read inside is
+ * part of that: it is the capability that bounds the read, and a scope rooted one directory too
+ * high would let a symlinked config escape the scope it belongs to.
+ */
 
-afterAll(() => rmSync(root, { recursive: true, force: true }));
+const ROOT = '/srv/root';
+const NESTED = '/srv/root/workspaces/app';
+const OUTSIDE = '/srv/policy-paths-sibling';
+const HOME = '/srv/home/tester';
 
-/** The fields both PolicyPaths shapes share; the capability brands differ by module. */
-function comparablePolicyPaths(paths: {
-  userConfigPath: string;
-  projectConfigPath: string;
-  userScope: { root: string; label: string };
-  projectScope: { root: string; label: string };
-  userConfigTarget: { path: string; relativePath: string };
-  projectConfigTarget: { path: string; relativePath: string };
-}) {
-  return {
-    userConfigPath: paths.userConfigPath,
-    projectConfigPath: paths.projectConfigPath,
-    userScopeRoot: paths.userScope.root,
-    userScopeLabel: paths.userScope.label,
-    projectScopeRoot: paths.projectScope.root,
-    projectScopeLabel: paths.projectScope.label,
-    userTargetPath: paths.userConfigTarget.path,
-    userTargetRelativePath: paths.userConfigTarget.relativePath,
-    projectTargetPath: paths.projectConfigTarget.path,
-    projectTargetRelativePath: paths.projectConfigTarget.relativePath,
-  };
-}
+const environmentWith = (safetyNetHome?: string) =>
+  createTestEnvironment({
+    env: new Map(safetyNetHome ? [['CC_SAFETY_NET_HOME', safetyNetHome]] : []),
+    home: HOME,
+  });
 
-const SCOPES: Array<{
-  name: string;
-  safetyNetHome?: string;
-  options: (cwd: string) => Omit<RulesPolicyOptions, 'cwd'>;
-}> = [
-  { name: 'user config dir', options: () => ({ userConfigDir: join(root, 'user', 'rules') }) },
+const USER_SCOPES: readonly {
+  readonly behavior: string;
+  readonly safetyNetHome?: string;
+  readonly options: Omit<RulesPolicyOptions, 'cwd'>;
+  readonly rulesDir: string;
+  readonly configPath: string;
+  readonly policyPath: string;
+  /** The root of the capability the user config is read inside. */
+  readonly scopeRoot: string;
+  readonly targetRelativePath: string;
+}[] = [
   {
-    name: 'user config path',
-    options: () => ({ userConfigPath: join(root, 'custom', 'home', 'rules', 'rule.json') }),
+    behavior: 'an explicit user config directory holds rule.json and its parent holds policy.json',
+    options: { userConfigDir: `${ROOT}/user/rules` },
+    rulesDir: `${ROOT}/user/rules`,
+    configPath: `${ROOT}/user/rules/rule.json`,
+    policyPath: `${ROOT}/user/policy.json`,
+    scopeRoot: `${ROOT}/user`,
+    targetRelativePath: 'rules/rule.json',
   },
   {
-    name: 'project config under cwd',
-    options: (cwd) => ({ projectConfigPath: join(cwd, 'config', 'rules', 'rule.json') }),
+    behavior: 'an explicit user config file names its own directory as the rules directory',
+    options: { userConfigPath: `${ROOT}/custom/home/rules/rule.json` },
+    rulesDir: `${ROOT}/custom/home/rules`,
+    configPath: `${ROOT}/custom/home/rules/rule.json`,
+    policyPath: `${ROOT}/custom/home/policy.json`,
+    scopeRoot: `${ROOT}/custom/home`,
+    targetRelativePath: 'rules/rule.json',
   },
   {
-    name: 'project config outside cwd',
-    options: () => ({
-      projectConfigPath: join(outside, '.cc-safety-net', 'rules', 'rule.json'),
-    }),
+    behavior: 'CC_SAFETY_NET_HOME relocates the whole user scope',
+    safetyNetHome: `${ROOT}/sn-home`,
+    options: {},
+    rulesDir: `${ROOT}/sn-home/rules`,
+    configPath: `${ROOT}/sn-home/rules/rule.json`,
+    policyPath: `${ROOT}/sn-home/policy.json`,
+    scopeRoot: `${ROOT}/sn-home`,
+    targetRelativePath: 'rules/rule.json',
   },
-  { name: 'safety net home set', safetyNetHome: join(root, 'sn-home'), options: () => ({}) },
-  { name: 'safety net home unset', options: () => ({}) },
+  {
+    behavior: 'with nothing set the user scope is .cc-safety-net under the home directory',
+    options: {},
+    rulesDir: `${HOME}/.cc-safety-net/rules`,
+    configPath: `${HOME}/.cc-safety-net/rules/rule.json`,
+    policyPath: `${HOME}/.cc-safety-net/policy.json`,
+    scopeRoot: `${HOME}/.cc-safety-net`,
+    targetRelativePath: 'rules/rule.json',
+  },
 ];
 
-const WORKING_DIRECTORIES = [root, nested, `${nested}${sep}`];
+describe('the user policy scope', () => {
+  test.each(USER_SCOPES.map((row) => [row.behavior, row] as const))('%s', (_behavior, row) => {
+    const environment = environmentWith(row.safetyNetHome);
+    expect(getUserRulesDir(environment, row.options)).toBe(row.rulesDir);
+    expect(getUserRulesConfigPath(environment, row.options)).toBe(row.configPath);
+    expect(getUserPolicyPath(environment, row.options)).toBe(row.policyPath);
 
-/** Every real directory a resolved path can name. */
-const PATH_FOLDS = [[outside, '<outside>'], ...rootFolds(root), [homedir(), '<home>']] as const;
+    const paths = getPolicyPaths(environment, { cwd: ROOT, ...row.options });
+    expect(paths.userConfigPath).toBe(row.configPath);
+    expect(paths.userScope.root).toBe(row.scopeRoot);
+    expect(paths.userScope.label).toBe('user policy');
+    expect(paths.userConfigTarget.path).toBe(row.configPath);
+    expect(paths.userConfigTarget.relativePath).toBe(row.targetRelativePath);
+  });
 
-describe('policy paths parity', () => {
-  for (const scope of SCOPES) {
-    for (const cwd of WORKING_DIRECTORIES) {
-      test(`${scope.name} from ${cwd === root ? 'root' : cwd.endsWith(sep) ? 'nested with separator' : 'nested'}`, () => {
-        const options: RulesPolicyOptions = { cwd, ...scope.options(cwd) };
-        const environment = createTestEnvironment({
-          env: new Map(scope.safetyNetHome ? [['CC_SAFETY_NET_HOME', scope.safetyNetHome]] : []),
-          home: homedir(),
-        });
-        recordPorted(
-          {
-            policyPaths: comparablePolicyPaths(getPolicyPaths(environment, options)),
-            userPolicyPath: getUserPolicyPath(environment, options),
-            projectPolicyPath: getProjectPolicyPath(cwd),
-            userRulesDir: getUserRulesDir(environment, options),
-            userRulesConfigPath: getUserRulesConfigPath(environment, options),
-            projectRulesDir: getProjectRulesDir(cwd),
-            projectRulesConfigPath: getProjectRulesConfigPath(cwd),
-            localRulebookPath: getLocalRulebookPath(
-              getUserRulesDir(environment, options),
-              'team-rules',
-            ),
-          },
-          PATH_FOLDS,
-        );
-      });
-    }
-  }
+  test.each(
+    USER_SCOPES.map((row) => [row.behavior, row] as const),
+  )('a local rulebook lives in a directory of its own beside rule.json — %s', (_behavior, row) => {
+    expect(
+      getLocalRulebookPath(
+        getUserRulesDir(environmentWith(row.safetyNetHome), row.options),
+        'team-rules',
+      ),
+    ).toBe(`${row.rulesDir}/team-rules/rulebook.json`);
+  });
+});
+
+const PROJECT_SCOPES: readonly {
+  readonly behavior: string;
+  readonly cwd: string;
+  readonly projectConfigPath?: string;
+  readonly configPath: string;
+  readonly scopeRoot: string;
+  readonly targetRelativePath: string;
+}[] = [
+  {
+    behavior: 'the default project config sits under the project directory',
+    cwd: ROOT,
+    configPath: `${ROOT}/.cc-safety-net/rules/rule.json`,
+    scopeRoot: ROOT,
+    targetRelativePath: '.cc-safety-net/rules/rule.json',
+  },
+  {
+    behavior: 'a nested project directory carries its own project scope',
+    cwd: NESTED,
+    configPath: `${NESTED}/.cc-safety-net/rules/rule.json`,
+    scopeRoot: NESTED,
+    targetRelativePath: '.cc-safety-net/rules/rule.json',
+  },
+  {
+    behavior: 'a config named inside the project keeps the project directory as its scope root',
+    cwd: NESTED,
+    projectConfigPath: `${NESTED}/config/rules/rule.json`,
+    configPath: `${NESTED}/config/rules/rule.json`,
+    scopeRoot: NESTED,
+    targetRelativePath: 'config/rules/rule.json',
+  },
+  {
+    // A config outside the project cannot be read inside the project's capability, so the scope
+    // is rebound to the config's own grandparent instead of widening the project scope.
+    behavior: 'a config outside the project is scoped to its own grandparent directory',
+    cwd: ROOT,
+    projectConfigPath: `${OUTSIDE}/.cc-safety-net/rules/rule.json`,
+    configPath: `${OUTSIDE}/.cc-safety-net/rules/rule.json`,
+    scopeRoot: `${OUTSIDE}/.cc-safety-net`,
+    targetRelativePath: 'rules/rule.json',
+  },
+];
+
+describe('the project policy scope', () => {
+  test.each(PROJECT_SCOPES.map((row) => [row.behavior, row] as const))('%s', (_behavior, row) => {
+    const options: RulesPolicyOptions = {
+      cwd: row.cwd,
+      ...(row.projectConfigPath ? { projectConfigPath: row.projectConfigPath } : {}),
+    };
+    const paths = getPolicyPaths(environmentWith(), options);
+    expect(paths.projectConfigPath).toBe(row.configPath);
+    expect(paths.projectScope.root).toBe(row.scopeRoot);
+    expect(paths.projectScope.label).toBe('project policy');
+    expect(paths.projectConfigTarget.path).toBe(row.configPath);
+    expect(paths.projectConfigTarget.relativePath).toBe(row.targetRelativePath);
+  });
+
+  test.each([
+    ['the project directory itself', ROOT],
+    ['a nested project directory', NESTED],
+  ])('%s holds its rules and policy under .cc-safety-net', (_behavior, cwd) => {
+    expect(getProjectRulesDir(cwd)).toBe(`${cwd}/.cc-safety-net/rules`);
+    expect(getProjectRulesConfigPath(cwd)).toBe(`${cwd}/.cc-safety-net/rules/rule.json`);
+    expect(getProjectPolicyPath(cwd)).toBe(`${cwd}/.cc-safety-net/policy.json`);
+  });
+
+  test('a trailing separator on the project directory resolves to the same paths', () => {
+    expect(getProjectRulesDir(`${NESTED}/`)).toBe(getProjectRulesDir(NESTED));
+    expect(getProjectRulesConfigPath(`${NESTED}/`)).toBe(getProjectRulesConfigPath(NESTED));
+    expect(getProjectPolicyPath(`${NESTED}/`)).toBe(getProjectPolicyPath(NESTED));
+    expect(getPolicyPaths(environmentWith(), { cwd: `${NESTED}/` }).projectScope.root).toBe(NESTED);
+  });
 });

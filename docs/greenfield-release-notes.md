@@ -48,6 +48,9 @@ was removed, and the recorded expectations from that comparison are now the test
 `src/` is now layered as core → gate → audit → hosts → rules-manager → cli → gui → entries, with
 an architecture test that forbids upward imports and sockets outside the GUI. The CLI runs from
 source as `bun run src/entries/bin.ts`, and the self-invocation guard recognizes that path.
-Tests live under `tests/` mirroring `src/`; snapshot and digest files beside them are the
-certified expectations described in `docs/greenfield-plan.md` and are re-recorded only
-deliberately (`CC_SAFETY_NET_UPDATE_GOLDENS=1`, `bun test --update-snapshots`).
+Tests live under `tests/` mirroring `src/`, and state their expectations directly: the gate's
+replay reads `tests/fixtures/gate/harvested-verdicts.jsonl`, a readable verdict per literal, and
+the snapshots and digests that remain cover output surfaces whose bytes are the contract (denial
+text, host output documents, `doctor --json`, `explain`, CLI help). A behavior change lands as a
+failing intent row first and only then re-records (`CC_SAFETY_NET_UPDATE_GOLDENS=1`,
+`bun test --update-snapshots`), naming in the commit message which entries changed and why.

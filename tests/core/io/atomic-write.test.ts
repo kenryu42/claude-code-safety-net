@@ -3,21 +3,23 @@ import * as fs from 'node:fs';
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { atomicWriteFile as writeWithNext } from '@/core/io/atomic-write';
-import { describeOutcome, snapshotTree } from '../../helpers/fixture-tree';
-import { recordPorted } from '../../helpers/temp-home';
+import { atomicWriteFile } from '@/core/io/atomic-write';
 
-const WRITERS = [['next', writeWithNext]] as const;
+/**
+ * The contract of `atomicWriteFile`: the destination ends up holding exactly the bytes handed in,
+ * the staging file is a sibling of the destination, and an interrupted rename leaves the previous
+ * destination intact.
+ */
 
-const CONTENTS: readonly (string | Buffer)[] = [
-  '',
-  'plain\n',
-  'no trailing newline',
-  'ünïcödé 😀 日本語\n',
-  'crlf\r\nlines\r\n',
-  'x'.repeat(70_000),
-  Buffer.from([0, 1, 2, 254, 255]),
-  Buffer.from('{"hooks":[]}\n'),
+const CONTENTS: readonly (readonly [string, string | Buffer])[] = [
+  ['an empty file', ''],
+  ['a single line', 'plain\n'],
+  ['text with no trailing newline', 'no trailing newline'],
+  ['multi-byte text', 'ünïcödé 😀 日本語\n'],
+  ['CRLF line endings', 'crlf\r\nlines\r\n'],
+  ['content far past one page', 'x'.repeat(70_000)],
+  ['raw bytes including NUL and 0xff', Buffer.from([0, 1, 2, 254, 255])],
+  ['a JSON buffer', Buffer.from('{"hooks":[]}\n')],
 ];
 
 let root = '';
@@ -35,62 +37,66 @@ afterEach(() => {
   mkdirSync(root);
 });
 
+function freshDirectory(name: string) {
+  const dir = join(root, name);
+  mkdirSync(dir);
+  return dir;
+}
+
 describe('atomic write', () => {
-  test('leaves the same bytes and nothing else behind, over a fresh or existing destination', () => {
-    for (const [index, content] of CONTENTS.entries()) {
-      const results = WRITERS.map(([name, write]) => {
-        const dir = join(root, `${name}-${index}`);
-        mkdirSync(dir);
-        const dest = join(dir, 'config.json');
-        write(dest, content);
-        const fresh = readFileSync(dest);
-        writeFileSync(dest, 'previous');
-        write(dest, content);
-        return { fresh, replaced: readFileSync(dest), listing: readdirSync(dir) };
+  for (const [index, [name, content]] of CONTENTS.entries()) {
+    for (const previous of [undefined, 'previous']) {
+      const destination =
+        previous === undefined ? 'a fresh destination' : 'an existing destination';
+      test(`writes ${name} to ${destination} byte for byte, with no temp file left`, () => {
+        const dir = freshDirectory(`${previous === undefined ? 'fresh' : 'replace'}-${index}`);
+        if (previous !== undefined) writeFileSync(join(dir, 'config.json'), previous);
+        atomicWriteFile(join(dir, 'config.json'), content);
+        expect(readFileSync(join(dir, 'config.json'))).toEqual(Buffer.from(content));
+        expect(readdirSync(dir)).toEqual(['config.json']);
       });
-      expect(results[0]?.fresh).toEqual(Buffer.from(content));
-      expect(results[0]?.listing).toEqual(['config.json']);
     }
+  }
+
+  test('stages the content in a sibling temp file the destination directory holds', () => {
+    const dir = freshDirectory('staging');
+    const dest = join(dir, 'settings.json');
+    writeFileSync(dest, 'old\n');
+    const staged: { from: string; to: string; listing: string[]; destination: string }[] = [];
+    const spy = spyOn(fs, 'renameSync').mockImplementation((from, to) => {
+      staged.push({
+        from: String(from),
+        to: String(to),
+        listing: readdirSync(dir).sort(),
+        destination: readFileSync(dest, 'utf-8'),
+      });
+    });
+    atomicWriteFile(dest, 'new\n');
+    spy.mockRestore();
+
+    expect(staged).toHaveLength(1);
+    expect(staged[0]?.from).toBe(`${dest}.${process.pid}.tmp`);
+    expect(dirname(staged[0]?.from ?? '')).toBe(dir);
+    expect(staged[0]?.to).toBe(dest);
+    expect(staged[0]?.listing).toEqual(['settings.json', `settings.json.${process.pid}.tmp`]);
+    // The bytes are complete in the temp file and the destination is still the previous file.
+    expect(readFileSync(staged[0]?.from ?? '', 'utf-8')).toBe('new\n');
+    expect(staged[0]?.destination).toBe('old\n');
   });
 
-  test('stages the content in a sibling temp file and only then renames it into place', () => {
-    const captures = WRITERS.map(([name, write]) => {
-      const dir = join(root, name);
-      mkdirSync(dir);
-      const dest = join(dir, 'settings.json');
-      writeFileSync(dest, 'old\n');
-      const seen: Record<string, unknown>[] = [];
-      const spy = spyOn(fs, 'renameSync').mockImplementation((from, to) => {
-        seen.push({
-          sameDirectory: dirname(String(from)) === dir && String(to) === dest,
-          listing: readdirSync(dir).sort(),
-          staged: readFileSync(String(from), 'utf-8'),
-          destination: readFileSync(dest, 'utf-8'),
-        });
-        throw new Error('rename refused');
-      });
-      const outcome = describeOutcome(() => write(dest, 'new\n'));
-      spy.mockRestore();
-      return { seen, outcome, after: snapshotTree(dir) };
+  test('leaves the previous destination intact when the rename fails', () => {
+    const dir = freshDirectory('failed-rename');
+    const dest = join(dir, 'settings.json');
+    writeFileSync(dest, 'old\n');
+    const spy = spyOn(fs, 'renameSync').mockImplementation(() => {
+      throw new Error('rename refused');
     });
+    expect(() => atomicWriteFile(dest, 'new\n')).toThrow('rename refused');
+    spy.mockRestore();
 
-    recordPorted(captures[0], [[`.${process.pid}.tmp`, '.<pid>.tmp']]);
-    expect(captures[0]?.seen).toEqual([
-      {
-        sameDirectory: true,
-        listing: ['settings.json', `settings.json.${process.pid}.tmp`],
-        staged: 'new\n',
-        destination: 'old\n',
-      },
-    ]);
-    expect(captures[0]?.outcome).toEqual({
-      ok: false,
-      error: { name: 'Error', message: 'rename refused' },
-    });
-    // The destination is untouched by a failed rename; the staged file is the only residue.
-    expect(captures[0]?.after.map((entry) => [entry.path, entry.content])).toEqual([
-      ['settings.json', 'old\n'],
-      [`settings.json.${process.pid}.tmp`, 'new\n'],
-    ]);
+    expect(readFileSync(dest, 'utf-8')).toBe('old\n');
+    // The staged file is the only residue of the failed write.
+    expect(readdirSync(dir).sort()).toEqual(['settings.json', `settings.json.${process.pid}.tmp`]);
+    expect(readFileSync(`${dest}.${process.pid}.tmp`, 'utf-8')).toBe('new\n');
   });
 });

@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { createProcessEnvironment, createTestEnvironment } from '@/core/environment';
+import { createTestEnvironment } from '@/core/environment';
+import { deriveEffectiveSafetyLevel } from '@/core/policy/env';
 import * as ported from '@/core/policy/store';
+import { getUserPolicyDiagnostics } from '@/core/policy/validate';
+import { DESTRUCTIVE_COMMAND_RULE_METADATA } from '@/core/rules/destructive';
 import { snapshotTree } from '../../helpers/fixture-tree';
-import { expectRecordedDigest } from '../../helpers/gate-differential';
 import { createSeededRandom, FUZZ_SEED } from '../../helpers/shell-inputs';
 import {
   createTempRoot,
   environmentFor,
   isolationEnv,
-  normalize,
-  recordPorted,
   removeTempRoots,
 } from '../../helpers/temp-home';
 import { mutate, USER_POLICY_VALUES } from './policy-values';
@@ -22,18 +22,25 @@ import { mutate, USER_POLICY_VALUES } from './policy-values';
  * developer's own shell cannot move what they report.
  */
 
-const HOME = createProcessEnvironment().home;
+const HOME = '/srv/home/tester';
 const MUTATION_COUNT = 200;
 
-const seededDocuments = createSeededRandom(FUZZ_SEED);
-const documents: readonly unknown[] = USER_POLICY_VALUES.concat(
-  Array.from({ length: MUTATION_COUNT }, (_unused, index) =>
-    mutate(USER_POLICY_VALUES.at(index % USER_POLICY_VALUES.length), seededDocuments),
-  ),
-);
+/** The fixture documents and a seeded mutation of each, for the properties below. */
+const DOCUMENTS: readonly unknown[] = (() => {
+  const random = createSeededRandom(FUZZ_SEED);
+  return USER_POLICY_VALUES.concat(
+    Array.from({ length: MUTATION_COUNT }, (_unused, index) =>
+      mutate(USER_POLICY_VALUES.at(index % USER_POLICY_VALUES.length), random),
+    ),
+  );
+})();
 
 const environmentWith = (values: Record<string, string>) =>
   createTestEnvironment({ home: HOME, env: new Map(Object.entries(values)) });
+
+const CONFIGURABLE_RULE_COUNT = DESTRUCTIVE_COMMAND_RULE_METADATA.filter(
+  (rule) => rule.catastrophic !== true,
+).length;
 
 const ENV_MAPS: readonly {
   readonly label: string;
@@ -59,43 +66,114 @@ const ENV_MAPS: readonly {
   },
 ];
 
-describe('the GUI policy preview', () => {
-  test('previews every document exactly as the shipped store does', () => {
-    const recorded: (readonly [string, unknown])[] = [];
-    for (const [row, document] of documents.entries()) {
-      recorded.push([`${row}`, ported.previewUserPolicyForGui(environmentWith({}), document)]);
+describe('previewing a proposed policy document', () => {
+  test('a valid document is previewed at the level it selects', () => {
+    const result = ported.previewUserPolicyForGui(environmentWith({}), {
+      version: 1,
+      safety: { level: 'strict' },
+    });
+    expect(result.errors).toEqual([]);
+    expect(result.preview?.selectedPreset).toBe('strict');
+    expect(result.preview?.effectiveLevel).toBe('strict');
+  });
+
+  test('a document the schema rejects is not previewed at all, only reported', () => {
+    expect(
+      ported.previewUserPolicyForGui(environmentWith({}), {
+        version: 1,
+        safety: { level: 'bogus' },
+        secret_protection: { enabled: 'yes' },
+      }),
+    ).toEqual({
+      errors: [
+        'safety.level must be "standard", "strict", or "paranoid"',
+        'secret_protection.enabled must be a boolean',
+      ],
+    });
+  });
+
+  test('the built-in default document previews cleanly', () => {
+    const result = ported.previewUserPolicyForGui(environmentWith({}), ported.DEFAULT_GUI_POLICY);
+    expect(result.errors).toEqual([]);
+    expect(result.preview?.selectedPreset).toBe('standard');
+  });
+});
+
+describe('properties every proposed document must satisfy', () => {
+  test('a document is either previewed or reported, never both and never neither', () => {
+    for (const document of DOCUMENTS) {
+      const result = ported.previewUserPolicyForGui(environmentWith({}), document);
+      expect(result.preview !== undefined).toBe(result.errors.length === 0);
     }
-    expectRecordedDigest('core-store-gui/preview', normalize(recorded, [[HOME, '<home>']]));
-  }, 60_000);
+  });
+
+  test('a previewed document is one the salvage would have left untouched', () => {
+    for (const document of DOCUMENTS) {
+      const result = ported.previewUserPolicyForGui(environmentWith({}), document);
+      if (result.preview === undefined) continue;
+      expect(result.preview.selectedPreset).toBe(
+        ported.normalizeGuiPolicy(document, HOME).safety.level,
+      );
+    }
+  });
 
   test.each(ENV_MAPS.map((row) => [row.label, row.values] as const))(
-    'resolves every salvaged policy the same way with %s',
-    (label, values) => {
-      const policies = documents.map((document) => ported.normalizeGuiPolicy(document, HOME));
-      const environment = environmentWith(values);
-      const recorded: (readonly [string, unknown])[] = [];
-      for (const [row, policy] of policies.entries()) {
-        recorded.push([`${row}`, ported.createPolicyPreview(policy, environment.env)]);
+    'a preview under %s counts every configurable rule exactly once',
+    (_label, values) => {
+      const env = environmentWith(values).env;
+      for (const document of DOCUMENTS) {
+        const preview = ported.createPolicyPreview(ported.normalizeGuiPolicy(document, HOME), env);
+        const states = Object.values(preview.rules);
+        const configurable = states.filter((state) => state.source !== 'catastrophic');
+        expect(Object.keys(preview.rules)).toHaveLength(DESTRUCTIVE_COMMAND_RULE_METADATA.length);
+        expect(configurable).toHaveLength(CONFIGURABLE_RULE_COUNT);
+        // The GUI headline reads "N active / M disabled": each tally is the rules that are
+        // actually in that state, so a swapped pair is a wrong headline, not a wrong sum.
+        expect(preview.counts.enabled).toBe(configurable.filter((state) => state.enabled).length);
+        expect(preview.counts.disabled).toBe(configurable.filter((state) => !state.enabled).length);
+        expect(preview.counts.effectiveCustomizations).toBe(
+          states.filter((state) => state.changesInherited).length,
+        );
+        expect(preview.effectiveLevel).toBe(
+          deriveEffectiveSafetyLevel({
+            failClosed: preview.capabilities.fail_closed.enabled,
+            paranoidRm: preview.capabilities.paranoid_rm.enabled,
+            paranoidInterpreters: preview.capabilities.paranoid_interpreters.enabled,
+          }),
+        );
       }
-      expectRecordedDigest(`core-store-gui/${label}`, normalize(recorded, [[HOME, '<home>']]));
     },
     60_000,
   );
 
   test.each(
     ENV_MAPS.map((row) => [row.label, row.values, row.effectiveLevel] as const),
-  )('reports the effective level under %s', (_label, values, effectiveLevel) => {
+  )('the default policy reports the effective level under %s', (_label, values, effectiveLevel) => {
     const preview = ported.createPolicyPreview(
       ported.DEFAULT_GUI_POLICY,
       environmentWith(values).env,
     );
     expect(preview.effectiveLevel).toBe(effectiveLevel);
     // Catastrophic rules are always enforced, so they are surfaced separately and never counted.
-    const states = Object.values(preview.rules);
-    const catastrophic = states.filter((state) => state.source === 'catastrophic');
+    const catastrophic = Object.values(preview.rules).filter(
+      (state) => state.source === 'catastrophic',
+    );
     expect(catastrophic.length).toBeGreaterThan(0);
-    expect(preview.counts.enabled + preview.counts.disabled).toBe(
-      states.length - catastrophic.length,
+    // The tallies themselves are asserted by the invariant above, which decides the default
+    // policy too: the empty document is one of DOCUMENTS and salvages to DEFAULT_GUI_POLICY.
+  });
+
+  test('with no mode flag set the default policy activates exactly the ungated rules', () => {
+    const preview = ported.createPolicyPreview(ported.DEFAULT_GUI_POLICY, environmentWith({}).env);
+    expect(preview.counts.enabled).toBe(
+      DESTRUCTIVE_COMMAND_RULE_METADATA.filter(
+        (rule) => rule.catastrophic !== true && rule.activationCapability === undefined,
+      ).length,
+    );
+    expect(preview.counts.disabled).toBe(
+      DESTRUCTIVE_COMMAND_RULE_METADATA.filter(
+        (rule) => rule.catastrophic !== true && rule.activationCapability !== undefined,
+      ).length,
     );
   });
 });
@@ -110,72 +188,128 @@ const STRICT_POLICY = `${JSON.stringify(
   2,
 )}\n`;
 
-const POLICY_FILES: readonly { readonly label: string; readonly file: string | null }[] = [
-  { label: 'no file at all', file: null },
-  { label: 'an empty file', file: '' },
-  { label: 'whitespace only', file: '   \n' },
-  { label: 'malformed JSON', file: '{ not json' },
-  {
-    label: 'a file the schema rejects',
-    file: '{"version":1,"safety":{"level":"bogus"},"audit":{"retention_days":5},"secret_protection":{"enabled":"yes"}}',
-  },
-  { label: 'a valid strict policy', file: STRICT_POLICY },
-];
+const REJECTED_POLICY =
+  '{"version":1,"safety":{"level":"bogus"},"audit":{"retention_days":5},"secret_protection":{"enabled":"yes"}}';
 
-const seedHome = (side: string, file: string | null) => {
-  const root = createTempRoot(`gui-store-${side}-`);
+/** A home holding `file` as its user policy, or none when `file` is null. */
+const seedHome = (file: string | null) => {
+  const root = createTempRoot('gui-store-');
   mkdirSync(join(root, '.cc-safety-net'), { recursive: true });
   if (file !== null) writeFileSync(join(root, '.cc-safety-net', 'policy.json'), file);
-  return root;
+  return { root, environment: environmentFor(root, isolationEnv(root)) };
 };
 
-const observed = (root: string, run: () => { read: unknown; repair: unknown }) =>
-  normalize({ ...run(), tree: snapshotTree(root) }, [[root, '<root>']]);
-
-const portedSide = (file: string | null) => {
-  const root = seedHome('ported', file);
-  const environment = environmentFor(root, isolationEnv(root));
-  return observed(root, () => ({
-    read: ported.readUserPolicyForGui(environment),
-    repair: ported.repairUserPolicyForGui(environment),
-  }));
+type FileState = {
+  readonly behavior: string;
+  readonly file: string | null;
+  readonly exists: boolean;
+  /** Exact messages where the wording is ours; a prefix where the JSON parser supplies it. */
+  readonly errors: readonly string[] | { readonly startsWith: string };
+  /** What the GUI shows for this file — the same projection the engine enforces. */
+  readonly shownLevel: 'standard' | 'strict' | 'paranoid';
+  readonly shownRetentionDays: number;
+  /** What repair writes back. */
+  readonly repairedRetentionDays: number;
 };
 
-describe('reading and repairing the user policy file', () => {
+const FILE_STATES: readonly FileState[] = [
+  {
+    behavior: 'no file at all is the default policy, and not an error',
+    file: null,
+    exists: false,
+    errors: [],
+    shownLevel: 'standard',
+    shownRetentionDays: 30,
+    repairedRetentionDays: 30,
+  },
+  {
+    behavior: 'an empty file names emptiness and shows the defaults',
+    file: '',
+    exists: true,
+    errors: ['Config file is empty'],
+    shownLevel: 'standard',
+    shownRetentionDays: 30,
+    repairedRetentionDays: 30,
+  },
+  {
+    behavior: 'a whitespace-only file is empty too',
+    file: '   \n',
+    exists: true,
+    errors: ['Config file is empty'],
+    shownLevel: 'standard',
+    shownRetentionDays: 30,
+    repairedRetentionDays: 30,
+  },
+  {
+    behavior: 'malformed JSON reports the parse failure and shows the defaults',
+    file: '{ not json',
+    exists: true,
+    errors: { startsWith: 'Invalid JSON:' },
+    shownLevel: 'standard',
+    shownRetentionDays: 30,
+    repairedRetentionDays: 30,
+  },
+  {
+    behavior:
+      'a file the schema rejects keeps the sections that were valid, so repair does not lose them',
+    file: REJECTED_POLICY,
+    exists: true,
+    errors: [
+      'safety.level must be "standard", "strict", or "paranoid"',
+      'secret_protection.enabled must be a boolean',
+    ],
+    shownLevel: 'standard',
+    shownRetentionDays: 5,
+    repairedRetentionDays: 5,
+  },
+  {
+    behavior: 'a valid strict policy is shown as written',
+    file: STRICT_POLICY,
+    exists: true,
+    errors: [],
+    shownLevel: 'strict',
+    shownRetentionDays: 10,
+    repairedRetentionDays: 10,
+  },
+];
+
+describe('reading the user policy file for the GUI', () => {
+  afterEach(removeTempRoots);
+
+  test.each(FILE_STATES.map((row) => [row.behavior, row] as const))('%s', (_behavior, row) => {
+    const home = seedHome(row.file);
+    const read = ported.readUserPolicyForGui(home.environment);
+
+    expect(read.path).toBe(join(home.root, '.cc-safety-net', 'policy.json'));
+    expect(read.exists).toBe(row.exists);
+    expect(read.raw).toBe(row.file ?? '');
+    if (Array.isArray(row.errors)) expect(read.errors).toEqual([...row.errors]);
+    if (!Array.isArray(row.errors)) {
+      expect(read.errors).toHaveLength(1);
+      expect(read.errors[0]).toStartWith((row.errors as { startsWith: string }).startsWith);
+    }
+    // The GUI shows the salvaged projection the engine enforces, never the raw file.
+    expect(read.policy.safety.level).toBe(row.shownLevel);
+    expect(read.policy.audit.retention_days).toBe(row.shownRetentionDays);
+  });
+});
+
+describe('repairing the user policy file', () => {
   afterEach(removeTempRoots);
 
   test.each(
-    POLICY_FILES.map((row) => [row.label, row.file] as const),
-  )('reads and repairs %s the same way', (_label, file) => {
-    recordPorted(portedSide(file));
-  });
+    FILE_STATES.map((row) => [row.behavior, row] as const),
+  )('repair rewrites the canonical document — %s', (_behavior, row) => {
+    const home = seedHome(row.file);
+    const repaired = ported.repairUserPolicyForGui(home.environment);
 
-  test('reports what each file state is', () => {
-    const readOf = (file: string | null) =>
-      portedSide(file).read as ReturnType<typeof ported.readUserPolicyForGui>;
-
-    expect(readOf(null).exists).toBeFalse();
-    expect(readOf(null).errors).toEqual([]);
-    expect(readOf('').exists).toBeTrue();
-    expect(readOf('').errors).toEqual(['Config file is empty']);
-    expect(readOf('   \n').errors).toEqual(['Config file is empty']);
-    expect(readOf('{ not json').errors[0]).toStartWith('Invalid JSON:');
-    const rejected = readOf(POLICY_FILES[4]?.file ?? null);
-    expect(rejected.errors.length).toBeGreaterThan(0);
-    // The salvaged projection keeps the section the schema accepted, so repair does not lose it.
-    expect(rejected.policy.audit.retention_days).toBe(5);
-    expect(readOf(STRICT_POLICY).errors).toEqual([]);
-    expect(readOf(STRICT_POLICY).policy.safety.level).toBe('strict');
-  });
-
-  test('repair leaves an owner-only file holding the canonical document', () => {
-    const side = portedSide(POLICY_FILES[4]?.file ?? null);
-    const repaired = side.repair as ReturnType<typeof ported.repairUserPolicyForGui>;
-
-    expect(repaired.policy.audit.retention_days).toBe(5);
-    // The whole config directory: the owner-only file with the canonical bytes, and no half-written
-    // temp file left beside it.
-    expect(side.tree.filter((entry) => entry.path.startsWith('.cc-safety-net/'))).toEqual([
+    expect(repaired.errors).toEqual([]);
+    expect(repaired.policy.audit.retention_days).toBe(row.repairedRetentionDays);
+    // The whole config directory: one owner-only file with the canonical bytes, and no
+    // half-written temp file left beside it.
+    expect(
+      snapshotTree(home.root).filter((entry) => entry.path.startsWith('.cc-safety-net/')),
+    ).toEqual([
       {
         path: '.cc-safety-net/policy.json',
         kind: 'file',
@@ -183,13 +317,14 @@ describe('reading and repairing the user policy file', () => {
         content: `${JSON.stringify(repaired.policy, null, 2)}\n`,
       },
     ]);
+    // What repair wrote validates cleanly, so a repaired file never degrades the next load.
+    expect(getUserPolicyDiagnostics(repaired.policy, home.environment.home)).toEqual([]);
   });
 
-  test('repair replaces a file nothing could be salvaged from with the defaults', () => {
-    const repaired = portedSide('{ not json').repair as ReturnType<
-      typeof ported.repairUserPolicyForGui
-    >;
-    expect(repaired.policy).toStrictEqual(ported.DEFAULT_GUI_POLICY);
-    expect(repaired.errors).toEqual([]);
+  test('a file nothing could be salvaged from is replaced with the defaults', () => {
+    const home = seedHome('{ not json');
+    expect(ported.repairUserPolicyForGui(home.environment).policy).toStrictEqual(
+      ported.DEFAULT_GUI_POLICY,
+    );
   });
 });

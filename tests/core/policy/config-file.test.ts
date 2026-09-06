@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
 import * as ported from '@/core/policy/config-file';
 import { snapshotTree, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
@@ -7,10 +6,7 @@ import {
   createTempRoot,
   environmentFor,
   isolationEnv,
-  normalize,
-  recordPorted,
   removeTempRoots,
-  rootFolds,
 } from '../../helpers/temp-home';
 
 /**
@@ -53,89 +49,181 @@ const TREE: TreeSpec = {
 
 /** The fixture tree under its own root, so nothing outside it is in reach. */
 function tree() {
-  const root = createTempRoot('config-file-ported-');
+  const root = createTempRoot('config-file-');
   writeTree(root, TREE);
   return root;
 }
 
-/** The result with its root spelled `<root>`; the rule-name set keeps its insertion order. */
-function reported(result: { errors: string[]; ruleNames: Set<string> }, root: string) {
-  return normalize({ errors: result.errors, ruleNames: [...result.ruleNames] }, [[root, '<root>']]);
+/** The result with its own absolute root removed, so a row can state the path it names. */
+function reported(
+  result: { errors: string[]; ruleNames: Set<string> },
+  root: string,
+): { errors: string[]; ruleNames: string[] } {
+  return {
+    errors: result.errors.map((error) => error.replaceAll(root, '<root>')),
+    ruleNames: [...result.ruleNames],
+  };
 }
 
-const FILES = [
-  'valid/rule.json',
-  'version-two/rule.json',
-  'not-json/rule.json',
-  'empty/rule.json',
-  'absent/rule.json',
-  'blocked/rule.json',
-  'legacy/two-rules.json',
-  'legacy/bad-rule.json',
+type Expectation = { readonly errors: readonly string[]; readonly ruleNames: readonly string[] };
+
+/**
+ * Both readers share one file-reading front end, so the rows that never reach a schema — an
+ * unreadable, empty or malformed file — must report identically through either one.
+ */
+const UNREADABLE: readonly { behavior: string; file: string; expected: Expectation }[] = [
+  {
+    behavior: 'a file that is not JSON reports the parse failure, not the parser message',
+    file: 'not-json/rule.json',
+    expected: { errors: ['Invalid JSON'], ruleNames: [] },
+  },
+  {
+    behavior: 'an empty file names emptiness rather than a JSON error',
+    file: 'empty/rule.json',
+    expected: { errors: ['Config file is empty'], ruleNames: [] },
+  },
+  {
+    behavior: 'an absent file names the path that is missing',
+    file: 'absent/rule.json',
+    expected: { errors: ['File not found: <root>/absent/rule.json'], ruleNames: [] },
+  },
+  {
+    behavior: 'a regular file where the parent directory belongs is a filesystem refusal',
+    file: 'blocked/rule.json',
+    expected: { errors: ['Unable to access rules policy filesystem safely.'], ruleNames: [] },
+  },
+  {
+    behavior: 'a version the reader does not support is rejected on the version alone',
+    file: 'version-two/rule.json',
+    expected: { errors: ['version must be 1'], ruleNames: [] },
+  },
 ];
 
-describe('the legacy config validator reports what the shipped one reports', () => {
+const AS_RULES_CONFIG: readonly { behavior: string; file: string; expected: Expectation }[] = [
+  ...UNREADABLE,
+  {
+    behavior: 'a valid rules config reports its sources and nothing else',
+    file: 'valid/rule.json',
+    expected: { errors: [], ruleNames: ['project-rules'] },
+  },
+  {
+    behavior: 'inline rule objects are not rulebook sources',
+    file: 'legacy/two-rules.json',
+    expected: {
+      errors: [
+        'rules[0]: must be a rulebook source string',
+        'rules[1]: must be a rulebook source string',
+      ],
+      ruleNames: [],
+    },
+  },
+  {
+    behavior: 'a single inline rule object is rejected the same way',
+    file: 'legacy/bad-rule.json',
+    expected: { errors: ['rules[0]: must be a rulebook source string'], ruleNames: [] },
+  },
+];
+
+const AS_LEGACY_CONFIG: readonly { behavior: string; file: string; expected: Expectation }[] = [
+  ...UNREADABLE,
+  {
+    behavior: 'a rulebook source string is not an inline rule object',
+    file: 'valid/rule.json',
+    expected: { errors: ['rules[0]: must be an object'], ruleNames: [] },
+  },
+  {
+    behavior: 'a valid legacy config reports its inline rule names, lowercased',
+    file: 'legacy/two-rules.json',
+    expected: { errors: [], ruleNames: ['no-force-push', 'no-system-prune'] },
+  },
+  {
+    behavior:
+      'an inline rule of the wrong shape names every field it failed, and its name is still collected for duplicate detection',
+    file: 'legacy/bad-rule.json',
+    expected: {
+      errors: [
+        'rules[0].name: must match pattern (letters, numbers, hyphens, underscores; max 64 chars)',
+        'rules[0].block_args: must have at least one element',
+        'rules[0].reason: must not be empty',
+      ],
+      ruleNames: ['bad name!'],
+    },
+  },
+];
+
+describe('reading a file as a rules config', () => {
   afterEach(removeTempRoots);
 
-  test.each(FILES)('validates %s as a rules config the same way', (file) => {
+  test.each(
+    AS_RULES_CONFIG.map((row) => [row.behavior, row.file, row.expected] as const),
+  )('%s', (_behavior, file, expected) => {
     const root = tree();
-    expect(reported(ported.validateRulesConfigFile(join(root, file)), root)).toMatchSnapshot();
-  });
-
-  test.each(FILES)('validates %s as a legacy config the same way', (file) => {
-    const root = tree();
-    expect(reported(ported.validateConfigFile(join(root, file)), root)).toMatchSnapshot();
-  });
-
-  test('names the same diagnostics for an inline rule of the wrong shape', () => {
-    const root = tree();
-    expect(ported.validateConfigFile(join(root, 'legacy/bad-rule.json')).errors).toEqual([
-      'rules[0].name: must match pattern (letters, numbers, hyphens, underscores; max 64 chars)',
-      'rules[0].block_args: must have at least one element',
-      'rules[0].reason: must not be empty',
-    ]);
+    expect(reported(ported.validateRulesConfigFile(join(root, file)), root)).toEqual({
+      errors: [...expected.errors],
+      ruleNames: [...expected.ruleNames],
+    });
   });
 });
 
-describe('the legacy paths resolve where the shipped ones resolve', () => {
+describe('reading a file as a legacy inline config', () => {
   afterEach(removeTempRoots);
 
-  test('the project config sits beside the project directory', () => {
+  test.each(
+    AS_LEGACY_CONFIG.map((row) => [row.behavior, row.file, row.expected] as const),
+  )('%s', (_behavior, file, expected) => {
+    const root = tree();
+    expect(reported(ported.validateConfigFile(join(root, file)), root)).toEqual({
+      errors: [...expected.errors],
+      ruleNames: [...expected.ruleNames],
+    });
+  });
+});
+
+describe('where the version-0 leftovers live', () => {
+  afterEach(removeTempRoots);
+
+  test('the project config is .safety-net.json beside the project directory', () => {
     const root = createTempRoot('config-file-project-');
-    recordPorted(ported.getLegacyProjectConfigPath(root), rootFolds(root));
+    expect(ported.getLegacyProjectConfigPath(root)).toBe(join(root, '.safety-net.json'));
   });
 
-  test('the user config sits under a relocated safety-net home', () => {
+  test('the user config is config.json in the safety-net home', () => {
     const home = createTempRoot('config-file-home-');
-    const env = isolationEnv(home);
-    recordPorted(ported.getLegacyUserRulesConfigPath(environmentFor(home, env)), rootFolds(home));
+    expect(ported.getLegacyUserRulesConfigPath(environmentFor(home, isolationEnv(home)))).toBe(
+      join(home, '.cc-safety-net', 'config.json'),
+    );
   });
 
-  // Without the relocation the path falls back to the process home, which `os.homedir()` reads
-  // from the account rather than from `HOME`, so the environment reports that same home. The
-  // path is computed and recorded; nothing under it is opened.
-  test('the user config sits under the default safety-net directory', () => {
+  test('with no relocation the user config falls back to the home directory', () => {
     const home = createTempRoot('config-file-home-');
-    const env = isolationEnv(home, { CC_SAFETY_NET_HOME: undefined });
-    recordPorted(ported.getLegacyUserRulesConfigPath(environmentFor(homedir(), env)), [
-      [homedir(), '<home>'],
-    ]);
+    const environment = environmentFor(home, isolationEnv(home, { CC_SAFETY_NET_HOME: undefined }));
+    expect(ported.getLegacyUserRulesConfigPath(environment)).toBe(
+      join(home, '.cc-safety-net', 'config.json'),
+    );
   });
 });
 
-describe('the atomic writer leaves the same file behind', () => {
+describe('the atomic JSON writer', () => {
   afterEach(removeTempRoots);
 
   test.each([
     ['an explicit owner-only mode', 0o600],
-    ['the writer default', undefined],
-  ] as const)('writes the same bytes with %s', (_label, mode) => {
-    const portedRoot = createTempRoot('config-file-write-ported-');
+    ['the writer default, which is owner-only too', undefined],
+  ] as const)('leaves one owner-only file behind with %s', (_behavior, mode) => {
+    const root = createTempRoot('config-file-write-');
     ported.writeJsonAtomic(
-      join(portedRoot, 'rule.json'),
+      join(root, 'rule.json'),
       { version: 1, rules: ['project-rules'], overrides: {} },
       mode,
     );
-    expect(snapshotTree(portedRoot)).toMatchSnapshot();
+    // One file, no half-written temp beside it, and the pretty-printed bytes with a final newline.
+    expect(snapshotTree(root)).toEqual([
+      {
+        path: 'rule.json',
+        kind: 'file',
+        mode: 0o600,
+        content: `${JSON.stringify({ version: 1, rules: ['project-rules'], overrides: {} }, null, 2)}\n`,
+      },
+    ]);
   });
 });
