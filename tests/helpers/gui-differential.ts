@@ -226,6 +226,14 @@ async function drive(
 }
 
 /** Spelled one way: the side's own root, and the path it resolves to, are both `<root>`. */
+/** Whether a native directory picker exists is the platform's answer (always on macOS and Windows,
+ *  a dialog binary on Linux), so the record carries a marker where the body carries the boolean. */
+function foldPicker(response: GuiResponse): GuiResponse {
+  const body = response.body;
+  if (body === null || typeof body !== 'object' || !('canPickDirectory' in body)) return response;
+  return { ...response, body: { ...body, canPickDirectory: '<platform>' } };
+}
+
 function observe(side: GuiSide, responses: readonly GuiResponse[]) {
   return normalize({ responses, tree: snapshotTree(side.root) }, [
     [realpathSync(side.root), '<root>'],
@@ -247,7 +255,7 @@ export async function runGuiRow(row: {
   const portedResponses = await drive(portedServer, row.requests).finally(portedServer.close);
 
   const ported = observe(portedSide, portedResponses);
-  recordPorted(ported);
+  recordPorted({ ...ported, responses: ported.responses.map(foldPicker) });
   // An atomic write that failed halfway leaves its scratch file behind, which no row spells.
   expect(ported.tree.filter((entry) => /\.[0-9a-f]{16}\.tmp$/.test(entry.path))).toStrictEqual([]);
   // The home is handed back unrecorded, for the rows whose contract is a file's mode.

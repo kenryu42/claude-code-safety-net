@@ -196,7 +196,9 @@ describe('protected path scanner walk', () => {
     expect(
       completedWalk(
         walkPair(`cd ${join(root, 'link')} && rm -rf x`, workspace, null),
-      ).observations.some((observation) => observation.includes(`cwd=${join(root, 'policy')}`)),
+      ).observations.some((observation) =>
+        observation.includes(`cwd=${join(realpathSync(root), 'policy')}`),
+      ),
     ).toBeTrue();
     expect(
       SEGMENT_SOURCES.map(

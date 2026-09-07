@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, test } from 'bun:test';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir as systemTemp } from 'node:os';
 import { join } from 'node:path';
 import { AnalysisLimit } from '@/core/budget';
@@ -380,19 +380,22 @@ describe('git metadata for the execution and configuration directories', () => {
     return seen.ported as { entries: readonly string[] } | null;
   }
 
+  // An anchor is the repository's canonical path, so the fixture is spelled through `realpath`.
+  const anchor = (repository: string) => join(realpathSync(repository), '.git');
+
   test('one repository resolves to one anchor', () => {
-    expect(metadataFor(project, project)?.entries).toStrictEqual([join(project, '.git')]);
+    expect(metadataFor(project, project)?.entries).toStrictEqual([anchor(project)]);
   });
 
   test('two repositories union into both anchors, in the order the pair names them', () => {
     expect(metadataFor(project, tooling)?.entries).toStrictEqual([
-      join(project, '.git'),
-      join(tooling, '.git'),
+      anchor(project),
+      anchor(tooling),
     ]);
   });
 
   test('a directory outside a repository contributes nothing', () => {
-    expect(metadataFor(plain, tooling)?.entries).toStrictEqual([join(tooling, '.git')]);
+    expect(metadataFor(plain, tooling)?.entries).toStrictEqual([anchor(tooling)]);
     expect(metadataFor(plain, plain)).toBeNull();
   });
 });

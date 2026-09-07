@@ -143,13 +143,15 @@ export function portedVerdict(
 const DIGEST_FILE = join(import.meta.dir, '..', 'fixtures', 'gate', 'harvested-digests.json');
 
 /**
- * The canonical spelling of `/tmp` where it is a symlink (`/private/tmp` on macOS): a corpus source
- * that changes into `/tmp` is canonicalized there, and the digest was recorded where `/tmp` is real.
+ * The canonical spelling of the system directories that are symlinks on macOS (`/tmp`, `/etc` and
+ * `/var` resolve under `/private`): a corpus source that changes into one is canonicalized there,
+ * and the digests were recorded where they are real directories.
  */
-const TMP_FOLDS =
-  existsSync('/tmp') && realpathSync('/tmp') !== '/tmp'
-    ? [[realpathSync('/tmp'), '/tmp'] as const]
-    : [];
+const SYSTEM_DIRECTORY_FOLDS = ['/tmp', '/etc', '/var'].flatMap((directory) =>
+  existsSync(directory) && realpathSync(directory) !== directory
+    ? [[realpathSync(directory), directory] as const]
+    : [],
+);
 
 /**
  * The recorded oracle for a corpus too large to snapshot row by row: the SHA-256 of the canonical
@@ -178,7 +180,7 @@ export function expectRecordedDigest(
 ): void {
   const folds = [
     ...(root === undefined ? [] : rootFolds(root)),
-    ...TMP_FOLDS,
+    ...SYSTEM_DIRECTORY_FOLDS,
     ...(sep === '/' ? [] : [[sep, '/'] as const]),
   ];
   const rows = pairs.map(([label, value]) => [normalize(label, folds), value] as const);

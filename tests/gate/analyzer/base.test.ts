@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createBudget } from '@/core/budget';
@@ -247,7 +247,11 @@ describe('heredoc files', () => {
 
   test('the tracked-path resolution agrees for absolute, relative and unknown cwd sources', () => {
     // `../escape` resolves out of the fixture, so the directory holding it is folded as well.
-    const recordFolds = () => [...rootFolds(root), [dirname(root), '<tmpdir>'] as const];
+    const recordFolds = () => [
+      ...rootFolds(root),
+      [realpathSync(dirname(root)), '<tmpdir>'] as const,
+      [dirname(root), '<tmpdir>'] as const,
+    ];
     const recorded: [string, unknown][] = [];
     for (const source of ['dir/file', 'link/file', 'missing/deep/file', './dir', '../escape', '']) {
       for (const cwd of [root, join(root, 'dir'), null, undefined]) {

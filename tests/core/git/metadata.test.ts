@@ -1,5 +1,13 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  renameSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createProcessEnvironment } from '@/core/environment';
@@ -86,10 +94,11 @@ describe('protected git metadata', () => {
     expect(resolveProtectedGitMetadata(join(root, 'plain'), environment)).toBeNull();
     const submodule = resolveProtectedGitMetadata(join(root, 'main', 'vendor', 'sub'), environment);
     expect(submodule?.markerFiles).toHaveLength(1);
+    // The resolver answers with canonical paths, so the fixture is spelled through `realpath`.
     expect(submodule?.directories).toContain(
-      join(root, 'main', '.git', 'modules', 'vendor', 'sub'),
+      join(realpathSync(root), 'main', '.git', 'modules', 'vendor', 'sub'),
     );
     const external = resolveProtectedGitMetadata(join(root, 'external'), environment);
-    expect(external?.hooksDirectories).toContain(join(root, 'hooks-outside'));
+    expect(external?.hooksDirectories).toContain(join(realpathSync(root), 'hooks-outside'));
   });
 });

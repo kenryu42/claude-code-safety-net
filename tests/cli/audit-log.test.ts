@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, mock, spyOn, test } from 'bun:test';
 import * as nodeFs from 'node:fs';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { encodeCwdForLogDirname, getAuditLogsDir } from '@/audit/writer';
 import { runLogsCommand as portedRunLogsCommand } from '@/cli/audit-log';
@@ -156,9 +156,10 @@ function seedLogs(clock: number) {
     const logsDir = logsDirOf(side);
     const entries = auditFixture(clock, side.project);
     const stamp = new Date(clock).toISOString();
+    // `logs --project .` resolves the cwd the child runs in, which is the canonical path.
     const nested = join(
       logsDir,
-      encodeCwdForLogDirname(side.project),
+      encodeCwdForLogDirname(realpathSync(side.project)),
       stamp.slice(0, 7),
       `${stamp.slice(0, 10)}-sess1.jsonl`,
     );

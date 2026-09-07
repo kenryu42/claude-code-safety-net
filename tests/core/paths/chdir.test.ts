@@ -105,7 +105,8 @@ describe('chdir target resolution', () => {
       name: 'does not reject a landing that is a file; the caller decides what a non-directory cwd means',
       base: root,
       target: 'file',
-      expected: join(canonicalRoot, 'file'),
+      // Nothing on the way is a symlink, so the base keeps its own spelling.
+      expected: join(root, 'file'),
     },
     {
       name: 'returns the filesystem root for an absolute root operand',

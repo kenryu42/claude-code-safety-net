@@ -10,7 +10,7 @@ import {
   type HookRow,
   hostEnv,
 } from '../helpers/hook-hosts';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
+import { auditDirnameFolds, recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The bin over the row's bytes. Each row is fed to `src/entries/bin.ts` through the bun running the
@@ -34,9 +34,9 @@ const fixture = createHookFixture('bin-');
  */
 const FOLDS = [
   ...rootFolds(fixture.root),
-  [fixture.root.replaceAll('/', '-'), '<root>'],
+  ...auditDirnameFolds(fixture.root, '<root>'),
   [REPO_ROOT, '<repo>'],
-  [REPO_ROOT.replaceAll('/', '-'), '<repo>'],
+  ...auditDirnameFolds(REPO_ROOT, '<repo>'),
 ] as const;
 
 afterAll(() => {

@@ -9183,7 +9183,7 @@ exports[`the GUI rulebook listing lists nothing when no scope configures a ruleb
   "responses": [
     {
       "body": {
-        "canPickDirectory": false,
+        "canPickDirectory": "<platform>",
         "errors": [],
         "projectPath": "<root>/project",
         "rulebooks": [],
@@ -9216,7 +9216,7 @@ exports[`the GUI rulebook listing names the scope a user rulebook came from 1`] 
   "responses": [
     {
       "body": {
-        "canPickDirectory": false,
+        "canPickDirectory": "<platform>",
         "errors": [],
         "projectPath": "<root>/project",
         "rulebooks": [
@@ -9320,7 +9320,7 @@ exports[`the GUI rulebook listing names the scope a project rulebook came from 1
   "responses": [
     {
       "body": {
-        "canPickDirectory": false,
+        "canPickDirectory": "<platform>",
         "errors": [],
         "projectPath": "<root>/project",
         "rulebooks": [
@@ -9424,7 +9424,7 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
   "responses": [
     {
       "body": {
-        "canPickDirectory": false,
+        "canPickDirectory": "<platform>",
         "errors": [
           "missing rulebook file <root>/home/.cc-safety-net/rules/ghost/rulebook.json for ghost; create that file or remove that source from the rules config",
         ],
@@ -9482,7 +9482,7 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
   "responses": [
     {
       "body": {
-        "canPickDirectory": false,
+        "canPickDirectory": "<platform>",
         "errors": [],
         "projectPath": "<root>/project",
         "rulebooks": [

@@ -190,8 +190,8 @@ function runSide(outdir: string, journey: Journey): Outcome {
   });
   const clean = (text: string) => {
     const spelled = normalize(text, [
-      [root, '<root>'],
       [realpathSync(root), '<root>'],
+      [root, '<root>'],
       [outdir, '<dist>'],
     ]);
     return journey.normalize?.(spelled) ?? spelled;
