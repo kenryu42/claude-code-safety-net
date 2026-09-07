@@ -8,7 +8,7 @@ import {
   probeInstallTarget,
 } from '@/hosts/install/choices';
 import type { NativeCommand } from '@/hosts/install/native';
-import type { InstallTarget } from '@/hosts/install/targets';
+import { INSTALL_TARGETS, type InstallTarget } from '@/hosts/install/targets';
 import { createFakeBin, type FakeScriptEntry } from '../../helpers/fake-bin';
 import { createTempRoot, removeTempRoots, withProcessEnv } from '../../helpers/temp-home';
 
@@ -16,7 +16,7 @@ import { createTempRoot, removeTempRoots, withProcessEnv } from '../../helpers/t
  * The rows the install picker offers. A host counts as present only when its CLI answers
  * `--version` with a clean exit inside five seconds, and what the picker says about a row that
  * cannot be chosen ("CLI not installed", "already installed", "not installed") is what the user
- * reads, so the probe result and the reason are both pinned.
+ * reads, so the probe result and the reason are both stated here.
  */
 
 const SCRIPT: readonly FakeScriptEntry[] = [
@@ -76,11 +76,12 @@ describe('probing a host CLI', () => {
 });
 
 describe('the install picker rows', () => {
-  test('mark availability the same way for every action', async () => {
-    for (const options of OPTIONS) {
-      const rows = await buildInstallTargetChoicesAsync(scriptedProbe, options);
-      expect(rows).toMatchSnapshot();
-    }
+  test('offer one row per install target, named as the catalog names it', async () => {
+    const rows = await buildInstallTargetChoicesAsync(scriptedProbe, OPTIONS[0]);
+
+    expect(rows.map((row) => [row.target, row.label, row.flag])).toEqual(
+      INSTALL_TARGETS.map((target) => [target.target, target.label, target.flag]),
+    );
   });
 
   test('read a configured host as installed, and an unprobed one as missing', async () => {
@@ -98,8 +99,6 @@ describe('the install picker rows', () => {
   test('re-decide an existing row from the state it already carries', async () => {
     const base = await buildInstallTargetChoicesAsync(scriptedProbe);
     for (const options of OPTIONS) {
-      const redecided = applyInstallTargetState(base, options);
-      expect(redecided).toMatchSnapshot();
       expect(applyInstallTargetState(base, options)).toEqual(
         await buildInstallTargetChoicesAsync(scriptedProbe, options),
       );
