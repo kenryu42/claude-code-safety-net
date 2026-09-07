@@ -144,7 +144,6 @@ describeDifferential(
   (row, outcome) => {
     expect(outcome).toStrictEqual(row.expected);
   },
-  () => fixture.root,
 );
 
 // W5: the library check writes no audit. Every row above ran with the audit home inside the

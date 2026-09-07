@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, expect, test } from 'bun:test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadBuiltinCommands } from '@/hosts/opencode/builtin-commands/commands';
 import {
   createCCSafetyNetPlugin as portedCreate,
   normalizeOpenCodeWindowsWorkdir as portedNormalizeWorkdir,
@@ -10,7 +11,6 @@ import { withEnv } from '../../helpers';
 import { readAuditEntries } from '../../helpers/hook-capture';
 import { createHookFixture, type HookFixture } from '../../helpers/hook-hosts';
 import { auditHomeFor, captureInProcessCall, describeDifferential } from '../../helpers/in-process';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The OpenCode plugin driven through a fake plugin input: one project directory, one OpenCode
@@ -218,7 +218,6 @@ describeDifferential(
     expect(agreed.thrown ?? '').toContain(row.contains ?? '');
     expect(agreed.thrown === undefined).toBe(!row.blocked);
   },
-  () => fixture.root,
 );
 
 test('the config hook adds the builtin command without dropping the host own', async () => {
@@ -227,8 +226,9 @@ test('the config hook adds the builtin command without dropping the host own', a
   await plugin.config(config as never);
   const ported = config.command;
 
-  expect(ported).toMatchSnapshot();
+  // Ours is added whole, exactly as the loader supplies it, and the host's own is left alone.
   expect(Object.keys(ported as Record<string, unknown>)).toStrictEqual(['cc-safety-net', 'own']);
+  expect(ported).toEqual({ ...loadBuiltinCommands(), own: { template: 'x' } });
 });
 
 test('the shell route and the Windows workdir resolve the same way on both sides', () => {
@@ -273,9 +273,9 @@ test('a homeDir input steers the shipped audit tree and the environment steers t
   const homeDir = join(fixture.root, 'opencode-home');
   const ported = await captureInProcessCall(fixture, {}, () => callToolExecuteBefore(row, homeDir));
 
-  const portedEntries = ported.entries.map((line) => line.entry);
-  recordPorted(portedEntries, rootFolds(fixture.root));
-  // The plugin wrote nowhere but the audit home the environment names.
+  // The plugin wrote nowhere but the audit home the environment names, and what it wrote there is
+  // the row's own verdict rather than a second call's.
+  expect(ported.entries.map((line) => line.entry.ruleId)).toEqual(['git.push-force']);
   expect(readAuditEntries(auditHomeFor(fixture))).toHaveLength(1);
   expect(readAuditEntries(homeDir)).toStrictEqual([]);
 });

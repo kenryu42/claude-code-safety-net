@@ -208,17 +208,11 @@ function runSide(row: Row) {
   );
 }
 
-describeDifferential(
-  'one Pi tool call through both handlers',
-  ROWS,
-  runSide,
-  (row, agreed) => {
-    expect(agreed.entries).toHaveLength(row.lines);
-    expect(agreed.returned?.reason ?? '').toContain(row.contains ?? '');
-    expect(agreed.returned === undefined).toBe(!row.blocked);
-  },
-  () => fixture.root,
-);
+describeDifferential('one Pi tool call through both handlers', ROWS, runSide, (row, agreed) => {
+  expect(agreed.entries).toHaveLength(row.lines);
+  expect(agreed.returned?.reason ?? '').toContain(row.contains ?? '');
+  expect(agreed.returned === undefined).toBe(!row.blocked);
+});
 
 test('the block for a failing secret scan names no command', async () => {
   const row = ROWS.find((candidate) => candidate.breaks === 'secret-scan') as Row;

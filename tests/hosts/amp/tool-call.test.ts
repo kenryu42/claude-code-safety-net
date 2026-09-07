@@ -231,17 +231,11 @@ function runSide(row: Row) {
   );
 }
 
-describeDifferential(
-  'one Amp tool call through both handlers',
-  ROWS,
-  runSide,
-  (row, agreed) => {
-    expect(agreed.entries).toHaveLength(row.lines);
-    expect(agreed.returned?.action).toBe(row.rejected ? 'reject-and-continue' : 'allow');
-    expect(JSON.stringify(agreed.returned)).toContain(row.contains ?? '');
-  },
-  () => fixture.root,
-);
+describeDifferential('one Amp tool call through both handlers', ROWS, runSide, (row, agreed) => {
+  expect(agreed.entries).toHaveLength(row.lines);
+  expect(agreed.returned?.action).toBe(row.rejected ? 'reject-and-continue' : 'allow');
+  expect(JSON.stringify(agreed.returned)).toContain(row.contains ?? '');
+});
 
 test('the debug line names the failing Amp event', async () => {
   const row = ROWS.find((candidate) => candidate.env?.CC_SAFETY_NET_DEBUG === '1') as Row;

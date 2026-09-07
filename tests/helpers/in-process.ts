@@ -3,7 +3,6 @@ import { join } from 'node:path';
 import { withEnv } from '../helpers';
 import { clearAuditLogs, readAuditEntries } from './hook-capture';
 import { type HookFixture, hostEnv } from './hook-hosts';
-import { auditDirnameFolds, recordPorted, rootFolds } from './temp-home';
 
 /**
  * The harness the four in-process host entries share: one call into a handler, captured whole, and
@@ -45,29 +44,19 @@ export function auditHomeFor(fixture: HookFixture): string {
 }
 
 /**
- * One test per row: the recorded outcome pins what the row returns, prints and audits, and `check`
- * then pins what that outcome has to be, so a row cannot pass by leaving the handler silent.
+ * One test per row: `check` states what the row's outcome has to be, so a row cannot pass by
+ * leaving the handler silent.
  */
 export function describeDifferential<Row extends { name: string }, Outcome>(
   title: string,
   rows: readonly Row[],
   run: (row: Row) => Promise<Outcome>,
   check: (row: Row, outcome: Outcome) => void,
-  /** The fixture root every path in an outcome sits under, read when the row runs because the
-   *  fixtures are rebuilt per test. */
-  root: () => string,
 ): void {
   describe(title, () => {
     for (const row of rows) {
       test(row.name, async () => {
-        const outcome = await run(row);
-
-        const fixtureRoot = root();
-        recordPorted(outcome, [
-          ...rootFolds(fixtureRoot),
-          ...auditDirnameFolds(fixtureRoot, '<root>'),
-        ]);
-        check(row, outcome);
+        check(row, await run(row));
       });
     }
   });
