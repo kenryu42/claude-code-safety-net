@@ -54,13 +54,17 @@ export function isolationEnv(
   overrides: Record<string, string | undefined> = {},
 ): Record<string, string | undefined> {
   mkdirSync(join(home, 'tmp'), { recursive: true });
+  const tmpdir = overrides.TMPDIR ?? join(home, 'tmp');
   return {
     ...Object.fromEntries(HOST_ENV_NAMES.map((name) => [name, undefined])),
     HOME: home,
     CC_SAFETY_NET_HOME: join(home, '.cc-safety-net'),
     CC_SAFETY_NET_AUDIT_HOME: join(home, '.cc-safety-net', 'audit'),
     npm_config_cache: join(home, '.npm'),
-    TMPDIR: join(home, 'tmp'),
+    TMPDIR: tmpdir,
+    // Windows reads its temp directory from TEMP and TMP, so `os.tmpdir()` follows the isolation.
+    TEMP: tmpdir,
+    TMP: tmpdir,
     // `bun run` caches transpiled sources under the isolated HOME (`.bun/install/cache` on Linux,
     // `Library/Caches/bun` on macOS), which a tree snapshot of that home would otherwise carry.
     BUN_RUNTIME_TRANSPILER_CACHE_PATH: '0',
@@ -178,12 +182,17 @@ function foldWindowsSeparators(text: string): string {
 export const WINDOWS_SEPARATOR_FOLDS: readonly Fold[] =
   sep === '/' ? [] : [[/^[\s\S]+$/g, foldWindowsSeparators]];
 
-/** Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold. */
-export const rootFolds = (root: string) =>
-  [
-    [realpathSync(root), '<root>'],
-    [root, '<root>'],
-  ] as const;
+/**
+ * Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold,
+ * each also as a JSON document spells it (`C:\\\\Users\\\\…`), for a root inside a document a host printed.
+ */
+export const rootFolds = (root: string): readonly Fold[] =>
+  [realpathSync(root), root].flatMap((spelling) => {
+    const escaped = JSON.stringify(spelling).slice(1, -1);
+    return escaped === spelling
+      ? [[spelling, '<root>'] as const]
+      : [[escaped, '<root>'] as const, [spelling, '<root>'] as const];
+  });
 
 /**
  * The audit writer names a project's log directory after the directory the call ran in, encoded

@@ -65,9 +65,10 @@ async function runSide(spec: FlowSpec) {
   const fakeBin = createFakeBin(
     root,
     JSON.parse(
+      // The paths are spliced into a JSON document, so they are spelled as one (`\\` on Windows).
       JSON.stringify(spec.script ?? [])
-        .replaceAll('<home>', home)
-        .replaceAll('<root>', root),
+        .replaceAll('<home>', JSON.stringify(home).slice(1, -1))
+        .replaceAll('<root>', JSON.stringify(root).slice(1, -1)),
     ) as FakeScriptEntry[],
     spec.extraCommands,
   );

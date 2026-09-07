@@ -7,7 +7,9 @@ import {
   createTempRoot,
   environmentFor,
   isolationEnv,
+  normalize,
   removeTempRoots,
+  WINDOWS_SEPARATOR_FOLDS,
 } from '../../helpers/temp-home';
 
 /**
@@ -61,7 +63,7 @@ function reported(
   root: string,
 ): { errors: string[]; ruleNames: string[] } {
   return {
-    errors: result.errors.map((error) => error.replaceAll(root, '<root>')),
+    errors: normalize(result.errors, [[root, '<root>'], ...WINDOWS_SEPARATOR_FOLDS]),
     ruleNames: [...result.ruleNames],
   };
 }

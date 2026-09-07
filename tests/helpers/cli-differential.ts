@@ -3,7 +3,14 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createFakeBin } from './fake-bin';
 import { snapshotTree, type TreeEntry, type TreeSpec, writeTree } from './fixture-tree';
-import { createTempRoot, isolatedSpawnEnv, normalize, recordPorted, rootFolds } from './temp-home';
+import {
+  createTempRoot,
+  isolatedSpawnEnv,
+  normalize,
+  recordPorted,
+  rootFolds,
+  WINDOWS_SEPARATOR_FOLDS,
+} from './temp-home';
 
 /**
  * The bin over one argument vector. Each row runs `bun run src/entries/bin.ts` under its own temp
@@ -108,14 +115,15 @@ function runSide(row: CliRow): CliOutcome {
     encoding: 'utf-8',
     maxBuffer: 32 * 1024 * 1024,
   });
-  const clean = (text: string) => normalize(text, [...rootFolds(side.root), [REPO_ROOT, '<repo>']]);
+  const clean = (text: string) =>
+    normalize(text, [...rootFolds(side.root), [REPO_ROOT, '<repo>'], ...WINDOWS_SEPARATOR_FOLDS]);
   return {
     stdout: clean(result.stdout),
     stderr: clean(result.stderr),
     exitCode: result.status,
     tree: normalize(
       snapshotTree(side.root).filter((entry) => !SCAFFOLDING.test(entry.path)),
-      rootFolds(side.root),
+      [...rootFolds(side.root), ...WINDOWS_SEPARATOR_FOLDS],
     ),
   };
 }

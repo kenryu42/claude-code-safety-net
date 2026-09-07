@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 
 /**
  * Design section 8 takes the schema validator off the hook's path: the loader reports the
@@ -62,7 +62,9 @@ describe('the policy snapshot never pulls the schema library onto the hook path'
   const graph = importGraph(SNAPSHOT);
 
   test('the entry reaches the loader it is supposed to reach', () => {
-    const reached = [...graph.files].map((file) => relative(NEXT, file)).sort();
+    const reached = [...graph.files]
+      .map((file) => relative(NEXT, file).split(sep).join('/'))
+      .sort();
     expect(reached).toContain('core/policy/store.ts');
     expect(reached).toContain('core/policy/validate.ts');
     expect(reached).toContain('core/policy/scope-policy.ts');

@@ -4,7 +4,7 @@ import { createTestEnvironment, processPathResolver } from '@/core/environment';
 import { behavioralContractCases } from '../gate/behavioral-contract-cases';
 import { pipelineContractCases } from '../gate/pipeline-contract-cases';
 import { type TreeSpec, writeTree } from '../helpers/fixture-tree';
-import { recordPorted } from '../helpers/temp-home';
+import { type Fold, recordPorted } from '../helpers/temp-home';
 
 /**
  * A file, a dangling link and a two-link cycle under `root`, plus `extras`: the shapes every path
@@ -96,7 +96,7 @@ function outcome<T>(call: () => T): Outcome<T> {
  */
 export function expectSameOutcome<T>(
   next: () => T,
-  replacements: readonly (readonly [string | RegExp, string])[] = [],
+  replacements: readonly Fold[] = [],
   record = true,
 ): unknown {
   const left = outcome(next);

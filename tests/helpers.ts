@@ -191,7 +191,9 @@ function getLinkedWorktreeSeed(): string {
 }
 
 export function createLinkedWorktreeFixture(): LinkedWorktreeFixture {
-  const rootDir = mkdtempSync(join(tmpdir(), 'safety-net-worktree-'));
+  const rootDir = mkdtempSync(
+    join(process.env.CC_SAFETY_NET_TEST_TMPDIR ?? tmpdir(), 'safety-net-worktree-'),
+  );
   const mainWorktree = join(rootDir, 'main');
   const linkedWorktree = join(rootDir, 'linked');
 
@@ -231,7 +233,9 @@ export interface FakeGitFileFixture {
 }
 
 export function createSubmoduleLikeGitFileFixture(): FakeGitFileFixture {
-  const rootDir = mkdtempSync(join(tmpdir(), 'safety-net-submodule-like-'));
+  const rootDir = mkdtempSync(
+    join(process.env.CC_SAFETY_NET_TEST_TMPDIR ?? tmpdir(), 'safety-net-submodule-like-'),
+  );
   const cwd = join(rootDir, 'submodule');
   const gitDir = join(rootDir, '.git', 'modules', 'submodule');
 

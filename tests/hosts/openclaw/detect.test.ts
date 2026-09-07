@@ -4,7 +4,14 @@ import { buildOpenClawArtifactHeader } from '@/hosts/openclaw/artifact';
 import { detect as detectOpenClaw, modifiedFileErrors } from '@/hosts/openclaw/detect';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
 import { differential, expectSameSides } from '../../helpers/host-differential';
-import { createTempRoot, recordPorted, removeTempRoots, rootFolds } from '../../helpers/temp-home';
+import {
+  createTempRoot,
+  normalize,
+  recordPorted,
+  removeTempRoots,
+  rootFolds,
+  WINDOWS_SEPARATOR_FOLDS,
+} from '../../helpers/temp-home';
 
 /**
  * Doctor reads the extension directory OpenClaw copied the plugin into and the config that decides
@@ -183,7 +190,7 @@ describe('comparing an install against the packaged copy', () => {
 
     const errors = modifiedFileErrors(dirs[0], 'dev', dirs[1]);
     recordPorted(errors, rootFolds(root));
-    return errors.map((error) => error.replaceAll(root, '<root>'));
+    return normalize(errors, [...rootFolds(root), ...WINDOWS_SEPARATOR_FOLDS]);
   };
 
   test('names the file an edited install would have to restore', () => {

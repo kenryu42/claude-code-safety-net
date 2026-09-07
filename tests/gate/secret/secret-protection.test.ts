@@ -191,7 +191,8 @@ describe('shell operands against the built-in secret catalog', () => {
       {
         name: '$HOME expands to the same home SSH path',
         command: 'cat $HOME/.ssh/config',
-        expected: ssh(shellPath(userHome, '.ssh', 'config')),
+        // The target is the expansion as the shell spelled it: the home, then `/.ssh/config`.
+        expected: ssh(`${userHome}/.ssh/config`),
       },
       {
         name: 'an unlisted reader still has its operand inspected (fail-safe operand handling)',
@@ -301,8 +302,11 @@ describe('shell operands against the built-in secret catalog', () => {
       },
       {
         name: 'the relocated Codex config file',
-        command: `cat ${join(codexHome, 'config.toml')}`,
-        expected: { target: join(codexHome, 'config.toml'), ruleId: 'secret.cli.codex.config' },
+        command: `cat ${shellPath(codexHome, 'config.toml')}`,
+        expected: {
+          target: shellPath(codexHome, 'config.toml'),
+          ruleId: 'secret.cli.codex.config',
+        },
       },
       {
         name: 'the relocation variable is expanded out of the command text',
@@ -545,7 +549,7 @@ describe('the carriers a candidate path can arrive through', () => {
       },
       {
         name: 'node -e reading an absolute key',
-        command: `node -e "require('fs').readFileSync('${join(userHome, '.ssh', 'id_rsa')}')"`,
+        command: `node -e "require('fs').readFileSync('${shellPath(userHome, '.ssh', 'id_rsa')}')"`,
         expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
       },
       {
@@ -688,7 +692,7 @@ describe('the carriers a candidate path can arrive through', () => {
       { name: 'an awk data operand', command: "awk '{print}' .env", expected: env('.env') },
       {
         name: 'a getline redirect inside the program',
-        command: `awk 'BEGIN{while((getline l < "${join(userHome, '.ssh', 'id_rsa')}")>0) print l}'`,
+        command: `awk 'BEGIN{while((getline l < "${shellPath(userHome, '.ssh', 'id_rsa')}")>0) print l}'`,
         expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
       },
       {

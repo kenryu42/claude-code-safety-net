@@ -7,7 +7,12 @@ import {
 } from '@/core/policy/scope-policy';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
 import { rulesConfig, v1Rulebook } from '../../helpers/rulebook-seeds';
-import { createTempRoot, normalize, removeTempRoots } from '../../helpers/temp-home';
+import {
+  createTempRoot,
+  normalize,
+  removeTempRoots,
+  WINDOWS_SEPARATOR_FOLDS,
+} from '../../helpers/temp-home';
 
 /**
  * What `rule add` and `doctor` report after a scope changes is exactly what the gate would find
@@ -70,7 +75,7 @@ function reportsFor(scope: string, bound: boolean) {
       runtime: getRulesConfigRuntimeErrorsForConfig(configPath(root, scope), scopeBinding),
       overrides: getUnknownOverrideErrorsForConfig(configPath(root, scope), scopeBinding),
     },
-    [[root, '<root>']],
+    [[root, '<root>'], ...WINDOWS_SEPARATOR_FOLDS],
   );
 }
 

@@ -261,15 +261,21 @@ describe('safe policy reads', () => {
   });
 });
 
+/** Windows has no POSIX mode to assert. */
+const posixModes = process.platform !== 'win32';
+
 describe('atomic policy writes', () => {
   test('creates the missing root and parents at 0700 and the file at 0600', () => {
     writePolicyFileAtomic(target('nowhere', 'rules/new/rule.json', 'user policy'), 'created\n');
     expect(readFileSync(join(base, 'nowhere', 'rules', 'new', 'rule.json'), 'utf-8')).toBe(
       'created\n',
     );
-    expect(lstatSync(join(base, 'nowhere')).mode & 0o777).toBe(0o700);
-    expect(lstatSync(join(base, 'nowhere', 'rules')).mode & 0o777).toBe(0o700);
-    expect(lstatSync(join(base, 'nowhere', 'rules', 'new', 'rule.json')).mode & 0o777).toBe(0o600);
+    if (posixModes) expect(lstatSync(join(base, 'nowhere')).mode & 0o777).toBe(0o700);
+    if (posixModes) expect(lstatSync(join(base, 'nowhere', 'rules')).mode & 0o777).toBe(0o700);
+    if (posixModes)
+      expect(lstatSync(join(base, 'nowhere', 'rules', 'new', 'rule.json')).mode & 0o777).toBe(
+        0o600,
+      );
   });
 
   test('hands the renamed destination path to the callback', () => {
@@ -285,14 +291,15 @@ describe('atomic policy writes', () => {
 
   test('honours an explicit mode', () => {
     writePolicyFileAtomic(target('root', 'rules/mode.json', 'user policy'), 'm\n', 0o644);
-    expect(lstatSync(join(base, 'root', 'rules', 'mode.json')).mode & 0o777).toBe(0o644);
+    if (posixModes)
+      expect(lstatSync(join(base, 'root', 'rules', 'mode.json')).mode & 0o777).toBe(0o644);
   });
 
   test('replaces an existing file, and gives it the write mode rather than the old one', () => {
-    expect(lstatSync(join(base, 'root', 'policy.json')).mode & 0o777).toBe(0o644);
+    if (posixModes) expect(lstatSync(join(base, 'root', 'policy.json')).mode & 0o777).toBe(0o644);
     writePolicyFileAtomic(target('root', 'policy.json', 'user policy'), '{"level":"strict"}\n');
     expect(readFileSync(join(base, 'root', 'policy.json'), 'utf-8')).toBe('{"level":"strict"}\n');
-    expect(lstatSync(join(base, 'root', 'policy.json')).mode & 0o777).toBe(0o600);
+    if (posixModes) expect(lstatSync(join(base, 'root', 'policy.json')).mode & 0o777).toBe(0o600);
   });
 
   test('writes beside a scope root that is itself a symlink to a directory', () => {
@@ -344,7 +351,7 @@ describe('atomic policy writes', () => {
     expect(staged).toHaveLength(1);
     expect(dirname(staged[0]?.from ?? '')).toBe(dir);
     expect(relative(dir, staged[0]?.from ?? '')).toMatch(/^policy\.json\.[0-9a-f]{16}\.tmp$/);
-    expect(staged[0]?.mode).toBe(0o600);
+    if (posixModes) expect(staged[0]?.mode).toBe(0o600);
     // The destination still holds the old bytes while the new ones sit in the temp file.
     expect(staged[0]?.destination).toBe('{"level":"standard"}\n|{"level":"strict"}\n');
     expect(

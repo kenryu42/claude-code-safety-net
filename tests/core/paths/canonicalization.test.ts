@@ -36,7 +36,7 @@ writeSymlinkLoopTree(root, {
 
 /** The fixture as a canonicalized candidate spells it: symlinks resolved, forward slashes. */
 const canonicalRoot = realpathSync(root).replace(/\\/g, '/');
-const under = (...parts: string[]) => [canonicalRoot, ...parts].join('/');
+const under = (...parts: string[]) => join(canonicalRoot, ...parts);
 
 const environment = pairedEnvironments(
   { HOME: home, TMPDIR: '/tmp', XDG_CONFIG_HOME: '/xdg' },

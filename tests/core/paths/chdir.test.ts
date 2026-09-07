@@ -124,7 +124,8 @@ describe('chdir target resolution', () => {
       name: 'appends to a base that already ends in a separator',
       base: `${root}/`,
       target: 'dir',
-      expected: join(root, 'dir'),
+      // The base's own separator is kept, whichever the host's is.
+      expected: `${root}/dir`,
     },
     {
       name: 'walks from a base that is itself a symlink path, leaving the base as given',

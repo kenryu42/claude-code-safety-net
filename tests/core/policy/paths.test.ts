@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { sep } from 'node:path';
 import { createTestEnvironment } from '@/core/environment';
 import {
   getLocalRulebookPath,
@@ -23,6 +24,9 @@ const ROOT = '/srv/root';
 const NESTED = '/srv/root/workspaces/app';
 const OUTSIDE = '/srv/policy-paths-sibling';
 const HOME = '/srv/home/tester';
+
+/** The paths are joined with the host's separator; the rows spell them with `/`. */
+const slash = (path: string) => path.split(sep).join('/');
 
 const environmentWith = (safetyNetHome?: string) =>
   createTestEnvironment({
@@ -83,15 +87,15 @@ const USER_SCOPES: readonly {
 describe('the user policy scope', () => {
   test.each(USER_SCOPES.map((row) => [row.behavior, row] as const))('%s', (_behavior, row) => {
     const environment = environmentWith(row.safetyNetHome);
-    expect(getUserRulesDir(environment, row.options)).toBe(row.rulesDir);
-    expect(getUserRulesConfigPath(environment, row.options)).toBe(row.configPath);
-    expect(getUserPolicyPath(environment, row.options)).toBe(row.policyPath);
+    expect(slash(getUserRulesDir(environment, row.options))).toBe(row.rulesDir);
+    expect(slash(getUserRulesConfigPath(environment, row.options))).toBe(row.configPath);
+    expect(slash(getUserPolicyPath(environment, row.options))).toBe(row.policyPath);
 
     const paths = getPolicyPaths(environment, { cwd: ROOT, ...row.options });
-    expect(paths.userConfigPath).toBe(row.configPath);
-    expect(paths.userScope.root).toBe(row.scopeRoot);
+    expect(slash(paths.userConfigPath)).toBe(row.configPath);
+    expect(slash(paths.userScope.root)).toBe(row.scopeRoot);
     expect(paths.userScope.label).toBe('user policy');
-    expect(paths.userConfigTarget.path).toBe(row.configPath);
+    expect(slash(paths.userConfigTarget.path)).toBe(row.configPath);
     expect(paths.userConfigTarget.relativePath).toBe(row.targetRelativePath);
   });
 
@@ -156,10 +160,10 @@ describe('the project policy scope', () => {
       ...(row.projectConfigPath ? { projectConfigPath: row.projectConfigPath } : {}),
     };
     const paths = getPolicyPaths(environmentWith(), options);
-    expect(paths.projectConfigPath).toBe(row.configPath);
-    expect(paths.projectScope.root).toBe(row.scopeRoot);
+    expect(slash(paths.projectConfigPath)).toBe(row.configPath);
+    expect(slash(paths.projectScope.root)).toBe(row.scopeRoot);
     expect(paths.projectScope.label).toBe('project policy');
-    expect(paths.projectConfigTarget.path).toBe(row.configPath);
+    expect(slash(paths.projectConfigTarget.path)).toBe(row.configPath);
     expect(paths.projectConfigTarget.relativePath).toBe(row.targetRelativePath);
   });
 
@@ -167,9 +171,9 @@ describe('the project policy scope', () => {
     ['the project directory itself', ROOT],
     ['a nested project directory', NESTED],
   ])('%s holds its rules and policy under .cc-safety-net', (_behavior, cwd) => {
-    expect(getProjectRulesDir(cwd)).toBe(`${cwd}/.cc-safety-net/rules`);
-    expect(getProjectRulesConfigPath(cwd)).toBe(`${cwd}/.cc-safety-net/rules/rule.json`);
-    expect(getProjectPolicyPath(cwd)).toBe(`${cwd}/.cc-safety-net/policy.json`);
+    expect(slash(getProjectRulesDir(cwd))).toBe(`${cwd}/.cc-safety-net/rules`);
+    expect(slash(getProjectRulesConfigPath(cwd))).toBe(`${cwd}/.cc-safety-net/rules/rule.json`);
+    expect(slash(getProjectPolicyPath(cwd))).toBe(`${cwd}/.cc-safety-net/policy.json`);
   });
 
   test('a trailing separator on the project directory resolves to the same paths', () => {
