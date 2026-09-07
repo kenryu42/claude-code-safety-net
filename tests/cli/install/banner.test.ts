@@ -37,34 +37,56 @@ async function runBanner(options: { inputTTY: boolean; outputTTY: boolean; keypr
   };
 }
 
+const BEGIN_SYNC = '\x1b[?2026h';
+const END_SYNC = '\x1b[?2026l';
+/** The cursor hidden, two lines opened for the banner, and the cursor parked above them. */
+const OPENING = '\x1b[?25l\n\n\x1b[2A\x1b7';
+/** Back to the saved position, down past the banner, and the cursor handed back. */
+const CLOSING = ['\x1b8', '\x1b[2B', '\n\x1b[0m\x1b[?25h'];
+
+/** Every frame is one write, wrapped so a half-painted banner never reaches the terminal. */
+const framesOf = (chunks: readonly string[]) => {
+  const frames = chunks.slice(1, -3);
+  for (const frame of frames) {
+    expect(frame, frame).toStartWith(BEGIN_SYNC);
+    expect(frame, frame).toEndWith(END_SYNC);
+  }
+  return frames;
+};
+
 const ENTER: KeyPress = { name: 'return', value: '\r' };
 const CTRL_C: KeyPress = { name: 'c', value: '\x03', ctrl: true };
 
 describe('cli/install/banner', () => {
   test('a non-TTY keyboard runs the animation to the end on both implementations', async () => {
     const ported = await runBanner({ inputTTY: false, outputTTY: true });
-    expect(ported).toMatchSnapshot();
+    // No raw mode to take and no stream to resume: a keyboard that is not a TTY is left alone.
     expect(ported.rawModeCalls).toEqual([]);
     expect(ported.streamCalls).toEqual([]);
-    expect(ported.chunks[0]?.startsWith('\x1b[?25l')).toBe(true);
-    expect(ported.chunks.at(-1)).toBe('\n\x1b[0m\x1b[?25h');
+    expect(ported.chunks[0]).toBe(OPENING);
+    expect(ported.chunks.slice(-3)).toEqual(CLOSING);
+    expect(framesOf(ported.chunks)).toHaveLength(55);
   });
 
   test('Enter cuts the animation short and restores the keyboard on both implementations', async () => {
     const ported = await runBanner({ inputTTY: true, keypress: ENTER, outputTTY: true });
-    expect(ported).toMatchSnapshot();
     expect(ported.rawModeCalls).toEqual([true, false]);
     expect(ported.streamCalls).toEqual(['resume', 'pause']);
     expect(ported.interrupts).toEqual([]);
-    const full = await runBanner({ inputTTY: false, outputTTY: true });
-    expect(ported.chunks.length).toBeLessThan(full.chunks.length);
+    // The frame the key landed on and the finished banner, instead of the whole animation.
+    expect(framesOf(ported.chunks)).toHaveLength(2);
+    expect(ported.chunks[0]).toBe(OPENING);
+    expect(ported.chunks.slice(-3)).toEqual(CLOSING);
   });
 
   test('Ctrl-C reaches the caller once on both implementations', async () => {
     const ported = await runBanner({ inputTTY: true, keypress: CTRL_C, outputTTY: true });
-    expect(ported).toMatchSnapshot();
+    // Ctrl-C ends the animation like any key, and reaches the caller once — never as a signal.
     expect(ported.interrupts).toEqual(['interrupt']);
     expect(ported.rawModeCalls).toEqual([true, false]);
+    expect(ported.streamCalls).toEqual(['resume', 'pause']);
+    expect(framesOf(ported.chunks)).toHaveLength(2);
+    expect(ported.chunks.slice(-3)).toEqual(CLOSING);
   });
 
   test('a non-TTY sink prints nothing on either implementation', async () => {
