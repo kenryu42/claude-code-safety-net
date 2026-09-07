@@ -6,10 +6,9 @@ import { normalizePage, renderPages } from '../helpers/gui-page';
 
 /**
  * The page the GUI serves is a build artifact: `page.html` with the stylesheet, the icon, the logo
- * and the browser script folded in at module load. The frontend files are byte-identical copies, so
- * the only thing the port can change is what the bundler writes around them — the module labels and
- * the order the three helper modules land in. Everything else, the session token included, is what the
- * recorded snapshot pins.
+ * and the browser script folded in at module load. Serving it adds one request-time value, the
+ * session token, and nothing else — so the document a request gets is the packaged one with that
+ * token folded into the empty data tag the page script reads on load.
  */
 
 const FRONTEND = join(import.meta.dir, '..', '..', 'src', 'gui', 'frontend');
@@ -24,12 +23,14 @@ const dataPayload = (html: string) => {
 };
 
 describe('the served GUI page', () => {
-  test('is the shipped page once the bundler labels and module order are folded out', () => {
-    const ported = normalizePage(renderPages(TOKEN).ported, TOKEN);
+  test('is the packaged document with the session token folded in', () => {
+    const rendered = renderPages(TOKEN).ported;
 
-    expect(ported).toMatchSnapshot();
+    // Taking the token payload back out of the data tag leaves the packaged document byte for byte.
+    expect(rendered.replace(`{"token":"${TOKEN}"}`, '')).toBe(guiDocument);
+    const ported = normalizePage(rendered, TOKEN);
+    // The page script and the three helper modules it imports, each labelled by the bundler.
     expect(ported.modules).toHaveLength(3);
-    // The one request-time value, in the empty tag the page script reads on load.
     expect(ported.head).toContain(
       '<script id="ccsn-data" type="application/json">{"token":"<token>"}</script>',
     );
