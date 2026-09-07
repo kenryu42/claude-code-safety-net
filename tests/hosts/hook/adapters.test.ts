@@ -9,13 +9,12 @@ import {
   type HookRow,
   hostEnv,
 } from '../../helpers/hook-hosts';
-import { auditDirnameFolds, recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
- * Every stdin host, driven over its own payload: the document it prints, the stderr it leaves and
- * the audit lines it writes are recorded per row. The last check is the port's own contract: each
- * host has to deny in its own protocol shape, because a Claude-shaped document is an allow on
- * Cursor and on Grok Build.
+ * Every stdin host, driven over its own payload: each row answers with the verdict the shared table
+ * declares for it, whichever of the nine protocols carried it there. The shape checks below are the
+ * port's own contract: each host has to deny in its own document shape, because a Claude-shaped
+ * document is an allow on Cursor and on Grok Build.
  */
 
 const DENIED = 'a denied command';
@@ -49,19 +48,13 @@ const DENY_DOCUMENT_KEYS: Record<string, readonly string[]> = {
   'hermes-agent': ['action', 'message'],
 };
 
-const fixture = createHookFixture('next-hook-adapters-');
+/** The whole allow document of the two hosts whose protocol answers every call. */
+const ALLOW_DOCUMENTS: Record<string, object> = {
+  cursor: { permission: 'allow' },
+  'grok-build': { decision: 'allow' },
+};
 
-/**
- * Every machine path a recorded row can spell: the fixture, and the checkout the suite runs in,
- * which a payload without a cwd of its own falls back to. Both are also spelled the way the audit
- * writer names the log directory after the directory the call ran in.
- */
-const FOLDS = [
-  ...rootFolds(fixture.root),
-  ...auditDirnameFolds(fixture.root, '<root>'),
-  [process.cwd(), '<cwd>'],
-  ...auditDirnameFolds(process.cwd(), '<cwd>'),
-] as const;
+const fixture = createHookFixture('next-hook-adapters-');
 
 afterAll(() => {
   fixture.remove();
@@ -102,8 +95,27 @@ for (const host of HOOK_HOSTS) {
     // The oversized row moves 8 MiB through the adapter; the rest finish far sooner.
     test(`${host.id}: ${row.name}`, async () => {
       const ported = await runSide(host, row);
-      const compared = { ...ported, stderr: ported.stderr.map(debugStage) };
-      recordPorted(compared, FOLDS);
+      // A host that prints nothing has allowed the call by saying nothing; one that prints says it
+      // exactly once, because a second document would be a second answer to one call.
+      expect(ported.stdout).toHaveLength(row.expected.document === 'none' ? 0 : 1);
+      expect(ported.stderr.map(debugStage)).toHaveLength(row.expected.stderr ?? 0);
+      expect(ported.audit.map((line) => line.entry.decision)).toEqual(
+        row.expected.audit === 'none' ? [] : [row.expected.audit],
+      );
+      if (row.expected.ruleId !== undefined) {
+        expect(ported.audit[0]?.entry.ruleId).toBe(row.expected.ruleId);
+      }
+      if (row.expected.document === 'none') return;
+      // An allow carries no reason at all: the whole document is the permission it grants.
+      if (row.expected.document === 'allow') {
+        expect(JSON.parse(ported.stdout[0] as string)).toEqual(ALLOW_DOCUMENTS[host.id] as object);
+        return;
+      }
+      // A denial is a reason the reader can act on, in the host's own shape.
+      expect(keyPaths(JSON.parse(ported.stdout[0] as string))).toStrictEqual(
+        DENY_DOCUMENT_KEYS[host.id] as string[],
+      );
+      expect(ported.stdout[0]).toContain('BLOCKED by CC Safety Net');
     }, 30_000);
   }
 

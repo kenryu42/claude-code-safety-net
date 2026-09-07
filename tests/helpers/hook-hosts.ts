@@ -22,10 +22,105 @@ import { withEnv } from '../helpers';
  * shape, so a row that stops matching the host is a broken row rather than a silently rewritten one.
  */
 
+/** What a row must answer, at both the adapter level and through the bin. */
+export type HookOutcome = {
+  /** The document the host printed, or `none` when its protocol answers an allow with silence. */
+  document: 'none' | 'allow' | 'deny';
+  /** The audit line the run leaves, or `none` when the call never reached the gate. */
+  audit: 'allow' | 'deny' | 'none';
+  /** The rule that answered, when a named one did. */
+  ruleId?: string;
+  /** Debug lines on stderr; every row but one leaves none. */
+  stderr?: number;
+};
+
 export type HookRow = {
   name: string;
   stdin: string | Uint8Array;
   env?: Record<string, string | undefined>;
+  expected: HookOutcome;
+};
+
+/**
+ * The answer every row is owed, by name. A row reaches the gate through nine different protocols,
+ * and the gate's answer is the same for all nine: this table is that answer, so a host that starts
+ * misreading its own payload shows up as a changed verdict rather than a redrawn document.
+ */
+const OUTCOMES: Readonly<Record<string, HookOutcome>> = {
+  'a denied command': { document: 'deny', audit: 'deny', ruleId: 'git.push-force' },
+  'an allowed command': { document: 'none', audit: 'allow' },
+  'an allowed command under the blocked-only audit scope': { document: 'none', audit: 'none' },
+  'an event the host does not handle': { document: 'none', audit: 'none' },
+  // A payload the intake cannot read is denied fail-closed, before any gate call to audit.
+  'a payload that is not JSON': { document: 'deny', audit: 'none' },
+  'an empty payload': { document: 'deny', audit: 'none' },
+  'a payload that is an array': { document: 'deny', audit: 'none' },
+  'a payload past the input byte limit': { document: 'deny', audit: 'none' },
+  'a payload without a tool name': { document: 'deny', audit: 'deny' },
+  // A relative read resolves against a directory the host never named, so nothing is audited.
+  'a read tool over a relative path': { document: 'none', audit: 'none' },
+  'a read tool over a private key': { document: 'deny', audit: 'deny', ruleId: 'secret.home.ssh' },
+  'a payload without a cwd': { document: 'none', audit: 'allow' },
+  'a cwd that is a regular file': { document: 'deny', audit: 'deny' },
+  'a denied command under a malformed user policy': {
+    document: 'deny',
+    audit: 'deny',
+    ruleId: 'git.reset-hard',
+  },
+  'a command that breaches an analysis limit': { document: 'deny', audit: 'deny' },
+  'a command past the structural shell-syntax limit': { document: 'deny', audit: 'deny' },
+  'a command that breaches an analysis limit with debug output on': {
+    document: 'deny',
+    audit: 'deny',
+    stderr: 1,
+  },
+  'a denied PowerShell command': {
+    document: 'deny',
+    audit: 'deny',
+    ruleId: 'powershell.remove-item-recursive-force-root-or-home',
+  },
+  'an allowed PowerShell command': { document: 'none', audit: 'allow' },
+  'a transcript under the Codex home': { document: 'none', audit: 'allow' },
+  'a transcript under the Copilot home': { document: 'none', audit: 'allow' },
+  'a transcript under the Claude config directory': { document: 'none', audit: 'allow' },
+  'no transcript under a Claude Code entrypoint': { document: 'none', audit: 'allow' },
+  'a tool cwd inside the session cwd': { document: 'none', audit: 'allow' },
+  'a tool cwd outside the session cwd': { document: 'deny', audit: 'deny' },
+  'a blank tool cwd': { document: 'deny', audit: 'deny' },
+  'a tool cwd that is not a string': { document: 'deny', audit: 'deny' },
+  'tool args that are not a string': { document: 'deny', audit: 'deny' },
+  'tool args that are not JSON': { document: 'deny', audit: 'deny' },
+  'a powershell command': {
+    document: 'deny',
+    audit: 'deny',
+    ruleId: 'powershell.remove-item-recursive-force-root-or-home',
+  },
+  // Copilot alone reads the session id, and a blank one is a payload it declines to handle.
+  'a blank session id': { document: 'none', audit: 'none' },
+  'a working directory inside the workspace roots': { document: 'allow', audit: 'allow' },
+  'a working directory outside the workspace roots': { document: 'deny', audit: 'deny' },
+  'a blank working directory': { document: 'deny', audit: 'deny' },
+  'no workspace roots': { document: 'deny', audit: 'deny' },
+  'a cwd outside the workspace roots': { document: 'deny', audit: 'deny' },
+  'a Cwd inside the workspace paths': { document: 'none', audit: 'allow' },
+  'a Cwd outside the workspace paths': { document: 'deny', audit: 'deny' },
+  'a blank Cwd': { document: 'deny', audit: 'deny' },
+  'view targets past the path-canonicalization budget': { document: 'deny', audit: 'deny' },
+  'tool input the host truncated': { document: 'deny', audit: 'deny' },
+  'a cwd inside the workspace root': { document: 'allow', audit: 'allow' },
+  'a cwd outside the workspace root': { document: 'deny', audit: 'deny' },
+  'a workdir that exists': { document: 'none', audit: 'allow' },
+  'a workdir that does not exist': { document: 'deny', audit: 'deny' },
+  'a blank workdir': { document: 'deny', audit: 'deny' },
+};
+
+/** What the two hosts that answer every call say instead, where their protocol differs. */
+const ANSWERED_OUTCOMES: Readonly<Record<string, HookOutcome>> = {
+  'an allowed command': { document: 'allow', audit: 'allow' },
+  'an allowed command under the blocked-only audit scope': { document: 'allow', audit: 'none' },
+  'a read tool over a relative path': { document: 'allow', audit: 'none' },
+  // With no directory to place the call in, these two deny where the others allow.
+  'a payload without a cwd': { document: 'deny', audit: 'deny' },
 };
 
 export type HookHost = {
@@ -122,8 +217,10 @@ type HostSpec = {
   commandArgs?: (command: string) => Record<string, unknown>;
   /** An event the host reads but does not handle; absent when the host accepts every payload. */
   unsupportedEvent?: string;
+  /** Hosts whose protocol expects an answer to every call, allow included, rather than silence. */
+  answersEveryCall?: true;
   build: (payload: Payload) => unknown;
-  extraRows?: (fixture: HookFixture) => readonly HookRow[];
+  extraRows?: (fixture: HookFixture) => readonly Omit<HookRow, 'expected'>[];
 };
 
 const claudeShaped = (event: string) => (payload: Payload) => ({
@@ -312,6 +409,7 @@ const HOST_SPECS: readonly HostSpec[] = [
   {
     id: 'cursor',
     flag: '--cursor',
+    answersEveryCall: true,
     ported: portedCursorHook,
     commandTool: 'Shell',
     build: (payload) => ({
@@ -390,6 +488,7 @@ const HOST_SPECS: readonly HostSpec[] = [
   {
     id: 'grok-build',
     flag: '--grok-build',
+    answersEveryCall: true,
     ported: portedGrokBuildHook,
     commandTool: 'run_terminal_command',
     build: (payload) => ({
@@ -431,7 +530,7 @@ const HOST_SPECS: readonly HostSpec[] = [
   },
 ];
 
-function commonRows(spec: HostSpec, fixture: HookFixture): HookRow[] {
+function commonRows(spec: HostSpec, fixture: HookFixture): Omit<HookRow, 'expected'>[] {
   const commandArgs = spec.commandArgs ?? ((command: string) => ({ command }));
   const payload = (values: Payload) => JSON.stringify(spec.build(values));
   const commandPayload = (command: string, cwd?: string) =>
@@ -501,12 +600,22 @@ function commonRows(spec: HostSpec, fixture: HookFixture): HookRow[] {
   ];
 }
 
+/** The row's declared answer, or a loud failure: a row nobody stated an outcome for is a row
+ *  whose verdict nothing checks. */
+function outcomeFor(spec: HostSpec, name: string): HookOutcome {
+  const outcome =
+    (spec.answersEveryCall === true ? ANSWERED_OUTCOMES[name] : undefined) ?? OUTCOMES[name];
+  if (outcome === undefined) throw new Error(`no declared outcome for hook row: ${name}`);
+  return outcome;
+}
+
 export const HOOK_HOSTS: readonly HookHost[] = HOST_SPECS.map((spec) => ({
   id: spec.id,
   flag: spec.flag,
   ported: spec.ported,
-  rows: (fixture: HookFixture) => [
-    ...commonRows(spec, fixture),
-    ...(spec.extraRows?.(fixture) ?? []),
-  ],
+  rows: (fixture: HookFixture) =>
+    [...commonRows(spec, fixture), ...(spec.extraRows?.(fixture) ?? [])].map((row) => ({
+      ...row,
+      expected: outcomeFor(spec, row.name),
+    })),
 }));

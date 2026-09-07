@@ -10,15 +10,14 @@ import {
   type HookRow,
   hostEnv,
 } from '../helpers/hook-hosts';
-import { auditDirnameFolds, recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The bin over the row's bytes. Each row is fed to `src/entries/bin.ts` through the bun running the
  * suite — `process.execPath`, so the run does not depend on a `bun` on `PATH` — under one temp home
- * whose audit tree is read back, and the document on stdout, the exit code, the stderr and the
- * audit lines are recorded together. This is the whole hook path — argument to flag to adapter to
- * gate to document — which the in-process runs cannot reach, because they call the adapters
- * directly.
+ * whose audit tree is read back. Every row has to answer with the verdict the shared table declares
+ * for it, the same one the in-process adapter run answers with: this is the whole hook path —
+ * argument to flag to adapter to gate to document — which the in-process runs cannot reach, because
+ * they call the adapters directly.
  */
 
 const REPO_ROOT = join(import.meta.dir, '..', '..');
@@ -26,18 +25,6 @@ const PORTED = 'src/entries/bin.ts';
 const CLAUDE_DENIAL = 'a denied command';
 
 const fixture = createHookFixture('bin-');
-
-/**
- * Every machine path a recorded row can spell: the fixture, and the checkout the two bins ran in.
- * Both are also spelled with `-` for every separator, the way the audit writer names the log
- * directory after the directory the call ran in.
- */
-const FOLDS = [
-  ...rootFolds(fixture.root),
-  ...auditDirnameFolds(fixture.root, '<root>'),
-  [REPO_ROOT, '<repo>'],
-  ...auditDirnameFolds(REPO_ROOT, '<repo>'),
-] as const;
 
 afterAll(() => {
   fixture.remove();
@@ -75,12 +62,32 @@ const denialRow = (HOOK_HOSTS.find((host) => host.id === 'claude-code') as HookH
   .rows(fixture)
   .find((row) => row.name === CLAUDE_DENIAL) as HookRow;
 
+/** The verdict the run answered with, whichever host protocol carried it. */
+function expectOutcome(ported: ReturnType<typeof runEntry>, expected: HookRow['expected']): void {
+  // The bin reports a decision through the document it prints, never through the exit code: a
+  // non-zero status would read to the host as the hook itself having failed.
+  expect(ported.exitCode).toBe(0);
+  expect(ported.stderr.split('\n').filter((line) => line !== '')).toHaveLength(
+    expected.stderr ?? 0,
+  );
+  expect(ported.audit.map((line) => line.entry.decision)).toEqual(
+    expected.audit === 'none' ? [] : [expected.audit],
+  );
+  if (expected.ruleId !== undefined) expect(ported.audit[0]?.entry.ruleId).toBe(expected.ruleId);
+  if (expected.document === 'none') {
+    expect(ported.stdout).toBe('');
+    return;
+  }
+  // One document per call, and a denial says so in the words the reader acts on.
+  expect(ported.stdout.trimEnd().split('\n')).toHaveLength(1);
+  expect(ported.stdout.includes('BLOCKED by CC Safety Net')).toBe(expected.document === 'deny');
+}
+
 for (const host of HOOK_HOSTS) {
   describe(`hook ${host.flag}`, () => {
     for (const row of host.rows(fixture)) {
       test(row.name, () => {
-        const argv = ['hook', host.flag];
-        recordPorted(runEntry(argv, row), FOLDS);
+        expectOutcome(runEntry(['hook', host.flag], row), row.expected);
       }, 60_000);
     }
   });
@@ -96,15 +103,17 @@ describe('flag resolution', () => {
     ['-cc'],
   ]) {
     test(`\`${argv.join(' ')}\` runs the Claude Code hook`, () => {
-      recordPorted(runEntry(argv, denialRow), FOLDS);
+      expectOutcome(runEntry(argv, denialRow), denialRow.expected);
     }, 60_000);
   }
 
   for (const argv of [['hook'], ['hook', '--cursor', '--kimi-code']]) {
     test(`\`${argv.join(' ')}\` names no integration`, () => {
       const ported = runEntry(argv, denialRow);
-      recordPorted(ported, FOLDS);
+      // Naming no integration is the bin failing rather than a host being answered, so nothing is
+      // printed, nothing is audited, and the status is the one the shell reads as a failure.
       expect(ported.stdout).toBe('');
+      expect(ported.audit).toEqual([]);
       expect(ported.exitCode).toBe(1);
     }, 60_000);
   }
