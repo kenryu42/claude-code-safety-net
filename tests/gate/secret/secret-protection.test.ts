@@ -152,8 +152,8 @@ type CarrierCase = {
   readonly relaxedInStandard?: true;
 };
 
-/** A fixture path as a POSIX shell operand: on Windows `join` spells it with `\`, which the shell
- *  would read as escapes. */
+/** A fixture path as a POSIX shell operand, and as the guard reports it back: on Windows `join`
+ *  spells it with `\`, which the shell would read as escapes. */
 const shellPath = (...parts: string[]) => join(...parts).replaceAll(sep, '/');
 
 function secretIn(command: string, mode: Mode, config?: SecretProtectionConfig): Verdict {
@@ -181,7 +181,7 @@ describe('shell operands against the built-in secret catalog', () => {
       {
         name: 'an absolute path inside the home SSH directory',
         command: `cat ${shellPath(userHome, '.ssh', 'config')}`,
-        expected: ssh(join(userHome, '.ssh', 'config')),
+        expected: ssh(shellPath(userHome, '.ssh', 'config')),
       },
       {
         name: 'a tilde-spelled SSH private key',
@@ -191,7 +191,7 @@ describe('shell operands against the built-in secret catalog', () => {
       {
         name: '$HOME expands to the same home SSH path',
         command: 'cat $HOME/.ssh/config',
-        expected: ssh(join(userHome, '.ssh', 'config')),
+        expected: ssh(shellPath(userHome, '.ssh', 'config')),
       },
       {
         name: 'an unlisted reader still has its operand inspected (fail-safe operand handling)',
@@ -297,7 +297,7 @@ describe('shell operands against the built-in secret catalog', () => {
       {
         name: 'CODEX_HOME relocates the Codex credential store',
         command: `cat ${shellPath(codexHome, 'auth.json')}`,
-        expected: { target: join(codexHome, 'auth.json'), ruleId: 'secret.cli.codex' },
+        expected: { target: shellPath(codexHome, 'auth.json'), ruleId: 'secret.cli.codex' },
       },
       {
         name: 'the relocated Codex config file',
@@ -307,7 +307,7 @@ describe('shell operands against the built-in secret catalog', () => {
       {
         name: 'the relocation variable is expanded out of the command text',
         command: 'cat "$CODEX_HOME/auth.json"',
-        expected: { target: join(codexHome, 'auth.json'), ruleId: 'secret.cli.codex' },
+        expected: { target: shellPath(codexHome, 'auth.json'), ruleId: 'secret.cli.codex' },
       },
       {
         name: 'Gemini CLI credentials',
@@ -418,7 +418,7 @@ describe('the carriers a candidate path can arrive through', () => {
       {
         name: 'an append to a credential file',
         command: `echo x >> ${shellPath(userHome, '.aws', 'credentials')}`,
-        expected: aws(join(userHome, '.aws', 'credentials')),
+        expected: aws(shellPath(userHome, '.aws', 'credentials')),
       },
       {
         name: 'a redirection to a device is not a secret',
@@ -471,7 +471,7 @@ describe('the carriers a candidate path can arrive through', () => {
       {
         name: 'printf of an absolute key into a batched reader',
         command: `printf '%s\\n' ${shellPath(userHome, '.ssh', 'id_rsa')} | xargs -n1 cat`,
-        expected: ssh(join(userHome, '.ssh', 'id_rsa')),
+        expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
       },
       {
         name: 'echo -n keeps the operand a path',
@@ -546,7 +546,7 @@ describe('the carriers a candidate path can arrive through', () => {
       {
         name: 'node -e reading an absolute key',
         command: `node -e "require('fs').readFileSync('${join(userHome, '.ssh', 'id_rsa')}')"`,
-        expected: ssh(join(userHome, '.ssh', 'id_rsa')),
+        expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
       },
       {
         name: 'bash -c carries a whole command',
@@ -652,7 +652,7 @@ describe('the carriers a candidate path can arrive through', () => {
       {
         name: 'an absolute sensitive root with a metadata action',
         command: `find ${shellPath(userHome, '.aws')} -type f -print`,
-        expected: aws(join(userHome, '.aws')),
+        expected: aws(shellPath(userHome, '.aws')),
         relaxedInStandard: true,
       },
       {
@@ -689,7 +689,7 @@ describe('the carriers a candidate path can arrive through', () => {
       {
         name: 'a getline redirect inside the program',
         command: `awk 'BEGIN{while((getline l < "${join(userHome, '.ssh', 'id_rsa')}")>0) print l}'`,
-        expected: ssh(join(userHome, '.ssh', 'id_rsa')),
+        expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
       },
       {
         name: 'a command inside awk system()',
@@ -797,7 +797,7 @@ describe('the carriers a candidate path can arrive through', () => {
       {
         name: 'ls with flags and an absolute path',
         command: `ls -la ${join(userHome, '.aws')}`,
-        expected: aws(join(userHome, '.aws')),
+        expected: aws(shellPath(userHome, '.aws')),
         relaxedInStandard: true,
       },
       {
@@ -850,7 +850,7 @@ describe('secret protection through tool inputs', () => {
           name: 'an absolute file_path under the home SSH directory',
           input: { file_path: join(userHome, '.ssh', 'id_rsa') },
           route: { kind: 'path' },
-          expected: ssh(join(userHome, '.ssh', 'id_rsa')),
+          expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
         },
         {
           name: 'a tilde-spelled file_path',
@@ -880,7 +880,7 @@ describe('secret protection through tool inputs', () => {
           name: 'a grep search directory',
           input: { pattern: 'token', path: join(userHome, '.aws') },
           route: { kind: 'grep' },
-          expected: aws(join(userHome, '.aws')),
+          expected: aws(shellPath(userHome, '.aws')),
         },
         {
           name: 'a grep glob filter naming a secret extension',

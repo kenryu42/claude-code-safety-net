@@ -85,28 +85,28 @@ describe('reading the installed OpenClaw plugin', () => {
       'an install whose manifest is gone',
       { [`${DIR}/index.js`]: INSTALLED[`${DIR}/index.js`] } as TreeSpec,
       [
-        `openclaw.plugin.json is missing from ${join(DIR_PATH, 'openclaw.plugin.json')}; run install --openclaw`,
-        `package.json is missing from ${join(DIR_PATH, 'package.json')}; run install --openclaw`,
+        `openclaw.plugin.json is missing from ${posix.join(DIR_PATH, 'openclaw.plugin.json')}; run install --openclaw`,
+        `package.json is missing from ${posix.join(DIR_PATH, 'package.json')}; run install --openclaw`,
       ],
     ],
     [
       'a manifest claiming another plugin',
       { ...INSTALLED, [`${DIR}/openclaw.plugin.json`]: '{"id":"other"}' } as TreeSpec,
       [
-        `${join(DIR_PATH, 'openclaw.plugin.json')} is not a valid cc-safety-net manifest; run install --openclaw`,
+        `${posix.join(DIR_PATH, 'openclaw.plugin.json')} is not a valid cc-safety-net manifest; run install --openclaw`,
       ],
     ],
     [
       'a package manifest that points OpenClaw nowhere',
       { ...INSTALLED, [`${DIR}/package.json`]: '{"name":"cc-safety-net"}' } as TreeSpec,
       [
-        `${join(DIR_PATH, 'package.json')} does not point OpenClaw at index.js; run install --openclaw`,
+        `${posix.join(DIR_PATH, 'package.json')} does not point OpenClaw at index.js; run install --openclaw`,
       ],
     ],
     [
       'an entry file without our header',
       { ...INSTALLED, [`${DIR}/index.js`]: 'export default {};\n' } as TreeSpec,
-      [`Unmanaged index.js occupies ${join(DIR_PATH, 'index.js')}; move or remove it`],
+      [`Unmanaged index.js occupies ${posix.join(DIR_PATH, 'index.js')}; move or remove it`],
     ],
   ])('refuses to call %s an install', async (_case, seed, errors) => {
     expect(await detection({ ...seed, ...ENABLING })).toEqual({

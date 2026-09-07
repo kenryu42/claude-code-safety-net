@@ -143,11 +143,12 @@ export function portedVerdict(
 const DIGEST_FILE = join(import.meta.dir, '..', 'fixtures', 'gate', 'harvested-digests.json');
 
 /**
- * The canonical spelling of the system directories that are symlinks on macOS (`/tmp`, `/etc` and
- * `/var` resolve under `/private`): a corpus source that changes into one is canonicalized there,
- * and the digests were recorded where they are real directories.
+ * The canonical spelling of the system directories that are symlinks or mounts on macOS (`/tmp`,
+ * `/etc` and `/var` resolve under `/private`, `/home` under `/System/Volumes/Data`): a corpus
+ * source that changes into one is canonicalized there, and the digests were recorded where they
+ * are real directories.
  */
-const SYSTEM_DIRECTORY_FOLDS = ['/tmp', '/etc', '/var'].flatMap((directory) =>
+const SYSTEM_DIRECTORY_FOLDS = ['/tmp', '/etc', '/var', '/home'].flatMap((directory) =>
   existsSync(directory) && realpathSync(directory) !== directory
     ? [[realpathSync(directory), directory] as const]
     : [],
@@ -214,9 +215,11 @@ export function expectRecordedDigest(
     expect(digest, `${recordedKey}: ${pairs.length} pairs`).toBe(recorded[recordedKey]);
     return;
   }
+  // The value this run produced is named, so a platform without a local checkout (a CI runner) can
+  // still have its digest recorded from the log.
   if (process.env.CI)
     throw new Error(
-      `${recordedKey}: no recorded digest for ${pairs.length} pairs; run without CI to record`,
+      `${recordedKey}: no recorded digest for ${pairs.length} pairs (this run: ${digest}); run without CI to record`,
     );
   mkdirSync(dirname(DIGEST_FILE), { recursive: true });
   writeFileSync(

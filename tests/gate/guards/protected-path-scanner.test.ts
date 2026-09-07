@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { type Budget, createBudget } from '@/core/budget';
 import type { Environment } from '@/core/environment';
 import {
@@ -81,6 +81,12 @@ function walkWithNext(source: string, cwd: string, environment: Environment, sto
 }
 
 /** The walk over one source — value or thrown error — so a caller can record either. */
+/** The canonical path of a fixture entry as the walk reports it: real, and spelled with `/`. */
+const canonical = (base: string, ...parts: string[]) =>
+  join(realpathSync(base), ...parts)
+    .split(sep)
+    .join('/');
+
 function walkPair(source: string, cwd: string, stop: string | null): Outcome<Walk> {
   const environments = pairedEnvironments({ HOME: home, TMPDIR: join(root, 'tmp') }, home);
   return describeOutcome(() => walkWithNext(source, cwd, environments, stop));
@@ -189,15 +195,15 @@ describe('protected path scanner walk', () => {
     );
     // The walk canonicalizes a `cd` target's existing prefix, so the tracked cwd spells the real
     // path of the fixture (`work/policy` itself does not exist).
-    expect(trackedCwds).toContain(join(realpathSync(workspace), 'policy'));
-    expect(trackedCwds).toContain(realpathSync(home));
-    expect(trackedCwds).toContain(realpathSync(root));
+    expect(trackedCwds).toContain(canonical(workspace, 'policy'));
+    expect(trackedCwds).toContain(canonical(home));
+    expect(trackedCwds).toContain(canonical(root));
     // A `cd` through a symlink is canonicalized, so the guard sees one spelling of the target.
     expect(
       completedWalk(
         walkPair(`cd ${join(root, 'link')} && rm -rf x`, workspace, null),
       ).observations.some((observation) =>
-        observation.includes(`cwd=${join(realpathSync(root), 'policy')}`),
+        observation.includes(`cwd=${canonical(root, 'policy')}`),
       ),
     ).toBeTrue();
     expect(
@@ -437,7 +443,7 @@ describe('protected candidate canonicalization', () => {
     // The existing prefix is canonicalized, so the answer spells the fixture's real path.
     expect(
       normalizeProtectedFileCandidate(missing, workspace, environments, createBudget(), () => true),
-    ).toBe(join(realpathSync(root), 'missing', 'deeper.json'));
+    ).toBe(canonical(root, 'missing', 'deeper.json'));
     expect(
       normalizeProtectedFileCandidate(
         missing,
@@ -455,7 +461,7 @@ describe('protected candidate canonicalization', () => {
         createBudget(),
         () => false,
       ),
-    ).toBe(join(realpathSync(root), 'policy'));
+    ).toBe(canonical(root, 'policy'));
   });
 });
 

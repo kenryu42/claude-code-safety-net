@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { createBudget } from '@/core/budget';
 import {
   findPolicyConfigMutationTargetInSemanticFacts,
@@ -76,53 +76,57 @@ function guardPair(toolName: string, input: unknown, route: ToolRoute) {
   );
 }
 
+/** A fixture path as a POSIX shell operand: on Windows `join` spells it with `\\`, which the shell
+ *  would read as escapes. */
+const sh = (path: string) => path.split(sep).join('/');
+
 function shellCases(): readonly string[] {
   return [
-    `cat ${userPolicy}`,
-    `less ${userPolicy}`,
-    `sed s/a/b/ ${userPolicy}`,
-    `sed -i s/a/b/ ${userPolicy}`,
-    `sed --in-place s/a/b/ ${userPolicy}`,
-    `jq . ${userPolicy}`,
-    `echo {} > ${userPolicy}`,
-    `echo {} >> ${userPolicy}`,
-    `echo {} > ${projectPolicy}`,
-    `tee ${userPolicy}`,
-    `cp /dev/null ${userPolicy}`,
-    `install -m 600 /dev/null ${userPolicy}`,
-    `rm ${userPolicy}`,
-    `rm -f ${projectPolicy}`,
-    `rm -rf ${safetyHome}`,
-    `rm -r ${home}`,
-    `rm --recursive ${safetyHome}`,
+    `cat ${sh(userPolicy)}`,
+    `less ${sh(userPolicy)}`,
+    `sed s/a/b/ ${sh(userPolicy)}`,
+    `sed -i s/a/b/ ${sh(userPolicy)}`,
+    `sed --in-place s/a/b/ ${sh(userPolicy)}`,
+    `jq . ${sh(userPolicy)}`,
+    `echo {} > ${sh(userPolicy)}`,
+    `echo {} >> ${sh(userPolicy)}`,
+    `echo {} > ${sh(projectPolicy)}`,
+    `tee ${sh(userPolicy)}`,
+    `cp /dev/null ${sh(userPolicy)}`,
+    `install -m 600 /dev/null ${sh(userPolicy)}`,
+    `rm ${sh(userPolicy)}`,
+    `rm -f ${sh(projectPolicy)}`,
+    `rm -rf ${sh(safetyHome)}`,
+    `rm -r ${sh(home)}`,
+    `rm --recursive ${sh(safetyHome)}`,
     `rm -rf ${join(workspace, '.cc-safety-net')}`,
-    `rm -rf ${workspace}`,
-    `rm -rf -- ${safetyHome}`,
-    `rm -rf ${join(root, 'other')}`,
-    `mv ${userPolicy} ${join(root, 'other')}`,
-    `mv ${safetyHome} ${join(root, 'other')}`,
-    `mv -S .bak ${userPolicy} ${join(root, 'other')}`,
-    `mv ${join(root, 'other')} ${userPolicy}`,
-    `find ${safetyHome} -delete`,
-    `find ${workspace} -name policy.json -delete`,
-    `find ${safetyHome} -exec rm -rf {} \\;`,
-    `find ${join(root, 'other')} -delete`,
+    `rm -rf ${sh(workspace)}`,
+    `rm -rf -- ${sh(safetyHome)}`,
+    `rm -rf ${sh(join(root, 'other'))}`,
+    `mv ${sh(userPolicy)} ${sh(join(root, 'other'))}`,
+    `mv ${sh(safetyHome)} ${sh(join(root, 'other'))}`,
+    `mv -S .bak ${sh(userPolicy)} ${sh(join(root, 'other'))}`,
+    `mv ${sh(join(root, 'other'))} ${sh(userPolicy)}`,
+    `find ${sh(safetyHome)} -delete`,
+    `find ${sh(workspace)} -name policy.json -delete`,
+    `find ${sh(safetyHome)} -exec rm -rf {} \\;`,
+    `find ${sh(join(root, 'other'))} -delete`,
     'rm -rf ~/.cc-safety-net',
     'cat ~/.cc-safety-net/policy.json',
     'truncate -s 0 ~/.cc-safety-net/policy.json',
-    `truncate -s 0 ${join(workspace, 'alias', 'policy.json')}`,
-    `P=${userPolicy}; cp /dev/null "$P"`,
-    `P=${userPolicy} && cp /dev/null $P`,
-    `P=${safetyHome}; rm -rf "$P"`,
-    `cd ${home} && rm -rf .cc-safety-net`,
-    `cd ${home} && cp /dev/null .cc-safety-net/policy.json`,
+    `truncate -s 0 ${sh(join(workspace, 'alias', 'policy.json'))}`,
+    `P=${sh(userPolicy)}; cp /dev/null "$P"`,
+    `P=${sh(userPolicy)} && cp /dev/null $P`,
+    `P=${sh(safetyHome)}; rm -rf "$P"`,
+    `cd ${sh(home)} && rm -rf .cc-safety-net`,
+    `cd ${sh(home)} && cp /dev/null .cc-safety-net/policy.json`,
     `cd /nowhere-at-all && cp /dev/null .cc-safety-net/policy.json`,
-    `env -S "cp /dev/null ${userPolicy}"`,
-    `env EDITOR=vi cp /dev/null ${userPolicy}`,
-    `sudo cp /dev/null ${userPolicy}`,
-    `cat "unclosed ${userPolicy}`,
-    `echo CONFIG=${userPolicy}`,
-    `printf x > ${join(workspace, 'src', 'policy.json')}`,
+    `env -S "cp /dev/null ${sh(userPolicy)}"`,
+    `env EDITOR=vi cp /dev/null ${sh(userPolicy)}`,
+    `sudo cp /dev/null ${sh(userPolicy)}`,
+    `cat "unclosed ${sh(userPolicy)}`,
+    `echo CONFIG=${sh(userPolicy)}`,
+    `printf x > ${sh(join(workspace, 'src', 'policy.json'))}`,
     'echo hello',
     '',
   ];
@@ -142,15 +146,15 @@ describe('policy config protection through the shell', () => {
       const outcome = guardPair('Bash', { command }, { kind: 'command', shell: 'posix' });
       return outcome.ok && outcome.value !== null;
     };
-    expect(blocked(`cat ${userPolicy}`)).toBeFalse();
-    expect(blocked(`sed -i s/a/b/ ${userPolicy}`)).toBeTrue();
-    expect(blocked(`echo {} > ${projectPolicy}`)).toBeTrue();
-    expect(blocked(`rm -rf ${safetyHome}`)).toBeTrue();
-    expect(blocked(`mv ${userPolicy} ${join(root, 'other')}`)).toBeTrue();
-    expect(blocked(`find ${safetyHome} -delete`)).toBeTrue();
-    expect(blocked(`P=${userPolicy}; cp /dev/null "$P"`)).toBeTrue();
-    expect(blocked(`truncate -s 0 ${join(workspace, 'alias', 'policy.json')}`)).toBeTrue();
-    expect(blocked(`rm -rf ${join(root, 'other')}`)).toBeFalse();
+    expect(blocked(`cat ${sh(userPolicy)}`)).toBeFalse();
+    expect(blocked(`sed -i s/a/b/ ${sh(userPolicy)}`)).toBeTrue();
+    expect(blocked(`echo {} > ${sh(projectPolicy)}`)).toBeTrue();
+    expect(blocked(`rm -rf ${sh(safetyHome)}`)).toBeTrue();
+    expect(blocked(`mv ${sh(userPolicy)} ${sh(join(root, 'other'))}`)).toBeTrue();
+    expect(blocked(`find ${sh(safetyHome)} -delete`)).toBeTrue();
+    expect(blocked(`P=${sh(userPolicy)}; cp /dev/null "$P"`)).toBeTrue();
+    expect(blocked(`truncate -s 0 ${sh(join(workspace, 'alias', 'policy.json'))}`)).toBeTrue();
+    expect(blocked(`rm -rf ${sh(join(root, 'other'))}`)).toBeFalse();
     expect(blocked('echo hello')).toBeFalse();
   });
 
@@ -197,17 +201,17 @@ describe('policy config protection through tool inputs', () => {
       { toolName: 'Glob', input: { path: safetyHome, pattern: '*' }, route: { kind: 'glob' } },
       {
         toolName: 'ApplyPatch',
-        input: { patch: `*** Update File: ${userPolicy}\n` },
+        input: { patch: `*** Update File: ${sh(userPolicy)}\n` },
         route: { kind: 'patch' },
       },
       {
         toolName: 'ApplyPatch',
-        input: { input: `*** Update File: ${projectPolicy}\n` },
+        input: { input: `*** Update File: ${sh(projectPolicy)}\n` },
         route: { kind: 'patch' },
       },
       {
         toolName: 'mystery',
-        input: { command: `cp /dev/null ${userPolicy}` },
+        input: { command: `cp /dev/null ${sh(userPolicy)}` },
         route: { kind: 'unknown' },
       },
       { toolName: 'mystery', input: { file_path: userPolicy }, route: { kind: 'unknown' } },
@@ -244,9 +248,9 @@ describe('policy config protection over prepared facts', () => {
     const paired = guardEnvironments();
     const recorded: [string, unknown][] = [];
     for (const command of [
-      `cp /dev/null ${userPolicy}`,
-      `cat ${userPolicy}`,
-      `rm -rf ${safetyHome}`,
+      `cp /dev/null ${sh(userPolicy)}`,
+      `cat ${sh(userPolicy)}`,
+      `rm -rf ${sh(safetyHome)}`,
     ]) {
       const invocation = { toolName: 'Bash', input: { command }, context: toolContext() };
       const route = { kind: 'command', shell: 'posix' } as const;

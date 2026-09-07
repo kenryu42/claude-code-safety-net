@@ -161,18 +161,22 @@ export function normalize<T>(value: T, replacements: readonly Fold[]): T {
 }
 
 /**
- * Windows spells a fixture path with `\`; the records spell every path with `/`. Only a path run
- * anchored at a fold marker or `~` is rewritten, so a backslash that is a JSON escape (`\n` in a
- * document the host printed) or part of a command's own text (`Remove-Item C:\`) stays as it is.
- * A JSON document doubles the separator, so one or two backslashes open a component; a component
- * that reads as an escape (`\n` before another escape, a quote or the end) is not a path.
+ * Windows spells a path with `\\`; the records spell every path with `/`. In a JSON document (a
+ * string opening with `{` or `[`) the separator is doubled and a single backslash opens an escape
+ * (`\\n`, `\\"`), so only a doubled backslash folds there; elsewhere every backslash folds. A
+ * drive-rooted path a row spelled as input (`Remove-Item C:\\`, `C:\\x\\pwsh.exe`) reads the same
+ * on every host and is left alone.
  */
-const MARKER_PATH = /(<[a-z-]+>|~)((?:\\{1,2}(?![nrtbf](?:\\|"|$))[^\\\s"'`<>|;,]+)+)/g;
+function foldWindowsSeparators(text: string): string {
+  const json = /^\s*[[{]/.test(text);
+  const separators = json
+    ? /([A-Za-z]:\\\\[^\s"'`<>|;,]*)|\\\\/g
+    : /([A-Za-z]:\\[^\s"'`<>|;,]*)|\\+/g;
+  return text.replace(separators, (_match, drive: string | undefined) => drive ?? '/');
+}
 
 export const WINDOWS_SEPARATOR_FOLDS: readonly Fold[] =
-  sep === '/'
-    ? []
-    : [[MARKER_PATH, (_match, anchor, path) => `${anchor}${path.replace(/\\{1,2}/g, '/')}`]];
+  sep === '/' ? [] : [[/^[\s\S]+$/g, foldWindowsSeparators]];
 
 /** Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold. */
 export const rootFolds = (root: string) =>
