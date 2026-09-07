@@ -150,27 +150,42 @@ const TABLE: readonly Row[] = [
   },
 ];
 
-/** One row through the constructor, recorded as the invocation the gate is handed. */
-function comparedInvocation(row: Row) {
-  const ported = createPortedInvocation(
+/**
+ * One row through the constructor. Everything but the command is the caller's own value handed
+ * straight on — asserted by identity, so a copy or a rewrite fails — and the command text is kept
+ * for a command route and dropped for any other, whatever the caller passed.
+ */
+function expectInvocation(row: Row) {
+  const invocation = createPortedInvocation(
     row.toolName,
     row.input,
     row.route,
     row.context,
     row.command,
   );
-  expect(ported).toMatchSnapshot();
-  return ported;
+
+  expect(invocation.toolName).toBe(row.toolName);
+  expect(invocation.input).toBe(row.input);
+  expect(invocation.route).toBe(row.route);
+  expect(invocation.context).toBe(row.context);
+  expect(Object.keys(invocation).sort()).toEqual(
+    row.route.kind === 'command'
+      ? ['command', 'context', 'input', 'route', 'toolName']
+      : ['context', 'input', 'route', 'toolName'],
+  );
+  // Retained verbatim where it is kept: an empty command stays empty rather than becoming absent.
+  if ('command' in invocation) expect(invocation.command).toBe(row.command);
 }
 
 describe('ported tool invocation', () => {
-  test('matches the shipped invocation for the corpus rows', () => {
-    corpusRows().forEach(comparedInvocation);
+  test('carries every corpus payload through unchanged', () => {
+    const rows = corpusRows();
+    expect(rows.length).toBeGreaterThan(10);
+    rows.forEach(expectInvocation);
   });
 
-  test('matches the shipped invocation for every route shape', () => {
-    TABLE.forEach((row) => {
-      expect('command' in comparedInvocation(row)).toBe(row.route.kind === 'command');
-    });
+  test('keeps the command text for a command route and drops it for every other', () => {
+    expect(TABLE.some((row) => row.route.kind !== 'command' && row.command !== null)).toBeTrue();
+    TABLE.forEach(expectInvocation);
   });
 });

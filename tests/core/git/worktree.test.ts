@@ -19,7 +19,6 @@ import {
   resolveWorktreeFacts,
 } from '@/core/git/worktree';
 import { createLinkedWorktreeFixture } from '../../helpers';
-import { type Fold, recordPorted, rootFolds } from '../../helpers/temp-home';
 
 const fixture = createLinkedWorktreeFixture();
 let scratch = '';
@@ -52,9 +51,6 @@ function fakeGit(script: string): string {
   return path;
 }
 
-/** Both temp roots a recorded path can carry; `scratch` only exists once the suite starts. */
-const pathFolds = () => [...rootFolds(fixture.rootDir), ...rootFolds(scratch)];
-
 beforeAll(() => {
   scratch = mkdtempSync(join(tmpdir(), 'next-worktree-'));
   mkdirSync(join(fixture.linkedWorktree, 'nested'));
@@ -68,29 +64,54 @@ afterAll(() => {
 });
 
 describe('linked worktree facts', () => {
-  test('detects linked worktrees and reads gitdir files like the shipped helpers', () => {
-    const cwds = [
-      fixture.mainWorktree,
-      fixture.linkedWorktree,
-      join(fixture.linkedWorktree, 'nested'),
-      join(fixture.linkedWorktree, 'missing'),
-      fixture.rootDir,
-      scratch,
-      join(scratch, 'file'),
-    ];
-    for (const cwd of cwds) {
-      expect(isLinkedWorktree(cwd)).toMatchSnapshot();
-      recordPorted(findDotGitInAncestors(cwd), pathFolds());
+  test('a directory is a linked worktree only inside the checkout that is one', () => {
+    const rows = () =>
+      [
+        // The main checkout owns the repository; it is not a linked worktree of it.
+        [fixture.mainWorktree, false],
+        [fixture.linkedWorktree, true],
+        // Anywhere inside it counts, because the walk finds the same `.git` file.
+        [join(fixture.linkedWorktree, 'nested'), true],
+        // A directory that is not there resolves to nothing to verify.
+        [join(fixture.linkedWorktree, 'missing'), false],
+        // Above the checkouts, and outside any repository at all.
+        [fixture.rootDir, false],
+        [scratch, false],
+        [join(scratch, 'file'), false],
+      ] as const;
+    for (const [cwd, linked] of rows()) expect(isLinkedWorktree(cwd), cwd).toBe(linked);
+  });
+
+  test('the walk finds the nearest .git, and stops where there is none', () => {
+    expect(findDotGitInAncestors(fixture.mainWorktree)).toBe(join(fixture.mainWorktree, '.git'));
+    expect(findDotGitInAncestors(fixture.linkedWorktree)).toBe(
+      join(fixture.linkedWorktree, '.git'),
+    );
+    // From a subdirectory, and from one that does not exist, the same ancestor answers.
+    for (const name of ['nested', 'missing']) {
+      expect(findDotGitInAncestors(join(fixture.linkedWorktree, name))).toBe(
+        join(fixture.linkedWorktree, '.git'),
+      );
     }
+    for (const cwd of [fixture.rootDir, scratch, join(scratch, 'file')]) {
+      expect(findDotGitInAncestors(cwd), cwd).toBeNull();
+    }
+  });
+
+  test('a .git file names its git directory and the common one; a .git directory names neither', () => {
+    // The linked checkout's `.git` is a file pointing into the main checkout's repository.
+    expect(resolveDotGitFileTargets(join(fixture.linkedWorktree, '.git'))).toEqual({
+      gitDir: join(fixture.mainWorktree, '.git', 'worktrees', 'linked'),
+      commonDir: join(fixture.mainWorktree, '.git'),
+    });
+    // A real `.git` directory, an ordinary file and a path that is not there all name nothing.
     for (const dotGit of [
       join(fixture.mainWorktree, '.git'),
-      join(fixture.linkedWorktree, '.git'),
       join(scratch, 'file'),
       join(scratch, 'missing'),
     ]) {
-      recordPorted(resolveDotGitFileTargets(dotGit), pathFolds());
+      expect(resolveDotGitFileTargets(dotGit), dotGit).toBeNull();
     }
-    expect(isLinkedWorktree(fixture.linkedWorktree)).toBe(true);
   });
 
   test('reads quoted and escaped core.worktree values like the shipped parser', () => {
@@ -109,61 +130,102 @@ describe('linked worktree facts', () => {
       fixture.mainWorktree,
       quoteForGitConfig(join(scratch, ODD_LINK_NAME)),
     ];
+    // Whether each spelling of `core.worktree` still names this worktree. A value that decodes to
+    // another name is a worktree the checkout does not belong to, and the directory stops being a
+    // verified linked worktree.
+    const accepted: readonly (readonly [string, boolean])[] = [
+      // The path as git itself would write it.
+      [quoted, true],
+      // `\n` and `\t` decode to a newline and a tab, so the name is not this one.
+      [`"${escaped}\\n"`, false],
+      [`"${escaped}\\t"`, false],
+      // A trailing backslash: the comparison reads one as a separator and drops a trailing one.
+      [`"${escaped}\\"`, true],
+      // Git quotes with double quotes only, so single ones stay part of the value.
+      [`'${escaped}'`, false],
+      // An unquoted value is taken as it stands.
+      [escaped, true],
+      // Nothing between the quotes.
+      ['"', false],
+      // An unknown escape is kept as written, so the value reads one directory deeper.
+      [`"${escaped}\\q"`, false],
+      // A real directory, but the other checkout's.
+      [fixture.mainWorktree, false],
+      // Only a full decode of the odd name lands on this worktree, so a wrong escape table here
+      // reads as "not a linked worktree".
+      [quoteForGitConfig(join(scratch, ODD_LINK_NAME)), true],
+    ];
+    expect(accepted.map(([value]) => value)).toEqual(values);
+
     try {
-      for (const value of values) {
+      for (const [value, linked] of accepted) {
         writeFileSync(configPath, `[core]\n\tworktree = ${value}\n`);
-        expect(isLinkedWorktree(fixture.linkedWorktree)).toMatchSnapshot();
+        expect(isLinkedWorktree(fixture.linkedWorktree), value).toBe(linked);
       }
-      // The odd link was written last: only a full decode of its name lands on the worktree's
-      // inode, so a wrong escape table reads as "not a linked worktree" here.
-      expect(isLinkedWorktree(fixture.linkedWorktree)).toBe(true);
     } finally {
       rmSync(configPath, { force: true });
     }
   });
 
-  test('normalizes comparison paths like the shipped helper', () => {
-    // The helper case-folds on Windows so a comparison there is case-insensitive; the record holds
-    // one spelling, so the drive letter it folds is put back before the value is recorded.
-    const driveCase: Fold = [/^([a-z]):/g, (_match, drive: string) => `${drive.toUpperCase()}:`];
+  /**
+   * The spelling two paths are compared in: the Windows namespace prefix dropped, backslashes
+   * read as separators, one trailing separator dropped, and on Windows the whole path case-folded
+   * so a comparison there is case-insensitive.
+   */
+  test.each([
+    ['\\\\?\\C:\\x\\', 'C:/x'],
+    ['\\\\?\\UNC\\srv\\share\\', '//srv/share'],
+    ['C:\\x\\y\\', 'C:/x/y'],
+    ['/a/b/', '/a/b'],
+    // The root is the one path a trailing separator is not dropped from.
+    ['/', '/'],
+    ['x/', 'x'],
+    ['', ''],
+  ])('%s compares as %s', (path, compared) => {
+    expect(normalizePathForComparison(path)).toBe(
+      process.platform === 'win32' ? compared.toLowerCase() : compared,
+    );
+  });
+
+  test('the comparison spelling case-folds only on Windows', () => {
     expect(normalizePathForComparison('C:\\X')).toBe(
       process.platform === 'win32' ? 'c:/x' : 'C:/X',
     );
-    for (const path of [
-      '\\\\?\\C:\\x\\',
-      '\\\\?\\UNC\\srv\\share\\',
-      'C:\\x\\y\\',
-      '/a/b/',
-      '/',
-      'x/',
-      '',
-      fixture.linkedWorktree,
-    ]) {
-      recordPorted(normalizePathForComparison(path), [...pathFolds(), driveCase]);
-    }
+    // A real path keeps its own spelling either way.
+    expect(normalizePathForComparison(fixture.linkedWorktree)).toBe(
+      process.platform === 'win32'
+        ? fixture.linkedWorktree.replaceAll('\\', '/').toLowerCase()
+        : fixture.linkedWorktree,
+    );
   });
 
   test('reports the effective submodule.recurse setting like the shipped config walk', () => {
     const commonConfig = join(fixture.mainWorktree, '.git', 'config');
     const worktreeConfig = join(linkedGitDir(), 'config.worktree');
     const original = readFileSync(commonConfig, 'utf-8');
-    const variants: [common: string, worktree: string | null][] = [
-      ['', null],
-      ['[submodule]\n\trecurse = true\n', null],
-      ['[submodule]\n\trecurse = no\n', null],
-      ['[submodule]\n\trecurse = no\n', '[submodule]\n\trecurse = yes\n'],
-      ['', '[submodule]\n\trecurse\n'],
-      ['[include]\n\tpath = /nonexistent/include\n', null],
-      ['', '[includeIf "gitdir:/x/"]\n\tpath = /nonexistent/include\n'],
+    /**
+     * Whether a local discard may be relaxed: `submodule.recurse` off is the only answer that
+     * says so. Unset is off; the worktree's own config wins over the common one; a bare key is
+     * on; and a config the walk cannot read through — an include it cannot follow — is treated
+     * as on rather than assumed off.
+     */
+    const variants: [common: string, worktree: string | null, recursive: boolean][] = [
+      ['', null, false],
+      ['[submodule]\n\trecurse = true\n', null, true],
+      ['[submodule]\n\trecurse = no\n', null, false],
+      ['[submodule]\n\trecurse = no\n', '[submodule]\n\trecurse = yes\n', true],
+      ['', '[submodule]\n\trecurse\n', true],
+      ['[include]\n\tpath = /nonexistent/include\n', null, true],
+      ['', '[includeIf "gitdir:/x/"]\n\tpath = /nonexistent/include\n', true],
     ];
     try {
-      for (const [common, worktree] of variants) {
+      for (const [common, worktree, recursive] of variants) {
         writeFileSync(commonConfig, `${original}${common}`);
         if (worktree === null) rmSync(worktreeConfig, { force: true });
         if (worktree !== null) writeFileSync(worktreeConfig, worktree);
         const facts = resolveWorktreeFacts(fixture.linkedWorktree);
         expect(facts).not.toBeNull();
-        expect(facts?.recursiveSubmodules).toMatchSnapshot();
+        expect(facts?.recursiveSubmodules, JSON.stringify([common, worktree])).toBe(recursive);
       }
     } finally {
       writeFileSync(commonConfig, original);

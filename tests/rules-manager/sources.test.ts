@@ -25,30 +25,9 @@ const CONFIG: RulesConfig = {
   transparent_wrappers: [],
 };
 
-const MATCHES = [
-  'acme/repo#main/x',
-  'local-a',
-  'z',
-  'x',
-  'other/repo',
-  'acme/repo',
-  'acme/repo#main',
-  'nope',
-  'acme/repo#main/absent',
-];
-
-/** The resolved match, pinned before the row asserts on it. */
-function removeMatches(match: string) {
-  const ported = getRemoveMatches(CONFIGURED, match);
-  expect(ported).toMatchSnapshot();
-  return ported;
-}
+const removeMatches = (match: string) => getRemoveMatches(CONFIGURED, match);
 
 describe('a remove match selects what the shipped module selects', () => {
-  test.each(MATCHES)('resolves %s', (match) => {
-    removeMatches(match);
-  });
-
   test('an exact spec and a local source select themselves', () => {
     expect(removeMatches('acme/repo#main/x')).toEqual({ ok: true, specs: ['acme/repo#main/x'] });
     expect(removeMatches('local-a')).toEqual({ ok: true, specs: ['local-a'] });
@@ -108,17 +87,42 @@ describe('a remove match selects what the shipped module selects', () => {
 });
 
 describe('an update selection matches what the shipped module selects', () => {
-  test.each(MATCHES)('resolves %s', (match) => {
-    expect(getSelectedUpdateSpecs(CONFIG, match)).toMatchSnapshot();
-  });
+  const noMatch = (match: string) =>
+    ({
+      ok: false as const,
+      result: {
+        ok: false as const,
+        errors: [`No configured rulebook matches ${match}`],
+        entries: [],
+      },
+    }) as const;
 
-  // `update` knows exact specs and rulebook names only: a repository is not a selection there,
-  // so `acme/repo` reports no match rather than the two refs `remove` would have offered.
-  test('a repository is not an update selection', () => {
-    expect(getSelectedUpdateSpecs(CONFIG, 'acme/repo')).toEqual({
-      ok: false,
-      result: { ok: false, errors: ['No configured rulebook matches acme/repo'], entries: [] },
-    });
-    expect(getSelectedUpdateSpecs(CONFIG, 'z')).toEqual({ ok: true, specs: ['other/repo#main/z'] });
+  /**
+   * `update` knows exact specs and rulebook names only. A repository or a repository-and-ref is a
+   * selection for `remove` but names no rulebook here, so it reports no match rather than the
+   * refs `remove` would have offered.
+   */
+  test.each([
+    ['acme/repo#main/x', { ok: true, specs: ['acme/repo#main/x'] }],
+    ['local-a', { ok: true, specs: ['local-a'] }],
+    ['z', { ok: true, specs: ['other/repo#main/z'] }],
+    [
+      'x',
+      {
+        ok: false,
+        result: {
+          ok: false,
+          errors: ['Ambiguous rulebook match x: acme/repo#main/x, acme/repo#v2/x'],
+          entries: [],
+        },
+      },
+    ],
+    ['other/repo', noMatch('other/repo')],
+    ['acme/repo', noMatch('acme/repo')],
+    ['acme/repo#main', noMatch('acme/repo#main')],
+    ['nope', noMatch('nope')],
+    ['acme/repo#main/absent', noMatch('acme/repo#main/absent')],
+  ] as const)('resolves %s', (match, expected) => {
+    expect(getSelectedUpdateSpecs(CONFIG, match)).toEqual(expected as never);
   });
 });

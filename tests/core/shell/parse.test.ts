@@ -13,8 +13,12 @@ const STATUSES = ['complete', 'partial', 'invalid', 'limited'];
 describe('next/core/shell/parse against src/parser/command', () => {
   const pairs = differentialProgramPairs();
 
-  test('ships the same default limits', () => {
-    expect(DEFAULT_COMMAND_PARSER_LIMITS).toMatchSnapshot();
+  test('the caps a parse runs under', () => {
+    expect(DEFAULT_COMMAND_PARSER_LIMITS).toEqual({
+      maxInputLength: 128 * 1024,
+      maxWords: 16_384,
+      maxDepth: 64,
+    });
   });
 
   test('parses the corpus, the fixed table and the seeded fuzz identically in every dialect', () => {
@@ -37,9 +41,22 @@ describe('next/core/shell/parse against src/parser/command', () => {
     }
   });
 
-  test('defaults the dialect to auto exactly as src does', () => {
-    for (const source of ['rm -rf x', 'Remove-Item x', 'cat $env:TEMP\\x', '']) {
-      expect(parseCommand(source)).toMatchSnapshot();
+  test('a parse with no dialect named is the auto parse, which picks one from the source', () => {
+    const rows = [
+      ['rm -rf x', 'posix'],
+      ['Remove-Item x', 'powershell'],
+      // A PowerShell environment variable, which posix would read as a literal.
+      ['cat $env:TEMP\\x', 'powershell'],
+      // Nothing to go on falls back to posix.
+      ['', 'posix'],
+    ] as const;
+    for (const [source, dialect] of rows) {
+      const program = parseCommand(source);
+      expect(program.dialect, source).toBe(dialect);
+      expect(program.status, source).toBe('complete');
+      // Naming `auto` explicitly is the same parse, so the default is the dialect and not a
+      // separate path through the parser.
+      expect(program).toStrictEqual(parseCommand(source, 'auto'));
     }
   });
 });
@@ -69,8 +86,11 @@ describe('parser caps yield status limited without throwing', () => {
     for (const row of overCap) {
       for (const dialect of row.dialects) {
         const program = parseCommand(row.source, dialect, small);
-        expect(program).toMatchSnapshot();
-        expect(program.status).toBe('limited');
+        // Refused for being too big, not misread: the parse still covers the whole source and
+        // reports the dialect it was asked for.
+        expect(program.status, `${dialect} ${row.source}`).toBe('limited');
+        expect(program.span).toStrictEqual({ start: 0, end: row.source.length });
+        if (dialect !== 'auto') expect(program.dialect).toBe(dialect);
       }
     }
   });
@@ -78,7 +98,6 @@ describe('parser caps yield status limited without throwing', () => {
   test('a heredoc body substitution over the depth cap limits only the nested program', () => {
     const source = 'cat <<EOF\n$($($(deep)))\nEOF';
     const program = parseCommand(source, 'posix', small);
-    expect(program).toMatchSnapshot();
     expect(program.status).toBe('complete');
     const command = program.nodes[0];
     expect(command?.kind === 'command' && command.nested[0]?.status).toBe('limited');

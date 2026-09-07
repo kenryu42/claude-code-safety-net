@@ -6,7 +6,6 @@ import { getUserPolicyPath } from '@/core/policy/paths';
 import { getNonCommandToolInputKind } from '@/core/tool-input';
 import { createGateTree, portedVerdict, toolCall } from '../helpers/gate-differential';
 import { policySnapshot } from '../helpers/policy';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
 import { pipelineContractCases } from './pipeline-contract-cases';
 
 /**
@@ -30,29 +29,36 @@ const LEVELS = {
   strict: policySnapshot({ safety: { level: 'strict' } }),
 };
 
-/** The gate's verdict for a call, recorded under the row's name and level before it is returned. */
-function agreedVerdict(
-  name: string,
-  toolName: string,
-  input: unknown,
-  cwd: string,
-  level: keyof typeof LEVELS,
-) {
+/** The gate's verdict for a call at one level. */
+function verdictFor(toolName: string, input: unknown, cwd: string, level: keyof typeof LEVELS) {
   const route =
     toolName === 'Bash'
       ? ({ kind: 'command', shell: 'posix' } as const)
       : { kind: getNonCommandToolInputKind(toolName) };
-  const call = toolCall(toolName, input, route, cwd);
-  const dependencies = { loadPolicySnapshot: () => LEVELS[level] };
-  const ported = portedVerdict(call, environment, dependencies);
-  const compared = { name, level, verdict: ported };
-  recordPorted(compared, [
-    ...rootFolds(tree.root),
-    [home, '<home>'],
-    // The ambient `CC_SAFETY_NET_HOME` the suite's preload points at a fresh temp directory.
-    [dirname(userPolicyPath), '<safety-net-home>'],
-  ]);
-  return ported;
+  return portedVerdict(toolCall(toolName, input, route, cwd), environment, {
+    loadPolicySnapshot: () => LEVELS[level],
+  });
+}
+
+/** What a row is about: which way the call went and, when it was refused, on whose authority. */
+const decisionOf = (verdict: ReturnType<typeof verdictFor>) => ({
+  outcome: verdict.outcome,
+  stage: verdict.stage,
+  ruleId: verdict.ruleId,
+});
+
+/**
+ * The safety level tunes command analysis, and none of these payloads reaches it: a path, a patch
+ * or a search is decided by the routing table and the guards alone. So every row must decide the
+ * same way at standard and at strict, and a row that started depending on the level would be a
+ * change of which stage owns it.
+ */
+function decisionAtEveryLevel(toolName: string, input: unknown, cwd: string) {
+  const standard = verdictFor(toolName, input, cwd, 'standard');
+  expect(decisionOf(verdictFor(toolName, input, cwd, 'strict'))).toStrictEqual(
+    decisionOf(standard),
+  );
+  return standard;
 }
 
 describe('the pipeline corpus rows that carry no command', () => {
@@ -64,18 +70,26 @@ describe('the pipeline corpus rows that carry no command', () => {
     userPolicyDir: dirname(userPolicyPath),
   }).filter((row) => row.route.kind !== 'command');
 
-  test('every non-command row is routed and decided identically', () => {
+  test('every non-command row decides the way the corpus declares, at either level', () => {
     expect(rows.length).toBe(5);
     for (const row of rows) {
-      for (const level of ['standard', 'strict'] as const) {
-        agreedVerdict(
-          row.name,
-          row.toolName,
-          row.input,
-          row.cwd === 'repo' ? tree.repository : tree.workspace,
-          level,
-        );
+      const verdict = decisionAtEveryLevel(
+        row.toolName,
+        row.input,
+        row.cwd === 'repo' ? tree.repository : tree.workspace,
+      );
+      if (row.expected.kind === 'allow') {
+        expect(verdict.outcome, row.name).toBe('allow');
+        continue;
       }
+      expect(
+        { outcome: verdict.outcome, stage: verdict.stage, ruleId: verdict.ruleId },
+        row.name,
+      ).toStrictEqual({
+        outcome: 'deny',
+        stage: row.expected.stage,
+        ruleId: row.expected.ruleId,
+      });
     }
   });
 });
@@ -228,26 +242,24 @@ describe('hand-built host payloads', () => {
   for (const payload of PAYLOADS) {
     test(payload.name, () => {
       const cwd = 'cwd' in payload ? payload.cwd : tree.workspace;
-      const standard = agreedVerdict(
-        payload.name,
-        payload.toolName,
-        payload.input,
-        cwd,
-        'standard',
-      );
-      agreedVerdict(payload.name, payload.toolName, payload.input, cwd, 'strict');
+      const verdict = decisionAtEveryLevel(payload.toolName, payload.input, cwd);
+
       if (payload.denies === null) {
-        expect(standard.outcome).toBe('allow');
+        // An allowed payload never reached a guard that could name a rule for it.
+        expect(decisionOf(verdict)).toStrictEqual({
+          outcome: 'allow',
+          stage: 'non-command',
+          ruleId: undefined,
+        });
         return;
       }
-      expect(standard.outcome).toBe('deny');
-      if (payload.denies === 'policy' || payload.denies === 'git-metadata') {
-        expect(standard.stage).toBe('policy-protection');
-        return;
-      }
-      expect({ stage: standard.stage, ruleId: standard.ruleId }).toStrictEqual({
-        stage: 'secret-protection',
-        ruleId: payload.denies,
+      // The policy and Git-metadata guards refuse a place rather than a catalogued secret, so
+      // they answer with a stage and no rule id.
+      const protects = payload.denies === 'policy' || payload.denies === 'git-metadata';
+      expect(decisionOf(verdict)).toStrictEqual({
+        outcome: 'deny',
+        stage: protects ? 'policy-protection' : 'secret-protection',
+        ruleId: protects ? undefined : payload.denies,
       });
     });
   }
