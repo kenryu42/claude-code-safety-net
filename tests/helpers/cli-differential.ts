@@ -115,7 +115,7 @@ function runSide(row: CliRow): CliOutcome {
     exitCode: result.status,
     tree: normalize(
       snapshotTree(side.root).filter((entry) => !SCAFFOLDING.test(entry.path)),
-      [[side.root, '<root>']],
+      rootFolds(side.root),
     ),
   };
 }
