@@ -203,8 +203,10 @@ describe('linked worktree facts', () => {
   );
 
   test('gives up without relaxation when git hangs past the timeout', () => {
+    // Between the 5s cap and the 8s the fake sleeps: a run that waited for the fake fails here,
+    // and the margin above the cap is the process teardown a loaded machine adds to it.
     const started = performance.now();
     expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('sleep 8'))).toBeNull();
-    expect(performance.now() - started).toBeLessThan(6000);
+    expect(performance.now() - started).toBeLessThan(7000);
   }, 10_000);
 });

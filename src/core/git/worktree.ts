@@ -21,7 +21,10 @@ const TRUSTED_GIT_BINARIES = [
   'C:\\Program Files\\Git\\bin\\git.exe',
 ] as const;
 
-const GIT_CONFIG_TIMEOUT_MS = 2000;
+// The cap a wedged git costs the hook, paid at most once per working directory. A timed-out
+// spawn withholds the relaxation, so too tight a cap denies a command it should have allowed:
+// 2s did that on a cold CI runner, where the first `git config` of the process took 2.2s.
+const GIT_CONFIG_TIMEOUT_MS = 5000;
 
 /**
  * Null when `cwd` is not a directory, not a verified linked worktree, or the effective
