@@ -99,11 +99,17 @@ describe('linked worktree facts', () => {
   });
 
   test('a .git file names its git directory and the common one; a .git directory names neither', () => {
-    // The linked checkout's `.git` is a file pointing into the main checkout's repository.
-    expect(resolveDotGitFileTargets(join(fixture.linkedWorktree, '.git'))).toEqual({
-      gitDir: join(fixture.mainWorktree, '.git', 'worktrees', 'linked'),
-      commonDir: join(fixture.mainWorktree, '.git'),
-    });
+    // The linked checkout's `.git` is a file pointing into the main checkout's repository. The
+    // file carries whichever spelling `git worktree add` recorded, and git resolves symlinks on
+    // the way: under a macOS temp root that is `/private/tmp/...` where the fixture says `/tmp`.
+    // So both sides are compared as the directories they name, not as the strings they are.
+    const targets = resolveDotGitFileTargets(join(fixture.linkedWorktree, '.git'));
+    expect(realpathSync(targets?.gitDir ?? '.')).toBe(
+      realpathSync(join(fixture.mainWorktree, '.git', 'worktrees', 'linked')),
+    );
+    expect(realpathSync(targets?.commonDir ?? '.')).toBe(
+      realpathSync(join(fixture.mainWorktree, '.git')),
+    );
     // A real `.git` directory, an ordinary file and a path that is not there all name nothing.
     for (const dotGit of [
       join(fixture.mainWorktree, '.git'),
