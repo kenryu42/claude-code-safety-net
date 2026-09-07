@@ -7,7 +7,6 @@ import { differential } from '../../helpers/host-differential';
 import {
   createTempRoot,
   normalize,
-  recordPorted,
   removeTempRoots,
   rootFolds,
   WINDOWS_SEPARATOR_FOLDS,
@@ -189,7 +188,6 @@ describe('comparing an install against the packaged copy', () => {
     const dirs = [join(root, 'installed'), join(root, 'packaged')] as const;
 
     const errors = modifiedFileErrors(dirs[0], 'dev', dirs[1]);
-    recordPorted(errors, rootFolds(root));
     return normalize(errors, [...rootFolds(root), ...WINDOWS_SEPARATOR_FOLDS]);
   };
 

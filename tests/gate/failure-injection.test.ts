@@ -8,6 +8,7 @@ import {
   type LimitKind,
   REASON_DERIVED_COMMAND_WORK_LIMIT,
   REASON_PARALLEL_ANALYSIS_LIMIT,
+  REASON_SAFETY_NET_FAILED_CLOSED,
 } from '@/core/budget';
 import { createProcessEnvironment } from '@/core/environment';
 import { ToolInputLimitError } from '@/core/tool-input';
@@ -21,7 +22,6 @@ import {
 import { withEnv } from '../helpers';
 import { bashCall, createGateTree, portedVerdict, toolCall } from '../helpers/gate-differential';
 import { policySnapshot } from '../helpers/policy';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * What the gate does when something under it fails: a filesystem that throws, a config file
@@ -42,24 +42,12 @@ afterAll(() => {
 const repeated = (count: number, make: (index: number) => string, separator = ' ') =>
   Array.from({ length: count }, (_, index) => make(index)).join(separator);
 
-/**
- * The two inputs past a cap, folded out of the record alone: a row's own evidence echoes the
- * command back, and the exact filler each of them is built from carries nothing the verdict does
- * not already say. Only the whole untruncated run folds, so a run that echoed less would show the
- * shorter text instead of the marker.
- */
-const FILLER_FOLDS = [
-  ['y'.repeat(200_000), '<200k-y>'],
-  ['x'.repeat(1024 * 1024 + 1), '<1mb-x>'],
-] as const;
-
 /** Records one command's verdict and hands it back for the row's own assertions. */
 function agreedOn(command: string, overrides = {}) {
   const ported = portedVerdict(bashCall(command, tree.workspace), environment, {
     ...dependencies,
     ...overrides,
   });
-  recordPorted({ command, verdict: ported }, [...rootFolds(tree.root), ...FILLER_FOLDS]);
   return ported;
 }
 
@@ -88,7 +76,6 @@ describe('a filesystem that throws instead of answering', () => {
       ...dependencies,
       ...breakingPaths,
     });
-    recordPorted(ported, rootFolds(tree.root));
     return ported;
   };
 
@@ -118,7 +105,6 @@ describe('input past the intake caps', () => {
       tree.workspace,
     );
     const ported = portedVerdict(call, environment, dependencies);
-    recordPorted(ported, rootFolds(tree.root));
     expect(ported).toMatchObject({ thrown: 'GuardEvaluationError', evidence: [] });
   });
 });
@@ -131,15 +117,26 @@ describe('a host that truncated the tool input', () => {
     return denials;
   }
 
-  for (const [name, toolInput] of [
-    ['a truncated command', { command: 'rm -rf /var/l' }],
-    ['a payload past the traversal cap', { command: 'x'.repeat(1024 * 1024 + 1) }],
-    ['no payload at all', undefined],
+  for (const [name, toolInput, command] of [
+    ['a truncated command', { command: 'rm -rf /var/l' }, 'rm -rf /var/l'],
+    [
+      'a payload past the traversal cap',
+      { command: 'x'.repeat(1024 * 1024 + 1) },
+      'x'.repeat(1024 * 1024 + 1),
+    ],
+    ['no payload at all', undefined, undefined],
   ] as const) {
     test(name, () => {
-      recordPorted(truncatedDenial(portedOutputFailedClosed, toolInput), [
-        ...rootFolds(tree.root),
-        ...FILLER_FOLDS,
+      // The adapter never analyzed the text, so it fails closed and echoes back whatever it was
+      // handed — the truncated command, the oversized one, or nothing at all.
+      expect(truncatedDenial(portedOutputFailedClosed, toolInput)).toEqual([
+        {
+          command,
+          intent: 'stop_and_explain',
+          reason: REASON_SAFETY_NET_FAILED_CLOSED,
+          segment: command,
+          toolName: 'run_terminal_command',
+        },
       ]);
     });
   }
@@ -154,7 +151,6 @@ describe('process state the two gates read differently', () => {
         createProcessEnvironment(),
         dependencies,
       );
-      recordPorted(ported, rootFolds(tree.root));
       return ported;
     };
     withEnv({ GIT_CONFIG_COUNT: '1025' }, () => {
@@ -199,7 +195,6 @@ describe('process state the two gates read differently', () => {
       spy.mockRestore();
 
       expect(swaps.length).toBe(1);
-      recordPorted(ported, rootFolds(tree.root));
       expect(ported.configFallback).toStrictEqual({
         reason:
           'Unable to access user policy filesystem safely. Those rule sources are not active; every other rule and all built-in protections still apply.',

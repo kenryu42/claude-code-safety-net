@@ -15,9 +15,7 @@ import {
   createTempRoot,
   environmentFor,
   isolationEnv,
-  recordPorted,
   removeTempRoots,
-  rootFolds,
   withProcessEnv,
 } from '../helpers/temp-home';
 
@@ -64,7 +62,6 @@ function compareSides(
   );
   // The worktree row's project is a `git worktree add` fixture of its own, outside the row's
   // root; every other row's project is already inside it, so the second pair folds nothing.
-  recordPorted(ported, [...rootFolds(side.root), ...rootFolds(side.project)]);
   return ported;
 }
 
@@ -139,7 +136,6 @@ describe('getConfigSource reports the rule config explain resolved against', () 
       const ported = withProcessEnv(side.values, () =>
         getConfigSource(environmentFor(side.home, side.values), { cwd: side.project }),
       );
-      recordPorted(ported, rootFolds(side.root));
       expect(ported.configValid).toBe(row.valid);
       expect(ported.configSource).toBe(
         row.source === null

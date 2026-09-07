@@ -4,7 +4,6 @@ import { createTestEnvironment, processPathResolver } from '@/core/environment';
 import { behavioralContractCases } from '../gate/behavioral-contract-cases';
 import { pipelineContractCases } from '../gate/pipeline-contract-cases';
 import { type TreeSpec, writeTree } from '../helpers/fixture-tree';
-import { type Fold, recordPorted } from '../helpers/temp-home';
 
 /**
  * A file, a dangling link and a two-link cycle under `root`, plus `extras`: the shapes every path
@@ -77,29 +76,4 @@ export function pairedEnvironments(env: Record<string, string>, home: string) {
     tmpdir: tmpdir(),
     paths: processPathResolver,
   });
-}
-
-type Outcome<T> = { ok: true; value: T } | { ok: false; error: unknown };
-
-function outcome<T>(call: () => T): Outcome<T> {
-  try {
-    return { ok: true, value: call() };
-  } catch (error) {
-    return { ok: false, error };
-  }
-}
-
-/**
- * Records what the call settled with — folded of the roots `replacements` names, unless `record`
- * is false because the value is machine-shaped past what a fold can hide — and hands back what it
- * threw so the caller can pin its kind.
- */
-export function expectSameOutcome<T>(
-  next: () => T,
-  replacements: readonly Fold[] = [],
-  record = true,
-): unknown {
-  const left = outcome(next);
-  if (record) recordPorted(left, replacements);
-  return left.ok ? undefined : left.error;
 }

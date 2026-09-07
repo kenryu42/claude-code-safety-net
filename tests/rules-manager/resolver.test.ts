@@ -9,7 +9,6 @@ import {
   createTempRoot,
   describeAsyncOutcome,
   normalize,
-  recordPorted,
   removeTempRoots,
   WINDOWS_SEPARATOR_FOLDS,
 } from '../helpers/temp-home';
@@ -101,7 +100,6 @@ afterEach(() => {
  *  observation comes back for the row to pin. */
 async function agree<T>(run: (side: Side, configDir: string) => Promise<T>, spec: TreeSpec = {}) {
   const ported = await observe(SIDES[0], run, spec);
-  recordPorted(ported, [[github.origin, '<github>']]);
   return ported;
 }
 

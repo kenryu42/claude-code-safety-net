@@ -7,7 +7,6 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
-  recordPorted,
   removeTempRoots,
 } from '../helpers/temp-home';
 
@@ -63,7 +62,6 @@ const feedOverBothSides = (
       [home, '<home>'],
     ],
   );
-  recordPorted(ported);
   return ported;
 };
 

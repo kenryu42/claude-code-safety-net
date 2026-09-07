@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -11,8 +11,8 @@ import {
 import { createLinkedWorktreeFixture } from '../helpers';
 import { describeOutcome } from '../helpers/fixture-tree';
 import { runGit } from '../helpers/git-worktree';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
-import { expectSameOutcome, writeSymlinkLoopTree } from './differential-inputs';
+
+import { writeSymlinkLoopTree } from './differential-inputs';
 
 let root = '';
 
@@ -32,10 +32,25 @@ afterAll(() => {
 
 describe('process environment', () => {
   test('resolves entries like the shipped resolver', () => {
-    for (const name of ['dir', 'file', 'link', 'broken', 'loop-a', 'missing', '']) {
+    // The temp root can itself be reached through a symlink (macOS spells it `/private/var/...`),
+    // so the answers are stated against the canonical root the resolver hands back.
+    const canonical = realpathSync(root);
+    const answers = {
+      dir: { realpath: join(canonical, 'dir'), entryKind: 'present' },
+      file: { realpath: join(canonical, 'file'), entryKind: 'present' },
+      // A link resolves to its target and is still named a link.
+      link: { realpath: join(canonical, 'dir'), entryKind: 'symlink' },
+      // A dangling link and a two-link cycle resolve to nothing, and are links all the same.
+      broken: { realpath: null, entryKind: 'symlink' },
+      'loop-a': { realpath: null, entryKind: 'symlink' },
+      missing: { realpath: null, entryKind: 'missing' },
+      // The empty name is the root itself.
+      '': { realpath: canonical, entryKind: 'present' },
+    };
+    for (const [name, answer] of Object.entries(answers)) {
       const path = join(root, name);
-      expectSameOutcome(() => processPathResolver.realpath(path), rootFolds(root));
-      expectSameOutcome(() => processPathResolver.entryKind(path), rootFolds(root));
+      expect(processPathResolver.realpath(path), name).toBe(answer.realpath);
+      expect(processPathResolver.entryKind(path), name).toBe(answer.entryKind);
     }
   });
 
@@ -103,8 +118,13 @@ describe('test environment', () => {
 describe('git facts through the seam', () => {
   test('gitMetadata agrees with the shipped resolver and is memoized per cwd', () => {
     const environment = createProcessEnvironment();
-    for (const cwd of [join(root, 'repo'), join(root, 'repo', 'nested'), join(root, 'dir'), root]) {
-      recordPorted(environment.gitMetadata(cwd), rootFolds(root));
+    // Inside the repository, and from a directory under it, the same repository is found; outside
+    // it, and above it, there is none.
+    expect(environment.gitMetadata(join(root, 'repo', 'nested'))).toEqual(
+      environment.gitMetadata(join(root, 'repo')),
+    );
+    for (const cwd of [join(root, 'dir'), root]) {
+      expect(environment.gitMetadata(cwd), cwd).toBeNull();
     }
     expect(environment.gitMetadata(join(root, 'repo'))).not.toBeNull();
     expect(environment.gitMetadata(join(root, 'repo'))).toBe(
@@ -120,7 +140,7 @@ describe('git facts through the seam', () => {
       expect(environment.worktreeFacts(fixture.mainWorktree)).toBeNull();
       expect(environment.worktreeFacts(join(root, 'dir'))).toBeNull();
       const facts = environment.worktreeFacts(fixture.linkedWorktree);
-      expect(facts?.recursiveSubmodules).toMatchSnapshot();
+      expect(facts?.recursiveSubmodules).toBe(false);
       expect(environment.worktreeFacts(fixture.linkedWorktree)).toBe(facts);
     } finally {
       fixture.cleanup();

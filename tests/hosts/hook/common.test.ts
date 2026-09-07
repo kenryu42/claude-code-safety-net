@@ -9,7 +9,6 @@ import {
 } from '@/gate/intake';
 import { runConfiguredHookAdapter as portedRunAdapter } from '@/hosts/hook/common';
 import { captureHookRun, readAuditEntries } from '../../helpers/hook-capture';
-import { auditDirnameFolds, recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The hook runner itself, driven through one fake host whose documents are `{deny}` and `{allow}`
@@ -258,12 +257,6 @@ describe('one payload through both runners', () => {
       const ported = await runSide(row);
 
       // The row without a cwd of its own falls back to the checkout the suite runs in.
-      recordPorted(ported, [
-        ...rootFolds(fixture.home),
-        ...auditDirnameFolds(fixture.home, '<home>'),
-        [process.cwd(), '<cwd>'],
-        ...auditDirnameFolds(process.cwd(), '<cwd>'),
-      ]);
       expect(ported.entries).toHaveLength(row.lines);
       expect(ported.stdout.join('\n')).toContain(row.contains ?? '');
       expect(ported.stdout).toHaveLength(row.contains === undefined ? 0 : 1);

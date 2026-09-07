@@ -7,7 +7,6 @@ import { analyzeCommandWithProgram, analyzerCapBreach } from '@/gate/analyzer';
 import { evaluateGuard } from '@/gate/pipeline';
 import { bashCall, createGateTree, portedVerdict } from '../helpers/gate-differential';
 import { policySnapshot, testModes } from '../helpers/policy';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * Every cap the analyzer used to enforce with a budget of its own now counts on the one Budget and
@@ -149,16 +148,14 @@ describe('one budget, one report per analyzer cap', () => {
     });
 
     test(`${row.name}: the shipped gate reaches the same verdict, and not below the cap`, () => {
-      const verdict = portedVerdict(
-        bashCall(row.breaching, tree.workspace),
-        environment,
-        dependencies,
-      );
-      recordPorted(verdict, rootFolds(tree.root));
-      const below = bashCall(row.below, tree.workspace);
-      expect(portedVerdict(below, environment, dependencies).reason).not.toBe(
-        LIMITS[row.kind].reason,
-      );
+      // The gate the hosts call answers the breach with the same capped denial the pipeline
+      // reports above, and the command one step below the cap never reaches that reason.
+      expect(
+        portedVerdict(bashCall(row.breaching, tree.workspace), environment, dependencies).reason,
+      ).toBe(LIMITS[row.kind].reason);
+      expect(
+        portedVerdict(bashCall(row.below, tree.workspace), environment, dependencies).reason,
+      ).not.toBe(LIMITS[row.kind].reason);
     });
   }
 

@@ -3,12 +3,7 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { clearBunxSafetyNetCache } from '@/hosts/install/bunx-cache';
 import { writeTree } from '../../helpers/fixture-tree';
-import {
-  createTempRoot,
-  recordPorted,
-  removeTempRoots,
-  snapshotHome,
-} from '../../helpers/temp-home';
+import { createTempRoot, removeTempRoots, snapshotHome } from '../../helpers/temp-home';
 
 /**
  * bunx keeps one directory per package under the OS temp dir, named `bunx-<uid>-<pkg>@<version>`.
@@ -22,12 +17,6 @@ const OURS_LATEST = `bunx-${uid}-cc-safety-net@latest`;
 const OURS_PINNED = `bunx-${uid}-cc-safety-net@1.0.0`;
 const LOOKALIKE = `bunx-${uid}-cc-safety-net-extra@1`;
 const OTHER_USER = `bunx-${uid + 1}-cc-safety-net@1`;
-
-/** The two uids the fixture names, longest spelling first so the folds cannot overlap. */
-const UID_FOLDS = [
-  [`bunx-${uid + 1}-`, 'bunx-<other-uid>-'],
-  [`bunx-${uid}-`, 'bunx-<uid>-'],
-] as const;
 
 const FIXTURE = {
   [`${OURS_LATEST}/package.json`]: '{}',
@@ -59,25 +48,21 @@ function sweep(
 describe('clearing the bunx cache', () => {
   test('removes only the entries this uid installed for this package', () => {
     const [ported] = sweep(true, 'linux', undefined);
-    recordPorted(ported, UID_FOLDS);
     expect(ported?.entries).toEqual([LOOKALIKE, OTHER_USER, 'other']);
   });
 
   test('keeps the entry the running process was launched from', () => {
     const [ported] = sweep(true, 'linux', OURS_LATEST);
-    recordPorted(ported, UID_FOLDS);
     expect(ported?.entries).toEqual([OURS_LATEST, LOOKALIKE, OTHER_USER, 'other'].sort());
   });
 
   test('takes every numeric id on Windows, where the temp dir is per user', () => {
     const [ported] = sweep(true, 'win32', undefined);
-    recordPorted(ported, UID_FOLDS);
     expect(ported?.entries).toEqual([LOOKALIKE, 'other']);
   });
 
   test('does nothing when the temp dir does not exist', () => {
     const [ported] = sweep(false, undefined, undefined);
-    recordPorted(ported, UID_FOLDS);
     expect(ported?.entries).toEqual([]);
   });
 });

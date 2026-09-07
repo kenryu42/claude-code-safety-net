@@ -10,7 +10,6 @@ import {
   createTempRoot,
   isolatedSpawnEnv,
   normalize,
-  recordPorted,
   removeTempRoots,
   rootFolds,
 } from '../helpers/temp-home';
@@ -200,7 +199,6 @@ for (const journey of JOURNEYS) {
   test(journey.name, () => {
     const outcome = runSide(buildRoot, journey);
 
-    recordPorted(outcome, [[pkg.version, '<version>']]);
     journey.check(outcome);
   }, 60_000);
 }
