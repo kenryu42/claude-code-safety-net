@@ -94,11 +94,14 @@ describe('protected git metadata', () => {
     expect(resolveProtectedGitMetadata(join(root, 'plain'), environment)).toBeNull();
     const submodule = resolveProtectedGitMetadata(join(root, 'main', 'vendor', 'sub'), environment);
     expect(submodule?.markerFiles).toHaveLength(1);
-    // The resolver answers with canonical paths, so the fixture is spelled through `realpath`.
-    expect(submodule?.directories).toContain(
-      join(realpathSync(root), 'main', '.git', 'modules', 'vendor', 'sub'),
-    );
+    // The resolver answers with the paths it compares: canonical, and on Windows lower-cased and
+    // spelled with `/`, so the fixture is spelled through `realpath` and folded the same way.
+    const compared = (...parts: string[]) => {
+      const path = join(realpathSync(root), ...parts);
+      return process.platform === 'win32' ? path.replaceAll('\\', '/').toLowerCase() : path;
+    };
+    expect(submodule?.directories).toContain(compared('main', '.git', 'modules', 'vendor', 'sub'));
     const external = resolveProtectedGitMetadata(join(root, 'external'), environment);
-    expect(external?.hooksDirectories).toContain(join(realpathSync(root), 'hooks-outside'));
+    expect(external?.hooksDirectories).toContain(compared('hooks-outside'));
   });
 });
