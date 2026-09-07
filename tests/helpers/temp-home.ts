@@ -182,16 +182,28 @@ function foldWindowsSeparators(text: string): string {
 export const WINDOWS_SEPARATOR_FOLDS: readonly Fold[] =
   sep === '/' ? [] : [[/^[\s\S]+$/g, foldWindowsSeparators]];
 
+/** A string as a regular expression matches it literally. */
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 /**
  * Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold,
- * each also as a JSON document spells it (`C:\\\\Users\\\\…`), for a root inside a document a host printed.
+ * each also as a JSON document spells it (`C:\\\\Users\\\\…`), for a root inside a document a host
+ * printed. On Windows the same root also comes back in another letter case (`c:/users/runner~1`)
+ * or with `/` for `\\`, so there the fold is one pattern over case and separator.
  */
 export const rootFolds = (root: string): readonly Fold[] =>
-  [realpathSync(root), root].flatMap((spelling) => {
+  [realpathSync(root), root].flatMap((spelling): readonly Fold[] => {
+    if (sep !== '/')
+      return [
+        [new RegExp(spelling.split(sep).map(escapeRegExp).join('(?:\\\\{1,2}|/)'), 'gi'), '<root>'],
+      ];
     const escaped = JSON.stringify(spelling).slice(1, -1);
     return escaped === spelling
-      ? [[spelling, '<root>'] as const]
-      : [[escaped, '<root>'] as const, [spelling, '<root>'] as const];
+      ? [[spelling, '<root>']]
+      : [
+          [escaped, '<root>'],
+          [spelling, '<root>'],
+        ];
   });
 
 /**
