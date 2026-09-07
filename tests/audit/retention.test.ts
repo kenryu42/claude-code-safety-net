@@ -84,7 +84,6 @@ describe('audit retention parity', () => {
       pruneExpiredAuditLogs(environmentFor(next.configRoot), next.logs, at(NOW_MS));
 
       const survivors = snapshotTree(next.tree);
-      expect(survivors).toMatchSnapshot();
       expect(before.filter((path) => !survivors.some((node) => node.path === path))).toStrictEqual(
         policy.removed,
       );
@@ -118,8 +117,10 @@ describe('audit retention throttle', () => {
     expect(statSync(marker).mtimeMs).toBe(NOW_MS);
 
     sweep(NOW_MS + DAY_MS);
-    expect(snapshotTree(nextSide.logs)).toMatchSnapshot();
-    expect(existsSync(join(nextSide.logs, expired))).toBeFalse();
+    // The expired file goes, and the directories it was the only content of go with it.
+    expect(snapshotTree(nextSide.logs)).toStrictEqual([
+      { path: '.last-prune', kind: 'file', content: '' },
+    ]);
     expect(statSync(marker).mtimeMs).toBe(NOW_MS + DAY_MS);
   });
 

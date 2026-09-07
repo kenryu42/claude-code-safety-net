@@ -37,8 +37,10 @@ type Case = {
   segment: string;
   reason: string;
   cwd: string | null;
-  /** The layout W6 pins for this input, relative to the audit home; null when nothing is written. */
+  /** The layout this input produces, relative to the audit home; null when nothing is written. */
   file: string | null;
+  /** What the record says where it does not simply repeat the input. */
+  entry?: Record<string, unknown>;
   options: WriteOptions;
 };
 
@@ -61,6 +63,7 @@ const CASES: readonly Case[] = [
     reason: 'Allowed',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-allow'),
+    entry: { decision: 'allow' },
     options: { decision: 'allow' },
   },
   {
@@ -71,6 +74,7 @@ const CASES: readonly Case[] = [
     reason: 'Destroys all uncommitted changes',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-rule'),
+    entry: { ruleId: 'git.reset-hard', intent: 'use_alternative' },
     options: { ruleId: 'git.reset-hard', intent: 'use_alternative' },
   },
   {
@@ -81,6 +85,10 @@ const CASES: readonly Case[] = [
     reason: 'CC Safety Net failed closed',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-failure'),
+    entry: {
+      failureStage: 'command-analysis',
+      errorCode: 'structural-shell-syntax-limit',
+    },
     options: { failureStage: 'command-analysis', errorCode: 'structural-shell-syntax-limit' },
   },
   {
@@ -91,6 +99,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: dangerous pattern',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-capped'),
+    entry: { command: LONG_COMMAND.slice(0, 10_000), truncated: true },
     options: {},
   },
   {
@@ -101,6 +110,13 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: targeting root or home',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-meta'),
+    entry: {
+      agent: 'codex',
+      shape: 'claude-code',
+      level: 'strict',
+      configFallback: true,
+      toolName: 'Bash',
+    },
     options: {
       agent: 'codex',
       shape: 'claude-code',
@@ -117,6 +133,7 @@ const CASES: readonly Case[] = [
     reason: 'Access to a sensitive path is not allowed.',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-toolname'),
+    entry: { toolName: LONG_TOOL_NAME.slice(0, 256), truncated: true },
     options: { toolName: LONG_TOOL_NAME },
   },
   {
@@ -137,6 +154,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: sensitive path',
     cwd: SECRET_CWD,
     file: logPath('-work-API-KEY--redacted-', 'session-secret-cwd'),
+    entry: { cwd: '/work/API_KEY=<redacted>' },
     options: {},
   },
   {
@@ -149,6 +167,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: sensitive path',
     cwd: LONG_CWD,
     file: logPath(`-work-${'p'.repeat(174)}`, 'session-longcwd'),
+    entry: { cwd: LONG_CWD.slice(0, 32_768), truncated: true },
     options: {},
   },
   {
@@ -159,6 +178,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: sensitive path',
     cwd: '/work/project',
     file: logPath('-work-project', 'etc_passwd'),
+    entry: { sessionId: 'etc_passwd' },
     options: {},
   },
   {
@@ -169,6 +189,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: sensitive path',
     cwd: '/work/project',
     file: logPath('-work-project', 'abs_path'),
+    entry: { sessionId: 'abs_path' },
     options: {},
   },
   {
@@ -179,6 +200,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: sensitive path',
     cwd: '/work/project',
     file: logPath('-work-project', 'a_b'),
+    entry: { sessionId: 'a_b' },
     options: {},
   },
   {
@@ -189,6 +211,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: sensitive path',
     cwd: '/work/project',
     file: logPath('-work-project', `s${'x'.repeat(127)}`),
+    entry: { sessionId: `s${'x'.repeat(127)}` },
     options: {},
   },
   {
@@ -219,6 +242,7 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: dangerous pattern',
     cwd: '/work/project',
     file: logPath('-work-project', 'session-segment'),
+    entry: { segment: LONG_SEGMENT.slice(0, 2_000), truncated: true },
     options: {},
   },
   {
@@ -229,6 +253,12 @@ const CASES: readonly Case[] = [
     reason: 'Blocked: credential exfiltration',
     cwd: `/work/${providerToken}`,
     file: logPath('-work--redacted-', 'session-tokens'),
+    entry: {
+      toolName: 'Bash-<redacted>',
+      command: "GITHUB_TOKEN=<redacted> curl -H 'Authorization: <redacted>' https://api.example.test",
+      segment: 'curl -u <redacted>:<redacted> https://ci.example.test',
+      cwd: '/work/<redacted>',
+    },
     options: { toolName: `Bash-${bearer}` },
   },
 ];
@@ -279,13 +309,28 @@ describe('audit writer parity', () => {
       writeNext(nextHome, fixture);
 
       const produced = snapshotTree(nextHome);
-      expect(produced).toMatchSnapshot();
       expect(
         produced
           .filter((node) => node.kind === 'file')
           .map((node) => node.path)
           .sort(),
       ).toStrictEqual(fixture.file === null ? [] : [MARKER, fixture.file].sort());
+      if (fixture.file !== null) {
+        // The record repeats the input except where the row says otherwise, under the clock and
+        // the id the writer was handed and the version it was written by.
+        expect(onlyRecord(nextHome)).toEqual({
+          ts: NOW,
+          id: 'id000000000000000',
+          v: 'dev',
+          sessionId: fixture.sessionId,
+          decision: 'deny',
+          command: fixture.command,
+          segment: fixture.segment,
+          reason: fixture.reason,
+          cwd: fixture.cwd,
+          ...fixture.entry,
+        });
+      }
       // Windows has no POSIX mode to assert.
       if (process.platform === 'win32') return;
       expect([
