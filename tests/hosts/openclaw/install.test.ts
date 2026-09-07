@@ -17,7 +17,7 @@ import {
 } from '@/hosts/openclaw/install';
 import { createFakeBin, type FakeScriptEntry } from '../../helpers/fake-bin';
 import { describeOutcome, type TreeSpec } from '../../helpers/fixture-tree';
-import { differential, expectSameSides } from '../../helpers/host-differential';
+import { differential } from '../../helpers/host-differential';
 import {
   createTempRoot,
   describeAsyncOutcome,
@@ -79,7 +79,7 @@ describe('resolving the OpenClaw state directory', () => {
     };
 
     expect(
-      expectSameSides(
+      (
         await differential({
           seed: {},
           env,
@@ -87,7 +87,7 @@ describe('resolving the OpenClaw state directory', () => {
             config: getOpenClawConfigPath(environment),
             plugin: getOpenClawPluginDir(environment),
           }),
-        }),
+        })
       ).outcome,
     ).toEqual({ kind: 'returned', value: { config, plugin: `${extensions}/cc-safety-net` } });
   });
@@ -95,11 +95,11 @@ describe('resolving the OpenClaw state directory', () => {
 
 describe('guarding the extension directory before a --force command', () => {
   const guard = async (seed: TreeSpec) =>
-    expectSameSides(
+    (
       await differential({
         seed,
         ported: (environment) => describeOutcome(() => assertOpenClawPluginDirIsOurs(environment)),
-      }),
+      })
     ).outcome;
 
   test.each([

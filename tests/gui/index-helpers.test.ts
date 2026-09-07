@@ -9,7 +9,7 @@ import {
 import { getIntegrationDisplayName, installIntegrationMetadata } from '@/hosts/catalog';
 import { mockVersionFetcher } from '../helpers';
 import type { TreeSpec } from '../helpers/fixture-tree';
-import { differential, expectSameSides } from '../helpers/host-differential';
+import { differential } from '../helpers/host-differential';
 import {
   createTempRoot,
   isolationEnv,
@@ -42,18 +42,18 @@ type Health = Awaited<ReturnType<typeof portedHealth>>;
 const UPDATE = { currentVersion: 'dev', latestVersion: '9.9.9', updateAvailable: true };
 
 const integrationsOver = async (seed: TreeSpec) => {
-  const outcome = expectSameSides(
+  const outcome = (
     await differential({
       seed,
       ported: (environment) => portedIntegrations(environment, { fetcher: mockVersionFetcher }),
-    }),
+    })
   ).outcome;
   if (outcome.kind !== 'returned') throw new Error(`fetchIntegrations threw: ${outcome.message}`);
   return outcome.value as Integrations;
 };
 
 const healthOver = async (seed: TreeSpec) => {
-  const outcome = expectSameSides(
+  const outcome = (
     await differential({
       seed,
       ported: (environment) =>
@@ -61,7 +61,7 @@ const healthOver = async (seed: TreeSpec) => {
           fetcher: mockVersionFetcher,
           checkUpdates: async () => UPDATE,
         }),
-    }),
+    })
   ).outcome;
   if (outcome.kind !== 'returned') throw new Error(`fetchHealth threw: ${outcome.message}`);
   return outcome.value as Health;

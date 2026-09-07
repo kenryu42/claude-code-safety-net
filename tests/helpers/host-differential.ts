@@ -17,7 +17,6 @@ import {
   environmentFor,
   isolationEnv,
   normalize,
-  recordPorted,
   snapshotHome,
   WINDOWS_SEPARATOR_FOLDS,
 } from './temp-home';
@@ -59,13 +58,6 @@ export async function differential<T>(options: {
   };
 }
 
-/** Record what the row left behind; the returned result is what the contract is asserted on. */
-export function expectSameSides<T>(result: T): T {
-  // A probe that reports system information names the machine it ran on.
-  recordPorted(result, [[`${process.platform} ${process.arch}`, '<platform>']]);
-  return result;
-}
-
 /** The content of one file in a home snapshot, or `undefined` when nothing sits there. */
 export function fileAt(tree: TreeEntry[] | undefined, path: string) {
   return tree?.find((entry) => entry.path === path)?.content;
@@ -78,7 +70,7 @@ export function fileAt(tree: TreeEntry[] | undefined, path: string) {
  */
 export function detectionRunner(sides: { ported: (environment: Environment) => HookDetection }) {
   return async (seed: TreeSpec, env?: Record<string, string>) =>
-    expectSameSides(await differential({ seed, env, ported: sides.ported })).outcome;
+    (await differential({ seed, env, ported: sides.ported })).outcome;
 }
 
 type HostActions = {
@@ -120,25 +112,23 @@ function hostLifecycle(home: string, actions: HostActions): HostLifecycle {
 export function hostRunner(sides: { ported: (environment: Environment) => HostActions }) {
   return {
     row: async (seed: TreeSpec, env?: Record<string, string>) => {
-      const result = expectSameSides(
-        await differential({
-          seed,
-          env,
-          ported: (environment) => hostLifecycle(environment.home, sides.ported(environment)),
-        }),
-      );
+      const result = await differential({
+        seed,
+        env,
+        ported: (environment) => hostLifecycle(environment.home, sides.ported(environment)),
+      });
       return {
         steps: result.outcome.kind === 'returned' ? result.outcome.value : undefined,
         tree: result.tree,
       };
     },
     detection: async (seed: TreeSpec, env?: Record<string, string>) =>
-      expectSameSides(
+      (
         await differential({
           seed,
           env,
           ported: (environment) => sides.ported(environment).detect(),
-        }),
+        })
       ).outcome,
   };
 }

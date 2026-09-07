@@ -2,13 +2,7 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import { detect as detectGrok } from '@/hosts/grok-build/detect';
 import { installGrokBuild, uninstallGrokBuild } from '@/hosts/grok-build/install';
 import { describeOutcome } from '../../helpers/fixture-tree';
-import {
-  differential,
-  expectRow,
-  expectSameSides,
-  fileAt,
-  hostRunner,
-} from '../../helpers/host-differential';
+import { differential, expectRow, fileAt, hostRunner } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -111,12 +105,10 @@ describe('the Grok Build hook config differential', () => {
 
   test('leaves content it cannot parse in place instead of deleting it', async () => {
     const seed = 'not json';
-    const removal = expectSameSides(
-      await differential({
-        seed: { [HOOKS]: seed },
-        ported: (environment) => describeOutcome(() => uninstallGrokBuild(environment)),
-      }),
-    );
+    const removal = await differential({
+      seed: { [HOOKS]: seed },
+      ported: (environment) => describeOutcome(() => uninstallGrokBuild(environment)),
+    });
 
     expect(removal.outcome).toEqual({
       kind: 'returned',

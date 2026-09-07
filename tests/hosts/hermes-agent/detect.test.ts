@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import { buildHermesAgentPluginFiles } from '@/hosts/hermes-agent/artifact';
 import { detect as detectHermes, isHermesAgentPluginEnabled } from '@/hosts/hermes-agent/detect';
 import type { TreeSpec } from '../../helpers/fixture-tree';
-import { differential, expectSameSides } from '../../helpers/host-differential';
+import { differential } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -43,11 +43,11 @@ const configSeed = (config: string | undefined): TreeSpec =>
   config === undefined ? {} : { [CONFIG]: config };
 
 const detection = async (seed: TreeSpec) =>
-  expectSameSides(
+  (
     await differential({
       seed,
       ported: (environment) => detectHermes({ environment, cwd: environment.home }),
-    }),
+    })
   ).outcome;
 
 afterEach(removeTempRoots);
@@ -55,11 +55,11 @@ afterEach(removeTempRoots);
 describe('reading whether Hermes would load the plugin', () => {
   test.each(CONFIGS)('reads %s', async (_case, config, enabled) => {
     expect(
-      expectSameSides(
+      (
         await differential({
           seed: configSeed(config),
           ported: (environment) => isHermesAgentPluginEnabled(environment),
-        }),
+        })
       ).outcome,
     ).toEqual({ kind: 'returned', value: enabled });
   });

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { detect } from '@/hosts/amp/detect';
 import type { HookDetection } from '@/hosts/detect/context';
-import { differential, expectSameSides } from '../../helpers/host-differential';
+import { differential } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -58,12 +58,12 @@ afterEach(removeTempRoots);
 describe('reading the Amp plugin listing', () => {
   test.each(OUTPUTS)('reports %s', async (_case, ampPluginListOutput, expected) => {
     expect(
-      expectSameSides(
+      (
         await differential({
           seed: {},
           ported: (environment) =>
             detect({ environment, cwd: environment.home, ampPluginListOutput }),
-        }),
+        })
       ).outcome,
     ).toEqual({ kind: 'returned', value: expected });
   });

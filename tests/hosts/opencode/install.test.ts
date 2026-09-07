@@ -6,7 +6,7 @@ import {
   verifyOpenCodePluginRuntime,
 } from '@/hosts/opencode/install';
 import type { TreeSpec } from '../../helpers/fixture-tree';
-import { differential, expectSameSides, fileAt } from '../../helpers/host-differential';
+import { differential, fileAt } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -34,12 +34,12 @@ describe('where OpenCode keeps its config and cache', () => {
     ['an XDG_CONFIG_HOME the user moved', '<home>/xdg', '<home>/xdg/opencode'],
   ])('derives the config directory from %s', async (_case, xdg, expected) => {
     expect(
-      expectSameSides(
+      (
         await differential({
           seed: {},
           env: xdg === undefined ? {} : { XDG_CONFIG_HOME: xdg },
           ported: (environment) => getOpenCodeConfigDir(environment),
-        }),
+        })
       ).outcome,
     ).toEqual({ kind: 'returned', value: expected });
   });
@@ -53,13 +53,11 @@ describe('where OpenCode keeps its config and cache', () => {
     ],
   ])('clears the cached package under %s', async (_case, env, cache) => {
     const seed = { [`${cache}/node_modules/cc-safety-net/package.json`]: '{}', 'keep.txt': 'kept' };
-    const result = expectSameSides(
-      await differential({
-        seed,
-        env,
-        ported: (environment) => clearOpenCodeCache(environment),
-      }),
-    );
+    const result = await differential({
+      seed,
+      env,
+      ported: (environment) => clearOpenCodeCache(environment),
+    });
 
     const paths = result.tree.map((entry) => entry.path);
     expect(paths.filter((path) => path.startsWith(cache))).toEqual([]);
@@ -69,11 +67,11 @@ describe('where OpenCode keeps its config and cache', () => {
 
 describe('proving the cached plugin would load', () => {
   const verify = async (seed: TreeSpec) =>
-    expectSameSides(
+    (
       await differential({
         seed,
         ported: (environment) => verifyOpenCodePluginRuntime(environment),
-      }),
+      })
     ).outcome;
 
   test('accepts a package whose main exports a callable plugin factory', async () => {
@@ -111,12 +109,10 @@ describe('proving the cached plugin would load', () => {
 
 describe('taking the plugin back out of the config', () => {
   const uninstall = async (seed: TreeSpec) => {
-    const result = expectSameSides(
-      await differential({
-        seed,
-        ported: (environment) => uninstallOpenCode(environment),
-      }),
-    );
+    const result = await differential({
+      seed,
+      ported: (environment) => uninstallOpenCode(environment),
+    });
     return { outcome: result.outcome, tree: result.tree };
   };
 

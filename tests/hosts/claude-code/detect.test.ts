@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import { detect as detectClaudeCode, hasClaudeInstalledPlugin } from '@/hosts/claude-code/detect';
 import type { HookDetection } from '@/hosts/detect/context';
 import type { TreeSpec } from '../../helpers/fixture-tree';
-import { detectionRunner, differential, expectSameSides } from '../../helpers/host-differential';
+import { detectionRunner, differential } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -82,11 +82,11 @@ describe('reading what Claude Code recorded', () => {
 
 describe('asking whether a specific plugin id is installed', () => {
   const legacyInstalled = async (seed: TreeSpec) =>
-    expectSameSides(
+    (
       await differential({
         seed,
         ported: (environment) => hasClaudeInstalledPlugin(environment, LEGACY_ID),
-      }),
+      })
     ).outcome;
 
   test('finds the pre-rename id the install flow cleans up after', async () => {

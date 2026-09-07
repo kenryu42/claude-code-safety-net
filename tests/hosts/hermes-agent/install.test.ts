@@ -7,7 +7,7 @@ import {
   uninstallHermesAgent,
 } from '@/hosts/hermes-agent/install';
 import { describeOutcome, type TreeEntry, type TreeSpec } from '../../helpers/fixture-tree';
-import { differential, expectSameSides, hostRunner } from '../../helpers/host-differential';
+import { differential, hostRunner } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -198,12 +198,10 @@ describe('refusing a managed path that is not ours', () => {
 
 describe('removing the Hermes Agent plugin', () => {
   const uninstallOnly = async (seed: TreeSpec) =>
-    expectSameSides(
-      await differential({
-        seed,
-        ported: (environment) => describeOutcome(() => uninstallHermesAgent(environment)),
-      }),
-    );
+    await differential({
+      seed,
+      ported: (environment) => describeOutcome(() => uninstallHermesAgent(environment)),
+    });
 
   test('takes its own bytecode cache with it but keeps a directory the user still uses', async () => {
     const removal = await uninstallOnly({
@@ -235,11 +233,11 @@ describe('removing the Hermes Agent plugin', () => {
 
 describe('reading the owned Hermes Agent files', () => {
   const owned = async (seed: TreeSpec) =>
-    expectSameSides(
+    (
       await differential({
         seed,
         ported: (environment) => describeOutcome(() => readOwnedHermesAgentFiles(environment)),
-      }),
+      })
     ).outcome;
 
   test('names the managed files a removal would delete, and nothing else', async () => {

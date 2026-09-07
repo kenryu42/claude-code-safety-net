@@ -3,7 +3,7 @@ import { join, posix } from 'node:path';
 import { buildOpenClawArtifactHeader } from '@/hosts/openclaw/artifact';
 import { detect as detectOpenClaw, modifiedFileErrors } from '@/hosts/openclaw/detect';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
-import { differential, expectSameSides } from '../../helpers/host-differential';
+import { differential } from '../../helpers/host-differential';
 import {
   createTempRoot,
   normalize,
@@ -38,12 +38,12 @@ const INSTALLED = installedAt(DIR, 'dev');
 const ENABLING = { [CONFIG]: '{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}' };
 
 const detection = async (seed: TreeSpec, env?: Record<string, string>) =>
-  expectSameSides(
+  (
     await differential({
       seed,
       env,
       ported: (environment) => detectOpenClaw({ environment, cwd: environment.home }),
-    }),
+    })
   ).outcome;
 
 const configured = (configPath: string, errors?: string[]) => ({

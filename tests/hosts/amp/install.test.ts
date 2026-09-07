@@ -12,7 +12,7 @@ import type { AmpRunner } from '@/hosts/amp/run';
 import type { InstallResult } from '@/hosts/install/types';
 import { AMP_CLONE_REF, type AmpScript, createScriptedAmpRunner } from '../../helpers/amp-runner';
 import { describeOutcome, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
-import { differential, expectSameSides, fileAt } from '../../helpers/host-differential';
+import { differential, fileAt } from '../../helpers/host-differential';
 import { createTempRoot, describeAsyncOutcome, removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -73,17 +73,15 @@ async function ampRow(row: Row = {}) {
       snapshots: runner.snapshots,
     };
   };
-  const side = expectSameSides(
-    await differential({
-      seed: row.home ?? {},
-      ported: (environment) =>
-        drive((run) =>
-          row.action === 'uninstall'
-            ? uninstallAmp(environment, run)
-            : installAmp(environment, join(artifactRoot, 'index.ts'), run),
-        ),
-    }),
-  );
+  const side = await differential({
+    seed: row.home ?? {},
+    ported: (environment) =>
+      drive((run) =>
+        row.action === 'uninstall'
+          ? uninstallAmp(environment, run)
+          : installAmp(environment, join(artifactRoot, 'index.ts'), run),
+      ),
+  });
   if (side.outcome.kind === 'threw') throw new Error(side.outcome.message);
   return { ...side.outcome.value, tree: side.tree };
 }
@@ -231,11 +229,11 @@ describe('clearing a local plugin that masks the personal one', () => {
 
   test('names the same system-scope path on both sides', async () => {
     expect(
-      expectSameSides(
+      (
         await differential({
           seed: {},
           ported: (environment) => getAmpPluginPath(environment),
-        }),
+        })
       ).outcome,
     ).toEqual({ kind: 'returned', value: local(LEGACY) });
   });

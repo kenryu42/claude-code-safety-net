@@ -3,7 +3,7 @@ import { detectAllHooks } from '@/hosts/detect/index';
 import { buildHermesAgentPluginFiles } from '@/hosts/hermes-agent/artifact';
 import { buildOpenClawArtifactHeader } from '@/hosts/openclaw/artifact';
 import type { TreeSpec } from '../../helpers/fixture-tree';
-import { differential, expectSameSides } from '../../helpers/host-differential';
+import { differential } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -93,11 +93,11 @@ type Outputs = {
 };
 
 const all = async (seed: TreeSpec, outputs: Outputs = {}) =>
-  expectSameSides(
+  (
     await differential({
       seed,
       ported: (environment) => detectAllHooks(environment, environment.home, outputs),
-    }),
+    })
   ).outcome;
 
 /** One line per host: what doctor would print about it, without the paths. */
