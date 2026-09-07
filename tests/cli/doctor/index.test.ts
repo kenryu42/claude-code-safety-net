@@ -5,6 +5,7 @@ import { encodeCwdForLogDirname, getAuditLogsDir } from '@/audit/writer';
 import { installCursor } from '@/hosts/cursor/install';
 import type { DoctorReport } from '@/hosts/doctor-types';
 import {
+  type CliOutcome,
   type CliRow,
   type CliSide,
   expectSameCli,
@@ -243,10 +244,19 @@ describe('doctor --json', () => {
   }, 120_000);
 });
 
+/**
+ * A table's column widths follow its widest cell, and the platform cell (`darwin arm64`, `linux
+ * x64`) is the host's, so the record keeps one border dash and one space of padding per cell.
+ */
+const foldTableWidths = (outcome: CliOutcome): CliOutcome => ({
+  ...outcome,
+  stdout: outcome.stdout.replace(/─+/g, '─').replace(/ +│/g, ' │'),
+});
+
 describe('doctor rendered', () => {
   test('a fresh home renders the self-test and the single error finding', async () => {
     const outcome = expectSameCli(
-      await runCliDifferential({ args: ['doctor', '--skip-update-check'] }),
+      foldTableWidths(await runCliDifferential({ args: ['doctor', '--skip-update-check'] })),
     );
     expect(outcome.exitCode).toBe(1);
     expect(outcome.stdout).toContain('Guard Engine Verification');
@@ -257,10 +267,12 @@ describe('doctor rendered', () => {
   test('a seeded audit tree renders its activity header', async () => {
     const entries = auditFixture('sess1');
     const outcome = expectSameCli(
-      await runCliDifferential({
-        args: ['doctor', '--skip-update-check'],
-        seed: (side) => seedAuditLog(side, 'sess1', entries),
-      }),
+      foldTableWidths(
+        await runCliDifferential({
+          args: ['doctor', '--skip-update-check'],
+          seed: (side) => seedAuditLog(side, 'sess1', entries),
+        }),
+      ),
     );
     expect(outcome.stdout).toContain('Recent Activity · last 7 days (3 blocked / 1 sessions)');
     expect(outcome.stdout).toContain('git reset --hard');
@@ -268,7 +280,7 @@ describe('doctor rendered', () => {
 
   test('the legacy --doctor spelling reaches the same report', async () => {
     const outcome = expectSameCli(
-      await runCliDifferential({ args: ['--doctor', '--skip-update-check'] }),
+      foldTableWidths(await runCliDifferential({ args: ['--doctor', '--skip-update-check'] })),
     );
     expect(outcome.exitCode).toBe(1);
     expect(outcome.stdout).toContain('Guard Engine Verification');

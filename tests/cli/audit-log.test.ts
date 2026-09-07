@@ -154,7 +154,8 @@ function logsDirOf(side: CliSide): string {
 function seedLogs(clock: number) {
   return (side: CliSide) => {
     const logsDir = logsDirOf(side);
-    const entries = auditFixture(clock, side.project);
+    // `logs --project .` resolves the cwd the child runs in, which is canonical on macOS.
+    const entries = auditFixture(clock, realpathSync(side.project));
     const stamp = new Date(clock).toISOString();
     // `logs --project .` resolves the cwd the child runs in, which is the canonical path.
     const nested = join(

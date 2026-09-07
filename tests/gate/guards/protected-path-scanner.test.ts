@@ -455,7 +455,7 @@ describe('protected candidate canonicalization', () => {
         createBudget(),
         () => false,
       ),
-    ).toBe(join(root, 'policy'));
+    ).toBe(join(realpathSync(root), 'policy'));
   });
 });
 

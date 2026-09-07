@@ -78,6 +78,9 @@ jobs:
         run: bun run check:ci
         env:
           CC_SAFETY_NET_E2E_ARTIFACTS: ${{ runner.temp }}/cc-safety-net-e2e
+          # The pair lists behind every digest, uploaded with the failure evidence so a digest that
+          # differs here can be diffed pair by pair against a Linux dump.
+          CC_SAFETY_NET_DUMP_VERDICTS: ${{ runner.temp }}/cc-safety-net-e2e/digests
       - name: Rebuild owned artifacts
         run: bun run build
       - name: Reject stale generated artifacts

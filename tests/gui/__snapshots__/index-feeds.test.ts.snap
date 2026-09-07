@@ -9581,7 +9581,7 @@ exports[`the GUI rulebook listing reports the platform dialog it could not open 
   "responses": [
     {
       "body": {
-        "error": "No folder dialog is available on this system",
+        "error": "<dialog-error>",
       },
       "cacheControl": "no-store",
       "contentType": "application/json; charset=utf-8",

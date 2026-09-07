@@ -2521,51 +2521,51 @@ exports[`doctor rendered a fresh home renders the self-test and the single error
   "stdout": 
 "
 Hook Integration
-   ┌────────────────────┬──────────────┬────────────────┬────────────────┐
-   │ Platform           │ Discovery    │ Configuration  │ Inspection     │
-   ├────────────────────┼──────────────┼────────────────┼────────────────┤
-   │ Claude Code        │ Not detected │ Not applicable │ Not applicable │
-   │ Amp Code           │ Not detected │ Not applicable │ Not applicable │
-   │ Antigravity CLI    │ Not detected │ Not applicable │ Not applicable │
-   │ Codex              │ Not detected │ Not applicable │ Not applicable │
-   │ Cursor             │ Not detected │ Not applicable │ Not applicable │
-   │ Gemini CLI         │ Not detected │ Not applicable │ Not applicable │
-   │ GitHub Copilot CLI │ Not detected │ Not applicable │ Not applicable │
-   │ Grok Build         │ Not detected │ Not applicable │ Not applicable │
-   │ Hermes Agent       │ Not detected │ Not applicable │ Not applicable │
-   │ Kimi Code          │ Not detected │ Not applicable │ Not applicable │
-   │ OpenClaw           │ Not detected │ Not applicable │ Not applicable │
-   │ OpenCode           │ Not detected │ Not applicable │ Not applicable │
-   │ Pi                 │ Not detected │ Not applicable │ Not applicable │
-   └────────────────────┴──────────────┴────────────────┴────────────────┘
+   ┌─┬─┬─┬─┐
+ │ Platform │ Discovery │ Configuration │ Inspection │
+   ├─┼─┼─┼─┤
+ │ Claude Code │ Not detected │ Not applicable │ Not applicable │
+ │ Amp Code │ Not detected │ Not applicable │ Not applicable │
+ │ Antigravity CLI │ Not detected │ Not applicable │ Not applicable │
+ │ Codex │ Not detected │ Not applicable │ Not applicable │
+ │ Cursor │ Not detected │ Not applicable │ Not applicable │
+ │ Gemini CLI │ Not detected │ Not applicable │ Not applicable │
+ │ GitHub Copilot CLI │ Not detected │ Not applicable │ Not applicable │
+ │ Grok Build │ Not detected │ Not applicable │ Not applicable │
+ │ Hermes Agent │ Not detected │ Not applicable │ Not applicable │
+ │ Kimi Code │ Not detected │ Not applicable │ Not applicable │
+ │ OpenClaw │ Not detected │ Not applicable │ Not applicable │
+ │ OpenCode │ Not detected │ Not applicable │ Not applicable │
+ │ Pi │ Not detected │ Not applicable │ Not applicable │
+   └─┴─┴─┴─┘
 
 Guard Engine Verification
    Synthetic self-test: 3/3 passed
 
 Configuration
-   ┌─────────┬────────┐
-   │ Scope   │ Status │
-   ├─────────┼────────┤
-   │ User    │ N/A    │
-   │ Project │ N/A    │
-   └─────────┴────────┘
+   ┌─┬─┐
+ │ Scope │ Status │
+   ├─┼─┤
+ │ User │ N/A │
+ │ Project │ N/A │
+   └─┴─┘
 
    Effective rules: (none - using built-in rules only)
 
 Environment
-   ┌─────────────────────────────────────┬────────┬──────────────────────────────────┐
-   │ Variable                            │ Status │ Legacy                           │
-   ├─────────────────────────────────────┼────────┼──────────────────────────────────┤
-   │ CC_SAFETY_NET_LEVEL                 │ ✗      │                                  │
-   │ CC_SAFETY_NET_STRICT                │ ✗      │ SAFETY_NET_STRICT                │
-   │ CC_SAFETY_NET_PARANOID              │ ✗      │ SAFETY_NET_PARANOID              │
-   │ CC_SAFETY_NET_PARANOID_RM           │ ✗      │ SAFETY_NET_PARANOID_RM           │
-   │ CC_SAFETY_NET_PARANOID_INTERPRETERS │ ✗      │ SAFETY_NET_PARANOID_INTERPRETERS │
-   │ CC_SAFETY_NET_WORKTREE              │ ✗      │ SAFETY_NET_WORKTREE              │
-   │ CC_SAFETY_NET_DEBUG                 │ ✗      │                                  │
-   │ CC_SAFETY_NET_AUDIT_SCOPE           │ ✗      │                                  │
-   │ CC_SAFETY_NET_HOME                  │ ✓      │                                  │
-   └─────────────────────────────────────┴────────┴──────────────────────────────────┘
+   ┌─┬─┬─┐
+ │ Variable │ Status │ Legacy │
+   ├─┼─┼─┤
+ │ CC_SAFETY_NET_LEVEL │ ✗ │ │
+ │ CC_SAFETY_NET_STRICT │ ✗ │ SAFETY_NET_STRICT │
+ │ CC_SAFETY_NET_PARANOID │ ✗ │ SAFETY_NET_PARANOID │
+ │ CC_SAFETY_NET_PARANOID_RM │ ✗ │ SAFETY_NET_PARANOID_RM │
+ │ CC_SAFETY_NET_PARANOID_INTERPRETERS │ ✗ │ SAFETY_NET_PARANOID_INTERPRETERS │
+ │ CC_SAFETY_NET_WORKTREE │ ✗ │ SAFETY_NET_WORKTREE │
+ │ CC_SAFETY_NET_DEBUG │ ✗ │ │
+ │ CC_SAFETY_NET_AUDIT_SCOPE │ ✗ │ │
+ │ CC_SAFETY_NET_HOME │ ✓ │ │
+   └─┴─┴─┘
 
 Effective Safety
    Selected preset: standard
@@ -2586,34 +2586,34 @@ Recent Activity
    Tip: This is normal for new installations
 
 System Info
-   ┌────────────────────┬───────────┐
-   │ Component          │ Version   │
-   ├────────────────────┼───────────┤
-   │ cc-safety-net      │ dev       │
-   │ Claude Code        │ not found │
-   │ Amp Code           │ not found │
-   │ Antigravity CLI    │ not found │
-   │ Codex              │ not found │
-   │ Cursor             │ not found │
-   │ Gemini CLI         │ not found │
-   │ GitHub Copilot CLI │ not found │
-   │ Grok Build         │ not found │
-   │ Hermes Agent       │ not found │
-   │ Kimi Code          │ not found │
-   │ OpenClaw           │ not found │
-   │ OpenCode           │ not found │
-   │ Pi                 │ not found │
-   │ Node.js            │ not found │
-   │ npm                │ not found │
-   │ Bun                │ not found │
-   │ Platform           │ <platform> │
-   └────────────────────┴───────────┘
+   ┌─┬─┐
+ │ Component │ Version │
+   ├─┼─┤
+ │ cc-safety-net │ dev │
+ │ Claude Code │ not found │
+ │ Amp Code │ not found │
+ │ Antigravity CLI │ not found │
+ │ Codex │ not found │
+ │ Cursor │ not found │
+ │ Gemini CLI │ not found │
+ │ GitHub Copilot CLI │ not found │
+ │ Grok Build │ not found │
+ │ Hermes Agent │ not found │
+ │ Kimi Code │ not found │
+ │ OpenClaw │ not found │
+ │ OpenCode │ not found │
+ │ Pi │ not found │
+ │ Node.js │ not found │
+ │ npm │ not found │
+ │ Bun │ not found │
+ │ Platform │ <platform> │
+   └─┴─┘
 
 Update Check
-   ┌───────────┬─────────┐
-   │ Status    │ Skipped │
-   │ Installed │ dev     │
-   └───────────┴─────────┘
+   ┌─┬─┐
+ │ Status │ Skipped │
+ │ Installed │ dev │
+   └─┴─┘
 
 1 finding: 1 error.
 "
@@ -2642,51 +2642,51 @@ exports[`doctor rendered a seeded audit tree renders its activity header 1`] = `
   "stdout": 
 "
 Hook Integration
-   ┌────────────────────┬──────────────┬────────────────┬────────────────┐
-   │ Platform           │ Discovery    │ Configuration  │ Inspection     │
-   ├────────────────────┼──────────────┼────────────────┼────────────────┤
-   │ Claude Code        │ Not detected │ Not applicable │ Not applicable │
-   │ Amp Code           │ Not detected │ Not applicable │ Not applicable │
-   │ Antigravity CLI    │ Not detected │ Not applicable │ Not applicable │
-   │ Codex              │ Not detected │ Not applicable │ Not applicable │
-   │ Cursor             │ Not detected │ Not applicable │ Not applicable │
-   │ Gemini CLI         │ Not detected │ Not applicable │ Not applicable │
-   │ GitHub Copilot CLI │ Not detected │ Not applicable │ Not applicable │
-   │ Grok Build         │ Not detected │ Not applicable │ Not applicable │
-   │ Hermes Agent       │ Not detected │ Not applicable │ Not applicable │
-   │ Kimi Code          │ Not detected │ Not applicable │ Not applicable │
-   │ OpenClaw           │ Not detected │ Not applicable │ Not applicable │
-   │ OpenCode           │ Not detected │ Not applicable │ Not applicable │
-   │ Pi                 │ Not detected │ Not applicable │ Not applicable │
-   └────────────────────┴──────────────┴────────────────┴────────────────┘
+   ┌─┬─┬─┬─┐
+ │ Platform │ Discovery │ Configuration │ Inspection │
+   ├─┼─┼─┼─┤
+ │ Claude Code │ Not detected │ Not applicable │ Not applicable │
+ │ Amp Code │ Not detected │ Not applicable │ Not applicable │
+ │ Antigravity CLI │ Not detected │ Not applicable │ Not applicable │
+ │ Codex │ Not detected │ Not applicable │ Not applicable │
+ │ Cursor │ Not detected │ Not applicable │ Not applicable │
+ │ Gemini CLI │ Not detected │ Not applicable │ Not applicable │
+ │ GitHub Copilot CLI │ Not detected │ Not applicable │ Not applicable │
+ │ Grok Build │ Not detected │ Not applicable │ Not applicable │
+ │ Hermes Agent │ Not detected │ Not applicable │ Not applicable │
+ │ Kimi Code │ Not detected │ Not applicable │ Not applicable │
+ │ OpenClaw │ Not detected │ Not applicable │ Not applicable │
+ │ OpenCode │ Not detected │ Not applicable │ Not applicable │
+ │ Pi │ Not detected │ Not applicable │ Not applicable │
+   └─┴─┴─┴─┘
 
 Guard Engine Verification
    Synthetic self-test: 3/3 passed
 
 Configuration
-   ┌─────────┬────────┐
-   │ Scope   │ Status │
-   ├─────────┼────────┤
-   │ User    │ N/A    │
-   │ Project │ N/A    │
-   └─────────┴────────┘
+   ┌─┬─┐
+ │ Scope │ Status │
+   ├─┼─┤
+ │ User │ N/A │
+ │ Project │ N/A │
+   └─┴─┘
 
    Effective rules: (none - using built-in rules only)
 
 Environment
-   ┌─────────────────────────────────────┬────────┬──────────────────────────────────┐
-   │ Variable                            │ Status │ Legacy                           │
-   ├─────────────────────────────────────┼────────┼──────────────────────────────────┤
-   │ CC_SAFETY_NET_LEVEL                 │ ✗      │                                  │
-   │ CC_SAFETY_NET_STRICT                │ ✗      │ SAFETY_NET_STRICT                │
-   │ CC_SAFETY_NET_PARANOID              │ ✗      │ SAFETY_NET_PARANOID              │
-   │ CC_SAFETY_NET_PARANOID_RM           │ ✗      │ SAFETY_NET_PARANOID_RM           │
-   │ CC_SAFETY_NET_PARANOID_INTERPRETERS │ ✗      │ SAFETY_NET_PARANOID_INTERPRETERS │
-   │ CC_SAFETY_NET_WORKTREE              │ ✗      │ SAFETY_NET_WORKTREE              │
-   │ CC_SAFETY_NET_DEBUG                 │ ✗      │                                  │
-   │ CC_SAFETY_NET_AUDIT_SCOPE           │ ✗      │                                  │
-   │ CC_SAFETY_NET_HOME                  │ ✓      │                                  │
-   └─────────────────────────────────────┴────────┴──────────────────────────────────┘
+   ┌─┬─┬─┐
+ │ Variable │ Status │ Legacy │
+   ├─┼─┼─┤
+ │ CC_SAFETY_NET_LEVEL │ ✗ │ │
+ │ CC_SAFETY_NET_STRICT │ ✗ │ SAFETY_NET_STRICT │
+ │ CC_SAFETY_NET_PARANOID │ ✗ │ SAFETY_NET_PARANOID │
+ │ CC_SAFETY_NET_PARANOID_RM │ ✗ │ SAFETY_NET_PARANOID_RM │
+ │ CC_SAFETY_NET_PARANOID_INTERPRETERS │ ✗ │ SAFETY_NET_PARANOID_INTERPRETERS │
+ │ CC_SAFETY_NET_WORKTREE │ ✗ │ SAFETY_NET_WORKTREE │
+ │ CC_SAFETY_NET_DEBUG │ ✗ │ │
+ │ CC_SAFETY_NET_AUDIT_SCOPE │ ✗ │ │
+ │ CC_SAFETY_NET_HOME │ ✓ │ │
+   └─┴─┴─┘
 
 Effective Safety
    Selected preset: standard
@@ -2703,43 +2703,43 @@ Findings
       Fix: Run \`cc-safety-net install\` and configure at least one integration.
 
 Recent Activity · last 7 days (3 blocked / 1 sessions)
-   ┌────────┬──────────────────┐
-   │ Time   │ Command          │
-   ├────────┼──────────────────┤
-   │ 3h ago │ git reset --hard │
-   │ 1d ago │ rm -rf build     │
-   │ 2d ago │ git clean -fd    │
-   └────────┴──────────────────┘
+   ┌─┬─┐
+ │ Time │ Command │
+   ├─┼─┤
+ │ 3h ago │ git reset --hard │
+ │ 1d ago │ rm -rf build │
+ │ 2d ago │ git clean -fd │
+   └─┴─┘
 
 System Info
-   ┌────────────────────┬───────────┐
-   │ Component          │ Version   │
-   ├────────────────────┼───────────┤
-   │ cc-safety-net      │ dev       │
-   │ Claude Code        │ not found │
-   │ Amp Code           │ not found │
-   │ Antigravity CLI    │ not found │
-   │ Codex              │ not found │
-   │ Cursor             │ not found │
-   │ Gemini CLI         │ not found │
-   │ GitHub Copilot CLI │ not found │
-   │ Grok Build         │ not found │
-   │ Hermes Agent       │ not found │
-   │ Kimi Code          │ not found │
-   │ OpenClaw           │ not found │
-   │ OpenCode           │ not found │
-   │ Pi                 │ not found │
-   │ Node.js            │ not found │
-   │ npm                │ not found │
-   │ Bun                │ not found │
-   │ Platform           │ <platform> │
-   └────────────────────┴───────────┘
+   ┌─┬─┐
+ │ Component │ Version │
+   ├─┼─┤
+ │ cc-safety-net │ dev │
+ │ Claude Code │ not found │
+ │ Amp Code │ not found │
+ │ Antigravity CLI │ not found │
+ │ Codex │ not found │
+ │ Cursor │ not found │
+ │ Gemini CLI │ not found │
+ │ GitHub Copilot CLI │ not found │
+ │ Grok Build │ not found │
+ │ Hermes Agent │ not found │
+ │ Kimi Code │ not found │
+ │ OpenClaw │ not found │
+ │ OpenCode │ not found │
+ │ Pi │ not found │
+ │ Node.js │ not found │
+ │ npm │ not found │
+ │ Bun │ not found │
+ │ Platform │ <platform> │
+   └─┴─┘
 
 Update Check
-   ┌───────────┬─────────┐
-   │ Status    │ Skipped │
-   │ Installed │ dev     │
-   └───────────┴─────────┘
+   ┌─┬─┐
+ │ Status │ Skipped │
+ │ Installed │ dev │
+   └─┴─┘
 
 1 finding: 1 error.
 "
@@ -2808,51 +2808,51 @@ exports[`doctor rendered the legacy --doctor spelling reaches the same report 1`
   "stdout": 
 "
 Hook Integration
-   ┌────────────────────┬──────────────┬────────────────┬────────────────┐
-   │ Platform           │ Discovery    │ Configuration  │ Inspection     │
-   ├────────────────────┼──────────────┼────────────────┼────────────────┤
-   │ Claude Code        │ Not detected │ Not applicable │ Not applicable │
-   │ Amp Code           │ Not detected │ Not applicable │ Not applicable │
-   │ Antigravity CLI    │ Not detected │ Not applicable │ Not applicable │
-   │ Codex              │ Not detected │ Not applicable │ Not applicable │
-   │ Cursor             │ Not detected │ Not applicable │ Not applicable │
-   │ Gemini CLI         │ Not detected │ Not applicable │ Not applicable │
-   │ GitHub Copilot CLI │ Not detected │ Not applicable │ Not applicable │
-   │ Grok Build         │ Not detected │ Not applicable │ Not applicable │
-   │ Hermes Agent       │ Not detected │ Not applicable │ Not applicable │
-   │ Kimi Code          │ Not detected │ Not applicable │ Not applicable │
-   │ OpenClaw           │ Not detected │ Not applicable │ Not applicable │
-   │ OpenCode           │ Not detected │ Not applicable │ Not applicable │
-   │ Pi                 │ Not detected │ Not applicable │ Not applicable │
-   └────────────────────┴──────────────┴────────────────┴────────────────┘
+   ┌─┬─┬─┬─┐
+ │ Platform │ Discovery │ Configuration │ Inspection │
+   ├─┼─┼─┼─┤
+ │ Claude Code │ Not detected │ Not applicable │ Not applicable │
+ │ Amp Code │ Not detected │ Not applicable │ Not applicable │
+ │ Antigravity CLI │ Not detected │ Not applicable │ Not applicable │
+ │ Codex │ Not detected │ Not applicable │ Not applicable │
+ │ Cursor │ Not detected │ Not applicable │ Not applicable │
+ │ Gemini CLI │ Not detected │ Not applicable │ Not applicable │
+ │ GitHub Copilot CLI │ Not detected │ Not applicable │ Not applicable │
+ │ Grok Build │ Not detected │ Not applicable │ Not applicable │
+ │ Hermes Agent │ Not detected │ Not applicable │ Not applicable │
+ │ Kimi Code │ Not detected │ Not applicable │ Not applicable │
+ │ OpenClaw │ Not detected │ Not applicable │ Not applicable │
+ │ OpenCode │ Not detected │ Not applicable │ Not applicable │
+ │ Pi │ Not detected │ Not applicable │ Not applicable │
+   └─┴─┴─┴─┘
 
 Guard Engine Verification
    Synthetic self-test: 3/3 passed
 
 Configuration
-   ┌─────────┬────────┐
-   │ Scope   │ Status │
-   ├─────────┼────────┤
-   │ User    │ N/A    │
-   │ Project │ N/A    │
-   └─────────┴────────┘
+   ┌─┬─┐
+ │ Scope │ Status │
+   ├─┼─┤
+ │ User │ N/A │
+ │ Project │ N/A │
+   └─┴─┘
 
    Effective rules: (none - using built-in rules only)
 
 Environment
-   ┌─────────────────────────────────────┬────────┬──────────────────────────────────┐
-   │ Variable                            │ Status │ Legacy                           │
-   ├─────────────────────────────────────┼────────┼──────────────────────────────────┤
-   │ CC_SAFETY_NET_LEVEL                 │ ✗      │                                  │
-   │ CC_SAFETY_NET_STRICT                │ ✗      │ SAFETY_NET_STRICT                │
-   │ CC_SAFETY_NET_PARANOID              │ ✗      │ SAFETY_NET_PARANOID              │
-   │ CC_SAFETY_NET_PARANOID_RM           │ ✗      │ SAFETY_NET_PARANOID_RM           │
-   │ CC_SAFETY_NET_PARANOID_INTERPRETERS │ ✗      │ SAFETY_NET_PARANOID_INTERPRETERS │
-   │ CC_SAFETY_NET_WORKTREE              │ ✗      │ SAFETY_NET_WORKTREE              │
-   │ CC_SAFETY_NET_DEBUG                 │ ✗      │                                  │
-   │ CC_SAFETY_NET_AUDIT_SCOPE           │ ✗      │                                  │
-   │ CC_SAFETY_NET_HOME                  │ ✓      │                                  │
-   └─────────────────────────────────────┴────────┴──────────────────────────────────┘
+   ┌─┬─┬─┐
+ │ Variable │ Status │ Legacy │
+   ├─┼─┼─┤
+ │ CC_SAFETY_NET_LEVEL │ ✗ │ │
+ │ CC_SAFETY_NET_STRICT │ ✗ │ SAFETY_NET_STRICT │
+ │ CC_SAFETY_NET_PARANOID │ ✗ │ SAFETY_NET_PARANOID │
+ │ CC_SAFETY_NET_PARANOID_RM │ ✗ │ SAFETY_NET_PARANOID_RM │
+ │ CC_SAFETY_NET_PARANOID_INTERPRETERS │ ✗ │ SAFETY_NET_PARANOID_INTERPRETERS │
+ │ CC_SAFETY_NET_WORKTREE │ ✗ │ SAFETY_NET_WORKTREE │
+ │ CC_SAFETY_NET_DEBUG │ ✗ │ │
+ │ CC_SAFETY_NET_AUDIT_SCOPE │ ✗ │ │
+ │ CC_SAFETY_NET_HOME │ ✓ │ │
+   └─┴─┴─┘
 
 Effective Safety
    Selected preset: standard
@@ -2873,34 +2873,34 @@ Recent Activity
    Tip: This is normal for new installations
 
 System Info
-   ┌────────────────────┬───────────┐
-   │ Component          │ Version   │
-   ├────────────────────┼───────────┤
-   │ cc-safety-net      │ dev       │
-   │ Claude Code        │ not found │
-   │ Amp Code           │ not found │
-   │ Antigravity CLI    │ not found │
-   │ Codex              │ not found │
-   │ Cursor             │ not found │
-   │ Gemini CLI         │ not found │
-   │ GitHub Copilot CLI │ not found │
-   │ Grok Build         │ not found │
-   │ Hermes Agent       │ not found │
-   │ Kimi Code          │ not found │
-   │ OpenClaw           │ not found │
-   │ OpenCode           │ not found │
-   │ Pi                 │ not found │
-   │ Node.js            │ not found │
-   │ npm                │ not found │
-   │ Bun                │ not found │
-   │ Platform           │ <platform> │
-   └────────────────────┴───────────┘
+   ┌─┬─┐
+ │ Component │ Version │
+   ├─┼─┤
+ │ cc-safety-net │ dev │
+ │ Claude Code │ not found │
+ │ Amp Code │ not found │
+ │ Antigravity CLI │ not found │
+ │ Codex │ not found │
+ │ Cursor │ not found │
+ │ Gemini CLI │ not found │
+ │ GitHub Copilot CLI │ not found │
+ │ Grok Build │ not found │
+ │ Hermes Agent │ not found │
+ │ Kimi Code │ not found │
+ │ OpenClaw │ not found │
+ │ OpenCode │ not found │
+ │ Pi │ not found │
+ │ Node.js │ not found │
+ │ npm │ not found │
+ │ Bun │ not found │
+ │ Platform │ <platform> │
+   └─┴─┘
 
 Update Check
-   ┌───────────┬─────────┐
-   │ Status    │ Skipped │
-   │ Installed │ dev     │
-   └───────────┴─────────┘
+   ┌─┬─┐
+ │ Status │ Skipped │
+ │ Installed │ dev │
+   └─┴─┘
 
 1 finding: 1 error.
 "

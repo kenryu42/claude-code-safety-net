@@ -69,9 +69,10 @@ const BLANKED_ENV_NAMES = [
 const SCAFFOLDING = /^(bin|fake-script\.json|fake-log\.txt|home\/\.bun)(\/|$)/;
 
 function createSide(): CliSide {
-  // The padded label the differential recorded its snapshots under: a row that renders a path into
-  // a fixed-width column truncates it, so the root's length is part of what `status` prints.
-  const root = createTempRoot('cli-ported--');
+  // A short label: a row that renders a path into a fixed-width column truncates it, so the
+  // root's length is part of what `status` prints, and macOS spells the temp root eight
+  // characters longer once canonicalized (`/private/tmp/…`).
+  const root = createTempRoot('cli-');
   const home = join(root, 'home');
   const project = join(root, 'project');
   mkdirSync(home, { recursive: true });
