@@ -46,7 +46,7 @@ describe('process environment', () => {
       missing: { realpath: null, entryKind: 'missing' },
       // The empty name is the root itself.
       '': { realpath: canonical, entryKind: 'present' },
-    };
+    } as const;
     for (const [name, answer] of Object.entries(answers)) {
       const path = join(root, name);
       expect(processPathResolver.realpath(path), name).toBe(answer.realpath);

@@ -135,5 +135,3 @@ export function runCliDifferential(row: CliRow): CliOutcome {
 export function seedFiles(side: CliSide, spec: TreeSpec): void {
   writeTree(side.root, spec);
 }
-
-/** Record the run against its snapshot, and hand the outcome back to pin against. */

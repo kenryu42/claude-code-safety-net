@@ -17,8 +17,12 @@ const RENDER_OPTIONS = { seed: 5, frequency: 0.2, spread: 2 };
 const BEGIN_SYNC = '\x1b[?2026h';
 const END_SYNC = '\x1b[?2026l';
 
+// The escape is built rather than written into the pattern: a literal control character in a
+// regular expression is what `noControlCharactersInRegex` refuses.
+const ANSI_STYLE = new RegExp(`${'\x1b'}\\[[\\d;]*m`, 'g');
+
 /** What a frame says once its colours are taken off: the text it painted. */
-const plain = (frame: string) => frame.replace(/\x1b\[[\d;]*m/g, '');
+const plain = (frame: string) => frame.replace(ANSI_STYLE, '');
 
 function captureAnimation(isTTY: boolean, signal?: AbortSignal) {
   const output = createFakeOutput({ isTTY });

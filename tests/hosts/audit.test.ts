@@ -144,7 +144,7 @@ describe('an evaluation projected as an audit descriptor', () => {
             // An allow is recorded only where allow auditing is on, and never carries a failure:
             // the call went through, so there is nothing that failed closed to report.
             if (descriptor?.decision === 'allow') {
-              expect(projected).toEqual(auditAllowed ? descriptor : undefined);
+              expect(projected).toEqual((auditAllowed ? descriptor : undefined) as never);
               return;
             }
             // A denial is recorded whatever the allow setting says. `includeCommand` decides the
@@ -154,7 +154,7 @@ describe('an evaluation projected as an audit descriptor', () => {
               ...descriptor,
               failureStage: failure?.stage,
               errorCode: failure?.errorCode,
-            });
+            } as never);
           });
         }
       }

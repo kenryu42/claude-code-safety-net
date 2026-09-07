@@ -255,7 +255,8 @@ const CASES: readonly Case[] = [
     file: logPath('-work--redacted-', 'session-tokens'),
     entry: {
       toolName: 'Bash-<redacted>',
-      command: "GITHUB_TOKEN=<redacted> curl -H 'Authorization: <redacted>' https://api.example.test",
+      command:
+        "GITHUB_TOKEN=<redacted> curl -H 'Authorization: <redacted>' https://api.example.test",
       segment: 'curl -u <redacted>:<redacted> https://ci.example.test',
       cwd: '/work/<redacted>',
     },

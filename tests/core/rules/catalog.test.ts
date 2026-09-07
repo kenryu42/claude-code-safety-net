@@ -106,9 +106,10 @@ describe('rule catalogs', () => {
       expect(rule.category, rule.id).not.toBe('');
       expect(rule.label, rule.id).not.toBe('');
       // A coding-CLI rule names the paths it guards; every other rule describes what it blocks.
-      expect('paths' in rule ? rule.paths.length > 0 : rule.description.endsWith('.'), rule.id).toBe(
-        true,
-      );
+      expect(
+        'paths' in rule ? rule.paths.length > 0 : rule.description.endsWith('.'),
+        rule.id,
+      ).toBe(true);
     }
   });
 

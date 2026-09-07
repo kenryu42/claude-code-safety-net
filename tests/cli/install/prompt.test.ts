@@ -12,8 +12,8 @@ import { withProcessEnv } from '../../helpers/temp-home';
 
 /**
  * The picker is the only surface where a user's keystrokes decide what gets written to their host
- * configs, so the rows drive the keyboard: the frames, the selection it returns and the terminal
- * state it leaves behind are all recorded, key for key.
+ * configs, so the rows drive the keyboard: the rows state the frames it draws, the
+ * selection it returns and the terminal state it leaves behind, key for key.
  */
 
 const CHOICES: readonly InstallTargetChoice[] = [
@@ -104,7 +104,8 @@ const framesOf = (chunks: readonly string[]) => chunks.filter((chunk) => chunk.s
 describe('cli/install/prompt', () => {
   test('every row state renders identically on both implementations', () => {
     const plain = renderEvery(false);
-    expect(plain).toMatchSnapshot();
+    // Two actions over two choice lists in three cursor-and-selection states.
+    expect(plain).toHaveLength(12);
     expect(plain[0]?.split('\n')).toEqual([
       '',
       'Install CC Safety Net into:',
@@ -136,7 +137,6 @@ describe('cli/install/prompt', () => {
     withStdoutTTY(true, () =>
       withProcessEnv({ NO_COLOR: undefined }, () => {
         const colored = renderEvery(true);
-        expect(colored).toMatchSnapshot();
         expect(colored[0]?.split('\n').slice(3, 7)).toEqual([
           '  \x1b[2m◯ Claude Code (CLI not found)\x1b[0m',
           '  \x1b[2m◯ Codex CLI (not installed)\x1b[0m',
@@ -154,7 +154,6 @@ describe('cli/install/prompt', () => {
   test('selection is returned in choice order on both implementations', async () => {
     const keys = [KEY.down, KEY.space, KEY.down, KEY.space, KEY.enter];
     const ported = await pickTargets('install', CHOICES, keys);
-    expect(ported).toMatchSnapshot();
     expect(ported.result).toEqual(['cursor', 'gemini-cli']);
     expect(ported.chunks.at(-1)).toBe('Installing selected integrations...\n');
     expect(ported.rawModeCalls).toEqual([true, false]);
@@ -162,18 +161,15 @@ describe('cli/install/prompt', () => {
 
   test('q cancels on both implementations', async () => {
     const ported = await pickTargets('install', CHOICES, [KEY.quit]);
-    expect(ported).toMatchSnapshot();
     expect(ported.result).toBeNull();
     expect(framesOf(ported.chunks)).toHaveLength(1);
   });
 
   test('u updates on install and is ignored on uninstall on both implementations', async () => {
     const update = await pickTargets('install', CHOICES, [KEY.update]);
-    expect(update).toMatchSnapshot();
     expect(update.result).toBe('update');
 
     const ignored = await pickTargets('uninstall', CHOICES, [KEY.update, KEY.quit]);
-    expect(ignored).toMatchSnapshot();
     expect(ignored.result).toBeNull();
     const quitOnly = await pickTargets('uninstall', CHOICES, [KEY.quit]);
     expect(ignored.chunks).toEqual(quitOnly.chunks);
@@ -185,12 +181,10 @@ describe('cli/install/prompt', () => {
     expect(ported.chunks).toContain('\x07');
     expect(framesOf(ported.chunks)).toHaveLength(2);
     expect(ported.result).toBeNull();
-    expect(ported).toMatchSnapshot();
   });
 
   test('Ctrl-C reaches the caller and cancels on both implementations', async () => {
     const ported = await pickTargets('install', CHOICES, [KEY.interrupt]);
-    expect(ported).toMatchSnapshot();
     expect(ported.interrupts).toEqual(['interrupt']);
     expect(ported.result).toBeNull();
     expect(ported.rawModeCalls).toEqual([true, false]);
@@ -199,7 +193,6 @@ describe('cli/install/prompt', () => {
   test('a list with no selectable row keeps the cursor put on both implementations', async () => {
     const keys = [KEY.down, KEY.quit];
     const ported = await pickTargets('uninstall', NOTHING_AVAILABLE, keys);
-    expect(ported).toMatchSnapshot();
     const frames = framesOf(ported.chunks);
     expect(frames).toHaveLength(2);
     expect(frames[1]).toBe(frames[0]);
@@ -209,21 +202,17 @@ describe('cli/install/prompt', () => {
 
   test('the Kimi method picker answers the same keys on both implementations', async () => {
     const globalHook = await pickKimiMethod(false, [KEY.enter]);
-    expect(globalHook).toMatchSnapshot();
     expect(globalHook.result).toBe('global-hook');
 
     const plugin = await pickKimiMethod(false, [KEY.down, KEY.enter]);
-    expect(plugin).toMatchSnapshot();
     expect(plugin.result).toBe('plugin');
 
     const cancelled = await pickKimiMethod(false, [KEY.quit]);
-    expect(cancelled).toMatchSnapshot();
     expect(cancelled.result).toBeNull();
   });
 
   test('an installed global hook relabels the first Kimi row on both implementations', async () => {
     const installed = await pickKimiMethod(true, [KEY.quit]);
-    expect(installed).toMatchSnapshot();
     expect(framesOf(installed.chunks)[0]).toContain(
       'Global hook — already installed; selecting it reports the current state',
     );

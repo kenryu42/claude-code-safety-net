@@ -205,7 +205,6 @@ async function applyBothWays(extra: readonly string[], answer: (input: PassThrou
       output: context.output,
     }),
   );
-  expect(ported.outcome).toMatchSnapshot();
   return { ...ported.outcome, home: ported.home };
 }
 

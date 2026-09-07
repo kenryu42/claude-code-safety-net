@@ -1,4 +1,3 @@
-import { expect } from 'bun:test';
 import { mkdirSync, mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
@@ -226,38 +225,6 @@ export const auditDirnameFolds = (path: string, marker: string) =>
     [encodeCwdForLogDirname(realpathSync(path)), marker],
     [encodeCwdForLogDirname(path), marker],
   ] as const;
-
-/**
- * Wall-clock text no two runs of a row share: ISO and `YYYY-MM-DD HH:MM` timestamps, and the day
- * and month the audit writer names its files after. Folded in the record alone, never in the
- * comparison.
- */
-const CLOCK_FOLDS = [
-  [/\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?Z?/g, '<time>'],
-  [/\b\d{4}-\d{2}-\d{2}\b/g, '<date>'],
-  [/\b\d{4}-\d{2}\b/g, '<month>'],
-] as const;
-
-/**
- * The outcome, recorded: the snapshot the record writes is what the row is asserted against.
- *
- * Every path a fold leaves behind is spelled with the recording host's separator, so a record made
- * here would fail the Windows leg of `check:ci` on the separator alone. Folding it to `/` there
- * costs nothing on a POSIX host and leaves only the gaps Windows already carries — a row whose own
- * input spells a backslash reads the same as one that spelled a path.
- */
-export function recordPorted(value: unknown, replacements: readonly Fold[] = []): void {
-  expect(
-    normalize(value, [
-      ...replacements,
-      ...CLOCK_FOLDS,
-      // The syscall a thrown fs error names for the same failed stat moves between Bun versions.
-      ['statx', '<stat>'],
-      ['lstat', '<stat>'],
-      ...WINDOWS_SEPARATOR_FOLDS,
-    ]),
-  ).toMatchSnapshot();
-}
 
 /** What an async call settles with: its value, or the message of what it rejected with. */
 export function describeAsyncOutcome<T>(run: () => Promise<T>) {

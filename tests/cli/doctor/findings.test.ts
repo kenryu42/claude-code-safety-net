@@ -239,9 +239,8 @@ describe('deriveDoctorFindings', () => {
     test(row.name, () => {
       const ported = derivePorted(row.facts);
 
-      expect(ported.map((finding) => finding.checkId)).toEqual(row.ids);
-      expect(ported.map((finding) => finding.severity)).toEqual(
-        row.ids.map((id) => SEVERITIES[id]),
+      expect(ported.map((finding) => `${finding.checkId} ${finding.severity}`)).toEqual(
+        row.ids.map((id) => `${id} ${SEVERITIES[id]}`),
       );
       // Every finding is read by a person: it says what is wrong and what to do about it.
       for (const finding of ported) {

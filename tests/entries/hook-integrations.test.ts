@@ -132,7 +132,10 @@ const HOOK_TABLE = [
     legacyFlags: [],
     legacyTopLevelFlags: [],
   },
-];
+] as const;
+
+/** The id as data: a row names one the table may not have, so the narrow union is not the type. */
+const idOf = (integration: { id: string } | undefined): string | undefined => integration?.id;
 
 /** A `run` is a closure; everything else on an integration is data the catalog owns. */
 const withoutRun = (integrations: readonly HookIntegration[]) =>
@@ -140,21 +143,21 @@ const withoutRun = (integrations: readonly HookIntegration[]) =>
 
 describe('the hook table', () => {
   test('resolves one integration per hook argument list', () => {
-    expect(HOOK_ARGS.map(([args]) => portedFindByFlag(args)?.id)).toEqual(
+    expect(HOOK_ARGS.map(([args]) => idOf(portedFindByFlag(args)))).toEqual(
       HOOK_ARGS.map(([, id]) => id),
     );
   });
 
   test('resolves the legacy top-level flags it still answers for', () => {
-    expect(LEGACY_FLAGS.map(([flag]) => portedFindLegacy(flag)?.id)).toEqual(
+    expect(LEGACY_FLAGS.map(([flag]) => idOf(portedFindLegacy(flag)))).toEqual(
       LEGACY_FLAGS.map(([, id]) => id),
     );
   });
 
   test('carries the flags and the help text the bin lists, in order', () => {
-    expect(withoutRun(portedIntegrations)).toEqual(HOOK_TABLE);
+    expect(withoutRun(portedIntegrations)).toEqual(HOOK_TABLE as never);
     // The table the CLI reads for `--help` is the same table the bin dispatches through.
-    expect(portedRuntimeMetadata).toEqual(HOOK_TABLE);
+    expect(portedRuntimeMetadata).toEqual(HOOK_TABLE as never);
   });
 });
 

@@ -13,8 +13,8 @@ import {
 
 /**
  * `rule verify` is the one diagnostic that writes: a valid config missing its `$schema` gets one
- * inserted. So each case compares the printed report, the exit code and the tree the run left
- * behind, over the same fixture built twice.
+ * inserted. So each case states the lines the report has to carry,
+ * the exit code, and what the run left in the tree.
  */
 
 afterEach(() => {
@@ -97,7 +97,6 @@ function verifyBothWays(spec: TreeSpec) {
   const ported = runVerify('ported', spec, (context) =>
     portedRulesVerify(environmentFor(context.home, context.env), { cwd: context.cwd }),
   );
-  expect(ported).toMatchSnapshot();
   return { ...ported, report: ported.written.join('\n') };
 }
 

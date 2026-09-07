@@ -162,7 +162,7 @@ function walkContext(module: typeof PORTED) {
 }
 
 /** Every step the events carry, in the order they were recorded. */
-const STEP_TYPES = [
+const STEP_TYPES: TraceStep['type'][] = [
   'parse',
   'env-strip',
   'leading-tokens-stripped',
@@ -189,7 +189,11 @@ const STEP_TYPES = [
 
 describe('the command trace recorder', () => {
   test('keeps every well-formed event and counts the two it cannot read', () => {
-    const recorded = recordAll(createPortedRecorder, undefined, TERMINALS[0] as CommandTraceTerminal);
+    const recorded = recordAll(
+      createPortedRecorder,
+      undefined,
+      TERMINALS[0] as CommandTraceTerminal,
+    );
 
     expect(recorded.trace.events.map((event) => event.step.type)).toEqual(STEP_TYPES);
     // The event under an unknown scope and the missing one are dropped, not half-recorded.
@@ -228,13 +232,13 @@ describe('the command trace recorder', () => {
       kind: 'step',
       scope: 'global',
       step: { type: 'parse', input: 'AWS_KEY=<r' },
-    });
+    } as never);
     // One property retained is the discriminant alone.
     expect(perProperty.events[0]).toEqual({
       kind: 'step',
       scope: 'global',
       step: { type: 'parse' },
-    });
+    } as never);
   });
 
   test('cuts a step off at the depth bound and never follows a cycle', () => {
@@ -299,9 +303,9 @@ describe('the command trace recorder', () => {
     expect(unreadable.droppedEvents).toBe(3);
     // An oversized reason and segment are cut to the text bound, an empty rule id is left off,
     // and a field the terminal has no place for does not survive.
-    expect(terminalOf(TERMINALS[4] as CommandTraceTerminal, { maxTextLength: 24 }).terminal).toEqual(
-      { result: 'blocked', reason: 'r'.repeat(24), segment: 's'.repeat(24) },
-    );
+    expect(
+      terminalOf(TERMINALS[4] as CommandTraceTerminal, { maxTextLength: 24 }).terminal,
+    ).toEqual({ result: 'blocked', reason: 'r'.repeat(24), segment: 's'.repeat(24) });
   });
 
   test('freezes the trace, its events and its terminal', () => {
