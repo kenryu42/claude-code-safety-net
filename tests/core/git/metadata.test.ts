@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import {
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   realpathSync,
   renameSync,
   rmSync,
@@ -73,10 +74,9 @@ describe('protected git metadata', () => {
    * The resolver answers with the paths it compares: canonical, and on Windows lower-cased and
    * spelled with `/`, so every expected path is spelled through `realpath` and folded the same way.
    */
-  const compared = (...parts: string[]) => {
-    const path = join(realpathSync(root), ...parts);
-    return process.platform === 'win32' ? path.replaceAll('\\', '/').toLowerCase() : path;
-  };
+  const fold = (path: string) =>
+    process.platform === 'win32' ? path.replaceAll('\\', '/').toLowerCase() : path;
+  const compared = (...parts: string[]) => fold(join(realpathSync(root), ...parts));
 
   /** The repository at `main`, whichever directory inside it the call was made from. */
   const mainRepository = () => ({
@@ -86,17 +86,28 @@ describe('protected git metadata', () => {
     markerFiles: [],
   });
 
-  /** A linked worktree protects its own git directory and the common one behind it. */
-  const linkedWorktree = () => ({
-    directories: [compared('main', '.git', 'worktrees', 'linked'), compared('main', '.git')],
-    entries: [compared('linked', '.git')],
-    hooksDirectories: [
-      compared('main', '.git', 'worktrees', 'linked', 'hooks'),
-      compared('main', '.git', 'hooks'),
-    ],
-    // The `.git` of a linked worktree is a file naming those directories, so it is protected too.
-    markerFiles: [compared('linked', '.git')],
-  });
+  /**
+   * A linked worktree protects its own git directory and the common one behind it. Both are read
+   * out of the `.git` file git wrote, because that spelling is the one the resolver reports: on
+   * Windows git records the temp root in its long form where `realpath` keeps the 8.3 short one.
+   */
+  const linkedWorktree = () => {
+    const gitDir = fold(
+      realpathSync(
+        readFileSync(join(root, 'linked', '.git'), 'utf8')
+          .replace('gitdir:', '')
+          .trim(),
+      ),
+    );
+    const commonDir = gitDir.slice(0, gitDir.indexOf('/worktrees/'));
+    return {
+      directories: [gitDir, commonDir],
+      entries: [compared('linked', '.git')],
+      hooksDirectories: [`${gitDir}/hooks`, `${commonDir}/hooks`],
+      // The `.git` of a linked worktree is a file naming those directories, so it is protected too.
+      markerFiles: [compared('linked', '.git')],
+    };
+  };
 
   const ROWS = [
     {

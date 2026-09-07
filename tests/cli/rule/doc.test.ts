@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from 'bun:test';
 import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { RULE_DOC } from '@/cli/rule/doc';
 import { createTestEnvironment } from '@/core/environment';
 import { assertValidRulebook } from '@/core/policy/rulebook';
@@ -69,7 +69,7 @@ test('the paths it tells an agent to write are the paths the manager resolves', 
   expect(RULE_DOC).toContain('`.cc-safety-net/rules/rule.json`');
   expect(RULE_DOC).toContain('`.cc-safety-net/rules/<rulebook-name>/rulebook.json`');
   expect(scope(true).configPath).toBe(join('/home/agent', '.cc-safety-net/rules/rule.json'));
-  expect(scope().configPath).toBe(join('/work/app', '.cc-safety-net/rules/rule.json'));
+  expect(scope().configPath).toBe(resolve('/work/app', '.cc-safety-net/rules/rule.json'));
   // And the variable that moves the user root, which the manager reads off the environment.
   expect(RULE_DOC).toContain('`CC_SAFETY_NET_HOME`');
   expect(
@@ -80,5 +80,5 @@ test('the paths it tells an agent to write are the paths the manager resolves', 
       }),
       { cwd: '/work/app', global: true },
     ).configPath,
-  ).toBe(join('/elsewhere', 'rules/rule.json'));
+  ).toBe(resolve('/elsewhere', 'rules/rule.json'));
 });

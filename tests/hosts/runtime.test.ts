@@ -176,8 +176,9 @@ for (const row of ROWS) {
     // The line lands in the log named after the workspace the call ran in, under the session id.
     const day = new Date().toISOString().slice(0, 10);
     for (const entry of ported.entries) {
+      // Spelled with `join`, since the writer spells the path with the host's own separator.
       expect(normalize(entry.file, FOLDS)).toBe(
-        `<root>-workspace/${day.slice(0, 7)}/${day}-hosts-runtime-1.jsonl`,
+        join('<root>-workspace', day.slice(0, 7), `${day}-hosts-runtime-1.jsonl`),
       );
     }
   });

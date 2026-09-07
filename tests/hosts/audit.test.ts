@@ -290,8 +290,9 @@ describe('a descriptor written to the audit log', () => {
       const day = new Date().toISOString().slice(0, 10);
 
       expect(written.map((line) => line.entry)).toEqual(row.entries);
+      // Spelled with `join`, since the writer spells the path with the host's own separator.
       expect(written.map((line) => normalize(line.file, FOLDS))).toEqual(
-        row.entries.map(() => `${row.directory}/${day.slice(0, 7)}/${day}-${SESSION}.jsonl`),
+        row.entries.map(() => join(`${row.directory}`, day.slice(0, 7), `${day}-${SESSION}.jsonl`)),
       );
     });
   }
