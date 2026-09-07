@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from 'bun:test';
+import { afterEach, describe, expect, spyOn, test } from 'bun:test';
 import { lstatSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createTestEnvironment } from '@/core/environment';
@@ -37,6 +37,28 @@ const DOCUMENTS: readonly unknown[] = (() => {
 
 const environmentWith = (values: Record<string, string>) =>
   createTestEnvironment({ home: HOME, env: new Map(Object.entries(values)) });
+
+/** The report the resolver writes for the row that names a level it does not recognize. */
+const INVALID_LEVEL_REPORT = 'CC Safety Net: ignored invalid CC_SAFETY_NET_LEVEL=';
+
+/**
+ * The rows below resolve the environment once per document, so the row naming an invalid level
+ * reports it hundreds of times and buries the run's own output. The report is pinned verbatim in
+ * `tests/core/policy/env.test.ts`; here it is captured, and anything else reaching the channel is
+ * a diagnostic these rows are not supposed to produce.
+ */
+function withCapturedReports(run: () => void): void {
+  const captured: string[] = [];
+  const spy = spyOn(console, 'error').mockImplementation((...parts: unknown[]) => {
+    captured.push(parts.map(String).join(' '));
+  });
+  try {
+    run();
+  } finally {
+    spy.mockRestore();
+  }
+  expect(captured.filter((line) => !line.startsWith(INVALID_LEVEL_REPORT))).toEqual([]);
+}
 
 const CONFIGURABLE_RULE_COUNT = DESTRUCTIVE_COMMAND_RULE_METADATA.filter(
   (rule) => rule.catastrophic !== true,
@@ -121,27 +143,34 @@ describe('properties every proposed document must satisfy', () => {
     'a preview under %s counts every configurable rule exactly once',
     (_label, values) => {
       const env = environmentWith(values).env;
-      for (const document of DOCUMENTS) {
-        const preview = ported.createPolicyPreview(ported.normalizeGuiPolicy(document, HOME), env);
-        const states = Object.values(preview.rules);
-        const configurable = states.filter((state) => state.source !== 'catastrophic');
-        expect(Object.keys(preview.rules)).toHaveLength(DESTRUCTIVE_COMMAND_RULE_METADATA.length);
-        expect(configurable).toHaveLength(CONFIGURABLE_RULE_COUNT);
-        // The GUI headline reads "N active / M disabled": each tally is the rules that are
-        // actually in that state, so a swapped pair is a wrong headline, not a wrong sum.
-        expect(preview.counts.enabled).toBe(configurable.filter((state) => state.enabled).length);
-        expect(preview.counts.disabled).toBe(configurable.filter((state) => !state.enabled).length);
-        expect(preview.counts.effectiveCustomizations).toBe(
-          states.filter((state) => state.changesInherited).length,
-        );
-        expect(preview.effectiveLevel).toBe(
-          deriveEffectiveSafetyLevel({
-            failClosed: preview.capabilities.fail_closed.enabled,
-            paranoidRm: preview.capabilities.paranoid_rm.enabled,
-            paranoidInterpreters: preview.capabilities.paranoid_interpreters.enabled,
-          }),
-        );
-      }
+      withCapturedReports(() => {
+        for (const document of DOCUMENTS) {
+          const preview = ported.createPolicyPreview(
+            ported.normalizeGuiPolicy(document, HOME),
+            env,
+          );
+          const states = Object.values(preview.rules);
+          const configurable = states.filter((state) => state.source !== 'catastrophic');
+          expect(Object.keys(preview.rules)).toHaveLength(DESTRUCTIVE_COMMAND_RULE_METADATA.length);
+          expect(configurable).toHaveLength(CONFIGURABLE_RULE_COUNT);
+          // The GUI headline reads "N active / M disabled": each tally is the rules that are
+          // actually in that state, so a swapped pair is a wrong headline, not a wrong sum.
+          expect(preview.counts.enabled).toBe(configurable.filter((state) => state.enabled).length);
+          expect(preview.counts.disabled).toBe(
+            configurable.filter((state) => !state.enabled).length,
+          );
+          expect(preview.counts.effectiveCustomizations).toBe(
+            states.filter((state) => state.changesInherited).length,
+          );
+          expect(preview.effectiveLevel).toBe(
+            deriveEffectiveSafetyLevel({
+              failClosed: preview.capabilities.fail_closed.enabled,
+              paranoidRm: preview.capabilities.paranoid_rm.enabled,
+              paranoidInterpreters: preview.capabilities.paranoid_interpreters.enabled,
+            }),
+          );
+        }
+      });
     },
     60_000,
   );
@@ -149,10 +178,10 @@ describe('properties every proposed document must satisfy', () => {
   test.each(
     ENV_MAPS.map((row) => [row.label, row.values, row.effectiveLevel] as const),
   )('the default policy reports the effective level under %s', (_label, values, effectiveLevel) => {
-    const preview = ported.createPolicyPreview(
-      ported.DEFAULT_GUI_POLICY,
-      environmentWith(values).env,
-    );
+    let preview!: ReturnType<typeof ported.createPolicyPreview>;
+    withCapturedReports(() => {
+      preview = ported.createPolicyPreview(ported.DEFAULT_GUI_POLICY, environmentWith(values).env);
+    });
     expect(preview.effectiveLevel).toBe(effectiveLevel);
     // Catastrophic rules are always enforced, so they are surfaced separately and never counted.
     const catastrophic = Object.values(preview.rules).filter(
