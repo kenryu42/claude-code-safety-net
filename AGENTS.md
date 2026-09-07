@@ -6,11 +6,14 @@
 
 ## Testing
 
-- A behavior change lands as a failing intent row first — a contract corpus row or an explicit
-  expectation — then the fix. Re-recording a snapshot or a golden is never the first step.
-- A change that re-records must name in its commit message which entries changed and why.
-- Goldens are kept only for output surfaces whose bytes are the contract: denial text, host output
-  documents, `doctor --json`, `explain`, CLI help.
+- A behavior change lands as a failing expectation first — a contract corpus row or a stated
+  assertion — then the fix. Re-recording a golden is never the first step.
+- State what a test expects; do not record it. `toMatchSnapshot` is not used in this repository:
+  a test that cannot say what it expects is not yet a test.
+- Goldens are kept only for the output surfaces whose bytes are the contract, and there are three:
+  `explain` (`tests/fixtures/cli/explain`), `doctor --json` (`tests/fixtures/cli/doctor`) and the
+  harvested verdict table. A change that re-records one must name in its commit message which
+  entries changed and why.
 - `tests/fixtures/gate/harvested-verdicts.jsonl` is the readable verdict table. Re-record it only
   with `CC_SAFETY_NET_UPDATE_GOLDENS=1`, alongside a contract row that explains the flip.
 
