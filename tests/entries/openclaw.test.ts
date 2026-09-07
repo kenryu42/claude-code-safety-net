@@ -11,10 +11,10 @@ test('the OpenClaw entry declares the same extension, with a register hook to ca
   expect({
     ...portedOpenClawEntry,
     register: typeof portedOpenClawEntry.register,
-  }).toMatchSnapshot();
-});
-
-test('it registers under the id the shipped manifest names', () => {
-  expect(portedOpenClawEntry.id).toBe('cc-safety-net');
-  expect(portedOpenClawEntry.name).toBe('CC Safety Net');
+  }).toEqual({
+    id: 'cc-safety-net',
+    name: 'CC Safety Net',
+    description: 'Block destructive commands and secret-file access before OpenClaw runs a tool.',
+    register: 'function',
+  });
 });

@@ -102,9 +102,11 @@ describe('cli/startup/banner', () => {
 
   test('a rejection propagates and still restores the cursor on both implementations', async () => {
     const ported = await driveSpinner({ frames: 2, fail: true });
-    expect(ported).toMatchSnapshot();
-    expect(ported.outcome).toEqual({ kind: 'threw', message: 'startup failed' });
-    expect(ported.chunks.at(-1)).toBe(`${CLEAR_LINE}${SHOW_CURSOR}`);
+    // The two frames drawn before the rejection stay drawn, and the clear-and-restore still runs.
+    expect(ported).toEqual({
+      chunks: [HIDE_CURSOR, spinnerFrame(0), spinnerFrame(1), `${CLEAR_LINE}${SHOW_CURSOR}`],
+      outcome: { kind: 'threw', message: 'startup failed' },
+    });
   });
 
   test('a non-TTY sink passes the value through on both implementations', async () => {

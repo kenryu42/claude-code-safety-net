@@ -40,7 +40,7 @@ type Row = {
   name: string;
   transcript: (root: string) => unknown;
   env?: Record<string, string | undefined>;
-  expected?: string;
+  expected: string;
 };
 
 const ROWS: readonly Row[] = [
@@ -77,8 +77,10 @@ const ROWS: readonly Row[] = [
     expected: 'codex',
   },
   {
+    // The root prefix decides who the payload came from; the file behind the path is never read.
     name: 'a transcript path that does not exist under a root',
     transcript: (root) => join(root, '.codex', 'sessions', 'gone.jsonl'),
+    expected: 'codex',
   },
   {
     name: 'a relative transcript path',
@@ -118,9 +120,9 @@ for (const row of ROWS) {
         CLAUDE_CODE_ENTRYPOINT: row.env?.CLAUDE_CODE_ENTRYPOINT,
       },
       () => {
-        const ported = portedDetect(row.transcript(home), createProcessEnvironment());
-        expect(ported).toMatchSnapshot();
-        if (row.expected) expect<string>(ported).toBe(row.expected);
+        expect<string>(portedDetect(row.transcript(home), createProcessEnvironment())).toBe(
+          row.expected,
+        );
       },
     );
   });

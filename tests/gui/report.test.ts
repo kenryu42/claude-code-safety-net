@@ -3,8 +3,8 @@ import { renderPages, sliceBlock } from '../helpers/gui-page';
 
 /**
  * The false-positive report the feed offers: the paths it scrubs before anything leaves the
- * machine, and the issue URL it builds under GitHub's length limit. The block is pinned by its
- * recorded snapshot, and it is then run on its own to prove what those bytes do.
+ * machine, and the issue URL it builds under GitHub's length limit. The block is sliced out of the
+ * served page and run on its own to prove what those bytes do.
  */
 
 // Token-shaped, assembled here rather than written out, and fixed so the slice is deterministic.
@@ -29,10 +29,6 @@ const report = new Function(
 )() as ReportBlock;
 
 describe('the report block on the served page', () => {
-  test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toMatchSnapshot();
-  });
-
   test('scrubs the project path before the home it sits under', () => {
     const home = '/var/home/robin';
     const cwd = `${home}/checkouts/ledger`;

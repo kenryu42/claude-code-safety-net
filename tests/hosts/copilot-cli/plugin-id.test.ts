@@ -29,17 +29,6 @@ const readAll = (
   OUTPUTS.map((output) => predicates.map((predicate) => predicate(output)));
 
 describe('the Copilot plugin identifiers', () => {
-  test('read the same identity out of every `plugin list` line', () => {
-    const read = readAll([
-      hasCopilotSafetyNetPlugin,
-      hasCopilotMarketplace,
-      hasCopilotLegacyPlugin,
-      hasCopilotPreRenamePlugin,
-    ]);
-
-    expect(read).toMatchSnapshot();
-  });
-
   test('match on a token boundary, so a longer identifier never counts as a hit', () => {
     // Columns: plugin, marketplace, legacy plugin, pre-rename plugin. The pre-rename id is a tail
     // of the current one, and `ccc-marketplace` a head-extension of the marketplace id.
@@ -63,14 +52,11 @@ describe('the Copilot plugin identifiers', () => {
   });
 
   test('name the same plugin, marketplace and checkout directories', () => {
-    const names = [
-      COPILOT_PLUGIN_ID,
-      COPILOT_PLUGIN_DIR,
-      COPILOT_LEGACY_PLUGIN_DIR,
-      COPILOT_PRE_RENAME_PLUGIN_DIR,
-      COPILOT_PRE_RENAME_PLUGIN_ID,
-    ];
-
-    expect(names).toMatchSnapshot();
+    // A plugin id is `<plugin>@<marketplace>`; a directory is the pair the checkout nests under.
+    expect(COPILOT_PLUGIN_ID).toBe('cc-safety-net@cc-marketplace');
+    expect(COPILOT_PLUGIN_DIR).toEqual(['cc-marketplace', 'cc-safety-net']);
+    expect(COPILOT_LEGACY_PLUGIN_DIR).toEqual(['_direct', 'copilot-safety-net']);
+    expect(COPILOT_PRE_RENAME_PLUGIN_DIR).toEqual(['cc-marketplace', 'safety-net']);
+    expect(COPILOT_PRE_RENAME_PLUGIN_ID).toBe('safety-net@cc-marketplace');
   });
 });

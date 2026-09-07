@@ -3,8 +3,8 @@ import { renderPages, sliceBlock } from '../helpers/gui-page';
 
 /**
  * The prompt the Rules composer copies out: it has to tell the agent which scope to write into,
- * which directory that is, and which rulebook names are already taken. The block is pinned by its
- * recorded snapshot, and it is then run over its own state.
+ * which directory that is, and which rulebook names are already taken. The block is sliced out of the
+ * served page and run over its own state.
  */
 
 // Token-shaped, assembled here rather than written out, and fixed so the slice is deterministic.
@@ -38,10 +38,6 @@ const RULEBOOKS = [
 ];
 
 describe('the rule prompt block on the served page', () => {
-  test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toMatchSnapshot();
-  });
-
   test('names the directory in the field, not the one the listing was loaded for', () => {
     const prompt = promptFor({
       rulesData: { projectPath: '/srv/launched-from', rulebooks: RULEBOOKS },

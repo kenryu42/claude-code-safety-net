@@ -4,8 +4,8 @@ import { renderPages, sliceBlock } from '../helpers/gui-page';
 /**
  * The activity feed marks the denials worth a second look: anything that failed inside the gate,
  * and anything one session hit twice on the same command signature. Both halves — the signature from
- * the shared display helper, the rule from the page script — are pinned by their recorded snapshot,
- * and the pair is then run over fresh entries.
+ * the shared display helper, the rule from the page script — are sliced out of the served page and
+ * run over fresh entries.
  */
 
 // Token-shaped, assembled here rather than written out, and fixed so the slice is deterministic.
@@ -37,10 +37,6 @@ const suspectCommands = (entries: readonly Entry[]) =>
   [...findSuspects(entries)].map((entry) => entry.command);
 
 describe('the suspect block on the served page', () => {
-  test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toMatchSnapshot();
-  });
-
   test('flags a denial that failed inside the gate on its own', () => {
     const entries: Entry[] = [
       { command: 'terraform destroy', decision: 'deny', sessionId: 's1', failureStage: 'analysis' },

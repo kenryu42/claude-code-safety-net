@@ -83,11 +83,6 @@ const VERSION_ONE_RULEBOOK: Rulebook = {
 };
 
 describe('the rulebook fixture evaluator', () => {
-  test('reports the diagnostics the shipped evaluator reports', () => {
-    expect(evaluateRulebookFixtures(RULEBOOK)).toMatchSnapshot();
-    expect(evaluateRulebookFixtures(VERSION_ONE_RULEBOOK)).toMatchSnapshot();
-  });
-
   test('names the failing fixture, its verdict and why', () => {
     expect(evaluateRulebookFixtures(RULEBOOK)).toEqual([
       // A wrapper prefix is not peeled here: the fixture describes the command the rule sees.

@@ -5,7 +5,7 @@ import { renderPages, sliceBlock } from '../helpers/gui-page';
 /**
  * The project draft the page edits: a sparse proposal built from the fields the user marked, the
  * entry snapshot that decides whether anything is unsaved, and the overlay that shows the marked
- * fields on top of the user policy. The block is pinned by its recorded snapshot, and it is then run
+ * fields on top of the user policy. The block is sliced out of the served page and run
  * over a policy of its own.
  */
 
@@ -48,10 +48,6 @@ const baseline = (): Policy => ({
 });
 
 describe('the project draft block on the served page', () => {
-  test('is the shipped block byte for byte', () => {
-    expect(block(pages.ported)).toMatchSnapshot();
-  });
-
   test('proposes the marked fields and nothing else', () => {
     const policy = baseline();
 

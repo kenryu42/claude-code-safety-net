@@ -1,9 +1,0 @@
-// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
-
-exports[`the Amp artifact markers name the same header, directory and entry the shipped build stamps 1`] = `
-{
-  "directory": "cc-safety-net",
-  "entry": "cc-safety-net/index.ts",
-  "header": "// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp",
-}
-`;

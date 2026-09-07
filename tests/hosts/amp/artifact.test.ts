@@ -14,16 +14,10 @@ import {
 
 describe('the Amp artifact markers', () => {
   test('name the same header, directory and entry the shipped build stamps', () => {
-    const markers = {
-      header: AMP_MANAGED_HEADER,
-      directory: AMP_PLUGIN_DIRECTORY,
-      entry: AMP_PLUGIN_ENTRY,
-    };
-
-    expect(markers).toMatchSnapshot();
     expect(AMP_MANAGED_HEADER).toBe(
       '// cc-safety-net managed Amp plugin. Do not edit. Reinstall with: npx -y cc-safety-net install --amp',
     );
+    expect(AMP_PLUGIN_DIRECTORY).toBe('cc-safety-net');
     expect(AMP_PLUGIN_ENTRY).toBe('cc-safety-net/index.ts');
   });
 
