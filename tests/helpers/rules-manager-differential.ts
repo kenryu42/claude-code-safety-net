@@ -10,7 +10,6 @@ import {
   type Fold,
   isolationEnv,
   normalize,
-  recordPorted,
   WINDOWS_SEPARATOR_FOLDS,
 } from './temp-home';
 
@@ -66,7 +65,6 @@ export async function runManagerDifferential<T>(
 ) {
   const side = seedSide(spec);
   const ported = await observe(side, () => run(side, environmentFor(side.home, side.values)));
-  recordPorted(ported);
   expect(ported.tree.filter((entry) => POLICY_TEMP_NAME_RE.test(entry.path))).toEqual([]);
   return { results: ported.results, tree: ported.tree, side };
 }
@@ -87,7 +85,6 @@ export function expectGateView(side: Side, scope: 'user' | 'project', result: Ma
     scope,
     side.root,
   );
-  recordPorted(ported);
   if (!result.ok) {
     for (const error of result.errors) expect(ported.warnings).toContain(error);
     return;

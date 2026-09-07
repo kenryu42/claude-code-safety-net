@@ -7,14 +7,14 @@ import {
   writeStarterRulebook,
 } from '@/rules-manager/config-file';
 import { snapshotTree, type TreeSpec, writeTree } from '../helpers/fixture-tree';
-import { createTempRoot, normalize, removeTempRoots } from '../helpers/temp-home';
+import { createTempRoot, removeTempRoots } from '../helpers/temp-home';
 
 /**
  * Every rule command starts by reading its scope's config and several end by writing one, so a
  * refusal that stops naming its reason silently turns a broken config into an empty one, and a
  * starter file that drifts by a byte changes what `rule init --example` ships. Each read row is
- * resolved over its own copy of the tree; each write row writes into its own root and pins the
- * tree, modes included.
+ * resolved over its own copy of the tree; each write row writes into its own root and states the
+ * tree it leaves, contents and modes included.
  */
 
 const OVER_LIMIT_SOURCES = Array.from({ length: 65 }, (_unused, index) => `book-${index}`);
@@ -27,30 +27,16 @@ const TREE: TreeSpec = {
   nothing: null,
 };
 
-const READS = [
-  'listed/rule.json',
-  'blank/rule.json',
-  'garbled/rule.json',
-  'over-limit/rule.json',
-  'nothing/rule.json',
-];
-
 afterEach(removeTempRoots);
 
 /** The read fixture under its own root, so nothing outside it is in reach. */
 function readBoth(file: string) {
   const portedRoot = createTempRoot('scope-config-read-ported-');
   writeTree(portedRoot, TREE);
-  const ported = readScopeRulesConfig(join(portedRoot, file));
-  expect(normalize(ported, [[portedRoot, '<root>']])).toMatchSnapshot();
-  return ported;
+  return readScopeRulesConfig(join(portedRoot, file));
 }
 
 describe('reading a scope config reports what the shipped reader reports', () => {
-  test.each(READS)('reads %s the same way', (file) => {
-    readBoth(file);
-  });
-
   test('a missing config reads as the empty default', () => {
     expect(readBoth('nothing/rule.json')).toEqual({
       ok: true,
@@ -82,22 +68,53 @@ describe('reading a scope config reports what the shipped reader reports', () =>
   });
 });
 
+/** The rulebook `rule init --example` ships, under the name and authorship of its scope. */
+const starterRulebook = (name: string, author: string) => ({
+  rulebook_version: 1,
+  name,
+  version: '1.0.0',
+  description: `${author === 'project' ? 'Project' : 'User'}-specific CC Safety Net rules.`,
+  author,
+  allowed_commands: ['docker'],
+  rules: [
+    {
+      name: 'block-docker-system-prune',
+      command: 'docker',
+      subcommand: 'system',
+      block_args: ['prune'],
+      reason: 'Use targeted cleanup instead.',
+    },
+  ],
+  tests: [
+    { command: 'docker system prune', expect: 'blocked', rule: 'block-docker-system-prune' },
+  ],
+});
+
 const WRITES = [
   {
     name: 'a default config with no sources',
     ported: (path: string) => writeDefaultRulesConfig(path),
+    content: { version: 1, rules: [], overrides: {}, transparent_wrappers: [] },
   },
   {
     name: 'a default config listing two sources',
     ported: (path: string) => writeDefaultRulesConfig(path, ['team-rules', 'local-a']),
+    content: {
+      version: 1,
+      rules: ['team-rules', 'local-a'],
+      overrides: {},
+      transparent_wrappers: [],
+    },
   },
   {
     name: 'the project starter rulebook',
     ported: (path: string) => writeStarterRulebook(path),
+    content: starterRulebook('project-rules', 'project'),
   },
   {
     name: 'the user starter rulebook',
     ported: (path: string) => writeStarterRulebook(path, 'user-rules'),
+    content: starterRulebook('user-rules', 'user'),
   },
 ];
 
@@ -107,7 +124,8 @@ describe('writing a scope file leaves what the shipped writer leaves', () => {
     const target = 'scope/rules/written.json';
     row.ported(join(portedRoot, target));
     const tree = snapshotTree(portedRoot);
-    expect(tree).toMatchSnapshot();
+    // The file is JSON a person can read and edit, so it is written indented and newline-ended.
+    expect(tree.at(-1)?.content).toBe(`${JSON.stringify(row.content, null, 2)}\n`);
     // The write is owner-only inside owner-only directories, and leaves no temp file behind.
     expect(tree.map((entry) => ({ path: entry.path, kind: entry.kind }))).toEqual([
       { path: 'scope', kind: 'directory' },
