@@ -1,8 +1,12 @@
 {
   "analyzer-analyze-command/budget-control-flow states": "ccbe63cbca4aa271035fb8b3c0d785a2f513c3561f1d05c0da5829ea458b582d",
+  "analyzer-analyze-command/budget-control-flow states@win32": "ccbe63cbca4aa271035fb8b3c0d785a2f513c3561f1d05c0da5829ea458b582d",
   "analyzer-analyze-command/budget-derived command work": "8370f0a1a011cd1762230b77a2fccb6141559f0aae92845a91c9cf1c05526c0f",
+  "analyzer-analyze-command/budget-derived command work@win32": "8370f0a1a011cd1762230b77a2fccb6141559f0aae92845a91c9cf1c05526c0f",
   "analyzer-analyze-command/budget-recursion depth": "64127d88df5858a46a5c062551b7e30f02a11caef1bfeb1d52d2a71eb9d917a2",
+  "analyzer-analyze-command/budget-recursion depth@win32": "531f71a847e4b77d00bdea523decbaeb7d0e997e57b6d5d896f8756196113cf7",
   "analyzer-analyze-command/budget-tracked heredoc files": "9231e0622c9287036a1f2d7fc90103f559096c9c89077b98e1a97faeec0dcbb5",
+  "analyzer-analyze-command/budget-tracked heredoc files@win32": "9231e0622c9287036a1f2d7fc90103f559096c9c89077b98e1a97faeec0dcbb5",
   "analyzer-analyze-command/corpus-paranoid_interpreters": "78c96b5c599963ba3291293415910f376d9224908343c818ff7bc1329ccd9be9",
   "analyzer-analyze-command/corpus-paranoid_interpreters@win32": "e2a4471d235531b1e67219aa4a0d896571d770295339ac780440473e8b7cfba6",
   "analyzer-analyze-command/corpus-paranoid_rm": "ae6a92a463b3391618636d2c4bdc7b13c603ce50d27f6061559a139fab28fea1",
