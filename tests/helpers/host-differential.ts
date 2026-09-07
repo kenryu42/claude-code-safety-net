@@ -1,6 +1,6 @@
 import { expect } from 'bun:test';
 import { mkdirSync } from 'node:fs';
-import { join, sep } from 'node:path';
+import { join, posix } from 'node:path';
 import type { Environment } from '@/core/environment';
 import type { HookDetection } from '@/hosts/detect/context';
 import type { InstallResult } from '@/hosts/install/types';
@@ -19,6 +19,7 @@ import {
   normalize,
   recordPorted,
   snapshotHome,
+  WINDOWS_SEPARATOR_FOLDS,
 } from './temp-home';
 
 /**
@@ -53,10 +54,7 @@ export async function differential<T>(options: {
 
   return {
     // The separator is folded with the home, so a `<home>/`-spelled expectation holds on Windows.
-    outcome: normalize(ported, [
-      [portedHome, '<home>'],
-      ...(sep === '/' ? [] : [[sep, '/'] as const]),
-    ]),
+    outcome: normalize(ported, [[portedHome, '<home>'], ...WINDOWS_SEPARATOR_FOLDS]),
     tree: snapshotHome(portedHome),
   };
 }
@@ -160,7 +158,7 @@ export function expectRow(
     left: string | undefined;
   },
 ): void {
-  const configPath = join('<home>', expected.file);
+  const configPath = posix.join('<home>', expected.file);
   expect({
     install: steps?.install.result,
     wrote: fileAt(steps?.install.tree, expected.file),

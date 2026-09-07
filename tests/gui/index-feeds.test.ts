@@ -1,6 +1,6 @@
 import { afterAll, afterEach, describe, expect, spyOn, test } from 'bun:test';
 import * as os from 'node:os';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { DEFAULT_GUI_POLICY } from '@/core/policy/store';
 import type { TreeSpec } from '../helpers/fixture-tree';
 import { type GuiHookOptions, type GuiRequest, runGuiRow } from '../helpers/gui-differential';
@@ -207,8 +207,8 @@ describe('the GUI activity feed over HTTP', () => {
     const week = feedOf(row.responses[0]?.body);
     const fortnight = feedOf(row.responses[1]?.body);
 
-    expect(week.logsDir).toBe(join('<root>', 'home/logs'));
-    expect(week.homeDir).toBe(join('<root>', 'home'));
+    expect(week.logsDir).toBe(posix.join('<root>', 'home/logs'));
+    expect(week.homeDir).toBe(posix.join('<root>', 'home'));
     expect(week.entries.map((entry) => entry.ts)).toStrictEqual(
       [...week.entries.map((entry) => entry.ts)].sort().reverse(),
     );
@@ -254,7 +254,7 @@ describe('the GUI rulebook listing', () => {
     const body = await readRules({});
 
     expect(body).toStrictEqual({
-      projectPath: join('<root>', 'project'),
+      projectPath: posix.join('<root>', 'project'),
       canPickDirectory: expect.any(Boolean),
       rulebooks: [],
       errors: [],

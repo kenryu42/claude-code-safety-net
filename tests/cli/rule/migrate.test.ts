@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { join } from 'node:path';
+import { posix } from 'node:path';
 import { runRulesMigrate as portedRulesMigrate } from '@/cli/rule/migrate';
 import { captureConsole } from '../../helpers/console-capture';
 import type { TreeSpec } from '../../helpers/fixture-tree';
@@ -88,7 +88,7 @@ describe('rule migrate over both scopes', () => {
     const agreed = await runMigrate({});
     expect(agreed.results.returned).toBe(0);
     expect(agreed.results.log).toEqual(
-      [join('<root>', PROJECT_LEGACY), join('<root>', USER_LEGACY)].map(
+      [posix.join('<root>', PROJECT_LEGACY), posix.join('<root>', USER_LEGACY)].map(
         (path) => `No legacy config found at ${path}`,
       ),
     );
@@ -102,7 +102,7 @@ describe('rule migrate over both scopes', () => {
     });
     expect(agreed.results.returned).toBe(0);
     expect(agreed.results.log).toContain(
-      `Migrated legacy config at ${join('<root>', PROJECT_LEGACY)}. Legacy file is no longer used.`,
+      `Migrated legacy config at ${posix.join('<root>', PROJECT_LEGACY)}. Legacy file is no longer used.`,
     );
     expect(content(agreed.tree, PROJECT_CONFIG)).toBe(rulesConfig(['project-rules']));
     expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json')).toBe(
@@ -121,7 +121,7 @@ describe('rule migrate over both scopes', () => {
     const agreed = await runMigrate({ [PROJECT_LEGACY]: legacyConfig([NO_FORCE_PUSH]) }, true);
     expect(agreed.results.returned).toBe(0);
     expect(agreed.results.log).toContain(
-      `Deleted legacy config at ${join('<root>', PROJECT_LEGACY)}`,
+      `Deleted legacy config at ${posix.join('<root>', PROJECT_LEGACY)}`,
     );
     expect(content(agreed.tree, PROJECT_LEGACY)).toBeUndefined();
     expect(content(agreed.tree, 'project/.cc-safety-net/rules/project-rules/rulebook.json')).toBe(
@@ -133,7 +133,7 @@ describe('rule migrate over both scopes', () => {
     const agreed = await runMigrate({ [USER_LEGACY]: legacyConfig([NO_CURL_PIPE]) });
     expect(agreed.results.returned).toBe(0);
     expect(agreed.results.log).toContain(
-      `Migrated legacy config at ${join('<root>', USER_LEGACY)}. Legacy file is no longer used.`,
+      `Migrated legacy config at ${posix.join('<root>', USER_LEGACY)}. Legacy file is no longer used.`,
     );
     expect(content(agreed.tree, USER_CONFIG)).toBe(rulesConfig(['user-rules']));
     expect(content(agreed.tree, 'home/.cc-safety-net/rules/user-rules/rulebook.json')).toBe(
@@ -163,7 +163,7 @@ describe('rule migrate over both scopes', () => {
     });
     expect(agreed.results.returned).toBe(1);
     expect(agreed.results.log).toEqual([
-      `No legacy config found at ${join('<root>', USER_LEGACY)}`,
+      `No legacy config found at ${posix.join('<root>', USER_LEGACY)}`,
     ]);
     expect(agreed.results.error.length).toBeGreaterThan(0);
     expect(agreed.tree.map((entry) => entry.path)).toEqual([

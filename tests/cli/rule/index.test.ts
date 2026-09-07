@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { join } from 'node:path';
+import { posix } from 'node:path';
 import { RULE_DOC } from '@/cli/rule/doc';
 import {
   type CliOutcome,
@@ -331,7 +331,7 @@ describe('add of a local source', () => {
     });
     expect(outcome.exitCode).toBe(0);
     expect(outcome.stdout.split('\n')[0]).toBe(
-      `Scope: user (${join('<root>', 'home', '.cc-safety-net', 'rules')})`,
+      `Scope: user (${posix.join('<root>', 'home', '.cc-safety-net', 'rules')})`,
     );
     expect(fileAt(outcome, `${U}/rule.json`)).toBe(rulesConfig(['team']));
   }, 60_000);

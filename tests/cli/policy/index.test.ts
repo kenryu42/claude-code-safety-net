@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, spyOn, test } from 'bun:test';
 import { lstatSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { PassThrough } from 'node:stream';
 import { runPolicyCommand as portedPolicyCommand } from '@/cli/policy/index';
 import { expectSameCli, runCliDifferential, seedFiles } from '../../helpers/cli-differential';
@@ -45,7 +45,7 @@ describe('policy check', () => {
     expect(outcome.exitCode).toBe(0);
     expect(outcome.stdout).toBe(
       [
-        `Scope: project (${join('<root>', PROJECT_POLICY)})`,
+        `Scope: project (${posix.join('<root>', PROJECT_POLICY)})`,
         'Proposal: prop.json',
         'Effective policy (user + project merged):',
         'Changes (1):',
@@ -61,7 +61,7 @@ describe('policy check', () => {
       [PROPOSAL_FILE]: STRICT_PROPOSAL,
     });
     expect(outcome.exitCode).toBe(0);
-    expect(outcome.stdout).toContain(`Scope: user (${join('<root>', USER_POLICY)})`);
+    expect(outcome.stdout).toContain(`Scope: user (${posix.join('<root>', USER_POLICY)})`);
     expect(outcome.stdout).toContain('  safety.level: standard -> strict');
   }, 60_000);
 
@@ -213,8 +213,10 @@ describe('policy apply at a terminal', () => {
   test('a typed yes writes only the fields the proposal set', async () => {
     const outcome = await applyBothWays([], (input) => input.write('y\n'));
     expect(outcome.code).toBe(0);
-    expect(outcome.prompt).toBe(`Apply this policy to ${join('<root>', PROJECT_POLICY)}? [y/N] `);
-    expect(outcome.written).toContain(`Policy applied: ${join('<root>', PROJECT_POLICY)}`);
+    expect(outcome.prompt).toBe(
+      `Apply this policy to ${posix.join('<root>', PROJECT_POLICY)}? [y/N] `,
+    );
+    expect(outcome.written).toContain(`Policy applied: ${posix.join('<root>', PROJECT_POLICY)}`);
     const applied = outcome.tree.find(
       (entry) => entry.path === 'project/.cc-safety-net/policy.json',
     );

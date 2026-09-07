@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import {
   findRuleV2Leftovers as findPorted,
   runRuleSyncMigration as runPortedMigration,
@@ -115,11 +115,11 @@ const LOCK_ENTRY = {
   display_ref: 'v2.0',
 };
 const STALE_ENTRY = { ...LOCK_ENTRY, digest: sha256Digest('{"rulebook_version":1}\n') };
-const CANNOT_MIGRATE = `Cannot migrate: the rules config in ${join('<root>', PROJECT_SCOPE)} is missing or unreadable while v2 leftovers remain. Restore rule.json, then re-run rule sync.`;
+const CANNOT_MIGRATE = `Cannot migrate: the rules config in ${posix.join('<root>', PROJECT_SCOPE)} is missing or unreadable while v2 leftovers remain. Restore rule.json, then re-run rule sync.`;
 
 const cachedAt = (scope: string, dir: string) => `${scope}/cache/rulebooks/${dir}/rulebook.json`;
 const removedUnder = (scope: string) =>
-  `Removed the v2 lock and cache under ${join('<root>', scope)}.`;
+  `Removed the v2 lock and cache under ${posix.join('<root>', scope)}.`;
 
 type Tree = { path: string; content?: string }[];
 
@@ -152,7 +152,7 @@ const migrationRows: {
     files: { [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([]) },
     code: 0,
     lines: [
-      `No v2 lock or cache leftovers found in ${join('<root>', PROJECT_SCOPE)}; nothing to migrate.`,
+      `No v2 lock or cache leftovers found in ${posix.join('<root>', PROJECT_SCOPE)}; nothing to migrate.`,
     ],
     check: (tree) => expect(holdsAny(tree, 'rules/x')).toBeFalse(),
   },

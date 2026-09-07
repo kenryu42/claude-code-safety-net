@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { createProcessEnvironment, type Environment } from '@/core/environment';
 import type { SecretProtectionConfig } from '@/core/policy/types';
 import { SECRET_DEFAULT_OFF_RULE_ID_SET, SECRET_PROTECTION_RULE_ID_SET } from '@/core/rules/secret';
@@ -152,6 +152,10 @@ type CarrierCase = {
   readonly relaxedInStandard?: true;
 };
 
+/** A fixture path as a POSIX shell operand: on Windows `join` spells it with `\`, which the shell
+ *  would read as escapes. */
+const shellPath = (...parts: string[]) => join(...parts).replaceAll(sep, '/');
+
 function secretIn(command: string, mode: Mode, config?: SecretProtectionConfig): Verdict {
   return findSensitiveTargetInCommand(command, repo, environment, config, mode);
 }
@@ -176,7 +180,7 @@ describe('shell operands against the built-in secret catalog', () => {
     checkCarriers([
       {
         name: 'an absolute path inside the home SSH directory',
-        command: `cat ${join(userHome, '.ssh', 'config')}`,
+        command: `cat ${shellPath(userHome, '.ssh', 'config')}`,
         expected: ssh(join(userHome, '.ssh', 'config')),
       },
       {
@@ -292,7 +296,7 @@ describe('shell operands against the built-in secret catalog', () => {
       },
       {
         name: 'CODEX_HOME relocates the Codex credential store',
-        command: `cat ${join(codexHome, 'auth.json')}`,
+        command: `cat ${shellPath(codexHome, 'auth.json')}`,
         expected: { target: join(codexHome, 'auth.json'), ruleId: 'secret.cli.codex' },
       },
       {
@@ -413,7 +417,7 @@ describe('the carriers a candidate path can arrive through', () => {
       },
       {
         name: 'an append to a credential file',
-        command: `echo x >> ${join(userHome, '.aws', 'credentials')}`,
+        command: `echo x >> ${shellPath(userHome, '.aws', 'credentials')}`,
         expected: aws(join(userHome, '.aws', 'credentials')),
       },
       {
@@ -466,7 +470,7 @@ describe('the carriers a candidate path can arrive through', () => {
       },
       {
         name: 'printf of an absolute key into a batched reader',
-        command: `printf '%s\\n' ${join(userHome, '.ssh', 'id_rsa')} | xargs -n1 cat`,
+        command: `printf '%s\\n' ${shellPath(userHome, '.ssh', 'id_rsa')} | xargs -n1 cat`,
         expected: ssh(join(userHome, '.ssh', 'id_rsa')),
       },
       {
@@ -647,7 +651,7 @@ describe('the carriers a candidate path can arrive through', () => {
       },
       {
         name: 'an absolute sensitive root with a metadata action',
-        command: `find ${join(userHome, '.aws')} -type f -print`,
+        command: `find ${shellPath(userHome, '.aws')} -type f -print`,
         expected: aws(join(userHome, '.aws')),
         relaxedInStandard: true,
       },

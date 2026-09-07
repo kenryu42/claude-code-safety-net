@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { join } from 'node:path';
+import { posix } from 'node:path';
 import {
   type CliRow,
   expectSameCli,
@@ -75,7 +75,7 @@ describe('status', () => {
     const outcome = await runStatus({
       seed: (side) => seedFiles(side, WEAKENED_BY_PROJECT),
     });
-    expect(outcome.stdout).toContain(`  Project      ${join('<root>', PROJECT_POLICY)}\n`);
+    expect(outcome.stdout).toContain(`  Project      ${posix.join('<root>', PROJECT_POLICY)}\n`);
     expect(outcome.stdout).toContain('  Project policy');
   }, 60_000);
 

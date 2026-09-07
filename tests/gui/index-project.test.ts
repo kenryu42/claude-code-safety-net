@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { mkdirSync, realpathSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { runPolicyCommand as runPortedPolicy } from '@/cli/policy/index';
 import { DEFAULT_GUI_POLICY } from '@/core/policy/store';
 import { captureConsole } from '../helpers/console-capture';
@@ -102,8 +102,8 @@ describe('the GUI project draft', () => {
     const [before, , after] = row.responses.map((response) => response.body as ProjectBody);
 
     expect(before).toMatchObject({
-      dir: join('<root>', 'project'),
-      path: join('<root>', PROJECT_POLICY_FILE),
+      dir: posix.join('<root>', 'project'),
+      path: posix.join('<root>', PROJECT_POLICY_FILE),
       revision: 0,
       baseline: { safety: { level: 'strict' } },
       userPolicyDiagnostics: [],
@@ -112,7 +112,7 @@ describe('the GUI project draft', () => {
     });
     expect(before?.canPickDirectory).toBeBoolean();
     expect(row.responses[1]?.body).toStrictEqual({ cancelled: false });
-    expect(after).toMatchObject({ dir: join('<root>', 'picked'), revision: 1 });
+    expect(after).toMatchObject({ dir: posix.join('<root>', 'picked'), revision: 1 });
     // The diff the first tab is holding names a revision the picker has moved past.
     expect(row.responses[3]).toMatchObject({
       status: 409,
@@ -124,7 +124,7 @@ describe('the GUI project draft', () => {
     expect(diff).toMatchObject({ weakenings: [], existingFileDiagnostics: [], errors: [] });
     expect(row.responses[5]).toMatchObject({
       status: 200,
-      body: { path: join('<root>', 'picked/.cc-safety-net/policy.json'), errors: [] },
+      body: { path: posix.join('<root>', 'picked/.cc-safety-net/policy.json'), errors: [] },
     });
     // Only the fields the proposal set, so everything else keeps inheriting from user scope.
     expect(
@@ -149,7 +149,7 @@ describe('the GUI project draft', () => {
     // The directory whose revision matched is the directory the write landed in.
     expect(row.responses[0]).toMatchObject({
       status: 200,
-      body: { path: join('<root>', PROJECT_POLICY_FILE), errors: [] },
+      body: { path: posix.join('<root>', PROJECT_POLICY_FILE), errors: [] },
     });
     expect(row.tree.find((entry) => entry.path === PROJECT_POLICY_FILE)).toMatchObject({
       content: json(PARANOID),
@@ -172,7 +172,10 @@ describe('the GUI project draft', () => {
     expect(cancelled.responses[0]?.body).toStrictEqual({ cancelled: true });
     expect(failed.responses[0]?.body).toStrictEqual({ cancelled: false, error: 'boom' });
     for (const row of [cancelled, failed]) {
-      expect(row.responses[1]?.body).toMatchObject({ dir: join('<root>', 'project'), revision: 0 });
+      expect(row.responses[1]?.body).toMatchObject({
+        dir: posix.join('<root>', 'project'),
+        revision: 0,
+      });
     }
   });
 

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { join } from 'node:path';
+import { posix } from 'node:path';
 import { installCursor } from '@/hosts/cursor/install';
 import { type CliRow, expectSameCli, runCliDifferential } from '../helpers/cli-differential';
 import { environmentFor, removeTempRoots } from '../helpers/temp-home';
@@ -136,7 +136,7 @@ describe('install, update and uninstall reach the Phase 6 flows', () => {
     const outcome = await differential({ args: ['install', '--cursor'] });
     expect(outcome.exitCode).toBe(0);
     expect(outcome.stdout).toBe(
-      `Installed Cursor hook in ${join('<root>', 'home/.cursor/hooks.json')}\n`,
+      `Installed Cursor hook in ${posix.join('<root>', 'home/.cursor/hooks.json')}\n`,
     );
     expect(outcome.tree.map((entry) => entry.path)).toContain('home/.cursor/hooks.json');
   }, 60_000);
@@ -150,7 +150,7 @@ describe('install, update and uninstall reach the Phase 6 flows', () => {
     });
     expect(outcome.exitCode).toBe(0);
     expect(outcome.stdout).toBe(
-      `Uninstalled Cursor hook from ${join('<root>', 'home/.cursor/hooks.json')}\n`,
+      `Uninstalled Cursor hook from ${posix.join('<root>', 'home/.cursor/hooks.json')}\n`,
     );
   }, 60_000);
 

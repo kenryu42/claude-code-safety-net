@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, posix } from 'node:path';
 import { encodeCwdForLogDirname, getAuditLogsDir } from '@/audit/writer';
 import { installCursor } from '@/hosts/cursor/install';
 import type { DoctorReport } from '@/hosts/doctor-types';
@@ -179,8 +179,8 @@ describe('doctor --json', () => {
       },
     });
     expect(report.v2Leftovers).toEqual([
-      join('<root>', 'project/.cc-safety-net/rules/rule.lock'),
-      join('<root>', 'home/.cc-safety-net/cache'),
+      posix.join('<root>', 'project/.cc-safety-net/rules/rule.lock'),
+      posix.join('<root>', 'home/.cc-safety-net/cache'),
     ]);
     const leftovers = report.findings.filter(
       (finding) => finding.checkId === 'config.v2-leftovers',
@@ -188,9 +188,9 @@ describe('doctor --json', () => {
     expect(leftovers).toHaveLength(1);
     expect(leftovers[0]?.severity).toBe('info');
     expect(leftovers[0]?.detail).toContain(
-      join('<root>', 'project/.cc-safety-net/rules/rule.lock'),
+      posix.join('<root>', 'project/.cc-safety-net/rules/rule.lock'),
     );
-    expect(leftovers[0]?.detail).toContain(join('<root>', 'home/.cc-safety-net/cache'));
+    expect(leftovers[0]?.detail).toContain(posix.join('<root>', 'home/.cc-safety-net/cache'));
   }, 120_000);
 
   test('a regular file where the config directory belongs is an unsafe posture', async () => {
@@ -204,7 +204,7 @@ describe('doctor --json', () => {
       [
         {
           kind: 'config',
-          path: join('<root>', 'home/.cc-safety-net/rules'),
+          path: posix.join('<root>', 'home/.cc-safety-net/rules'),
           status: 'unsafe',
           issues: ['not-directory'],
         },

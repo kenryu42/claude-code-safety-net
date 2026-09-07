@@ -58,13 +58,13 @@ function sweep(
 
 describe('clearing the bunx cache', () => {
   test('removes only the entries this uid installed for this package', () => {
-    const [ported] = sweep(true, undefined, undefined);
+    const [ported] = sweep(true, 'linux', undefined);
     recordPorted(ported, UID_FOLDS);
     expect(ported?.entries).toEqual([LOOKALIKE, OTHER_USER, 'other']);
   });
 
   test('keeps the entry the running process was launched from', () => {
-    const [ported] = sweep(true, undefined, OURS_LATEST);
+    const [ported] = sweep(true, 'linux', OURS_LATEST);
     recordPorted(ported, UID_FOLDS);
     expect(ported?.entries).toEqual([OURS_LATEST, LOOKALIKE, OTHER_USER, 'other'].sort());
   });

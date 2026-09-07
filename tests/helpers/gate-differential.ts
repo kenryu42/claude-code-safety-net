@@ -199,25 +199,28 @@ export function expectRecordedDigest(
             : value,
   );
   const digest = createHash('sha256').update(json).digest('hex');
+  // Windows resolves a path to a drive letter and compares it case-insensitively, so what the gate
+  // produces there is recorded under its own key, from the dump a Windows run leaves.
+  const recordedKey = process.platform === 'win32' ? `${key}@win32` : key;
   const dump = process.env.CC_SAFETY_NET_DUMP_VERDICTS;
   if (dump !== undefined) {
     mkdirSync(dump, { recursive: true });
-    writeFileSync(join(dump, `${key.replaceAll('/', '-')}.json`), json);
+    writeFileSync(join(dump, `${recordedKey.replaceAll('/', '-')}.json`), json);
   }
   const recorded = existsSync(DIGEST_FILE)
     ? (JSON.parse(readFileSync(DIGEST_FILE, 'utf8')) as Record<string, string>)
     : {};
-  if (recorded[key] !== undefined && process.env.CC_SAFETY_NET_UPDATE_GOLDENS !== '1') {
-    expect(digest, `${key}: ${pairs.length} pairs`).toBe(recorded[key]);
+  if (recorded[recordedKey] !== undefined && process.env.CC_SAFETY_NET_UPDATE_GOLDENS !== '1') {
+    expect(digest, `${recordedKey}: ${pairs.length} pairs`).toBe(recorded[recordedKey]);
     return;
   }
   if (process.env.CI)
     throw new Error(
-      `${key}: no recorded digest for ${pairs.length} pairs; run without CI to record`,
+      `${recordedKey}: no recorded digest for ${pairs.length} pairs; run without CI to record`,
     );
   mkdirSync(dirname(DIGEST_FILE), { recursive: true });
   writeFileSync(
     DIGEST_FILE,
-    `${JSON.stringify(Object.fromEntries(Object.entries({ ...recorded, [key]: digest }).sort()), null, 2)}\n`,
+    `${JSON.stringify(Object.fromEntries(Object.entries({ ...recorded, [recordedKey]: digest }).sort()), null, 2)}\n`,
   );
 }

@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync } from 'node:fs';
-import { join, sep } from 'node:path';
+import { join } from 'node:path';
 import {
   type RunInstallCommandOptions,
   runInstallCommand,
@@ -15,6 +15,7 @@ import {
   normalize,
   recordPorted,
   snapshotHome,
+  WINDOWS_SEPARATOR_FOLDS,
   withProcessEnv,
 } from './temp-home';
 
@@ -116,7 +117,7 @@ async function runSide(spec: FlowSpec) {
       [root, '<root>'],
       [REPO_ROOT, '<repo>'],
       // The separator is folded with the paths, so a `<home>/`-spelled expectation holds on Windows.
-      ...(sep === '/' ? [] : [[sep, '/'] as const]),
+      ...WINDOWS_SEPARATOR_FOLDS,
     ],
   );
 }

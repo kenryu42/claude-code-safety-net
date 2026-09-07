@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { buildOpenClawArtifactHeader } from '@/hosts/openclaw/artifact';
 import { detect as detectOpenClaw, modifiedFileErrors } from '@/hosts/openclaw/detect';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
@@ -14,9 +14,9 @@ import { createTempRoot, recordPorted, removeTempRoots, rootFolds } from '../../
  */
 
 const DIR = '.openclaw/extensions/cc-safety-net';
-const DIR_PATH = join('<home>', DIR);
+const DIR_PATH = posix.join('<home>', DIR);
 const CONFIG = '.openclaw/openclaw.json';
-const CONFIG_PATH = join('<home>', CONFIG);
+const CONFIG_PATH = posix.join('<home>', CONFIG);
 const ENABLE_HINT = 'run `openclaw plugins enable cc-safety-net`';
 const OUTDATED = 'Installed OpenClaw plugin is outdated; run install --openclaw to update';
 
@@ -69,9 +69,9 @@ describe('reading the installed OpenClaw plugin', () => {
     expect(
       await detection(
         { ...installedAt(dir, 'dev'), 'elsewhere/openclaw.json': ENABLING[CONFIG] },
-        { OPENCLAW_CONFIG_PATH: join('<home>', 'elsewhere/openclaw.json') },
+        { OPENCLAW_CONFIG_PATH: posix.join('<home>', 'elsewhere/openclaw.json') },
       ),
-    ).toEqual(configured(join('<home>', dir)));
+    ).toEqual(configured(posix.join('<home>', dir)));
   });
 
   test.each([
@@ -193,7 +193,7 @@ describe('comparing an install against the packaged copy', () => {
         'packaged/openclaw.plugin.json': '{\n  "id": "cc-safety-net",\n  "version": "dev"\n}\n',
       }),
     ).toEqual([
-      `Modified openclaw.plugin.json occupies ${join('<root>', 'installed/openclaw.plugin.json')}; run install --openclaw to restore it`,
+      `Modified openclaw.plugin.json occupies ${posix.join('<root>', 'installed/openclaw.plugin.json')}; run install --openclaw to restore it`,
     ]);
   });
 

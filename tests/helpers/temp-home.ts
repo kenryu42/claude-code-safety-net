@@ -136,14 +136,15 @@ export function snapshotHome(home: string) {
   );
 }
 
+/** One fold: what to find, and the text or the replacer function that stands in for it. */
+export type Fold = readonly [string | RegExp, string | ((...match: string[]) => string)];
+
 /** Replace machine-specific prefixes and Amp's random checkout id everywhere in a value. */
-export function normalize<T>(
-  value: T,
-  replacements: readonly (readonly [string | RegExp, string])[],
-): T {
+export function normalize<T>(value: T, replacements: readonly Fold[]): T {
   if (typeof value === 'string') {
     const replaced: string = replacements.reduce<string>(
-      (text, [from, to]) => text.replaceAll(from, to),
+      (text, [from, to]) =>
+        typeof to === 'string' ? text.replaceAll(from, to) : text.replaceAll(from, to),
       value,
     );
     return replaced.replace(/cc-safety-net-amp-[A-Za-z0-9]+/g, 'cc-safety-net-amp-<id>') as T;
@@ -158,6 +159,20 @@ export function normalize<T>(
   }
   return value;
 }
+
+/**
+ * Windows spells a fixture path with `\`; the records spell every path with `/`. Only a path run
+ * anchored at a fold marker or `~` is rewritten, so a backslash that is a JSON escape (`\n` in a
+ * document the host printed) or part of a command's own text (`Remove-Item C:\`) stays as it is.
+ * A JSON document doubles the separator, so one or two backslashes open a component; a component
+ * that reads as an escape (`\n` before another escape, a quote or the end) is not a path.
+ */
+const MARKER_PATH = /(<[a-z-]+>|~)((?:\\{1,2}(?![nrtbf](?:\\|"|$))[^\\\s"'`<>|;,]+)+)/g;
+
+export const WINDOWS_SEPARATOR_FOLDS: readonly Fold[] =
+  sep === '/'
+    ? []
+    : [[MARKER_PATH, (_match, anchor, path) => `${anchor}${path.replace(/\\{1,2}/g, '/')}`]];
 
 /** Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold. */
 export const rootFolds = (root: string) =>
@@ -196,10 +211,7 @@ const CLOCK_FOLDS = [
  * costs nothing on a POSIX host and leaves only the gaps Windows already carries — a row whose own
  * input spells a backslash reads the same as one that spelled a path.
  */
-export function recordPorted(
-  value: unknown,
-  replacements: readonly (readonly [string | RegExp, string])[] = [],
-): void {
+export function recordPorted(value: unknown, replacements: readonly Fold[] = []): void {
   expect(
     normalize(value, [
       ...replacements,
@@ -207,7 +219,7 @@ export function recordPorted(
       // The syscall a thrown fs error names for the same failed stat moves between Bun versions.
       ['statx', '<stat>'],
       ['lstat', '<stat>'],
-      ...(sep === '/' ? [] : [[sep, '/'] as const]),
+      ...WINDOWS_SEPARATOR_FOLDS,
     ]),
   ).toMatchSnapshot();
 }

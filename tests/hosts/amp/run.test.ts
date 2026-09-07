@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { runAmpCommand } from '@/hosts/amp/run';
 import { createFakeBin, type FakeScriptEntry } from '../../helpers/fake-bin';
 import {
@@ -75,6 +75,6 @@ describe('running an amp or git command', () => {
   test('runs the command in the directory it was given', async () => {
     const inCheckout = await bothSides(['git', 'status', '--porcelain'], 'checkout');
     recordPorted(inCheckout, CWD_FOLD);
-    expect(inCheckout.log).toEqual(['git status --porcelain\t<root>/checkout']);
+    expect(inCheckout.log).toEqual([`git status --porcelain\t<root>${sep}checkout`]);
   });
 });

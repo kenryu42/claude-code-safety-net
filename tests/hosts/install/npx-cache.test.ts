@@ -94,7 +94,8 @@ describe('clearing the npx cache', () => {
 
       clearNpxSafetyNetCache(
         environmentFor(portedHome, isolationEnv(portedHome, testCase.env(portedHome))),
-        testCase.platform,
+        // The rows without a platform pin the POSIX layout wherever the suite runs.
+        testCase.platform ?? 'linux',
       );
 
       expect(snapshotHome(portedHome)).toMatchSnapshot();

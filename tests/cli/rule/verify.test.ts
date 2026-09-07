@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, spyOn, test } from 'bun:test';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { runRulesVerify as portedRulesVerify } from '@/cli/rule/verify';
 import { snapshotTree, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
 import {
@@ -116,7 +116,7 @@ describe('rule verify', () => {
     expect(outcome.code).toBe(0);
     expect(outcome.report).toContain('\nAdded $schema to user config.');
     expect(outcome.report).toContain(
-      `✓ User config: ${join('<root>', 'home', '.cc-safety-net', 'rules', 'rule.json')}`,
+      `✓ User config: ${posix.join('<root>', 'home', '.cc-safety-net', 'rules', 'rule.json')}`,
     );
     expect(outcome.report).toContain('    1. team-rules');
     expect(outcome.report).toContain('\nAll configs valid.');
@@ -157,7 +157,7 @@ describe('rule verify', () => {
     });
     expect(outcome.code).toBe(1);
     expect(outcome.report).toContain(
-      `✗ GitHub source rules: ${join('<root>', 'project', '.cc-safety-net', 'rules')}`,
+      `✗ GitHub source rules: ${posix.join('<root>', 'project', '.cc-safety-net', 'rules')}`,
     );
     expect(outcome.report).toContain(
       '    1. broken-rules/rulebook.json: tests[0]: expected "block-system-prune" to block "docker ps" but no rule matched',
@@ -218,7 +218,7 @@ describe('rule verify', () => {
     const outcome = verifyBothWays({ [LEGACY_PROJECT_CONFIG]: LEGACY_RULES });
     expect(outcome.code).toBe(1);
     expect(outcome.report).toContain(
-      `✗ Legacy project config: ${join('<root>', 'project', '.safety-net.json')}`,
+      `✗ Legacy project config: ${posix.join('<root>', 'project', '.safety-net.json')}`,
     );
     expect(outcome.report).toContain(
       'Warning: Legacy project config is ignored by CC Safety Net. Run `npx -y cc-safety-net rule migrate`.',

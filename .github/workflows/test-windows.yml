@@ -30,6 +30,9 @@ jobs:
         run: bun run check:ci
         env:
           CC_SAFETY_NET_E2E_ARTIFACTS: ${{ runner.temp }}/cc-safety-net-e2e
+          # The pair lists behind every digest, uploaded with the failure evidence so a Windows
+          # digest can be recorded from what the runner produced.
+          CC_SAFETY_NET_DUMP_VERDICTS: ${{ runner.temp }}/cc-safety-net-e2e/digests
       - run: bun run build
       - run: git diff --exit-code -- dist assets/cc-safety-net.schema.json THIRD_PARTY_LICENSES.txt
       - name: Verify Windows command behavior

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, mock, spyOn, test } from 'bun:test';
 import * as nodeFs from 'node:fs';
 import { existsSync, mkdirSync, realpathSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, posix } from 'node:path';
 import { encodeCwdForLogDirname, getAuditLogsDir } from '@/audit/writer';
 import { runLogsCommand as portedRunLogsCommand } from '@/cli/audit-log';
 import type { AuditLogEntry } from '@/core/audit';
@@ -277,7 +277,7 @@ describe('logs selection', () => {
   test('--project admits the directory it names and nothing beside it', async () => {
     const here = await runSeededLogs(['--project', '.']);
     expect(rows(here.stdout)).toHaveLength(1);
-    expect(here.stdout).toContain(join('<root>', 'project'));
+    expect(here.stdout).toContain(posix.join('<root>', 'project'));
     const elsewhere = await runSeededLogs(['--project', LEGACY_CWD]);
     expect(rows(elsewhere.stdout)).toHaveLength(4);
   }, 60_000);
@@ -318,7 +318,7 @@ describe('logs --id', () => {
     expect(outcome.stdout).toContain(`id:        ${RESET_HARD_ID}`);
     expect(outcome.stdout).toContain('rule:      git.reset-hard');
     expect(outcome.stdout).toContain('command:   git reset --hard && echo done');
-    expect(outcome.stdout).toContain(`cwd:       ${join('<root>', 'project')}`);
+    expect(outcome.stdout).toContain(`cwd:       ${posix.join('<root>', 'project')}`);
   }, 60_000);
 
   test('an id nothing recorded is reported as retained history having none', async () => {
