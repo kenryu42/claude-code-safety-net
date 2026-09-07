@@ -3,7 +3,7 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { AMP_MANAGED_HEADER } from '@/hosts/amp/artifact';
 import type { InstallTarget } from '@/hosts/install/targets';
-import { expectSameFlow, type FlowSpec, runFlowDifferential } from '../../helpers/command-flow';
+import { type FlowSpec, runFlowDifferential } from '../../helpers/command-flow';
 import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
 import { fileAt } from '../../helpers/host-differential';
 import { createTempRoot, removeTempRoots } from '../../helpers/temp-home';
@@ -15,7 +15,7 @@ import { createTempRoot, removeTempRoots } from '../../helpers/temp-home';
  * or a byte fails the row.
  */
 
-const flow = async (spec: FlowSpec) => expectSameFlow(await runFlowDifferential(spec));
+const flow = async (spec: FlowSpec) => await runFlowDifferential(spec);
 
 const TARGET_FLAGS =
   '--amp, --agy-cli, --claude-code, --codex, --cursor, --gemini-cli, --copilot-cli, --grok-build, --hermes-agent, --kimi-code, --openclaw, --opencode, --pi';

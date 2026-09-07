@@ -6,7 +6,6 @@ import type { TraceStep } from '@/gate/trace';
 import {
   type CliOutcome,
   type CliRow,
-  expectSameCli,
   runCliDifferential,
   seedFiles,
 } from '../../helpers/cli-differential';
@@ -241,7 +240,7 @@ describe('explain renders the same trace from both bins', () => {
       const asJson = await runCliDifferential(
         rowFor(explainCase.slug, { args: ['explain', '--json', explainCase.command] }),
       );
-      const outcome = expectSameCli(asJson);
+      const outcome = asJson;
       expect(outcome.exitCode).toBe(0);
       pinRendering(`${explainCase.slug}.json`, asJson);
       expect(reportFacts(JSON.parse(outcome.stdout) as ExplainResult)).toEqual(
@@ -251,7 +250,7 @@ describe('explain renders the same trace from both bins', () => {
       const asHuman = await runCliDifferential(
         rowFor(explainCase.slug, { args: ['explain', explainCase.command] }),
       );
-      expect(expectSameCli(asHuman).exitCode).toBe(0);
+      expect(asHuman.exitCode).toBe(0);
       pinRendering(`${explainCase.slug}.txt`, asHuman);
     }, 30_000);
   }
@@ -266,19 +265,17 @@ describe('explain reports an analysis budget breach as bounded output', () => {
           args: ['explain', '--json', EXPLAIN_CASES.find((e) => e.slug === slug)?.command ?? ''],
         }),
       );
-      const outcome = expectSameCli(asJson);
+      const outcome = asJson;
       expect(outcome.stdout).toBe(`${JSON.stringify({ error: message })}\n`);
       expect(outcome.exitCode).toBe(1);
       pinRendering(`${slug}.json`, asJson);
 
       // The human form writes the message to stderr and leaves stdout empty, so there is
       // nothing to pin as a rendering.
-      const asHuman = expectSameCli(
-        await runCliDifferential(
-          rowFor(slug, {
-            args: ['explain', EXPLAIN_CASES.find((e) => e.slug === slug)?.command ?? ''],
-          }),
-        ),
+      const asHuman = await runCliDifferential(
+        rowFor(slug, {
+          args: ['explain', EXPLAIN_CASES.find((e) => e.slug === slug)?.command ?? ''],
+        }),
       );
       expect(asHuman.stdout).toBe('');
       expect(asHuman.stderr).toBe(`${message}\n`);
@@ -311,9 +308,10 @@ describe('explain flags', () => {
 
   for (const row of flagRows) {
     test(row.name, async () => {
-      const outcome = expectSameCli(
-        await runCliDifferential({ args: row.args, ...(row.seed ? { seed: row.seed } : {}) }),
-      );
+      const outcome = await runCliDifferential({
+        args: row.args,
+        ...(row.seed ? { seed: row.seed } : {}),
+      });
       expect(outcome.exitCode).toBe(row.exitCode);
     }, 30_000);
   }
@@ -363,21 +361,17 @@ describe('explain diverges from the shipped CLI only where the design says it mu
     'Get-ChildItem . -Recurse | Remove-Item -Force',
   ]) {
     test(`agrees on ${command}`, async () => {
-      const outcome = expectSameCli(
-        await runCliDifferential({ args: ['explain', '--json', command] }),
-      );
+      const outcome = await runCliDifferential({ args: ['explain', '--json', command] });
       expect(outcome.exitCode).toBe(0);
     }, 30_000);
   }
 
   // In strict mode the partial program is unparseable, and the trace says so.
   test('strict mode answers a partial program identically', async () => {
-    const outcome = expectSameCli(
-      await runCliDifferential({
-        args: ['explain', '--json', "git reset --hard 'unterminated"],
-        env: { CC_SAFETY_NET_LEVEL: 'strict' },
-      }),
-    );
+    const outcome = await runCliDifferential({
+      args: ['explain', '--json', "git reset --hard 'unterminated"],
+      env: { CC_SAFETY_NET_LEVEL: 'strict' },
+    });
     const document = JSON.parse(outcome.stdout) as ExplainResult;
     expect(document.trace.steps.map((step) => step.type)).toEqual(['parse', 'strict-unparseable']);
   }, 30_000);

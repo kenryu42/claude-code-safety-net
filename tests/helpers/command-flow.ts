@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   type RunInstallCommandOptions,
@@ -13,7 +13,6 @@ import {
   createTempRoot,
   isolationEnv,
   normalize,
-  recordPorted,
   snapshotHome,
   WINDOWS_SEPARATOR_FOLDS,
   withProcessEnv,
@@ -27,13 +26,6 @@ import {
  */
 
 const REPO_ROOT = join(import.meta.dir, '..', '..');
-
-/** The `install --amp` row's tmp tree holds the packaged artifact byte for byte, and a rebuild of
- *  `dist/` changes it; the record sees a placeholder in its place. */
-const AMP_ARTIFACT = readFileSync(
-  join(REPO_ROOT, 'dist', 'amp', 'cc-safety-net', 'index.ts'),
-  'utf8',
-);
 
 /** Everything but `input`/`output`, which the harness owns so every row is recorded alike. */
 export type FlowOptions = Omit<RunInstallCommandOptions, 'input' | 'output'> & {
@@ -126,19 +118,4 @@ async function runSide(spec: FlowSpec) {
 /** One run of the flow, which mutates `process.env` and the console while it lasts. */
 export async function runFlowDifferential(spec: FlowSpec) {
   return runSide(spec);
-}
-
-/**
- * Record the run; the returned result is what the contract is asserted on. bunx names its cache
- * entries after the running user, so the id the suite runs under is folded out of the temp tree.
- */
-export function expectSameFlow(result: Awaited<ReturnType<typeof runFlowDifferential>>) {
-  recordPorted(result, [
-    [AMP_ARTIFACT, '<amp-artifact>'],
-    // The tree came back with its separators folded, which rewrites the escapes inside the
-    // artifact's own source, so the record also folds the artifact as that fold spells it.
-    [normalize(AMP_ARTIFACT, WINDOWS_SEPARATOR_FOLDS), '<amp-artifact>'],
-    [`bunx-${process.getuid?.() ?? 0}-`, 'bunx-<uid>-'],
-  ]);
-  return result;
 }

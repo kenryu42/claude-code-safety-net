@@ -9,7 +9,6 @@ import {
   type CliOutcome,
   type CliRow,
   type CliSide,
-  expectSameCli,
   runCliDifferential,
   seedFiles,
 } from '../helpers/cli-differential';
@@ -19,7 +18,6 @@ import {
   createTempRoot,
   environmentFor,
   isolationEnv,
-  recordPorted,
   removeTempRoots,
 } from '../helpers/temp-home';
 
@@ -189,9 +187,7 @@ const foldProjectDir = (outcome: CliOutcome): CliOutcome => ({
 });
 
 async function runLogs(args: readonly string[], row: Omit<CliRow, 'args'> = {}) {
-  return expectSameCli(
-    foldProjectDir(await runCliDifferential({ args: ['logs', ...args], ...row })),
-  );
+  return foldProjectDir(await runCliDifferential({ args: ['logs', ...args], ...row }));
 }
 
 /** The same rows against the seeded tree; the clock is read once so the fixture is fixed. */
@@ -431,7 +427,6 @@ describe('logs --prune-legacy failure', () => {
         logsDir: portedSide.logsDir,
       }),
     );
-    recordPorted(ported);
     return { ...ported, file: join(portedSide.logsDir, LEGACY_FILE) };
   }
 

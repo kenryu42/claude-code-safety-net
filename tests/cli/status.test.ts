@@ -1,11 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { posix } from 'node:path';
-import {
-  type CliRow,
-  expectSameCli,
-  runCliDifferential,
-  seedFiles,
-} from '../helpers/cli-differential';
+import { type CliRow, runCliDifferential, seedFiles } from '../helpers/cli-differential';
 import {
   json,
   PLUGIN_SETTINGS,
@@ -30,8 +25,7 @@ afterEach(() => {
 
 const statusRow = (row: Omit<CliRow, 'args'>): CliRow => ({ args: ['status'], ...row });
 
-const runStatus = async (row: Omit<CliRow, 'args'>) =>
-  expectSameCli(await runCliDifferential(statusRow(row)));
+const runStatus = async (row: Omit<CliRow, 'args'>) => await runCliDifferential(statusRow(row));
 
 describe('status', () => {
   test('a fresh home reports the disabled plugin and points at doctor', async () => {

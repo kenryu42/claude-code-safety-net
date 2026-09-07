@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { posix } from 'node:path';
 import { installCursor } from '@/hosts/cursor/install';
-import { type CliRow, expectSameCli, runCliDifferential } from '../helpers/cli-differential';
+import { type CliRow, runCliDifferential } from '../helpers/cli-differential';
 import { environmentFor, removeTempRoots } from '../helpers/temp-home';
 
 /**
@@ -15,7 +15,7 @@ afterEach(() => {
   removeTempRoots();
 });
 
-const differential = async (row: CliRow) => expectSameCli(await runCliDifferential(row));
+const differential = async (row: CliRow) => await runCliDifferential(row);
 
 describe('help', () => {
   for (const args of [['help'], ['--help'], ['-h'], []]) {

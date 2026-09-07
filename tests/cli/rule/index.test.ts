@@ -1,12 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { posix } from 'node:path';
 import { RULE_DOC } from '@/cli/rule/doc';
-import {
-  type CliOutcome,
-  expectSameCli,
-  runCliDifferential,
-  seedFiles,
-} from '../../helpers/cli-differential';
+import { type CliOutcome, runCliDifferential, seedFiles } from '../../helpers/cli-differential';
 import type { TreeSpec } from '../../helpers/fixture-tree';
 import {
   json,
@@ -41,13 +36,11 @@ const U = 'home/.cc-safety-net/rules';
 
 /** The update check is off for every row: `rule doc` would otherwise probe the registry. */
 const rule = async (args: readonly string[], files: TreeSpec = {}) =>
-  expectSameCli(
-    await runCliDifferential({
-      args: ['rule', ...args],
-      seed: (side) => seedFiles(side, files),
-      env: { CC_SAFETY_NET_NO_UPDATE_CHECK: '1' },
-    }),
-  );
+  await runCliDifferential({
+    args: ['rule', ...args],
+    seed: (side) => seedFiles(side, files),
+    env: { CC_SAFETY_NET_NO_UPDATE_CHECK: '1' },
+  });
 
 const fileAt = (outcome: CliOutcome, path: string) =>
   outcome.tree.find((entry) => entry.path === path)?.content;

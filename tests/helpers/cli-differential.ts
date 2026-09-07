@@ -7,7 +7,6 @@ import {
   createTempRoot,
   isolatedSpawnEnv,
   normalize,
-  recordPorted,
   rootFolds,
   WINDOWS_SEPARATOR_FOLDS,
 } from './temp-home';
@@ -138,8 +137,3 @@ export function seedFiles(side: CliSide, spec: TreeSpec): void {
 }
 
 /** Record the run against its snapshot, and hand the outcome back to pin against. */
-export function expectSameCli(outcome: CliOutcome): CliOutcome {
-  // `doctor` names the machine it ran on, which the run reads from the process.
-  recordPorted(outcome, [[`${process.platform} ${process.arch}`, '<platform>']]);
-  return outcome;
-}

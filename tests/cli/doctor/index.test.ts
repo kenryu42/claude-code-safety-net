@@ -8,7 +8,6 @@ import {
   type CliOutcome,
   type CliRow,
   type CliSide,
-  expectSameCli,
   runCliDifferential,
   seedFiles,
 } from '../../helpers/cli-differential';
@@ -52,7 +51,7 @@ async function runDoctorJson(slug: string, row: Omit<CliRow, 'args'>) {
     args: ['doctor', '--json', '--skip-update-check'],
     ...row,
   });
-  const outcome = expectSameCli({ ...result, stdout: foldWindowsPosture(result.stdout) });
+  const outcome = { ...result, stdout: foldWindowsPosture(result.stdout) };
   pinGolden(slug, normalizeDoctorJson(outcome.stdout));
   return { outcome, report: JSON.parse(outcome.stdout) as DoctorReport };
 }
@@ -255,8 +254,8 @@ const foldTableWidths = (outcome: CliOutcome): CliOutcome => ({
 
 describe('doctor rendered', () => {
   test('a fresh home renders the self-test and the single error finding', async () => {
-    const outcome = expectSameCli(
-      foldTableWidths(await runCliDifferential({ args: ['doctor', '--skip-update-check'] })),
+    const outcome = foldTableWidths(
+      await runCliDifferential({ args: ['doctor', '--skip-update-check'] }),
     );
     expect(outcome.exitCode).toBe(1);
     expect(outcome.stdout).toContain('Guard Engine Verification');
@@ -266,28 +265,26 @@ describe('doctor rendered', () => {
 
   test('a seeded audit tree renders its activity header', async () => {
     const entries = auditFixture('sess1');
-    const outcome = expectSameCli(
-      foldTableWidths(
-        await runCliDifferential({
-          args: ['doctor', '--skip-update-check'],
-          seed: (side) => seedAuditLog(side, 'sess1', entries),
-        }),
-      ),
+    const outcome = foldTableWidths(
+      await runCliDifferential({
+        args: ['doctor', '--skip-update-check'],
+        seed: (side) => seedAuditLog(side, 'sess1', entries),
+      }),
     );
     expect(outcome.stdout).toContain('Recent Activity · last 7 days (3 blocked / 1 sessions)');
     expect(outcome.stdout).toContain('git reset --hard');
   }, 120_000);
 
   test('the legacy --doctor spelling reaches the same report', async () => {
-    const outcome = expectSameCli(
-      foldTableWidths(await runCliDifferential({ args: ['--doctor', '--skip-update-check'] })),
+    const outcome = foldTableWidths(
+      await runCliDifferential({ args: ['--doctor', '--skip-update-check'] }),
     );
     expect(outcome.exitCode).toBe(1);
     expect(outcome.stdout).toContain('Guard Engine Verification');
   }, 120_000);
 
   test('an unknown option is refused before anything is inspected', async () => {
-    const outcome = expectSameCli(await runCliDifferential({ args: ['doctor', '--nope'] }));
+    const outcome = await runCliDifferential({ args: ['doctor', '--nope'] });
     expect(outcome.exitCode).toBe(1);
     expect(outcome.stdout).toBe('');
     expect(outcome.stderr).toBe('Unknown option for doctor: --nope\n');

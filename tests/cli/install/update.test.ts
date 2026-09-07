@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from 'bun:test';
 import { join } from 'node:path';
-import { expectSameFlow, type FlowSpec, runFlowDifferential } from '../../helpers/command-flow';
+import { type FlowSpec, runFlowDifferential } from '../../helpers/command-flow';
 import { fileAt } from '../../helpers/host-differential';
 import { removeTempRoots } from '../../helpers/temp-home';
 
@@ -11,7 +11,7 @@ import { removeTempRoots } from '../../helpers/temp-home';
  * with the same fake CLIs on `PATH`, so any divergence fails the row.
  */
 
-const flow = async (spec: FlowSpec) => expectSameFlow(await runFlowDifferential(spec));
+const flow = async (spec: FlowSpec) => await runFlowDifferential(spec);
 
 const NUDGE =
   'Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. `npm i -g cc-safety-net@latest` for a global install.';

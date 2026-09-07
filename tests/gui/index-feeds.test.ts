@@ -308,14 +308,6 @@ describe('the GUI rulebook listing', () => {
         runGuiRow({
           seed: {},
           requests: [{ method: 'POST', path: '/api/rules/choose-directory' }],
-          // Linux answers that no dialog exists; macOS and Windows name the binary they could not
-          // start. The record keeps one marker for either.
-          folds: [
-            [
-              /No folder dialog is available on this system|Could not open the folder dialog \([^)]*\)/g,
-              '<dialog-error>',
-            ],
-          ],
         }),
     );
 

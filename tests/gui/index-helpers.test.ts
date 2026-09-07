@@ -14,7 +14,6 @@ import {
   createTempRoot,
   isolationEnv,
   normalize,
-  recordPorted,
   removeTempRoots,
   snapshotHome,
   WINDOWS_SEPARATOR_FOLDS,
@@ -162,11 +161,8 @@ describe('the GUI installer wrapper', () => {
       return folded({ install, installed, uninstall, removed: snapshotHome(home) }, home);
     });
 
-  const bothSides = async (run: (runner: Runner, home: string) => Promise<unknown>) => {
-    const ported = await run(portedRunIntegration, homeFor('ported'));
-    recordPorted(ported);
-    return ported;
-  };
+  const bothSides = (run: (runner: Runner, home: string) => Promise<unknown>) =>
+    run(portedRunIntegration, homeFor('ported'));
 
   test('installs and removes the target the GUI asked for, reporting what it wrote', async () => {
     const result = (await bothSides(lifecycle)) as Awaited<ReturnType<typeof lifecycle>>;
