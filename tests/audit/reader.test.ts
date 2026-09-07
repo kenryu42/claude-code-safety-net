@@ -209,9 +209,10 @@ describe('audit reader record parity', () => {
       if (readCase.content !== null) writeFileSync(file, readCase.content);
       const nextSkips = { count: 0 };
 
-      const entries = readAuditLogEntries(file, nextSkips);
-      expect(entries).toMatchSnapshot();
-      expect(entries.map((entry) => entry.command)).toStrictEqual(readCase.commands);
+      // A record that survives comes back whole, so the commands name entire lines.
+      expect(readAuditLogEntries(file, nextSkips)).toEqual(
+        readCase.commands.map((command) => JSON.parse(denied(command))),
+      );
       expect(nextSkips.count).toBe(readCase.skips);
     });
   }

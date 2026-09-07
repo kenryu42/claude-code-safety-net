@@ -48,19 +48,19 @@ describe('running a host CLI', () => {
       merged: await native.runNativeCommand(['tool', 'go']),
       stdoutOnly: await native.runNativeCommand(['tool', 'go'], { stdoutOnly: true }),
     }));
-    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual({ merged: 'out\n\nerr\n', stdoutOnly: 'out\n' });
+    expect(ported.calls).toEqual(['tool go', 'tool go']);
   });
 
   test('reports the exit status and everything the command printed', async () => {
     const ported = await forBoth((native) =>
       describeAsyncOutcome(() => native.runNativeCommand(['tool', 'fail'])),
     );
-    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual({
       kind: 'threw',
       message: 'Failed to run tool fail (exit 2).\nout\nerr',
     });
+    expect(ported.calls).toEqual(['tool fail']);
   });
 
   test('reports a command that is not on PATH as a spawn failure', async () => {
@@ -78,11 +78,11 @@ describe('running a host CLI', () => {
     const ported = await forBoth((native) =>
       describeAsyncOutcome(() => native.runNativeCommand(['tool', 'slow'], { timeoutMs: 200 })),
     );
-    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual({
       kind: 'threw',
       message: 'Failed to run tool slow.\nTimed out after 200ms.',
     });
+    expect(ported.calls).toEqual(['tool slow']);
   });
 
   test('runs a list of commands one after the other', async () => {
@@ -92,7 +92,7 @@ describe('running a host CLI', () => {
         ['other', 'ok'],
       ]),
     );
-    expect(ported).toMatchSnapshot();
+    expect(ported.value).toBeUndefined();
     expect(ported.calls).toEqual(['tool go', 'other ok']);
   });
 
@@ -109,7 +109,6 @@ describe('running a host CLI', () => {
       warn.mockRestore();
       return warnings;
     });
-    expect(ported).toMatchSnapshot();
     expect(ported.value).toEqual(['Failed to run tool gone (exit 3).\nnothing to remove']);
     expect(ported.calls).toEqual(['tool gone', 'tool go']);
   });

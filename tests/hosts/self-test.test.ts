@@ -30,14 +30,43 @@ describe('the engine self-test', () => {
       tree: snapshotHome(root),
     };
 
-    expect(ported).toMatchSnapshot();
-    expect(ported.summary.passed).toBe(3);
-    expect(ported.summary.failed).toBe(0);
-    expect(ported.summary.results.map((result) => result.ruleId)).toEqual([
-      'git.reset-hard',
-      'rm.recursive-force-root-or-home',
-      undefined,
-    ]);
+    expect(ported.summary).toEqual({
+      total: 3,
+      passed: 3,
+      failed: 0,
+      results: [
+        {
+          description: 'git reset --hard',
+          command: 'git reset --hard',
+          expected: 'blocked',
+          actual: 'blocked',
+          passed: true,
+          ruleId: 'git.reset-hard',
+          reason:
+            "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.",
+        },
+        {
+          description: 'rm -rf /',
+          command: 'rm -rf /',
+          expected: 'blocked',
+          actual: 'blocked',
+          passed: true,
+          ruleId: 'rm.recursive-force-root-or-home',
+          reason:
+            'rm -rf targeting root or home directory is extremely dangerous and always blocked.',
+        },
+        // An allowed command is answered by no rule, so it carries neither an id nor a reason.
+        {
+          description: 'rm in cwd (safe)',
+          command: 'rm -rf ./node_modules',
+          expected: 'allowed',
+          actual: 'allowed',
+          passed: true,
+          ruleId: undefined,
+          reason: undefined,
+        },
+      ],
+    });
     expect(ported.entries).toEqual([]);
     expect(ported.tree.map((entry) => entry.path)).toEqual(['tmp']);
   });
