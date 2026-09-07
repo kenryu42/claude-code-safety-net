@@ -8,7 +8,6 @@ import {
   environmentFor,
   isolationEnv,
   removeTempRoots,
-  snapshotHome,
 } from '../../helpers/temp-home';
 
 /**
@@ -98,7 +97,7 @@ describe('clearing the npx cache', () => {
         testCase.platform ?? 'linux',
       );
 
-      expect(snapshotHome(portedHome)).toMatchSnapshot();
+      // Only the entry holding a `cc-safety-net` install is gone; `b` and `c` stay.
       expect(cacheEntries(portedHome, testCase.cacheDir)).toEqual(testCase.remaining);
     });
   }

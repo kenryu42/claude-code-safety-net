@@ -10,11 +10,11 @@ import { withEnv } from '../helpers';
 import { bashCall, createGateTree } from '../helpers/gate-differential';
 import { readAuditEntries } from '../helpers/hook-capture';
 import { STRUCTURAL_LIMIT_COMMAND } from '../helpers/hook-hosts';
-import { auditDirnameFolds, recordPorted, rootFolds } from '../helpers/temp-home';
+import { auditDirnameFolds, normalize, rootFolds } from '../helpers/temp-home';
 
 /**
  * The runner's one call into the gate: evaluate, then record. Each row runs one invocation against
- * one audit home and records what came back — or what was thrown — together with the line that
+ * one audit home and states what came back — or what was thrown — together with the line that
  * reached the log. The limit rows raise the gate's own limit classes, and the classification they
  * carry is what the audit line has to keep.
  */
@@ -53,6 +53,8 @@ type Row = {
   /** Set by the one row that throws out of the gate without an injected dependency. */
   throws?: true;
   lines: number;
+  /** Where the guard settled: every row but the secret guard's own breach answers in analysis. */
+  stage: string;
   entry?: Record<string, unknown>;
 };
 
@@ -62,6 +64,7 @@ const ROWS: readonly Row[] = [
     command: 'git status',
     auditAllowed: true,
     lines: 1,
+    stage: 'command-analysis',
     entry: { decision: 'allow', command: 'git status', reason: 'allowed' },
   },
   {
@@ -69,12 +72,14 @@ const ROWS: readonly Row[] = [
     command: 'git status',
     auditAllowed: false,
     lines: 0,
+    stage: 'command-analysis',
   },
   {
     name: 'a rule denial',
     command: 'git push --force origin main',
     auditAllowed: false,
     lines: 1,
+    stage: 'command-analysis',
     entry: { decision: 'deny', command: 'git push --force origin main' },
   },
   {
@@ -83,6 +88,7 @@ const ROWS: readonly Row[] = [
     auditAllowed: false,
     breach: 'unexpected',
     lines: 1,
+    stage: 'command-analysis',
     entry: {
       decision: 'deny',
       command: 'echo unexpected',
@@ -97,6 +103,7 @@ const ROWS: readonly Row[] = [
     auditAllowed: false,
     breach: 'toolInput',
     lines: 1,
+    stage: 'command-analysis',
     entry: { decision: 'deny', command: '', segment: '', errorCode: 'tool-input-limit' },
   },
   {
@@ -107,6 +114,7 @@ const ROWS: readonly Row[] = [
     auditAllowed: false,
     throws: true,
     lines: 1,
+    stage: 'secret-protection',
     entry: {
       decision: 'deny',
       failureStage: 'secret-protection',
@@ -119,6 +127,7 @@ const ROWS: readonly Row[] = [
     auditAllowed: false,
     breach: 'canonicalization',
     lines: 1,
+    stage: 'command-analysis',
     entry: {
       decision: 'deny',
       command: 'echo canonicalization',
@@ -155,12 +164,22 @@ for (const row of ROWS) {
       return { outcome, entries: readAuditEntries(auditHome) };
     });
 
-    recordPorted(ported, FOLDS);
     expect(ported.entries).toHaveLength(row.lines);
     expect(ported.outcome.thrown).toBe(
       row.breach || row.throws ? 'GuardEvaluationError' : undefined,
     );
+    expect(ported.outcome.stage).toBe(row.stage);
+    expect(ported.outcome.decision).toMatchObject({
+      kind: row.entry?.decision ?? 'allow',
+    });
     if (row.entry) expect(ported.entries[0]?.entry).toMatchObject(row.entry);
+    // The line lands in the log named after the workspace the call ran in, under the session id.
+    const day = new Date().toISOString().slice(0, 10);
+    for (const entry of ported.entries) {
+      expect(normalize(entry.file, FOLDS)).toBe(
+        `<root>-workspace/${day.slice(0, 7)}/${day}-hosts-runtime-1.jsonl`,
+      );
+    }
   });
 }
 

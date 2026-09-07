@@ -13,7 +13,6 @@ import { join } from 'node:path';
 import { createProcessEnvironment } from '@/core/environment';
 import { resolveProtectedGitMetadata } from '@/core/git/metadata';
 import { runGit } from '../../helpers/git-worktree';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
 
 const IDENTITY = ['-c', 'user.name=Next Test', '-c', 'user.email=next@example.test'];
 
@@ -70,38 +69,117 @@ afterAll(() => {
 });
 
 describe('protected git metadata', () => {
-  test('matches the shipped resolver for repositories, worktrees, submodules and symlinks', () => {
-    const environment = createProcessEnvironment();
-    const cwds = [
-      join(root, 'main'),
-      join(root, 'main', 'nested'),
-      join(root, 'main', 'vendor', 'sub'),
-      join(root, 'main', 'missing', 'deeper'),
-      join(root, 'linked'),
-      join(root, 'linked', 'inner'),
-      join(root, 'plain'),
-      join(root, 'via-symlink'),
-      join(root, 'via-symlink', 'nested'),
-      join(root, 'external'),
-      join(root, 'external-gitdir'),
-      join(root, 'main', '.git'),
-      root,
-      '',
-    ];
-    for (const cwd of cwds) {
-      recordPorted(resolveProtectedGitMetadata(cwd, environment), rootFolds(root));
-    }
-    expect(resolveProtectedGitMetadata(join(root, 'plain'), environment)).toBeNull();
-    const submodule = resolveProtectedGitMetadata(join(root, 'main', 'vendor', 'sub'), environment);
-    expect(submodule?.markerFiles).toHaveLength(1);
-    // The resolver answers with the paths it compares: canonical, and on Windows lower-cased and
-    // spelled with `/`, so the fixture is spelled through `realpath` and folded the same way.
-    const compared = (...parts: string[]) => {
-      const path = join(realpathSync(root), ...parts);
-      return process.platform === 'win32' ? path.replaceAll('\\', '/').toLowerCase() : path;
-    };
-    expect(submodule?.directories).toContain(compared('main', '.git', 'modules', 'vendor', 'sub'));
-    const external = resolveProtectedGitMetadata(join(root, 'external'), environment);
-    expect(external?.hooksDirectories).toContain(compared('hooks-outside'));
+  /**
+   * The resolver answers with the paths it compares: canonical, and on Windows lower-cased and
+   * spelled with `/`, so every expected path is spelled through `realpath` and folded the same way.
+   */
+  const compared = (...parts: string[]) => {
+    const path = join(realpathSync(root), ...parts);
+    return process.platform === 'win32' ? path.replaceAll('\\', '/').toLowerCase() : path;
+  };
+
+  /** The repository at `main`, whichever directory inside it the call was made from. */
+  const mainRepository = () => ({
+    directories: [compared('main', '.git')],
+    entries: [compared('main', '.git')],
+    hooksDirectories: [compared('main', '.git', 'hooks')],
+    markerFiles: [],
+  });
+
+  /** A linked worktree protects its own git directory and the common one behind it. */
+  const linkedWorktree = () => ({
+    directories: [compared('main', '.git', 'worktrees', 'linked'), compared('main', '.git')],
+    entries: [compared('linked', '.git')],
+    hooksDirectories: [
+      compared('main', '.git', 'worktrees', 'linked', 'hooks'),
+      compared('main', '.git', 'hooks'),
+    ],
+    // The `.git` of a linked worktree is a file naming those directories, so it is protected too.
+    markerFiles: [compared('linked', '.git')],
+  });
+
+  const ROWS = [
+    {
+      name: 'the working tree of a repository',
+      cwd: () => join(root, 'main'),
+      expected: mainRepository,
+    },
+    {
+      name: 'a directory under the working tree',
+      cwd: () => join(root, 'main', 'nested'),
+      expected: mainRepository,
+    },
+    {
+      name: 'a submodule checkout',
+      cwd: () => join(root, 'main', 'vendor', 'sub'),
+      // A submodule keeps its git directory in the superproject and its `.git` is a file naming it.
+      expected: () => ({
+        directories: [compared('main', '.git', 'modules', 'vendor', 'sub')],
+        entries: [compared('main', 'vendor', 'sub', '.git')],
+        hooksDirectories: [compared('main', '.git', 'modules', 'vendor', 'sub', 'hooks')],
+        markerFiles: [compared('main', 'vendor', 'sub', '.git')],
+      }),
+    },
+    {
+      name: 'a path under the working tree that does not exist',
+      cwd: () => join(root, 'main', 'missing', 'deeper'),
+      expected: mainRepository,
+    },
+    { name: 'a linked worktree', cwd: () => join(root, 'linked'), expected: linkedWorktree },
+    {
+      name: 'a directory under a linked worktree',
+      cwd: () => join(root, 'linked', 'inner'),
+      expected: linkedWorktree,
+    },
+    {
+      name: 'a directory in no repository',
+      cwd: () => join(root, 'plain'),
+      expected: () => null,
+    },
+    {
+      name: 'a working tree reached through a symlink',
+      cwd: () => join(root, 'via-symlink'),
+      expected: mainRepository,
+    },
+    {
+      name: 'a directory under a symlinked working tree',
+      cwd: () => join(root, 'via-symlink', 'nested'),
+      expected: mainRepository,
+    },
+    {
+      name: 'a working tree whose git directory is a symlink out of it',
+      cwd: () => join(root, 'external'),
+      // Both spellings of the git directory are protected, and so is the directory its `hooks`
+      // link points at — otherwise a write through the link would install a hook unnoticed.
+      expected: () => ({
+        directories: [compared('external', '.git'), compared('external-gitdir')],
+        entries: [compared('external-gitdir')],
+        hooksDirectories: [
+          compared('external', '.git', 'hooks'),
+          compared('hooks-outside'),
+          compared('external-gitdir', 'hooks'),
+        ],
+        markerFiles: [],
+      }),
+    },
+    {
+      // A git directory with no working tree beside it is not a repository to enter.
+      name: 'a git directory standing on its own',
+      cwd: () => join(root, 'external-gitdir'),
+      expected: () => null,
+    },
+    {
+      name: 'the git directory inside a working tree',
+      cwd: () => join(root, 'main', '.git'),
+      expected: mainRepository,
+    },
+    { name: 'the directory the fixtures sit in', cwd: () => root, expected: () => null },
+    { name: 'no working directory at all', cwd: () => '', expected: () => null },
+  ];
+
+  test.each(ROWS)('$name', (row) => {
+    expect(resolveProtectedGitMetadata(row.cwd(), createProcessEnvironment())).toEqual(
+      row.expected(),
+    );
   });
 });
