@@ -174,14 +174,18 @@ function seedLogs(clock: number) {
 /**
  * The directory the writer names after the project path encodes each side's own temp root, which
  * the harness cannot spell as `<root>`. Nothing reads that name — the reader walks every
- * directory it finds — so the record folds it to one token.
+ * directory it finds — so the record folds it to one token and orders the tree by the folded
+ * path: the encoded name starts with `-` on Linux and with a drive letter on Windows, which sort
+ * on either side of the `.last-prune` marker beside it.
  */
 const foldProjectDir = (outcome: CliOutcome): CliOutcome => ({
   ...outcome,
-  tree: outcome.tree.map((entry) => ({
-    ...entry,
-    path: entry.path.replace(/(\/logs\/)[^/]+-project/, '$1<project-dir>'),
-  })),
+  tree: outcome.tree
+    .map((entry) => ({
+      ...entry,
+      path: entry.path.replace(/(\/logs\/)[^/]+-project/, '$1<project-dir>'),
+    }))
+    .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0)),
 });
 
 async function runLogs(args: readonly string[], row: Omit<CliRow, 'args'> = {}) {

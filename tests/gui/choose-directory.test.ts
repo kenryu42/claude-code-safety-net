@@ -15,6 +15,8 @@ import { createTempRoot, normalize, removeTempRoots } from '../helpers/temp-home
  * missing `osascript` on a `PATH` of our own, so no test opens a window.
  */
 
+const EXECUTE_BIT = process.platform !== 'win32';
+
 const executableDir = (root: string, name: string) => {
   const dir = join(root, `${name}-bin`);
   mkdirSync(dir, { recursive: true });
@@ -49,7 +51,11 @@ describe('whether a folder dialog can be opened', () => {
       ['freebsd', { DISPLAY: ':0', PATH: zenity }, false],
     ];
 
-    for (const [platform, env, available] of rows) {
+    // A Linux dialog is found by its execute bit, which a Windows filesystem has no way to set,
+    // so the rows that find one only hold on a host that has the bit.
+    for (const [platform, env, available] of rows.filter(
+      ([host, , found]) => !found || EXECUTE_BIT || host !== 'linux',
+    )) {
       expect(portedAvailable(platform, env)).toBe(available);
     }
   });
@@ -135,7 +141,9 @@ describe('opening the folder dialog', () => {
   };
 
   test.each(
-    DIALOG_ROWS.map((row) => [row.label, row] as const),
+    DIALOG_ROWS.filter((row) => EXECUTE_BIT || row.platform !== 'linux').map(
+      (row) => [row.label, row] as const,
+    ),
   )('reports %s the same way', async (_label, row) => {
     expect(await runSide(row)).toStrictEqual({ result: row.result, argv: row.argv });
   });

@@ -201,7 +201,7 @@ describe('protected path scanner walk', () => {
     // A `cd` through a symlink is canonicalized, so the guard sees one spelling of the target.
     expect(
       completedWalk(
-        walkPair(`cd ${join(root, 'link')} && rm -rf x`, workspace, null),
+        walkPair(`cd ${join(root, 'link').split(sep).join('/')} && rm -rf x`, workspace, null),
       ).observations.some((observation) =>
         observation.includes(`cwd=${canonical(root, 'policy')}`),
       ),

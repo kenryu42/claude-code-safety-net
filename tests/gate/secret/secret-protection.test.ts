@@ -233,8 +233,8 @@ describe('shell operands against the built-in secret catalog', () => {
       },
       {
         name: 'a file:// URI is resolved to the path it names',
-        command: `cat file://${join(repo, '.env')}`,
-        expected: env(`file://${join(repo, '.env')}`),
+        command: `cat file://${shellPath(repo, '.env')}`,
+        expected: env(`file://${shellPath(repo, '.env')}`),
       },
       { name: 'an operand after --', command: 'cat -- .env', expected: env('.env') },
       { name: 'an archived secret', command: 'tar -cf backup.tar .env', expected: env('.env') },
@@ -311,7 +311,8 @@ describe('shell operands against the built-in secret catalog', () => {
       {
         name: 'the relocation variable is expanded out of the command text',
         command: 'cat "$CODEX_HOME/auth.json"',
-        expected: { target: shellPath(codexHome, 'auth.json'), ruleId: 'secret.cli.codex' },
+        // The target is the expansion as the shell spelled it: the variable's value, then the file.
+        expected: { target: `${codexHome}/auth.json`, ruleId: 'secret.cli.codex' },
       },
       {
         name: 'Gemini CLI credentials',
@@ -800,7 +801,7 @@ describe('the carriers a candidate path can arrive through', () => {
       },
       {
         name: 'ls with flags and an absolute path',
-        command: `ls -la ${join(userHome, '.aws')}`,
+        command: `ls -la ${shellPath(userHome, '.aws')}`,
         expected: aws(shellPath(userHome, '.aws')),
         relaxedInStandard: true,
       },
@@ -852,9 +853,11 @@ describe('secret protection through tool inputs', () => {
         },
         {
           name: 'an absolute file_path under the home SSH directory',
+          // A path field is not read by a shell, so it carries the host's own spelling, and the
+          // target is that spelling.
           input: { file_path: join(userHome, '.ssh', 'id_rsa') },
           route: { kind: 'path' },
-          expected: ssh(shellPath(userHome, '.ssh', 'id_rsa')),
+          expected: ssh(join(userHome, '.ssh', 'id_rsa')),
         },
         {
           name: 'a tilde-spelled file_path',

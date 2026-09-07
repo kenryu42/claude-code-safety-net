@@ -165,18 +165,24 @@ export function normalize<T>(value: T, replacements: readonly Fold[]): T {
 }
 
 /**
- * Windows spells a path with `\\`; the records spell every path with `/`. In a JSON document (a
- * string opening with `{` or `[`) the separator is doubled and a single backslash opens an escape
- * (`\\n`, `\\"`), so only a doubled backslash folds there; elsewhere every backslash folds. A
- * drive-rooted path a row spelled as input (`Remove-Item C:\\`, `C:\\x\\pwsh.exe`) reads the same
- * on every host and is left alone.
+ * Windows spells a path with `\\`; the records spell every path with `/`. A backslash is folded only
+ * where a separator can stand: before a path character (`\\home`, `\\.cc-safety-net`, `\\<month>`) or
+ * at the end of the path. A shell escape (`rm {} \\;`, `\\"`), an escaped backslash and a `\\n` are
+ * left as the row spelled them. In a JSON document (a string opening with `{` or `[`) the
+ * separator is doubled and a single backslash opens an escape, so escapes are consumed pairwise
+ * and only a doubled backslash folds. A drive-rooted path a row spelled as input (`Remove-Item
+ * C:\\`, `C:\\x\\pwsh.exe`) reads the same on every host and is left alone.
  */
 function foldWindowsSeparators(text: string): string {
   const json = /^\s*[[{]/.test(text);
   const separators = json
-    ? /([A-Za-z]:\\\\[^\s"'`<>|;,]*)|\\\\/g
-    : /([A-Za-z]:\\[^\s"'`<>|;,]*)|\\+/g;
-  return text.replace(separators, (_match, drive: string | undefined) => drive ?? '/');
+    ? /([A-Za-z]:\\\\[^\s"'`<>|;,]*)|(\\\\(?=[A-Za-z0-9_.~@<-]|"))|\\./g
+    : /([A-Za-z]:\\[^\s"'`<>|;,]*)|(\\+(?=[A-Za-z0-9_.~@<-]|$))|\\./gm;
+  return text.replace(
+    separators,
+    (match, drive: string | undefined, separator: string | undefined) =>
+      drive ?? (separator === undefined ? match : '/'),
+  );
 }
 
 export const WINDOWS_SEPARATOR_FOLDS: readonly Fold[] =
@@ -191,18 +197,18 @@ const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&
  * printed. On Windows the same root also comes back in another letter case (`c:/users/runner~1`)
  * or with `/` for `\\`, so there the fold is one pattern over case and separator.
  */
-export const rootFolds = (root: string): readonly Fold[] =>
+export const rootFolds = (root: string, marker = '<root>'): readonly Fold[] =>
   [realpathSync(root), root].flatMap((spelling): readonly Fold[] => {
     if (sep !== '/')
       return [
-        [new RegExp(spelling.split(sep).map(escapeRegExp).join('(?:\\\\{1,2}|/)'), 'gi'), '<root>'],
+        [new RegExp(spelling.split(sep).map(escapeRegExp).join('(?:\\\\{1,2}|/)'), 'gi'), marker],
       ];
     const escaped = JSON.stringify(spelling).slice(1, -1);
     return escaped === spelling
-      ? [[spelling, '<root>']]
+      ? [[spelling, marker]]
       : [
-          [escaped, '<root>'],
-          [spelling, '<root>'],
+          [escaped, marker],
+          [spelling, marker],
         ];
   });
 

@@ -11,6 +11,7 @@ import {
   normalize,
   recordPorted,
   removeTempRoots,
+  WINDOWS_SEPARATOR_FOLDS,
 } from '../helpers/temp-home';
 
 /**
@@ -113,7 +114,10 @@ async function observe<T>(
   const before = github.requests.length;
   const value = await run(side, join(root, RULES_SUBPATH));
   // Sorted: a row cares which requests were made, not which of two sockets answered first.
-  return normalize({ value, requests: github.requests.slice(before).sort() }, [[root, '<root>']]);
+  return normalize({ value, requests: github.requests.slice(before).sort() }, [
+    [root, '<root>'],
+    ...WINDOWS_SEPARATOR_FOLDS,
+  ]);
 }
 
 /** One bounded fetch reduced to what a row compares: the status and the head of the body it

@@ -135,6 +135,9 @@ export async function runFlowDifferential(spec: FlowSpec) {
 export function expectSameFlow(result: Awaited<ReturnType<typeof runFlowDifferential>>) {
   recordPorted(result, [
     [AMP_ARTIFACT, '<amp-artifact>'],
+    // The tree came back with its separators folded, which rewrites the escapes inside the
+    // artifact's own source, so the record also folds the artifact as that fold spells it.
+    [normalize(AMP_ARTIFACT, WINDOWS_SEPARATOR_FOLDS), '<amp-artifact>'],
     [`bunx-${process.getuid?.() ?? 0}-`, 'bunx-<uid>-'],
   ]);
   return result;

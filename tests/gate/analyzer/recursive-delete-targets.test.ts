@@ -314,9 +314,11 @@ describe('recursive delete target context', () => {
         protectedGitMetadata: null,
       },
     });
-    // An allow root is canonicalized, so it spells the fixture's real path.
-    expect(withAllowed.allowRoots).toContain(join(realpathSync(root), 'allowed'));
-    expect(withAllowed.allowRoots).toContain(join(realpathSync(home), 'allowed-home'));
+    // An allow root is canonicalized, so it spells the fixture's real path, lower-cased on
+    // Windows where the comparison is case-insensitive.
+    const allowRoot = (path: string) => (process.platform === 'win32' ? path.toLowerCase() : path);
+    expect(withAllowed.allowRoots).toContain(allowRoot(join(realpathSync(root), 'allowed')));
+    expect(withAllowed.allowRoots).toContain(allowRoot(join(realpathSync(home), 'allowed-home')));
     // A relative entry is not an allow root, and a root containing home is refused.
     expect(withAllowed.allowRoots).not.toContain('relative');
     expect(

@@ -8,6 +8,7 @@ import {
   isolationEnv,
   normalize,
   removeTempRoots,
+  WINDOWS_SEPARATOR_FOLDS,
 } from '../../helpers/temp-home';
 
 /**
@@ -78,7 +79,10 @@ function runVerify(label: string, spec: TreeSpec, call: (context: VerifyContext)
   );
   try {
     const code = call({ home, env, cwd: join(root, 'project') });
-    return normalize({ code, written, tree: snapshotTree(root) }, [[root, '<root>']]);
+    return normalize({ code, written, tree: snapshotTree(root) }, [
+      [root, '<root>'],
+      ...WINDOWS_SEPARATOR_FOLDS,
+    ]);
   } finally {
     for (const spy of spies) spy.mockRestore();
   }

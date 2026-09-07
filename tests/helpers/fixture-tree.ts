@@ -7,7 +7,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 
 /**
  * A directory tree as data, so the I/O differential tests can build the same fixture twice (one
@@ -18,7 +18,12 @@ import { dirname, join } from 'node:path';
 export type TreeSpec = Record<string, string | null | { symlink: string }>;
 
 export function writeTree(root: string, spec: TreeSpec): void {
-  for (const [path, entry] of Object.entries(spec)) {
+  // Links last: Windows types a symlink by what its target is when the link is made, and a link
+  // to a directory that does not exist yet is made a file link, which no later stat can follow.
+  const entries = Object.entries(spec).sort(
+    ([, a], [, b]) => Number(isLink(a)) - Number(isLink(b)),
+  );
+  for (const [path, entry] of entries) {
     const full = join(root, path);
     mkdirSync(dirname(full), { recursive: true });
     if (entry === null) {
@@ -33,6 +38,8 @@ export function writeTree(root: string, spec: TreeSpec): void {
   }
 }
 
+const isLink = (entry: TreeSpec[string]) => entry !== null && typeof entry === 'object';
+
 export type TreeEntry = {
   path: string;
   kind: 'file' | 'directory' | 'symlink' | 'other';
@@ -41,10 +48,11 @@ export type TreeEntry = {
 };
 
 /**
- * Every entry under `root`, sorted, with regular-file content and raw symlink targets. No mode: a
- * symlink's is 0777 on Linux and 0755 on macOS, Windows reports 0666 for everything, and a
- * directory's is the runner's umask, so a recorded mode pins the recording host rather than the
- * code. A test whose contract is a mode (an owner-only policy file) asserts it with `lstatSync`.
+ * Every entry under `root`, sorted, with regular-file content and symlink targets spelled with `/`
+ * (Windows stores a relative target with `\\`). No mode: a symlink's is 0777 on Linux and 0755 on
+ * macOS, Windows reports 0666 for everything, and a directory's is the runner's umask, so a
+ * recorded mode pins the recording host rather than the code. A test whose contract is a mode (an
+ * owner-only policy file) asserts it with `lstatSync`.
  */
 export function snapshotTree(root: string, prefix = ''): TreeEntry[] {
   return readdirSync(join(root, prefix))
@@ -53,7 +61,9 @@ export function snapshotTree(root: string, prefix = ''): TreeEntry[] {
       const path = prefix === '' ? name : `${prefix}/${name}`;
       const stat = lstatSync(join(root, path));
       if (stat.isSymbolicLink()) {
-        return [{ path, kind: 'symlink', target: readlinkSync(join(root, path)) }];
+        return [
+          { path, kind: 'symlink', target: readlinkSync(join(root, path)).split(sep).join('/') },
+        ];
       }
       if (stat.isDirectory()) {
         return [{ path, kind: 'directory' }, ...snapshotTree(root, path)];

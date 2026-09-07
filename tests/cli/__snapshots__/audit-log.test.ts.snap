@@ -38,6 +38,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -55,11 +60,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -131,6 +131,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -148,11 +153,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -278,6 +278,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -295,11 +300,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -366,6 +366,11 @@ exports[`logs selection --limit truncates after the sort, keeping the newest 1`]
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -383,11 +388,6 @@ exports[`logs selection --limit truncates after the sort, keeping the newest 1`]
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -458,6 +458,11 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -475,11 +480,6 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -546,6 +546,11 @@ exports[`logs selection --agent and --rule each select one entry 1`] = `
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -563,11 +568,6 @@ exports[`logs selection --agent and --rule each select one entry 1`] = `
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -635,6 +635,11 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -652,11 +657,6 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -724,6 +724,11 @@ a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clea
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -741,11 +746,6 @@ a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clea
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -815,6 +815,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -832,11 +837,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -903,6 +903,11 @@ exports[`logs selection --project admits the directory it names and nothing besi
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -920,11 +925,6 @@ exports[`logs selection --project admits the directory it names and nothing besi
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -994,6 +994,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -1011,11 +1016,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -1084,6 +1084,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -1101,11 +1106,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -1424,6 +1424,11 @@ exports[`logs selection --json prints the selected entries as read 1`] = `
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -1441,11 +1446,6 @@ exports[`logs selection --json prints the selected entries as read 1`] = `
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -1528,6 +1528,11 @@ segment:   git reset --hard
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -1545,11 +1550,6 @@ segment:   git reset --hard
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -1616,6 +1616,11 @@ exports[`logs --id an id nothing recorded is reported as retained history having
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -1633,11 +1638,6 @@ exports[`logs --id an id nothing recorded is reported as retained history having
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -1702,6 +1702,11 @@ Multiple audit log entries found for id b1c2e3f405162740.
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -1719,11 +1724,6 @@ Multiple audit log entries found for id b1c2e3f405162740.
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 
@@ -2451,6 +2451,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
       "kind": "directory",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
@@ -2468,11 +2473,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 ,
       "kind": "file",
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "content": 

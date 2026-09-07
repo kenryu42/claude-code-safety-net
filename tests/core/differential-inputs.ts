@@ -1,5 +1,5 @@
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, posix } from 'node:path';
 import { createTestEnvironment, processPathResolver } from '@/core/environment';
 import { behavioralContractCases } from '../gate/behavioral-contract-cases';
 import { pipelineContractCases } from '../gate/pipeline-contract-cases';
@@ -32,8 +32,8 @@ export function corpusStrings(): string[] {
     workspace: WORKSPACE,
     repo: '/srv/work/repo',
     home: HOME,
-    userPolicyPath: join(HOME, '.cc-safety-net', 'policy.json'),
-    userPolicyDir: join(HOME, '.cc-safety-net'),
+    userPolicyPath: posix.join(HOME, '.cc-safety-net', 'policy.json'),
+    userPolicyDir: posix.join(HOME, '.cc-safety-net'),
   }).flatMap((row) =>
     typeof row.input === 'object' && row.input !== null
       ? Object.values(row.input).filter((value): value is string => typeof value === 'string')

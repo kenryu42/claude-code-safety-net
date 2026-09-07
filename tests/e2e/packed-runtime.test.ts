@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, expect, test } from 'bun:test';
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, realpathSync, rmSync } from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import pkg from '../../package.json';
@@ -12,6 +12,7 @@ import {
   normalize,
   recordPorted,
   removeTempRoots,
+  rootFolds,
 } from '../helpers/temp-home';
 
 /**
@@ -189,11 +190,7 @@ function runSide(outdir: string, journey: Journey): Outcome {
     maxBuffer: 32 * 1024 * 1024,
   });
   const clean = (text: string) => {
-    const spelled = normalize(text, [
-      [realpathSync(root), '<root>'],
-      [root, '<root>'],
-      [outdir, '<dist>'],
-    ]);
+    const spelled = normalize(text, [...rootFolds(root), ...rootFolds(outdir, '<dist>')]);
     return journey.normalize?.(spelled) ?? spelled;
   };
   return { stdout: clean(result.stdout), stderr: clean(result.stderr), exitCode: result.status };

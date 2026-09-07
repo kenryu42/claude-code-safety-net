@@ -164,19 +164,17 @@ function decide(input: string, index: number, environment: Environment) {
   return { row, verdicts: decided.map((cell) => cell.verdict) };
 }
 
-/** A mismatch names the literal and the cell, so the reader sees which command flipped. */
-function compareToTable(row: HarvestedRow, index: number) {
+/** Every cell of a row that disagrees with the table, named so the reader sees what flipped. */
+function mismatchesAgainstTable(row: HarvestedRow, index: number): string[] {
   const label = `literal ${index + 1} ${JSON.stringify(row.literal).slice(0, 120)}`;
   const expected = recorded?.[index];
   expect(expected?.literal, `${label} is not the literal recorded at that position`).toBe(
     row.literal,
   );
   expect(Object.keys(expected ?? {}), `${label}: recorded cells`).toStrictEqual(Object.keys(row));
-  Object.keys(row)
-    .filter((column) => column !== 'literal')
-    .forEach((column) => {
-      expect(row[column], `${label}: ${column}`).toBe(expected?.[column]);
-    });
+  return Object.keys(row)
+    .filter((column) => column !== 'literal' && row[column] !== expected?.[column])
+    .map((column) => `${label}: ${column}: ${expected?.[column]} -> ${row[column]}`);
 }
 
 const BATCH_SIZE = 250;
@@ -216,9 +214,11 @@ describe(`${HARVESTED_LITERAL_COUNT} literals harvested from the shipped test su
               .map((entry) => entry.row.literal),
           ).toStrictEqual([]);
           if (RECORDING) return;
-          decided.forEach((entry, offset) => {
-            compareToTable(entry.row, start + offset);
-          });
+          // Every flipped cell in the batch at once: one failure names them all rather than
+          // stopping at the first, so a reader sees the whole shape of a change.
+          expect(
+            decided.flatMap((entry, offset) => mismatchesAgainstTable(entry.row, start + offset)),
+          ).toStrictEqual([]);
         }),
       BATCH_TIMEOUT_MS,
     );

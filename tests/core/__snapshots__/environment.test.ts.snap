@@ -87,30 +87,11 @@ exports[`process environment resolves entries like the shipped resolver 12`] = `
 exports[`process environment resolves entries like the shipped resolver 13`] = `
 {
   "ok": true,
-  "value": null,
-}
-`;
-
-exports[`process environment resolves entries like the shipped resolver 14`] = `
-{
-  "error": {
-    "code": "ENOTDIR",
-    "errno": -20,
-    "path": "<root>/file/under",
-    "syscall": "<stat>",
-  },
-  "ok": false,
-}
-`;
-
-exports[`process environment resolves entries like the shipped resolver 15`] = `
-{
-  "ok": true,
   "value": "<root>",
 }
 `;
 
-exports[`process environment resolves entries like the shipped resolver 16`] = `
+exports[`process environment resolves entries like the shipped resolver 14`] = `
 {
   "ok": true,
   "value": "present",

@@ -24,8 +24,10 @@ import { recordPorted, rootFolds } from '../../helpers/temp-home';
 const fixture = createLinkedWorktreeFixture();
 let scratch = '';
 
-/** A link to the linked worktree whose name needs every escape the config parser decodes. */
-const ODD_LINK_NAME = 'odd "\\\t\n\bname';
+/** A link to the linked worktree whose name needs every escape the config parser decodes. Windows
+ *  refuses a quote, a control character and a backslash in a name, so there the name only needs
+ *  the quoting a space calls for. */
+const ODD_LINK_NAME = process.platform === 'win32' ? 'odd name' : 'odd "\\\t\n\bname';
 
 const GIT_CONFIG_ESCAPED: Readonly<Record<string, string>> = {
   '\\': '\\\\',

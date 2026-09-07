@@ -76,7 +76,8 @@ function resolveGitMetadataAnchor(
       hooksDirectories: [
         ...new Set(
           directories.flatMap((directory) => {
-            const lexical = comparePath(join(directory, 'hooks'));
+            // `join` spells the Windows separator, which the canonical entry beside it does not.
+            const lexical = comparePath(join(directory, 'hooks').replace(/\\/g, '/'));
             return [
               lexical,
               comparePath(normalizeProtectedPathCandidate(lexical, cwd, environment, budget)),

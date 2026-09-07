@@ -13,7 +13,7 @@ import {
   seedFiles,
 } from '../../helpers/cli-differential';
 import { json } from '../../helpers/cli-fixtures';
-import { normalizeDoctorJson } from '../../helpers/doctor-json';
+import { foldWindowsPosture, normalizeDoctorJson } from '../../helpers/doctor-json';
 import { environmentFor, removeTempRoots } from '../../helpers/temp-home';
 
 /**
@@ -52,7 +52,7 @@ async function runDoctorJson(slug: string, row: Omit<CliRow, 'args'>) {
     args: ['doctor', '--json', '--skip-update-check'],
     ...row,
   });
-  const outcome = expectSameCli(result);
+  const outcome = expectSameCli({ ...result, stdout: foldWindowsPosture(result.stdout) });
   pinGolden(slug, normalizeDoctorJson(outcome.stdout));
   return { outcome, report: JSON.parse(outcome.stdout) as DoctorReport };
 }

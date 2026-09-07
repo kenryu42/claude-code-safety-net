@@ -13,7 +13,7 @@ import {
 import { withEnv } from '../helpers';
 import { bashCall, createGateTree } from '../helpers/gate-differential';
 import { readAuditEntries } from '../helpers/hook-capture';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
+import { auditDirnameFolds, recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The host audit projection: what an evaluation becomes as an audit descriptor, and what that
@@ -28,7 +28,7 @@ const tree = createGateTree('next-hosts-audit-');
  * The workspace an evaluation ran in, as a descriptor spells it and as the audit writer spells it
  * in the log directory it names after that directory, with every separator replaced by `-`.
  */
-const FOLDS = [...rootFolds(tree.root), [tree.root.replaceAll('/', '-'), '<root>']] as const;
+const FOLDS = [...rootFolds(tree.root), ...auditDirnameFolds(tree.root, '<root>')];
 
 afterAll(() => {
   tree.remove();

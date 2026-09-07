@@ -2,7 +2,7 @@ import { afterAll, describe, expect, test } from 'bun:test';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 import type { BlockIntent } from '@/core/decision';
 import { createTestEnvironment, processPathResolver } from '@/core/environment';
 import { getCCSafetyNetEnvModes } from '@/core/policy/env';
@@ -148,7 +148,9 @@ describe('behavioral contract through the ported gate', () => {
 });
 
 describe('pipeline-only contract through the ported gate', () => {
-  const userPolicyPath = getUserPolicyPath(environment);
+  // The rows splice these into shell commands, where a `\\` is an escape: spelled with `/`.
+  const shellPath = (path: string) => path.split(sep).join('/');
+  const userPolicyPath = shellPath(getUserPolicyPath(environment));
   for (const contractCase of pipelineContractCases({
     workspace,
     repo: repository,

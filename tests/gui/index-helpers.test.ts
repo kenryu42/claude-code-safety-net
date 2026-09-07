@@ -17,6 +17,7 @@ import {
   recordPorted,
   removeTempRoots,
   snapshotHome,
+  WINDOWS_SEPARATOR_FOLDS,
   withProcessEnv,
 } from '../helpers/temp-home';
 
@@ -150,6 +151,7 @@ describe('the GUI installer wrapper', () => {
     normalize(value, [
       [realpathSync(home), '<home>'],
       [home, '<home>'],
+      ...WINDOWS_SEPARATOR_FOLDS,
     ]);
 
   const lifecycle = (run: Runner, home: string) =>

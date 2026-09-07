@@ -19,23 +19,29 @@ import { corpusWords, pairedEnvironments, pickWord, seededRandom } from '../diff
  */
 
 const HOME = '/srv/home/tester';
+// Every row spells the POSIX temp roots. Windows has none of them: its trusted root is the system
+// temp directory alone, and `/tmp` there names a directory on the current drive that does not
+// exist, so the fixture cannot even be made.
+const POSIX_TEMP_ROOTS = process.platform !== 'win32';
 // Made under the literal `/tmp` root rather than `tmpdir()`: the OS temp directory is only a
 // trusted root on darwin when it is the per-user `/var/folders/xx/yyy/T` form, so a session with
 // `TMPDIR` set elsewhere would otherwise decide these fixtures differently.
-const root = mkdtempSync('/tmp/next-tmpdir-');
-const outside = mkdtempSync('/tmp/next-tmpdir-outside-');
-mkdirSync(join(root, 'inner'));
-symlinkSync(outside, join(root, 'escape'));
-symlinkSync(join(root, 'nowhere'), join(root, 'broken'));
+const root = POSIX_TEMP_ROOTS ? mkdtempSync('/tmp/next-tmpdir-') : '';
+const outside = POSIX_TEMP_ROOTS ? mkdtempSync('/tmp/next-tmpdir-outside-') : '';
+if (POSIX_TEMP_ROOTS) {
+  mkdirSync(join(root, 'inner'));
+  symlinkSync(outside, join(root, 'escape'));
+  symlinkSync(join(root, 'nowhere'), join(root, 'broken'));
+}
 
 afterAll(() => {
-  rmSync(root, { recursive: true, force: true });
-  rmSync(outside, { recursive: true, force: true });
+  for (const dir of [root, outside].filter((dir) => dir !== ''))
+    rmSync(dir, { recursive: true, force: true });
 });
 
 const environment = pairedEnvironments({}, HOME);
 
-describe('trusted temp locations', () => {
+describe.skipIf(!POSIX_TEMP_ROOTS)('trusted temp locations', () => {
   const paths = [
     { name: 'the /tmp root', path: '/tmp', trusted: true, root: true },
     { name: 'the /tmp root with a trailing separator', path: '/tmp/', trusted: true, root: true },
@@ -107,7 +113,7 @@ describe('trusted temp locations', () => {
   }
 });
 
-describe('tmpdir trust for a command', () => {
+describe.skipIf(!POSIX_TEMP_ROOTS)('tmpdir trust for a command', () => {
   const rows: {
     name: string;
     env: Record<string, string>;
@@ -254,7 +260,7 @@ describe('tmpdir trust for a command', () => {
  * can spell and the words the two contract corpora carry: what a caller may not get is a crash,
  * a value trusted while it still carries expansion, or an override that disagrees with trust.
  */
-describe('tmpdir trust invariants over generated values', () => {
+describe.skipIf(!POSIX_TEMP_ROOTS)('tmpdir trust invariants over generated values', () => {
   const FRAGMENTS = [
     '/tmp',
     '/tmp/',

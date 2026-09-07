@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { sep } from 'node:path';
+import { resolve, sep } from 'node:path';
 import { createTestEnvironment } from '@/core/environment';
 import {
   getLocalRulebookPath,
@@ -20,13 +20,15 @@ import {
  * high would let a symlinked config escape the scope it belongs to.
  */
 
-const ROOT = '/srv/root';
-const NESTED = '/srv/root/workspaces/app';
-const OUTSIDE = '/srv/policy-paths-sibling';
-const HOME = '/srv/home/tester';
-
 /** The paths are joined with the host's separator; the rows spell them with `/`. */
 const slash = (path: string) => path.split(sep).join('/');
+
+// Absolute on the host: Windows resolves a `/`-rooted spelling onto the current drive, and the
+// rows are the paths the resolver produces from them.
+const ROOT = slash(resolve('/srv/root'));
+const NESTED = slash(resolve('/srv/root/workspaces/app'));
+const OUTSIDE = slash(resolve('/srv/policy-paths-sibling'));
+const HOME = slash(resolve('/srv/home/tester'));
 
 const environmentWith = (safetyNetHome?: string) =>
   createTestEnvironment({
@@ -103,9 +105,11 @@ describe('the user policy scope', () => {
     USER_SCOPES.map((row) => [row.behavior, row] as const),
   )('a local rulebook lives in a directory of its own beside rule.json — %s', (_behavior, row) => {
     expect(
-      getLocalRulebookPath(
-        getUserRulesDir(environmentWith(row.safetyNetHome), row.options),
-        'team-rules',
+      slash(
+        getLocalRulebookPath(
+          getUserRulesDir(environmentWith(row.safetyNetHome), row.options),
+          'team-rules',
+        ),
       ),
     ).toBe(`${row.rulesDir}/team-rules/rulebook.json`);
   });
@@ -180,6 +184,8 @@ describe('the project policy scope', () => {
     expect(getProjectRulesDir(`${NESTED}/`)).toBe(getProjectRulesDir(NESTED));
     expect(getProjectRulesConfigPath(`${NESTED}/`)).toBe(getProjectRulesConfigPath(NESTED));
     expect(getProjectPolicyPath(`${NESTED}/`)).toBe(getProjectPolicyPath(NESTED));
-    expect(getPolicyPaths(environmentWith(), { cwd: `${NESTED}/` }).projectScope.root).toBe(NESTED);
+    expect(slash(getPolicyPaths(environmentWith(), { cwd: `${NESTED}/` }).projectScope.root)).toBe(
+      NESTED,
+    );
   });
 });

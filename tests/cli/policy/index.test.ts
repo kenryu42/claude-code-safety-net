@@ -13,6 +13,7 @@ import {
   isolationEnv,
   normalize,
   removeTempRoots,
+  WINDOWS_SEPARATOR_FOLDS,
 } from '../../helpers/temp-home';
 
 /**
@@ -189,6 +190,7 @@ async function driveApply(
       home,
       outcome: normalize({ code, written, prompt: output.text(), tree: snapshotTree(root) }, [
         [root, '<root>'],
+        ...WINDOWS_SEPARATOR_FOLDS,
       ]),
     };
   } finally {

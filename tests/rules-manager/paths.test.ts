@@ -15,6 +15,7 @@ import {
   recordPorted,
   removeTempRoots,
   rootFolds,
+  WINDOWS_SEPARATOR_FOLDS,
 } from '../helpers/temp-home';
 
 /**
@@ -112,7 +113,9 @@ describe('getScopePaths resolves the scope the shipped module resolves', () => {
     const portedScope = scopeOf(
       getScopePaths(environmentFor(ported.home, ported.values), row.options(ported.root)),
     );
-    expect(normalize(portedScope, [[ported.root, '<root>']])).toMatchSnapshot();
+    expect(
+      normalize(portedScope, [[ported.root, '<root>'], ...WINDOWS_SEPARATOR_FOLDS]),
+    ).toMatchSnapshot();
   });
 
   test('an omitted working directory falls back to the process one', () => {
@@ -123,7 +126,9 @@ describe('getScopePaths resolves the scope the shipped module resolves', () => {
     expect(portedScope.configPath).toBe(
       join(ported.project, '.cc-safety-net', 'rules', 'rule.json'),
     );
-    expect(normalize(portedScope, [[ported.root, '<root>']])).toMatchSnapshot();
+    expect(
+      normalize(portedScope, [[ported.root, '<root>'], ...WINDOWS_SEPARATOR_FOLDS]),
+    ).toMatchSnapshot();
   });
 });
 

@@ -12,6 +12,7 @@ import {
   isolationEnv,
   normalize,
   recordPorted,
+  WINDOWS_SEPARATOR_FOLDS,
 } from './temp-home';
 
 /**
@@ -245,6 +246,8 @@ function observe(side: GuiSide, responses: readonly GuiResponse[]) {
   return normalize({ responses, tree: snapshotTree(side.root) }, [
     [realpathSync(side.root), '<root>'],
     [side.root, '<root>'],
+    // Folded here as well as in the record, so a `<root>/`-spelled expectation holds on Windows.
+    ...WINDOWS_SEPARATOR_FOLDS,
   ]);
 }
 

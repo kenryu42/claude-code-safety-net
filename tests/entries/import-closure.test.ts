@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 
 /**
  * Two budgets on the hook entry, both read off its transitive static import closure. Cold start:
@@ -44,14 +44,17 @@ function resolveSpecifier(specifier: string, fromFile: string): string | undefin
   return existsSync(`${base}.ts`) ? `${base}.ts` : join(base, 'index.ts');
 }
 
+/** A file's path under `src/`, spelled with `/` as the budget names it. */
+const relativeToRoot = (file: string) => relative(NEXT_ROOT, file).split(sep).join('/');
+
 function closureOf(entryFile: string) {
   const files = new Set<string>();
   const bare = new Set<string>();
   const pending = [entryFile];
   while (pending.length > 0) {
     const file = pending.pop() as string;
-    if (files.has(relative(NEXT_ROOT, file))) continue;
-    files.add(relative(NEXT_ROOT, file));
+    if (files.has(relativeToRoot(file))) continue;
+    files.add(relativeToRoot(file));
     for (const specifier of staticSpecifiers(readFileSync(file, 'utf-8'))) {
       const resolved = resolveSpecifier(specifier, file);
       if (resolved === undefined) bare.add(specifier);
@@ -133,7 +136,7 @@ describe('the hook entry closure', () => {
     expect(
       resolved
         .filter((file) => file !== undefined)
-        .map((file) => relative(NEXT_ROOT, file))
+        .map(relativeToRoot)
         .filter(offTheHookPath),
     ).toEqual(['core/policy/schema.ts', 'hosts/system-info.ts']);
     expect(

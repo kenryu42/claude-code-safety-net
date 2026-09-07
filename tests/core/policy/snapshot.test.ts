@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, parse } from 'node:path';
 import {
   createProcessEnvironment,
   createTestEnvironment,
@@ -186,7 +186,9 @@ const ROWS: readonly Row[] = [
         destructive_command_protection: {
           enabled: 'yes',
           overrides: { 'git.no-such-rule': 'off', 'git.alias-config': 'sometimes' },
-          allow_paths: ['/', '~', 'rel'],
+          // The root above the home: `/` on POSIX, the home's drive on Windows, where `/` names
+          // the current drive and need not be above the home at all.
+          allow_paths: [parse(HOME).root, '~', 'rel'],
         },
         secret_protection: { deny_paths: ['~'] },
         audit: { retention_days: 0 },

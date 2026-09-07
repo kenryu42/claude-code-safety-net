@@ -4,7 +4,15 @@ import { join } from 'node:path';
 import type { Environment } from '@/core/environment';
 import { loadRulesPolicy as portedLoadRulesPolicy } from '@/core/policy/scope-policy';
 import { snapshotTree, type TreeSpec, writeTree } from './fixture-tree';
-import { createTempRoot, environmentFor, isolationEnv, normalize, recordPorted } from './temp-home';
+import {
+  createTempRoot,
+  environmentFor,
+  type Fold,
+  isolationEnv,
+  normalize,
+  recordPorted,
+  WINDOWS_SEPARATOR_FOLDS,
+} from './temp-home';
 
 /**
  * The rulebook manager over a seeded home, driven through its `Environment`, recording everything
@@ -114,10 +122,8 @@ function gateView(policy: GatePolicy, scope: 'user' | 'project', root: string) {
 }
 
 /** Both spellings of the root: the temp path itself and what it canonicalizes to, because a
- *  diagnostic can carry either one. */
-function replacementsFor(root: string) {
-  return [
-    [root, '<root>'],
-    [realpathSync(root), '<root>'],
-  ] as const;
+ *  diagnostic can carry either one; and the separator, so a `<root>/`-spelled expectation holds
+ *  on Windows. */
+function replacementsFor(root: string): readonly Fold[] {
+  return [[root, '<root>'], [realpathSync(root), '<root>'], ...WINDOWS_SEPARATOR_FOLDS];
 }

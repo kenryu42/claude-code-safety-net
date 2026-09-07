@@ -9,6 +9,7 @@ import {
   processPathResolver,
 } from '@/core/environment';
 import { createLinkedWorktreeFixture } from '../helpers';
+import { describeOutcome } from '../helpers/fixture-tree';
 import { runGit } from '../helpers/git-worktree';
 import { recordPorted, rootFolds } from '../helpers/temp-home';
 import { expectSameOutcome, writeSymlinkLoopTree } from './differential-inputs';
@@ -31,11 +32,22 @@ afterAll(() => {
 
 describe('process environment', () => {
   test('resolves entries like the shipped resolver', () => {
-    for (const name of ['dir', 'file', 'link', 'broken', 'loop-a', 'missing', 'file/under', '']) {
+    for (const name of ['dir', 'file', 'link', 'broken', 'loop-a', 'missing', '']) {
       const path = join(root, name);
       expectSameOutcome(() => processPathResolver.realpath(path), rootFolds(root));
       expectSameOutcome(() => processPathResolver.entryKind(path), rootFolds(root));
     }
+  });
+
+  test('a path under a regular file is missing or refused, never an entry', () => {
+    // Linux and macOS refuse the stat with ENOTDIR; Windows answers that nothing is there.
+    const under = join(root, 'file', 'under');
+    expect(processPathResolver.realpath(under)).toBeNull();
+    expect(describeOutcome(() => processPathResolver.entryKind(under))).toSatisfy(
+      (outcome) =>
+        (outcome.ok && outcome.value === 'missing') ||
+        (!outcome.ok && outcome.error.message.includes('ENOTDIR')),
+    );
   });
 });
 

@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, isAbsolute, join } from 'node:path';
+import { dirname, isAbsolute, join, sep } from 'node:path';
 import { createTestEnvironment, type FakeEntry, processPathResolver } from '@/core/environment';
 import { resolveChdirTarget } from '@/core/paths/chdir';
 import { pickWord, seededRandom, writeSymlinkLoopTree } from '../differential-inputs';
@@ -175,16 +175,19 @@ describe('chdir target resolution', () => {
   }
 
   test('reads the in-memory filesystem through the seam', () => {
+    // The walker appends each component with the host's separator, so the seam's entries are
+    // spelled with it too.
+    const under = (name: string) => `/work${sep}${name}`;
     const environment = createTestEnvironment({
       entries: new Map<string, FakeEntry>([
-        ['/work/dir', 'present'],
-        ['/work/link', { symlink: '/work/dir' }],
+        [under('dir'), 'present'],
+        [under('link'), { symlink: under('dir') }],
       ]),
     });
-    expect(resolveChdirTarget('/work', 'link/../dir', environment.paths)).toBe('/work/dir');
-    expect(resolveChdirTarget('/work', 'link', environment.paths)).toBe('/work/dir');
+    expect(resolveChdirTarget('/work', 'link/../dir', environment.paths)).toBe(under('dir'));
+    expect(resolveChdirTarget('/work', 'link', environment.paths)).toBe(under('dir'));
     expect(() => resolveChdirTarget('/work', 'gone', environment.paths)).toThrow(
-      'Cannot resolve path component: /work/gone',
+      `Cannot resolve path component: ${under('gone')}`,
     );
   });
 });

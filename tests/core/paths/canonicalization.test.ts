@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, test } from 'bun:test';
 import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { isAbsolute, join } from 'node:path';
+import { isAbsolute, join, posix } from 'node:path';
 import { AnalysisLimit, createBudget } from '@/core/budget';
 import { processPathResolver } from '@/core/environment';
 import {
@@ -36,7 +36,7 @@ writeSymlinkLoopTree(root, {
 
 /** The fixture as a canonicalized candidate spells it: symlinks resolved, forward slashes. */
 const canonicalRoot = realpathSync(root).replace(/\\/g, '/');
-const under = (...parts: string[]) => join(canonicalRoot, ...parts);
+const under = (...parts: string[]) => posix.join(canonicalRoot, ...parts);
 
 const environment = pairedEnvironments(
   { HOME: home, TMPDIR: '/tmp', XDG_CONFIG_HOME: '/xdg' },

@@ -77,6 +77,9 @@ function importSpecifiers(source: string): string[] {
   });
 }
 
+/** A file's path under `src/`, spelled with `/` as the allowance tables and the reports spell it. */
+const relativeToRoot = (file: string) => relative(NEXT_ROOT, file).split(sep).join('/');
+
 function isAllowed(specifier: string, file: string): boolean {
   if (specifier.startsWith('node:')) return true;
   if (specifier.startsWith('@/')) return true;
@@ -84,7 +87,7 @@ function isAllowed(specifier: string, file: string): boolean {
     return !relative(NEXT_ROOT, join(file, '..', specifier)).startsWith('..');
   }
   if (specifier === 'bun') return true;
-  return (THIRD_PARTY_ALLOWANCES[relative(NEXT_ROOT, file)] ?? []).includes(specifier);
+  return (THIRD_PARTY_ALLOWANCES[relativeToRoot(file)] ?? []).includes(specifier);
 }
 
 /**
@@ -119,8 +122,8 @@ function typeOnlyImports(source: string): string[] {
  * a gate that runs on every tool call has no use for.
  */
 function layeringViolations(file: string, source: string): string[] {
-  const path = relative(NEXT_ROOT, file);
-  const layer = path.split(sep)[0];
+  const path = relativeToRoot(file);
+  const layer = path.split('/')[0];
   const specifiers = importSpecifiers(source);
   const allowedThirdParty = THIRD_PARTY_ALLOWANCES[path] ?? [];
   const offending = specifiers.filter((specifier) => {
@@ -288,7 +291,7 @@ describe('next/ architecture', () => {
     const violations = files.flatMap((file) =>
       importSpecifiers(readFileSync(file, 'utf-8'))
         .filter((specifier) => !isAllowed(specifier, file))
-        .map((specifier) => `${relative(NEXT_ROOT, file)} imports ${specifier}`),
+        .map((specifier) => `${relativeToRoot(file)} imports ${specifier}`),
     );
     expect(violations).toEqual([]);
   });
@@ -320,7 +323,7 @@ describe('next/ architecture', () => {
       .flatMap((file) =>
         importSpecifiers(readFileSync(file, 'utf-8'))
           .filter((specifier) => resolvesToSchemaModule(specifier, file))
-          .map((specifier) => `${relative(NEXT_ROOT, file)} imports ${specifier}`),
+          .map((specifier) => `${relativeToRoot(file)} imports ${specifier}`),
       );
     expect(violations).toEqual([]);
   });

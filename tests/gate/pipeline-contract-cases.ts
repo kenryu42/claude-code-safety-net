@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import { posix } from 'node:path';
 import type { BlockIntent } from '@/core/decision';
 import type { PolicySafetyLevel } from '@/core/policy/types';
 import type { ToolRoute } from '@/gate/invocation';
@@ -107,7 +107,7 @@ export function pipelineContractCases(paths: {
     {
       name: 'denies a read tool targeting AWS credentials',
       toolName: 'Read',
-      input: { file_path: join(paths.home, '.aws', 'credentials') },
+      input: { file_path: posix.join(paths.home, '.aws', 'credentials') },
       route: { kind: 'path' },
       cwd: 'workspace',
       expected: secretBlock('secret.home.aws'),
@@ -156,7 +156,10 @@ export function pipelineContractCases(paths: {
     {
       name: 'denies a write tool targeting the project policy file',
       toolName: 'Write',
-      input: { file_path: join(paths.workspace, '.cc-safety-net', 'policy.json'), content: '{}' },
+      input: {
+        file_path: posix.join(paths.workspace, '.cc-safety-net', 'policy.json'),
+        content: '{}',
+      },
       route: { kind: 'path' },
       cwd: 'workspace',
       expected: policyBlock,

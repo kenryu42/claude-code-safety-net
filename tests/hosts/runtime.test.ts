@@ -10,7 +10,7 @@ import { withEnv } from '../helpers';
 import { bashCall, createGateTree } from '../helpers/gate-differential';
 import { readAuditEntries } from '../helpers/hook-capture';
 import { STRUCTURAL_LIMIT_COMMAND } from '../helpers/hook-hosts';
-import { recordPorted, rootFolds } from '../helpers/temp-home';
+import { auditDirnameFolds, recordPorted, rootFolds } from '../helpers/temp-home';
 
 /**
  * The runner's one call into the gate: evaluate, then record. Each row runs one invocation against
@@ -25,7 +25,7 @@ const tree = createGateTree('next-hosts-runtime-');
  * The workspace the invocation ran in, as the audit line spells it and as the writer spells it in
  * the log directory it names after that directory, with every separator replaced by `-`.
  */
-const FOLDS = [...rootFolds(tree.root), [tree.root.replaceAll('/', '-'), '<root>']] as const;
+const FOLDS = [...rootFolds(tree.root), ...auditDirnameFolds(tree.root, '<root>')];
 
 afterAll(() => {
   tree.remove();

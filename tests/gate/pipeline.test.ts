@@ -2,7 +2,7 @@ import { afterAll, describe, expect, test } from 'bun:test';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir as systemTemp } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { AnalysisLimit } from '@/core/budget';
 import { createProcessEnvironment } from '@/core/environment';
 import { getUserPolicyPath } from '@/core/policy/paths';
@@ -135,7 +135,8 @@ const STAGE_EXITS: readonly {
   {
     label: 'a redirection into the user policy file',
     stage: 'policy-protection',
-    call: bash(`printf x > ${userPolicyPath}`, plain),
+    // A shell operand: spelled with `/`, which Windows reads as a separator and a shell as text.
+    call: bash(`printf x > ${userPolicyPath.split(sep).join('/')}`, plain),
     denyReason: 'protected policy config',
   },
   {
@@ -380,8 +381,12 @@ describe('git metadata for the execution and configuration directories', () => {
     return seen.ported as { entries: readonly string[] } | null;
   }
 
-  // An anchor is the repository's canonical path, so the fixture is spelled through `realpath`.
-  const anchor = (repository: string) => join(realpathSync(repository), '.git');
+  // An anchor is the repository's canonical path as the resolver compares it: through `realpath`,
+  // and on Windows lower-cased and spelled with `/`.
+  const anchor = (repository: string) => {
+    const path = join(realpathSync(repository), '.git');
+    return process.platform === 'win32' ? path.replaceAll('\\', '/').toLowerCase() : path;
+  };
 
   test('one repository resolves to one anchor', () => {
     expect(metadataFor(project, project)?.entries).toStrictEqual([anchor(project)]);
