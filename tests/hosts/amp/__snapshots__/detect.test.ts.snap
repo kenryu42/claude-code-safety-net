@@ -12,7 +12,6 @@ exports[`reading the Amp plugin listing reports no listing was taken at all 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -31,7 +30,6 @@ exports[`reading the Amp plugin listing reports an empty listing 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -52,7 +50,6 @@ exports[`reading the Amp plugin listing reports the personal plugin loaded 1`] =
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -76,7 +73,6 @@ exports[`reading the Amp plugin listing reports the legacy root file failing to 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -97,7 +93,6 @@ exports[`reading the Amp plugin listing reports a colored terminal listing 1`] =
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -116,7 +111,6 @@ exports[`reading the Amp plugin listing reports only the system-scope path line 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -135,7 +129,6 @@ exports[`reading the Amp plugin listing reports a personal plugin whose name onl
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

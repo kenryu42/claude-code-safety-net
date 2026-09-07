@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createProcessEnvironment } from '@/core/environment';
@@ -314,8 +314,9 @@ describe('recursive delete target context', () => {
         protectedGitMetadata: null,
       },
     });
-    expect(withAllowed.allowRoots).toContain(join(root, 'allowed'));
-    expect(withAllowed.allowRoots).toContain(join(home, 'allowed-home'));
+    // An allow root is canonicalized, so it spells the fixture's real path.
+    expect(withAllowed.allowRoots).toContain(join(realpathSync(root), 'allowed'));
+    expect(withAllowed.allowRoots).toContain(join(realpathSync(home), 'allowed-home'));
     // A relative entry is not an allow root, and a root containing home is refused.
     expect(withAllowed.allowRoots).not.toContain('relative');
     expect(

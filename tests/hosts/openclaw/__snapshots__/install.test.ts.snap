@@ -12,7 +12,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=%s with
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -31,7 +30,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~ with 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -50,7 +48,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~ with 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -69,7 +66,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~ with 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -88,7 +84,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~/state
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -107,7 +102,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~/state
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -126,7 +120,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=~/state
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -145,7 +138,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=<home>/
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -164,7 +156,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=<home>/
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -183,7 +174,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=<home>/
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -202,7 +192,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=   with
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -221,7 +210,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=   with
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -240,7 +228,6 @@ exports[`resolving the OpenClaw state directory reads OPENCLAW_STATE_DIR=   with
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -259,7 +246,6 @@ exports[`guarding the extension directory before a --force command lets a --forc
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -278,17 +264,14 @@ exports[`guarding the extension directory before a --force command lets a --forc
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -299,7 +282,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -308,7 +290,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -317,12 +298,10 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -341,22 +320,18 @@ exports[`guarding the extension directory before a --force command lets a --forc
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -378,17 +353,14 @@ exports[`guarding the extension directory before a --force command refuses to to
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -399,7 +371,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -408,7 +379,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -417,18 +387,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "mine",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/README.md",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -450,17 +417,14 @@ exports[`guarding the extension directory before a --force command refuses to to
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -469,7 +433,6 @@ exports[`guarding the extension directory before a --force command refuses to to
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -478,7 +441,6 @@ exports[`guarding the extension directory before a --force command refuses to to
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -487,12 +449,10 @@ exports[`guarding the extension directory before a --force command refuses to to
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -514,22 +474,18 @@ exports[`guarding the extension directory before a --force command refuses to to
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
       "kind": "symlink",
-      "mode": 511,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
       "target": "../../../elsewhere.js",
     },
@@ -539,7 +495,6 @@ exports[`guarding the extension directory before a --force command refuses to to
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -548,12 +503,10 @@ exports[`guarding the extension directory before a --force command refuses to to
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -575,34 +528,28 @@ exports[`guarding the extension directory before a --force command refuses to to
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "symlink",
-      "mode": 511,
       "path": ".openclaw/extensions/cc-safety-net",
       "target": "../../elsewhere",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere",
     },
     {
       "content": "kept",
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/keep.txt",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

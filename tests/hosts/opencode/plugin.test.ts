@@ -50,7 +50,7 @@ const failingPolicyLoad = (): never => {
 const ROWS: readonly Row[] = [
   {
     name: 'a destructive command',
-    args: () => ({ command: 'rm -rf /' }),
+    args: () => ({ command: 'git push --force origin main' }),
     contains: 'BLOCKED by CC Safety Net',
     blocked: true,
     lines: 1,

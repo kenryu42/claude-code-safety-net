@@ -12,7 +12,6 @@ exports[`reports Gemini absent when nothing is installed 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -31,23 +30,19 @@ exports[`reports Gemini absent when only the enablement file exists 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{"gemini-safety-net":{"overrides":["user"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -68,22 +63,18 @@ exports[`reports the extension configured when no enablement file was written 1`
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -104,28 +95,23 @@ exports[`reports the extension configured when the override enables the extensio
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{"gemini-safety-net":{"overrides":["user"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -146,28 +132,23 @@ exports[`reports the extension configured when the override list is empty 1`] = 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{"gemini-safety-net":{"overrides":[]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -188,28 +169,23 @@ exports[`reports the extension configured when the enablement file names another
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{"other":{"overrides":["!user"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -233,28 +209,23 @@ exports[`reports a \`!\`-prefixed override as disabled, naming the enablement fi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{"gemini-safety-net":{"overrides":["!user"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -273,27 +244,22 @@ exports[`refuses to guess when a directory sits where the enablement file belong
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -312,28 +278,23 @@ exports[`refuses to guess when the enablement file is not JSON 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{ "gemini-safety-net"",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

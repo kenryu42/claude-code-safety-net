@@ -75,7 +75,6 @@ exports[`every installed integration is updated in catalog order behind one cach
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -282,7 +281,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -298,7 +296,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -349,7 +346,6 @@ exports[`every installed integration is updated in catalog order behind one cach
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -358,7 +354,6 @@ exports[`every installed integration is updated in catalog order behind one cach
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
@@ -382,7 +377,6 @@ exports[`every installed integration is updated in catalog order behind one cach
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -403,7 +397,6 @@ exports[`every installed integration is updated in catalog order behind one cach
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/gemini-safety-net/gemini-extension.json",
     },
     {
@@ -587,7 +580,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -603,7 +595,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -622,7 +613,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -674,7 +664,6 @@ exports[`one failing target is reported as an error while the rest still update 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -881,7 +870,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -897,7 +885,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -952,7 +939,6 @@ marketplace gone"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -961,7 +947,6 @@ marketplace gone"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
@@ -985,7 +970,6 @@ marketplace gone"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -1006,7 +990,6 @@ marketplace gone"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/gemini-safety-net/gemini-extension.json",
     },
     {
@@ -1190,7 +1173,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1206,7 +1188,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -1225,7 +1206,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -1277,7 +1257,7 @@ exports[`the bunx entry the update runs from survives while the stale one goes 1
   "tmp": [
     {
       "kind": "directory",
-      "path": "bunx-0-cc-safety-net@latest",
+      "path": "bunx-<uid>-cc-safety-net@latest",
     },
     {
       "content": 
@@ -1285,12 +1265,11 @@ exports[`the bunx entry the update runs from survives while the stale one goes 1
 "
 ,
       "kind": "file",
-      "mode": 420,
-      "path": "bunx-0-cc-safety-net@latest/running.txt",
+      "path": "bunx-<uid>-cc-safety-net@latest/running.txt",
     },
     {
       "kind": "directory",
-      "path": "bunx-0-other-tool@latest",
+      "path": "bunx-<uid>-other-tool@latest",
     },
     {
       "content": 
@@ -1298,8 +1277,7 @@ exports[`the bunx entry the update runs from survives while the stale one goes 1
 "
 ,
       "kind": "file",
-      "mode": 420,
-      "path": "bunx-0-other-tool@latest/keep.txt",
+      "path": "bunx-<uid>-other-tool@latest/keep.txt",
     },
   ],
   "tree": [
@@ -1402,7 +1380,6 @@ exports[`a Copilot plugin checkout on disk is enough to update Copilot 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {

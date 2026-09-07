@@ -77,7 +77,6 @@ exports[`publishing the plugin to the hosted repository writes the artifact into
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -88,7 +87,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -98,7 +96,6 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -182,7 +179,6 @@ exports[`publishing the plugin to the hosted repository appends the user policy 
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -194,7 +190,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -204,18 +199,15 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cc-safety-net",
     },
     {
       "content": "{"version":1,"safety":{"level":"strict"},"secret_protection":{"deny_paths":["~/vault"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -299,7 +291,6 @@ exports[`publishing the plugin to the hosted repository publishes the artifact a
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -310,7 +301,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -320,18 +310,15 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cc-safety-net",
     },
     {
       "content": "not json",
       "kind": "file",
-      "mode": 420,
       "path": ".cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -415,7 +402,6 @@ exports[`publishing the plugin to the hosted repository publishes the artifact a
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -426,7 +412,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -436,18 +421,15 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cc-safety-net",
     },
     {
       "content": "[]",
       "kind": "file",
-      "mode": 420,
       "path": ".cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -492,7 +474,6 @@ exports[`publishing the plugin to the hosted repository touches no git command w
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -577,7 +558,6 @@ exports[`publishing the plugin to the hosted repository migrates a managed legac
         "git add -- cc-safety-net/index.ts cc-safety-net.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -588,7 +568,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -598,7 +577,6 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -658,7 +636,6 @@ exports[`publishing the plugin to the hosted repository reports the repository a
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -669,7 +646,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -679,7 +655,6 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -763,7 +738,6 @@ scripted failure"
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -774,7 +748,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -784,7 +757,6 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -826,7 +798,6 @@ exports[`refusing a hosted repository that holds something else leaves an unmana
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -868,7 +839,6 @@ exports[`refusing a hosted repository that holds something else leaves a symlink
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -910,7 +880,6 @@ exports[`refusing a hosted repository that holds something else leaves an unmana
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -946,7 +915,6 @@ spawn amp ENOENT"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -982,7 +950,6 @@ x"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1015,7 +982,6 @@ exports[`reading which repository to clone stops at an account whose personal re
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1031,7 +997,6 @@ exports[`clearing a local plugin that masks the personal one names the same syst
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1115,7 +1080,6 @@ exports[`clearing a local plugin that masks the personal one removes a managed c
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -1126,7 +1090,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -1136,22 +1099,18 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1235,7 +1194,6 @@ exports[`clearing a local plugin that masks the personal one removes a managed c
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -1246,7 +1204,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -1256,22 +1213,18 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1352,7 +1305,6 @@ exports[`clearing a local plugin that masks the personal one fails the install o
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -1363,7 +1315,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -1373,17 +1324,14 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp/plugins",
     },
     {
@@ -1392,12 +1340,10 @@ export default function plugin() {}
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/amp/plugins/cc-safety-net.ts",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1478,7 +1424,6 @@ exports[`clearing a local plugin that masks the personal one fails the install o
         "git add -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -1489,7 +1434,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -1499,22 +1443,18 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp/plugins/cc-safety-net",
     },
     {
@@ -1525,7 +1465,6 @@ export default function plugin() {}
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/amp/plugins/cc-safety-net/index.ts",
     },
     {
@@ -1534,12 +1473,10 @@ export default function plugin() {}
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/amp/plugins/cc-safety-net/README.md",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1584,17 +1521,14 @@ exports[`clearing a local plugin that masks the personal one keeps an unmanaged 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/amp/plugins",
     },
     {
@@ -1603,12 +1537,10 @@ exports[`clearing a local plugin that masks the personal one keeps an unmanaged 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/amp/plugins/cc-safety-net.ts",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1692,7 +1624,6 @@ exports[`removing the plugin from the hosted repository removes only our entry f
         "git rm -- cc-safety-net/index.ts": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "cc-safety-net",
           },
           {
@@ -1701,7 +1632,6 @@ exports[`removing the plugin from the hosted repository removes only our entry f
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/README.md",
           },
           {
@@ -1712,7 +1642,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net/index.ts",
           },
         ],
@@ -1722,7 +1651,6 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1812,7 +1740,6 @@ export default function plugin() {}
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "cc-safety-net.ts",
           },
         ],
@@ -1822,7 +1749,6 @@ export default function plugin() {}
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1867,7 +1793,6 @@ exports[`removing the plugin from the hosted repository commits nothing when the
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

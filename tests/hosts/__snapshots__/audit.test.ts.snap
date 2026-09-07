@@ -56,130 +56,130 @@ exports[`an evaluation projected as an audit descriptor git status (allowed fals
 
 exports[`an evaluation projected as an audit descriptor git status (allowed false, command false, failure true) 1`] = `undefined`;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command true, failure false) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed true, command true, failure false) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": undefined,
   "failureStage": undefined,
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command true, failure true) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed true, command true, failure true) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": "unexpected-error",
   "failureStage": "command-analysis",
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command false, failure false) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed true, command false, failure false) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": undefined,
   "failureStage": undefined,
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed true, command false, failure true) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed true, command false, failure true) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": "unexpected-error",
   "failureStage": "command-analysis",
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command true, failure false) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed false, command true, failure false) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": undefined,
   "failureStage": undefined,
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command true, failure true) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed false, command true, failure true) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": "unexpected-error",
   "failureStage": "command-analysis",
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command false, failure false) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed false, command false, failure false) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": undefined,
   "failureStage": undefined,
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
 
-exports[`an evaluation projected as an audit descriptor rm -rf / (allowed false, command false, failure true) 1`] = `
+exports[`an evaluation projected as an audit descriptor git push --force origin main (allowed false, command false, failure true) 1`] = `
 {
-  "command": "rm -rf /",
+  "command": "git push --force origin main",
   "cwd": "<root>/workspace",
   "decision": "deny",
   "errorCode": "unexpected-error",
   "failureStage": "command-analysis",
-  "intent": "hard_stop",
-  "level": undefined,
-  "reason": "This path contains the protected policy config and you must not modify or delete it.",
-  "ruleId": undefined,
-  "segment": "/",
+  "intent": "use_alternative",
+  "level": "standard",
+  "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+  "ruleId": "git.push-force",
+  "segment": "git push --force origin main",
   "toolName": "Bash",
 }
 `;
@@ -461,17 +461,19 @@ exports[`a descriptor written to the audit log guard audit for git status 1`] = 
 ]
 `;
 
-exports[`a descriptor written to the audit log guard audit for rm -rf / 1`] = `
+exports[`a descriptor written to the audit log guard audit for git push --force origin main 1`] = `
 [
   {
     "entry": {
       "agent": "hosts-test",
-      "command": "rm -rf /",
+      "command": "git push --force origin main",
       "cwd": "<root>/workspace",
       "decision": "deny",
-      "intent": "hard_stop",
-      "reason": "This path contains the protected policy config and you must not modify or delete it.",
-      "segment": "/",
+      "intent": "use_alternative",
+      "level": "standard",
+      "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+      "ruleId": "git.push-force",
+      "segment": "git push --force origin main",
       "sessionId": "hosts-audit-1",
       "shape": "claude-code",
       "toolName": "Bash",

@@ -48,12 +48,14 @@ exports[`a rule denial 1`] = `
     {
       "entry": {
         "agent": "hosts-test",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/workspace",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "hosts-runtime-1",
         "toolName": "Bash",
         "v": "dev",
@@ -65,16 +67,17 @@ exports[`a rule denial 1`] = `
     "decision": {
       "evidence": [
         {
-          "command": "rm -rf /",
+          "command": "git push --force origin main",
           "kind": "command",
-          "segment": "/",
+          "segment": "git push --force origin main",
         },
       ],
-      "intent": "hard_stop",
+      "intent": "use_alternative",
       "kind": "deny",
-      "reason": "This path contains the protected policy config and you must not modify or delete it.",
+      "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+      "ruleId": "git.push-force",
     },
-    "stage": "policy-protection",
+    "stage": "command-analysis",
     "thrown": undefined,
   },
 }

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
+import { lstatSync } from 'node:fs';
 import { join } from 'node:path';
 import { DEFAULT_GUI_POLICY } from '@/core/policy/store';
 import { DESTRUCTIVE_COMMAND_RULE_METADATA } from '@/core/rules/destructive';
@@ -83,6 +84,12 @@ const errorsOf = (body: unknown) => (body as { errors: string[] }).errors;
 
 const policyFile = (tree: readonly TreeEntry[]) =>
   tree.find((entry) => entry.path === USER_POLICY_FILE);
+
+/** The user policy file's permission bits, or the owner-only bits on Windows, which has none. */
+const policyFileMode = (home: string) =>
+  process.platform === 'win32'
+    ? 0o600
+    : lstatSync(join(home, '.cc-safety-net', 'policy.json')).mode & 0o777;
 
 const explainRequest = (command: unknown, policy: unknown): GuiRequest => ({
   method: 'POST',
@@ -355,7 +362,8 @@ describe('the policy GUI server', () => {
     });
 
     expect(written.responses[0]).toMatchObject({ status: 200, body: { errors: [] } });
-    expect(policyFile(written.tree)).toMatchObject({ mode: 0o600, content: json(USER_POLICY) });
+    expect(policyFile(written.tree)).toMatchObject({ content: json(USER_POLICY) });
+    expect(policyFileMode(written.home)).toBe(0o600);
     expect(refused.responses.map((response) => response.status)).toStrictEqual([400, 400]);
     expect(errorsOf(refused.responses[0]?.body).length).toBeGreaterThan(0);
     expect(errorsOf(refused.responses[1]?.body)[0]).toStartWith('Invalid JSON:');
@@ -397,10 +405,8 @@ describe('the policy GUI server', () => {
       ...JSON_HEADERS,
       body: { errors: [] },
     });
-    expect(policyFile(reset.tree)).toMatchObject({
-      mode: 0o600,
-      content: json(DEFAULT_GUI_POLICY),
-    });
+    expect(policyFile(reset.tree)).toMatchObject({ content: json(DEFAULT_GUI_POLICY) });
+    expect(policyFileMode(reset.home)).toBe(0o600);
     // Repair keeps what parsed — the retention window — and drops what the schema refused.
     expect(repairedInvalid.responses[0]).toMatchObject({
       status: 200,

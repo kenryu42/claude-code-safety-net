@@ -12,7 +12,6 @@ exports[`reports Codex absent when the caller could not run the host command 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -31,7 +30,6 @@ exports[`reports Codex absent when the listing is empty 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -50,7 +48,6 @@ exports[`reports Codex absent when every row belongs to another plugin 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -69,7 +66,6 @@ exports[`reports Codex absent when our row is registered but never installed 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -93,7 +89,6 @@ exports[`reports an installed row the user switched off, and says what it must s
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -114,7 +109,6 @@ exports[`reports an installed and enabled row as configured 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

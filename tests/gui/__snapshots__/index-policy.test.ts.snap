@@ -13,17 +13,14 @@ exports[`the policy GUI server answers the favicon before the token is checked 1
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2344,12 +2341,10 @@ exports[`the policy GUI server refuses a token that is missing, wrong, or suppli
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -2381,17 +2376,14 @@ exports[`the policy GUI server refuses a token that is missing, wrong, or suppli
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2565,12 +2557,10 @@ exports[`the policy GUI server stands the guard above every route, not just the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -2602,17 +2592,14 @@ exports[`the policy GUI server stands the guard above every route, not just the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -5595,17 +5582,14 @@ M 1506 121 L 1499 127 L 1497 131 L 1497 138 L 1496 139 L 1496 143 L 1495 144 L 1
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -7448,17 +7432,14 @@ exports[`the policy GUI server reads the user policy file in every state it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9327,12 +9308,10 @@ exports[`the policy GUI server reads the user policy file in every state it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -9364,17 +9343,14 @@ exports[`the policy GUI server reads the user policy file in every state it can 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -10825,28 +10801,23 @@ exports[`the policy GUI server reads the user policy file in every state it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -12297,28 +12268,23 @@ exports[`the policy GUI server reads the user policy file in every state it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "{ not json",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -13784,12 +13750,10 @@ exports[`the policy GUI server reads the user policy file in every state it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -13809,17 +13773,14 @@ exports[`the policy GUI server reads the user policy file in every state it can 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -15695,12 +15656,10 @@ exports[`the policy GUI server reports a project policy in force beside the user
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -15732,22 +15691,18 @@ exports[`the policy GUI server reports a project policy in force beside the user
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
@@ -15766,7 +15721,6 @@ exports[`the policy GUI server reports a project policy in force beside the user
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/policy.json",
     },
   ],
@@ -17639,12 +17593,10 @@ exports[`the policy GUI server reports a project policy in force beside the user
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -17676,22 +17628,18 @@ exports[`the policy GUI server reports a project policy in force beside the user
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
@@ -17705,7 +17653,6 @@ exports[`the policy GUI server reports a project policy in force beside the user
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/policy.json",
     },
   ],
@@ -18133,12 +18080,10 @@ exports[`the policy GUI server previews a draft policy and reports the diagnosti
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -18170,17 +18115,14 @@ exports[`the policy GUI server previews a draft policy and reports the diagnosti
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -18709,17 +18651,14 @@ exports[`the policy GUI server explains a command against the draft in the reque
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -18735,12 +18674,10 @@ exports[`the policy GUI server explains a command against the draft in the reque
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules/team-rules",
     },
     {
@@ -18767,17 +18704,14 @@ exports[`the policy GUI server explains a command against the draft in the reque
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -18824,12 +18758,10 @@ exports[`the policy GUI server writes a valid policy and leaves the file alone f
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
@@ -18861,17 +18793,14 @@ exports[`the policy GUI server writes a valid policy and leaves the file alone f
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -18930,12 +18859,10 @@ exports[`the policy GUI server writes a valid policy and leaves the file alone f
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -18967,17 +18894,14 @@ exports[`the policy GUI server writes a valid policy and leaves the file alone f
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -19034,12 +18958,10 @@ exports[`the policy GUI server caps the body it will parse at the same size on b
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
@@ -19071,17 +18993,14 @@ exports[`the policy GUI server caps the body it will parse at the same size on b
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -19128,12 +19047,10 @@ exports[`the policy GUI server resets to the defaults and repairs a file it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -19165,17 +19082,14 @@ exports[`the policy GUI server resets to the defaults and repairs a file it can 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -19222,12 +19136,10 @@ exports[`the policy GUI server resets to the defaults and repairs a file it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -19259,17 +19171,14 @@ exports[`the policy GUI server resets to the defaults and repairs a file it can 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -19316,12 +19225,10 @@ exports[`the policy GUI server resets to the defaults and repairs a file it can 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -19353,17 +19260,14 @@ exports[`the policy GUI server resets to the defaults and repairs a file it can 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],

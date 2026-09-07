@@ -6,12 +6,14 @@ exports[`one OpenCode tool call through both plugins a destructive command 1`] =
     {
       "entry": {
         "agent": "opencode",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "opencode-1",
         "toolName": "bash",
         "v": "dev",
@@ -24,13 +26,13 @@ exports[`one OpenCode tool call through both plugins a destructive command 1`] =
   "thrown": 
 "BLOCKED by CC Safety Net
 
-Reason: This path contains the protected policy config and you must not modify or delete it.
+Reason: git push --force destroys remote history. Use --force-with-lease for safer force push.
 
-Command: rm -rf /
+Rule: git.push-force
 
-Segment: /
+Command: git push --force origin main
 
-Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+Do not retry the blocked form. Continue the task using the safer alternative described above."
 ,
 }
 `;
@@ -692,12 +694,14 @@ exports[`a homeDir input steers the shipped audit tree and the environment steer
 [
   {
     "agent": "opencode",
-    "command": "rm -rf /",
+    "command": "git push --force origin main",
     "cwd": "<root>/project",
     "decision": "deny",
-    "intent": "hard_stop",
-    "reason": "This path contains the protected policy config and you must not modify or delete it.",
-    "segment": "/",
+    "intent": "use_alternative",
+    "level": "standard",
+    "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+    "ruleId": "git.push-force",
+    "segment": "git push --force origin main",
     "sessionId": "opencode-1",
     "toolName": "bash",
     "v": "dev",

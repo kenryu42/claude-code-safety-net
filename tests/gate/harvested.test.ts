@@ -41,9 +41,18 @@ const environment = createProcessEnvironment();
  * so a literal spelling `$TMPDIR` or `~` would otherwise decide on whatever the host set — `allow`
  * where `TMPDIR` is unset, `deny` where it names a directory above the fixture — and a recorded
  * verdict would carry the machine's own paths. The two variables that reach a verdict point into
- * the fixture; the rest are the synthetic values the trace recordings already use.
+ * the fixture; the rest are the synthetic values the trace recordings already use. Every `GIT_*`
+ * variable the host exports is blanked: the git analyzer reads `GIT_CONFIG_COUNT` and its
+ * `GIT_CONFIG_KEY_n`/`GIT_CONFIG_VALUE_n` pairs from the process, so a literal that sets the count
+ * and a key would borrow the host's value where the host exports one and fail closed where it
+ * does not.
  */
 const PINNED_PROCESS = {
+  ...Object.fromEntries(
+    Object.keys(process.env)
+      .filter((name) => name.startsWith('GIT_'))
+      .map((name) => [name, undefined]),
+  ),
   HOME: tree.home,
   LOGNAME: 'agent',
   PATH: '/usr/local/bin:/usr/bin:/bin',

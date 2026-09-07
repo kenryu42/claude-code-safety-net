@@ -23,12 +23,10 @@ exports[`the GUI activity feed over HTTP refuses a window request that carries n
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -60,17 +58,14 @@ exports[`the GUI activity feed over HTTP refuses a window request that carries n
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -202,12 +197,10 @@ exports[`the GUI activity feed over HTTP bounds the window by the retention the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -239,17 +232,14 @@ exports[`the GUI activity feed over HTTP bounds the window by the retention the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -295,12 +285,10 @@ exports[`the GUI activity feed over HTTP bounds the window by the retention the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -332,17 +320,14 @@ exports[`the GUI activity feed over HTTP bounds the window by the retention the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -560,12 +545,10 @@ exports[`the GUI activity feed over HTTP aggregates the window it was asked for 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -597,18 +580,15 @@ exports[`the GUI activity feed over HTTP aggregates the window it was asked for 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/logs",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/logs/.last-prune",
     },
     {
@@ -624,17 +604,14 @@ exports[`the GUI activity feed over HTTP aggregates the window it was asked for 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/logs/feed.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/logs/proj",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/logs/proj/<month>",
     },
     {
@@ -643,17 +620,14 @@ exports[`the GUI activity feed over HTTP aggregates the window it was asked for 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/logs/proj/<month>/<date>-s2.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -4212,12 +4186,10 @@ exports[`the GUI activity feed over HTTP caps 600 denials and 200 allows at the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -4249,18 +4221,15 @@ exports[`the GUI activity feed over HTTP caps 600 denials and 200 allows at the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/logs",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/logs/.last-prune",
     },
     {
@@ -5068,17 +5037,14 @@ exports[`the GUI activity feed over HTTP caps 600 denials and 200 allows at the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/logs/feed.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -8637,12 +8603,10 @@ exports[`the GUI activity feed over HTTP caps 490 denials and 20 allows at the e
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -8674,18 +8638,15 @@ exports[`the GUI activity feed over HTTP caps 490 denials and 20 allows at the e
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/logs",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/logs/.last-prune",
     },
     {
@@ -9203,17 +9164,14 @@ exports[`the GUI activity feed over HTTP caps 490 denials and 20 allows at the e
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/logs/feed.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9239,17 +9197,14 @@ exports[`the GUI rulebook listing lists nothing when no scope configures a ruleb
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9293,17 +9248,14 @@ exports[`the GUI rulebook listing names the scope a user rulebook came from 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -9319,12 +9271,10 @@ exports[`the GUI rulebook listing names the scope a user rulebook came from 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules/team-rules",
     },
     {
@@ -9351,17 +9301,14 @@ exports[`the GUI rulebook listing names the scope a user rulebook came from 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9405,27 +9352,22 @@ exports[`the GUI rulebook listing names the scope a project rulebook came from 1
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -9441,12 +9383,10 @@ exports[`the GUI rulebook listing names the scope a project rulebook came from 1
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/team-rules",
     },
     {
@@ -9473,7 +9413,6 @@ exports[`the GUI rulebook listing names the scope a project rulebook came from 1
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/team-rules/rulebook.json",
     },
   ],
@@ -9501,17 +9440,14 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -9527,17 +9463,14 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9573,17 +9506,14 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -9602,12 +9532,10 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules/team-rules",
     },
     {
@@ -9634,17 +9562,14 @@ exports[`the GUI rulebook listing reports a source with no rulebook file and an 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9666,17 +9591,14 @@ exports[`the GUI rulebook listing reports the platform dialog it could not open 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9698,17 +9620,14 @@ exports[`the GUI rulebook listing refuses the listing without a token 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9764,17 +9683,14 @@ exports[`the GUI star, integrations and install endpoints answers the star conte
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9797,17 +9713,14 @@ exports[`the GUI star, integrations and install endpoints answers the star conte
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9876,17 +9789,14 @@ exports[`the GUI star, integrations and install endpoints passes the integration
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9936,17 +9846,14 @@ exports[`the GUI star, integrations and install endpoints runs an install and an
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -9976,17 +9883,14 @@ exports[`the GUI star, integrations and install endpoints answers an unknown rou
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],

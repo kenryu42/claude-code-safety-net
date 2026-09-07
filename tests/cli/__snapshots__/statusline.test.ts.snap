@@ -11,17 +11,14 @@ exports[`statusline a disabled plugin is the whole answer 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -39,17 +36,14 @@ exports[`statusline a non-JSON payload is echoed in front of the line 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -67,12 +61,10 @@ exports[`statusline an enabled plugin at standard 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -85,17 +77,14 @@ exports[`statusline an enabled plugin at standard 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -113,12 +102,10 @@ exports[`statusline an enabled plugin at strict 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -131,17 +118,14 @@ exports[`statusline an enabled plugin at strict 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -159,12 +143,10 @@ exports[`statusline an enabled plugin at paranoid 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -177,17 +159,14 @@ exports[`statusline an enabled plugin at paranoid 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -205,12 +184,10 @@ exports[`statusline an enabled plugin at a rule override that changes inherited 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -226,12 +203,10 @@ exports[`statusline an enabled plugin at a rule override that changes inherited 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -244,17 +219,14 @@ exports[`statusline an enabled plugin at a rule override that changes inherited 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -272,12 +244,10 @@ exports[`statusline an enabled plugin at worktree 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -290,17 +260,14 @@ exports[`statusline an enabled plugin at worktree 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -318,23 +285,19 @@ exports[`statusline a malformed user policy adds the degraded glyph 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "not json",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -347,17 +310,14 @@ exports[`statusline a malformed user policy adds the degraded glyph 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -375,12 +335,10 @@ exports[`statusline a project policy that weakens the user policy adds its own g
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -394,12 +352,10 @@ exports[`statusline a project policy that weakens the user policy adds its own g
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -412,22 +368,18 @@ exports[`statusline a project policy that weakens the user policy adds its own g
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
@@ -441,7 +393,6 @@ exports[`statusline a project policy that weakens the user policy adds its own g
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/policy.json",
     },
   ],
@@ -459,12 +410,10 @@ exports[`statusline the legacy top-level spelling prints the same line 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.claude",
     },
     {
@@ -477,17 +426,14 @@ exports[`statusline the legacy top-level spelling prints the same line 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -519,17 +465,14 @@ EXAMPLES:
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -561,17 +504,14 @@ EXAMPLES:
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],

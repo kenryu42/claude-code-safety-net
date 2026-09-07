@@ -6,12 +6,14 @@ exports[`one payload through both runners a denied command 1`] = `
     {
       "entry": {
         "agent": "fake",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "hook-common-1",
         "toolName": "sh",
         "v": "dev",
@@ -21,7 +23,7 @@ exports[`one payload through both runners a denied command 1`] = `
   ],
   "stderr": [],
   "stdout": [
-    "{"deny":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: sh\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}",
+    "{"deny":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}",
   ],
 }
 `;

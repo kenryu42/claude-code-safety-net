@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import {
   type RunInstallCommandOptions,
   runInstallCommand,
@@ -8,7 +8,7 @@ import {
 import type { UpdateInfo } from '@/hosts/doctor-types';
 import { createFakeBin, type FakeScriptEntry } from './fake-bin';
 import { createFakeInput, createFakeOutput } from './fake-tty';
-import { snapshotTree, type TreeEntry, type TreeSpec, writeTree } from './fixture-tree';
+import { snapshotTree, type TreeSpec, writeTree } from './fixture-tree';
 import {
   createTempRoot,
   isolationEnv,
@@ -115,6 +115,8 @@ async function runSide(spec: FlowSpec) {
       [home, '<home>'],
       [root, '<root>'],
       [REPO_ROOT, '<repo>'],
+      // The separator is folded with the paths, so a `<home>/`-spelled expectation holds on Windows.
+      ...(sep === '/' ? [] : [[sep, '/'] as const]),
     ],
   );
 }
@@ -125,17 +127,13 @@ export async function runFlowDifferential(spec: FlowSpec) {
 }
 
 /**
- * Record the run; the returned result is what the contract is asserted on. A directory's mode is
- * the runner's umask rather than the contract — `mkdtemp` alone spells it 0700 on some Bun versions
- * and 0755 on others — so only the file modes, which carry the executable hooks, are recorded.
+ * Record the run; the returned result is what the contract is asserted on. bunx names its cache
+ * entries after the running user, so the id the suite runs under is folded out of the temp tree.
  */
 export function expectSameFlow(result: Awaited<ReturnType<typeof runFlowDifferential>>) {
-  const listed = (entries: readonly TreeEntry[]) =>
-    entries.map((entry) =>
-      entry.kind === 'directory' ? { path: entry.path, kind: entry.kind } : entry,
-    );
-  recordPorted({ ...result, tree: listed(result.tree), tmp: listed(result.tmp) }, [
+  recordPorted(result, [
     [AMP_ARTIFACT, '<amp-artifact>'],
+    [`bunx-${process.getuid?.() ?? 0}-`, 'bunx-<uid>-'],
   ]);
   return result;
 }

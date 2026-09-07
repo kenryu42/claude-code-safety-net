@@ -18,32 +18,26 @@ exports[`adding rulebook sources adds a local source and reports what the guard 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -70,7 +64,6 @@ exports[`adding rulebook sources adds a local source and reports what the guard 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -86,7 +79,6 @@ exports[`adding rulebook sources adds a local source and reports what the guard 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -173,32 +165,26 @@ exports[`adding rulebook sources adds every rulebook a repository publishes and 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -234,12 +220,10 @@ exports[`adding rulebook sources adds every rulebook a repository publishes and 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -266,12 +250,10 @@ exports[`adding rulebook sources adds every rulebook a repository publishes and 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/c",
     },
     {
@@ -298,7 +280,6 @@ exports[`adding rulebook sources adds every rulebook a repository publishes and 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/c/rulebook.json",
     },
     {
@@ -316,7 +297,6 @@ exports[`adding rulebook sources adds every rulebook a repository publishes and 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -384,32 +364,26 @@ exports[`adding rulebook sources adds only the selected rulebook 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -436,7 +410,6 @@ exports[`adding rulebook sources adds only the selected rulebook 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
@@ -452,7 +425,6 @@ exports[`adding rulebook sources adds only the selected rulebook 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -502,32 +474,26 @@ exports[`adding rulebook sources adds from an explicit ref 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -563,12 +529,10 @@ exports[`adding rulebook sources adds from an explicit ref 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -595,7 +559,6 @@ exports[`adding rulebook sources adds from an explicit ref 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
@@ -612,7 +575,6 @@ exports[`adding rulebook sources adds from an explicit ref 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -656,32 +618,26 @@ exports[`adding rulebook sources re-adding a commit-pinned rulebook configures a
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -717,7 +673,6 @@ exports[`adding rulebook sources re-adding a commit-pinned rulebook configures a
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
@@ -733,7 +688,6 @@ exports[`adding rulebook sources re-adding a commit-pinned rulebook configures a
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -755,27 +709,22 @@ Available rulebooks: a, b, c"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -789,7 +738,6 @@ Available rulebooks: a, b, c"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -822,32 +770,26 @@ exports[`adding rulebook sources refuses a rulebook name another configured sour
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -883,7 +825,6 @@ exports[`adding rulebook sources refuses a rulebook name another configured sour
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
@@ -899,7 +840,6 @@ exports[`adding rulebook sources refuses a rulebook name another configured sour
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -926,32 +866,26 @@ exports[`adding rulebook sources refuses to overwrite a file no configured sourc
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -978,7 +912,6 @@ exports[`adding rulebook sources refuses to overwrite a file no configured sourc
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
@@ -992,7 +925,6 @@ exports[`adding rulebook sources refuses to overwrite a file no configured sourc
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1037,32 +969,26 @@ exports[`adding rulebook sources a refused name stops the rest of the catalogue 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -1098,7 +1024,6 @@ exports[`adding rulebook sources a refused name stops the rest of the catalogue 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
@@ -1114,7 +1039,6 @@ exports[`adding rulebook sources a refused name stops the rest of the catalogue 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1133,27 +1057,22 @@ exports[`adding rulebook sources a failed fetch leaves no config and no vendored
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules",
     },
   ],
@@ -1172,27 +1091,22 @@ exports[`adding rulebook sources a rulebook whose own fixture fails is never ven
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -1206,7 +1120,6 @@ exports[`adding rulebook sources a rulebook whose own fixture fails is never ven
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1241,32 +1154,26 @@ exports[`adding rulebook sources repository-only flags are refused on a local so
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -1293,7 +1200,6 @@ exports[`adding rulebook sources repository-only flags are refused on a local so
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -1307,7 +1213,6 @@ exports[`adding rulebook sources repository-only flags are refused on a local so
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1347,32 +1252,26 @@ exports[`updating rulebook sources reports what moved upstream and keeps a sourc
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -1408,12 +1307,10 @@ exports[`updating rulebook sources reports what moved upstream and keeps a sourc
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -1440,12 +1337,10 @@ exports[`updating rulebook sources reports what moved upstream and keeps a sourc
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/c",
     },
     {
@@ -1472,7 +1367,6 @@ exports[`updating rulebook sources reports what moved upstream and keeps a sourc
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/c/rulebook.json",
     },
     {
@@ -1490,7 +1384,6 @@ exports[`updating rulebook sources reports what moved upstream and keeps a sourc
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1523,32 +1416,26 @@ exports[`updating rulebook sources a selective update never reaches the network 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -1584,7 +1471,6 @@ exports[`updating rulebook sources a selective update never reaches the network 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
@@ -1601,7 +1487,6 @@ exports[`updating rulebook sources a selective update never reaches the network 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1633,32 +1518,26 @@ exports[`updating rulebook sources a source that fails to fetch keeps its vendor
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -1694,12 +1573,10 @@ exports[`updating rulebook sources a source that fails to fetch keeps its vendor
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -1726,7 +1603,6 @@ exports[`updating rulebook sources a source that fails to fetch keeps its vendor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
@@ -1743,7 +1619,6 @@ exports[`updating rulebook sources a source that fails to fetch keeps its vendor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1774,32 +1649,26 @@ exports[`updating rulebook sources an unchanged upstream reports no change and w
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -1835,12 +1704,10 @@ exports[`updating rulebook sources an unchanged upstream reports no change and w
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -1867,7 +1734,6 @@ exports[`updating rulebook sources an unchanged upstream reports no change and w
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
@@ -1884,7 +1750,6 @@ exports[`updating rulebook sources an unchanged upstream reports no change and w
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1927,32 +1792,26 @@ exports[`updating rulebook sources a selector matching nothing names itself 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -1988,7 +1847,6 @@ exports[`updating rulebook sources a selector matching nothing names itself 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
@@ -2004,7 +1862,6 @@ exports[`updating rulebook sources a selector matching nothing names itself 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2022,32 +1879,26 @@ exports[`removing rulebook sources removes an exact local spec 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -2074,7 +1925,6 @@ exports[`removing rulebook sources removes an exact local spec 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -2088,7 +1938,6 @@ exports[`removing rulebook sources removes an exact local spec 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2121,32 +1970,26 @@ exports[`removing rulebook sources removes by rulebook name and leaves the vendo
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -2173,7 +2016,6 @@ exports[`removing rulebook sources removes by rulebook name and leaves the vendo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -2189,12 +2031,10 @@ exports[`removing rulebook sources removes by rulebook name and leaves the vendo
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/x",
     },
     {
@@ -2221,7 +2061,6 @@ exports[`removing rulebook sources removes by rulebook name and leaves the vendo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/x/rulebook.json",
     },
   ],
@@ -2239,27 +2078,22 @@ exports[`removing rulebook sources removes every rulebook a repository contribut
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -2273,12 +2107,10 @@ exports[`removing rulebook sources removes every rulebook a repository contribut
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/x",
     },
     {
@@ -2305,7 +2137,6 @@ exports[`removing rulebook sources removes every rulebook a repository contribut
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/x/rulebook.json",
     },
   ],
@@ -2325,27 +2156,22 @@ exports[`removing rulebook sources an ambiguous repository match asks for an exp
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -2362,7 +2188,6 @@ exports[`removing rulebook sources an ambiguous repository match asks for an exp
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2387,32 +2212,26 @@ exports[`removing rulebook sources an explicit ref removes only that ref 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -2448,12 +2267,10 @@ exports[`removing rulebook sources an explicit ref removes only that ref 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -2480,7 +2297,6 @@ exports[`removing rulebook sources an explicit ref removes only that ref 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
@@ -2496,7 +2312,6 @@ exports[`removing rulebook sources an explicit ref removes only that ref 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2514,27 +2329,22 @@ exports[`removing rulebook sources --delete-source deletes the rulebook file and
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -2548,7 +2358,6 @@ exports[`removing rulebook sources --delete-source deletes the rulebook file and
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2567,32 +2376,26 @@ exports[`removing rulebook sources --delete-source refuses a directory that hold
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -2601,7 +2404,6 @@ exports[`removing rulebook sources --delete-source refuses a directory that hold
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/notes.md",
     },
     {
@@ -2628,7 +2430,6 @@ exports[`removing rulebook sources --delete-source refuses a directory that hold
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -2644,7 +2445,6 @@ exports[`removing rulebook sources --delete-source refuses a directory that hold
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2663,32 +2463,26 @@ exports[`removing rulebook sources --delete-source refuses a directory with no r
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -2704,7 +2498,6 @@ exports[`removing rulebook sources --delete-source refuses a directory with no r
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2723,27 +2516,22 @@ exports[`removing rulebook sources --delete-source refuses a GitHub source 1`] =
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -2759,12 +2547,10 @@ exports[`removing rulebook sources --delete-source refuses a GitHub source 1`] =
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/x",
     },
     {
@@ -2791,7 +2577,6 @@ exports[`removing rulebook sources --delete-source refuses a GitHub source 1`] =
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/x/rulebook.json",
     },
   ],
@@ -2810,32 +2595,26 @@ exports[`removing rulebook sources a remove whose post-write sync fails restores
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -2862,7 +2641,6 @@ exports[`removing rulebook sources a remove whose post-write sync fails restores
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -2879,7 +2657,6 @@ exports[`removing rulebook sources a remove whose post-write sync fails restores
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -2905,32 +2682,26 @@ exports[`the post-change runtime reload --check reports what the guard would ref
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -2957,7 +2728,6 @@ exports[`the post-change runtime reload --check reports what the guard would ref
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -2975,12 +2745,10 @@ exports[`the post-change runtime reload --check reports what the guard would ref
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/second",
     },
     {
@@ -3007,7 +2775,6 @@ exports[`the post-change runtime reload --check reports what the guard would ref
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/second/rulebook.json",
     },
   ],
@@ -3077,32 +2844,26 @@ exports[`the post-change runtime reload an add leaves the reload to the update t
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -3129,7 +2890,6 @@ exports[`the post-change runtime reload an add leaves the reload to the update t
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -3148,12 +2908,10 @@ exports[`the post-change runtime reload an add leaves the reload to the update t
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/second",
     },
     {
@@ -3180,7 +2938,6 @@ exports[`the post-change runtime reload an add leaves the reload to the update t
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/second/rulebook.json",
     },
   ],
@@ -3238,27 +2995,22 @@ exports[`resource limits a config over the source limit is refused by every entr
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -3338,7 +3090,6 @@ exports[`resource limits a config over the source limit is refused by every entr
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -3357,27 +3108,22 @@ exports[`resource limits an add past the source limit writes nothing 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -3456,7 +3202,6 @@ exports[`resource limits an add past the source limit writes nothing 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -3475,17 +3220,14 @@ exports[`resource limits mapping more sources than the limit throws before any m
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -3504,32 +3246,26 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-10",
     },
     {
@@ -3556,12 +3292,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-10/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-11",
     },
     {
@@ -3588,12 +3322,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-11/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-12",
     },
     {
@@ -3620,12 +3352,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-12/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-13",
     },
     {
@@ -3652,12 +3382,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-13/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-14",
     },
     {
@@ -3684,12 +3412,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-14/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-15",
     },
     {
@@ -3716,12 +3442,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-15/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-16",
     },
     {
@@ -3748,12 +3472,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-16/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-17",
     },
     {
@@ -3780,12 +3502,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-17/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-18",
     },
     {
@@ -3812,12 +3532,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-18/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-19",
     },
     {
@@ -3844,12 +3562,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-19/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-20",
     },
     {
@@ -3876,12 +3592,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-20/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-21",
     },
     {
@@ -3908,12 +3622,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-21/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-22",
     },
     {
@@ -3940,12 +3652,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-22/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-23",
     },
     {
@@ -3972,12 +3682,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-23/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-24",
     },
     {
@@ -4004,12 +3712,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-24/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-25",
     },
     {
@@ -4036,12 +3742,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-25/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-26",
     },
     {
@@ -4068,12 +3772,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-26/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-27",
     },
     {
@@ -4100,12 +3802,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-27/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-28",
     },
     {
@@ -4132,12 +3832,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-28/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-29",
     },
     {
@@ -4164,12 +3862,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-29/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-30",
     },
     {
@@ -4196,12 +3892,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-30/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-31",
     },
     {
@@ -4228,12 +3922,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-31/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-32",
     },
     {
@@ -4260,12 +3952,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-32/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-33",
     },
     {
@@ -4292,12 +3982,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-33/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-34",
     },
     {
@@ -4324,12 +4012,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-34/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-35",
     },
     {
@@ -4356,12 +4042,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-35/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-36",
     },
     {
@@ -4388,12 +4072,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-36/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-37",
     },
     {
@@ -4420,12 +4102,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-37/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-38",
     },
     {
@@ -4452,12 +4132,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-38/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-39",
     },
     {
@@ -4484,12 +4162,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-39/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-40",
     },
     {
@@ -4516,12 +4192,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-40/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-41",
     },
     {
@@ -4548,12 +4222,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-41/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-42",
     },
     {
@@ -4580,12 +4252,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-42/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-43",
     },
     {
@@ -4612,12 +4282,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-43/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-44",
     },
     {
@@ -4644,12 +4312,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-44/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-45",
     },
     {
@@ -4676,12 +4342,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-45/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-46",
     },
     {
@@ -4708,12 +4372,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-46/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-47",
     },
     {
@@ -4740,12 +4402,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-47/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-48",
     },
     {
@@ -4772,12 +4432,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-48/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-49",
     },
     {
@@ -4804,12 +4462,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-49/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-50",
     },
     {
@@ -4836,12 +4492,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-50/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-51",
     },
     {
@@ -4868,12 +4522,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-51/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-52",
     },
     {
@@ -4900,12 +4552,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-52/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-53",
     },
     {
@@ -4932,12 +4582,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-53/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-54",
     },
     {
@@ -4964,12 +4612,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-54/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-55",
     },
     {
@@ -4996,12 +4642,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-55/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-56",
     },
     {
@@ -5028,12 +4672,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-56/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-57",
     },
     {
@@ -5060,12 +4702,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-57/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-58",
     },
     {
@@ -5092,12 +4732,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-58/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-59",
     },
     {
@@ -5124,12 +4762,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-59/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-60",
     },
     {
@@ -5156,12 +4792,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-60/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-61",
     },
     {
@@ -5188,12 +4822,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-61/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-62",
     },
     {
@@ -5220,12 +4852,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-62/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-63",
     },
     {
@@ -5252,12 +4882,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-63/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-64",
     },
     {
@@ -5284,12 +4912,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-64/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-65",
     },
     {
@@ -5316,12 +4942,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-65/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-66",
     },
     {
@@ -5348,12 +4972,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-66/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-67",
     },
     {
@@ -5380,12 +5002,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-67/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-68",
     },
     {
@@ -5412,12 +5032,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-68/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-69",
     },
     {
@@ -5444,12 +5062,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-69/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-70",
     },
     {
@@ -5476,12 +5092,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-70/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-71",
     },
     {
@@ -5508,12 +5122,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-71/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-72",
     },
     {
@@ -5540,12 +5152,10 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-72/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/rb-73",
     },
     {
@@ -5572,7 +5182,6 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rb-73/rulebook.json",
     },
     {
@@ -5651,7 +5260,6 @@ exports[`resource limits adding a full catalogue spends exactly the request budg
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -5670,27 +5278,22 @@ exports[`resource limits an exhausted request budget fails the whole operation a
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -5704,7 +5307,6 @@ exports[`resource limits an exhausted request budget fails the whole operation a
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -5729,17 +5331,14 @@ exports[`bounded fanout at most four mappers run at once and results keep their 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -5770,17 +5369,14 @@ exports[`bounded fanout the first rejection aborts its siblings and is the error
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -5799,32 +5395,26 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-10",
     },
     {
@@ -5851,12 +5441,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-10/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-11",
     },
     {
@@ -5883,12 +5471,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-11/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-12",
     },
     {
@@ -5915,12 +5501,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-12/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-13",
     },
     {
@@ -5947,12 +5531,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-13/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-14",
     },
     {
@@ -5979,12 +5561,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-14/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-15",
     },
     {
@@ -6011,12 +5591,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-15/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-16",
     },
     {
@@ -6043,12 +5621,10 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-16/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/rb-17",
     },
     {
@@ -6075,7 +5651,6 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rb-17/rulebook.json",
     },
     {
@@ -6098,7 +5673,6 @@ exports[`bounded fanout an update holds four responses open at a time 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -6120,37 +5694,30 @@ exports[`fault hooks a write that throws mid-add leaves no vendored rulebook and
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -6164,7 +5731,6 @@ exports[`fault hooks a write that throws mid-add leaves no vendored rulebook and
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -6183,32 +5749,26 @@ exports[`fault hooks a write that throws mid-update restores every file the run 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/a",
     },
     {
@@ -6244,12 +5804,10 @@ exports[`fault hooks a write that throws mid-update restores every file the run 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/a/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/b",
     },
     {
@@ -6276,7 +5834,6 @@ exports[`fault hooks a write that throws mid-update restores every file the run 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/b/rulebook.json",
     },
     {
@@ -6293,7 +5850,6 @@ exports[`fault hooks a write that throws mid-update restores every file the run 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -6312,32 +5868,26 @@ exports[`fault hooks a failed source-directory delete restores the config and ke
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/local",
     },
     {
@@ -6364,7 +5914,6 @@ exports[`fault hooks a failed source-directory delete restores the config and ke
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/local/rulebook.json",
     },
     {
@@ -6380,7 +5929,6 @@ exports[`fault hooks a failed source-directory delete restores the config and ke
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],

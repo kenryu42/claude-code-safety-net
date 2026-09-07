@@ -15,17 +15,14 @@ exports[`reading the installed OpenClaw plugin finds an enabled install of the r
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -36,7 +33,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -47,7 +43,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -58,18 +53,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -93,17 +85,14 @@ exports[`reading the installed OpenClaw plugin reports an install stamped with a
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -114,7 +103,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -125,7 +113,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -136,18 +123,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -169,17 +153,14 @@ exports[`reading the installed OpenClaw plugin follows OPENCLAW_CONFIG_PATH to t
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere/extensions/cc-safety-net",
     },
     {
@@ -190,7 +171,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/extensions/cc-safety-net/index.js",
     },
     {
@@ -201,7 +181,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -212,18 +191,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -243,18 +219,15 @@ exports[`reading the installed OpenClaw plugin refuses to call a home that never
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -277,29 +250,24 @@ exports[`reading the installed OpenClaw plugin refuses to call a symlink standin
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "symlink",
-      "mode": 511,
       "path": ".openclaw/extensions/cc-safety-net",
       "target": "../../elsewhere",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -323,17 +291,14 @@ exports[`reading the installed OpenClaw plugin refuses to call an install whose 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -344,18 +309,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -378,17 +340,14 @@ exports[`reading the installed OpenClaw plugin refuses to call a manifest claimi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -399,13 +358,11 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
       "content": "{"id":"other"}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -416,18 +373,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -450,17 +404,14 @@ exports[`reading the installed OpenClaw plugin refuses to call a package manifes
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -471,7 +422,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -482,24 +432,20 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -522,17 +468,14 @@ exports[`reading the installed OpenClaw plugin refuses to call an entry file wit
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -541,7 +484,6 @@ exports[`reading the installed OpenClaw plugin refuses to call an entry file wit
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -552,7 +494,6 @@ exports[`reading the installed OpenClaw plugin refuses to call an entry file wit
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -563,18 +504,15 @@ exports[`reading the installed OpenClaw plugin refuses to call an entry file wit
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -598,17 +536,14 @@ exports[`reading whether OpenClaw would load the plugin reports a config that is
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -619,7 +554,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -630,7 +564,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -641,12 +574,10 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -670,17 +601,14 @@ exports[`reading whether OpenClaw would load the plugin reports a config it cann
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -691,7 +619,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -702,7 +629,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -713,18 +639,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{ not json",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -748,17 +671,14 @@ exports[`reading whether OpenClaw would load the plugin reports the global plugi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -769,7 +689,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -780,7 +699,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -791,18 +709,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"enabled":false,"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -826,17 +741,14 @@ exports[`reading whether OpenClaw would load the plugin reports a deny list nami
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -847,7 +759,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -858,7 +769,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -869,18 +779,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"deny":["cc-safety-net"],"allow":["cc-safety-net"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -904,17 +811,14 @@ exports[`reading whether OpenClaw would load the plugin reports a per-plugin ent
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -925,7 +829,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -936,7 +839,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -947,18 +849,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":false}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -982,17 +881,14 @@ exports[`reading whether OpenClaw would load the plugin reports an allow list wi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -1003,7 +899,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -1014,7 +909,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -1025,18 +919,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"allow":["x"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1060,17 +951,14 @@ exports[`reading whether OpenClaw would load the plugin reports a config that me
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -1081,7 +969,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -1092,7 +979,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -1103,18 +989,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1136,17 +1019,14 @@ exports[`reading whether OpenClaw would load the plugin reads an allow list nami
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -1157,7 +1037,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -1168,7 +1047,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -1179,18 +1057,15 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"allow":["cc-safety-net"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1212,17 +1087,14 @@ exports[`reading whether OpenClaw would load the plugin reads comments around th
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -1233,7 +1105,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -1244,7 +1115,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -1255,7 +1125,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
@@ -1266,12 +1135,10 @@ export default {};
 }"
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

@@ -9,7 +9,6 @@ exports[`where OpenCode keeps its config and cache derives the config directory 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -25,7 +24,6 @@ exports[`where OpenCode keeps its config and cache derives the config directory 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -41,28 +39,23 @@ exports[`where OpenCode keeps its config and cache clears the cached package und
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages",
     },
     {
       "content": "kept",
       "kind": "file",
-      "mode": 420,
       "path": "keep.txt",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -79,27 +72,22 @@ exports[`where OpenCode keeps its config and cache clears the cached package und
     {
       "content": "kept",
       "kind": "file",
-      "mode": 420,
       "path": "keep.txt",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "xdgcache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "xdgcache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "xdgcache/opencode/packages",
     },
   ],
@@ -115,32 +103,26 @@ exports[`proving the cached plugin would load accepts a package whose main expor
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net",
     },
     {
@@ -149,18 +131,15 @@ exports[`proving the cached plugin would load accepts a package whose main expor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/index.mjs",
     },
     {
       "content": "{"main":"./index.mjs"}",
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -176,33 +155,27 @@ exports[`proving the cached plugin would load rejects a cache with no package at
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/.keep",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -218,43 +191,35 @@ exports[`proving the cached plugin would load rejects a package that declares no
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net",
     },
     {
       "content": "{"name":"x"}",
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -270,32 +235,26 @@ exports[`proving the cached plugin would load rejects an entry whose export is n
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net",
     },
     {
@@ -304,18 +263,15 @@ exports[`proving the cached plugin would load rejects an entry whose export is n
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/index.mjs",
     },
     {
       "content": "{"main":"./index.mjs"}",
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -334,27 +290,22 @@ exports[`taking the plugin back out of the config removes only our item from a f
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cache/opencode/packages",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
@@ -366,12 +317,10 @@ exports[`taking the plugin back out of the config removes only our item from a f
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -390,12 +339,10 @@ exports[`taking the plugin back out of the config keeps every comment and every 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
@@ -410,12 +357,10 @@ exports[`taking the plugin back out of the config keeps every comment and every 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -434,12 +379,10 @@ exports[`taking the plugin back out of the config edits the file that holds the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
@@ -450,7 +393,6 @@ exports[`taking the plugin back out of the config edits the file that holds the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
@@ -461,12 +403,10 @@ exports[`taking the plugin back out of the config edits the file that holds the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -485,12 +425,10 @@ exports[`taking the plugin back out of the config reports the existing config wh
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
@@ -501,12 +439,10 @@ exports[`taking the plugin back out of the config reports the existing config wh
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -525,7 +461,6 @@ exports[`taking the plugin back out of the config reports the default path when 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -541,23 +476,19 @@ exports[`taking the plugin back out of the config refuses to touch a config it c
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{ not json",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

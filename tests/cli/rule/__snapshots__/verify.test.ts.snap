@@ -6,12 +6,10 @@ exports[`rule verify no config anywhere reports the built-in rules alone 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -32,17 +30,14 @@ exports[`rule verify a valid user config gains its schema and lists its sources 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -56,23 +51,19 @@ exports[`rule verify a valid user config gains its schema and lists its sources 
 }"
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules/team-rules",
     },
     {
       "content": "{"rulebook_version":2,"name":"team-rules","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker system prune","expect":"blocked","rule":"block-system-prune"}]}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -104,28 +95,23 @@ exports[`rule verify an unparseable user config is reported as invalid 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
       "content": "not json",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -152,39 +138,32 @@ exports[`rule verify an override naming no rule its sources define is a runtime 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
       "content": "{"version":1,"rules":["team-rules"],"overrides":{"team-rules/no-such-rule":"off"}}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules/team-rules",
     },
     {
       "content": "{"rulebook_version":2,"name":"team-rules","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker system prune","expect":"blocked","rule":"block-system-prune"}]}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/team-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -213,38 +192,31 @@ exports[`rule verify a rulebook whose fixture fails is reported by index 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/broken-rules",
     },
     {
       "content": "{"rulebook_version":2,"name":"broken-rules","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker ps","expect":"blocked","rule":"block-system-prune"}]}",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/broken-rules/rulebook.json",
     },
   ],
@@ -271,38 +243,31 @@ exports[`rule verify a rulebook whose name disagrees with its folder is refused 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/team-rules",
     },
     {
       "content": "{"rulebook_version":2,"name":"other","version":"1.0.0","allowed_commands":["docker"],"rules":[{"name":"block-system-prune","command":"docker","match":{"command_path":["system","prune"]},"reason":"Prune everything and an unrelated stopped container goes with it."}],"tests":[{"command":"docker system prune","expect":"blocked","rule":"block-system-prune"}]}",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/team-rules/rulebook.json",
     },
   ],
@@ -329,33 +294,27 @@ exports[`rule verify a regular file beside the rulebooks is not a rulebook 1`] =
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "content": "not a rulebook",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/stray",
     },
   ],
@@ -382,23 +341,19 @@ exports[`rule verify a legacy user config on its own is reported as ignored 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/config.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -431,23 +386,19 @@ exports[`rule verify a legacy user config that no longer validates is an error 1
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "{"version":1,"rules":[{}]}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/config.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -483,34 +434,28 @@ exports[`rule verify a legacy user config beside a current one is only cleanup 1
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/config.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
       "content": "{"$schema":"x","version":1,"rules":[]}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],
@@ -541,23 +486,19 @@ exports[`rule verify a legacy project config is reported against the project sco
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -590,39 +531,32 @@ exports[`rule verify a legacy project config beside a current one is only cleanu
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "content": "{"$schema":"x","version":1,"rules":[]}",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "content": "{"version":1,"rules":[{"name":"no-force-push","command":"git","subcommand":"push","block_args":["--force"],"reason":"Force pushing rewrites history other clones already have."}]}",
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -653,23 +587,19 @@ exports[`rule verify a regular file where the rules directory belongs stops the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "not a directory",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
   ],

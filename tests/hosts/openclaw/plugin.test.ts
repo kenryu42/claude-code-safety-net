@@ -76,7 +76,7 @@ function createFakeApi(fixture: HookFixture, workspace: Row['workspace']) {
 const ROWS: readonly Row[] = [
   {
     name: 'a destructive command',
-    event: () => exec({ command: 'rm -rf /' }),
+    event: () => exec({ command: 'git push --force origin main' }),
     contains: 'BLOCKED by CC Safety Net',
     blocked: true,
     lines: 1,

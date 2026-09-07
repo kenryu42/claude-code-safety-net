@@ -40,7 +40,6 @@ exports[`the engine self-test reaches the same verdicts as the shipped suite and
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

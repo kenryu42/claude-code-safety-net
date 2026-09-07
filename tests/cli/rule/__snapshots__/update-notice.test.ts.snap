@@ -11,38 +11,31 @@ exports[`the update notice both implementations decide on the first run polls th
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -58,38 +51,31 @@ exports[`the update notice both implementations decide on an hour after a notice
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1699996400000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1699996400000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -105,38 +91,31 @@ exports[`the update notice both implementations decide on six days after a notic
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1699996400000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1699481600000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -152,38 +131,31 @@ exports[`the update notice both implementations decide on a week after the last 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1699996400000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -199,38 +171,31 @@ exports[`the update notice both implementations decide on a check an hour short 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1699917200000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -248,38 +213,31 @@ exports[`the update notice both implementations decide on a check older than a d
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -297,38 +255,31 @@ exports[`the update notice both implementations decide on a cache that is not JS
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -346,38 +297,31 @@ exports[`the update notice both implementations decide on timestamps from the fu
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -395,33 +339,27 @@ exports[`the update notice both implementations decide on a cache location that 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "content": "a regular file where the cache directory belongs",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -437,17 +375,14 @@ exports[`the update notice both implementations decide on the opt-out variable s
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -463,17 +398,14 @@ exports[`the update notice both implementations decide on no place to cache mean
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -491,38 +423,31 @@ exports[`the update notice both implementations decide on a registry that refuse
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000}",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -540,38 +465,31 @@ exports[`the update notice both implementations decide on a registry error is re
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000}",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -589,38 +507,31 @@ exports[`the update notice both implementations decide on the published version 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000,"latestVersion":"1.0.0"}",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -829,38 +740,31 @@ A missing or invalid rulebook file makes that source inactive, and an unreadable
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "{"lastCheck":1700000000000,"latestVersion":"2.0.0","notifiedVersion":"2.0.0","notifiedAt":1700000000000}",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/update-check.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1067,17 +971,14 @@ A missing or invalid rulebook file makes that source inactive, and an unreadable
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],

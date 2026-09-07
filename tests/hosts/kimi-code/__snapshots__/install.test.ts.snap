@@ -29,7 +29,6 @@ exports[`the Kimi Code hook config differential writes the hook block when the h
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -40,12 +39,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -67,7 +64,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -78,12 +74,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -104,7 +98,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -113,12 +106,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -128,7 +119,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -137,12 +127,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -178,7 +166,6 @@ exports[`the Kimi Code hook config differential appends the block after the conf
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -195,12 +182,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -222,7 +207,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -239,12 +223,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -265,7 +247,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -278,12 +259,10 @@ name = "y"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -293,7 +272,6 @@ name = "y"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -306,12 +284,10 @@ name = "y"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -347,7 +323,6 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -358,12 +333,10 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -385,7 +358,6 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -396,12 +368,10 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -422,7 +392,6 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -432,12 +401,10 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -447,7 +414,6 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -457,12 +423,10 @@ exports[`the Kimi Code hook config differential joins an inline hooks array as o
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -498,7 +462,6 @@ exports[`the Kimi Code hook config differential drops an empty inline hooks arra
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -512,12 +475,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -539,7 +500,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -553,12 +513,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -579,7 +537,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -589,12 +546,10 @@ name = "y"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -604,7 +559,6 @@ name = "y"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -614,12 +568,10 @@ name = "y"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -655,7 +607,6 @@ exports[`the Kimi Code hook config differential reports a config that already ru
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -666,12 +617,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -693,7 +642,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -704,12 +652,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -730,7 +676,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -739,12 +684,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -754,7 +697,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -763,12 +705,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -803,7 +743,6 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -812,12 +751,10 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -838,7 +775,6 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -847,12 +783,10 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -873,7 +807,6 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -882,12 +815,10 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -897,7 +828,6 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -906,12 +836,10 @@ exports[`the Kimi Code hook config differential refuses a string that never clos
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -946,7 +874,6 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -955,12 +882,10 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -981,7 +906,6 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -990,12 +914,10 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1016,7 +938,6 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -1025,12 +946,10 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1040,7 +959,6 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -1049,12 +967,10 @@ exports[`the Kimi Code hook config differential refuses an array that never clos
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1090,7 +1006,6 @@ exports[`the Kimi Code hook config differential takes its own block back out and
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -1104,12 +1019,10 @@ name = "y"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1131,7 +1044,6 @@ name = "y"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -1145,12 +1057,10 @@ name = "y"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1171,7 +1081,6 @@ name = "y"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".kimi-code",
           },
           {
@@ -1182,12 +1091,10 @@ name = "y"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".kimi-code/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1197,7 +1104,6 @@ name = "y"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -1208,12 +1114,10 @@ name = "y"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1249,7 +1153,6 @@ exports[`the Kimi Code hook config differential follows KIMI_CODE_HOME out of th
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "kimi-home",
           },
           {
@@ -1260,12 +1163,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "kimi-home/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1287,7 +1188,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "kimi-home",
           },
           {
@@ -1298,12 +1198,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "kimi-home/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1324,7 +1222,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "kimi-home",
           },
           {
@@ -1333,12 +1230,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "kimi-home/config.toml",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1348,7 +1243,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "kimi-home",
     },
     {
@@ -1357,12 +1251,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "kimi-home/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1383,7 +1275,6 @@ exports[`the Kimi Code detector differential finds the managed hook 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -1394,12 +1285,10 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1419,7 +1308,6 @@ exports[`the Kimi Code detector differential says nothing is installed for a for
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -1432,12 +1320,10 @@ name = "y"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1457,7 +1343,6 @@ exports[`the Kimi Code detector differential says nothing is installed for a for
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1480,17 +1365,14 @@ exports[`the Kimi Code detector differential reports a config it cannot read ins
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

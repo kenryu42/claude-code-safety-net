@@ -13,17 +13,14 @@ exports[`rule migrate over both scopes a workspace with no legacy file reports b
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -43,32 +40,26 @@ exports[`rule migrate over both scopes a project legacy file becomes a listed ru
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -119,7 +110,6 @@ exports[`rule migrate over both scopes a project legacy file becomes a listed ru
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
     },
     {
@@ -135,7 +125,6 @@ exports[`rule migrate over both scopes a project legacy file becomes a listed ru
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -165,7 +154,6 @@ exports[`rule migrate over both scopes a project legacy file becomes a listed ru
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -185,32 +173,26 @@ exports[`rule migrate over both scopes --cleanup deletes the legacy file once th
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -247,7 +229,6 @@ exports[`rule migrate over both scopes --cleanup deletes the legacy file once th
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
     },
     {
@@ -263,7 +244,6 @@ exports[`rule migrate over both scopes --cleanup deletes the legacy file once th
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -283,12 +263,10 @@ exports[`rule migrate over both scopes a user legacy file lands under the user r
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -309,12 +287,10 @@ exports[`rule migrate over both scopes a user legacy file lands under the user r
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/config.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -330,12 +306,10 @@ exports[`rule migrate over both scopes a user legacy file lands under the user r
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/rules/user-rules",
     },
     {
@@ -371,17 +345,14 @@ exports[`rule migrate over both scopes a user legacy file lands under the user r
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/rules/user-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -401,12 +372,10 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -427,12 +396,10 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/config.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -448,12 +415,10 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/rules/user-rules",
     },
     {
@@ -489,32 +454,26 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/rules/user-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -551,7 +510,6 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
     },
     {
@@ -567,7 +525,6 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -589,7 +546,6 @@ exports[`rule migrate over both scopes both legacy files migrate in one run 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -612,17 +568,14 @@ exports[`rule migrate over both scopes a legacy file the schema rejects fails it
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -638,7 +591,6 @@ exports[`rule migrate over both scopes a legacy file the schema rejects fails it
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -658,32 +610,26 @@ exports[`rule migrate over both scopes a second run reuses the rulebook the firs
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -720,7 +666,6 @@ exports[`rule migrate over both scopes a second run reuses the rulebook the firs
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
     },
     {
@@ -736,7 +681,6 @@ exports[`rule migrate over both scopes a second run reuses the rulebook the firs
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -758,7 +702,6 @@ exports[`rule migrate over both scopes a second run reuses the rulebook the firs
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -778,32 +721,26 @@ exports[`rule migrate over both scopes a rulebook converted from another tool is
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/imported-rules",
     },
     {
@@ -839,12 +776,10 @@ exports[`rule migrate over both scopes a rulebook converted from another tool is
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/imported-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -881,7 +816,6 @@ exports[`rule migrate over both scopes a rulebook converted from another tool is
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
     },
     {
@@ -898,7 +832,6 @@ exports[`rule migrate over both scopes a rulebook converted from another tool is
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -920,7 +853,6 @@ exports[`rule migrate over both scopes a rulebook converted from another tool is
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -940,32 +872,26 @@ exports[`rule migrate over both scopes an unrelated rulebook holding the default
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -992,12 +918,10 @@ exports[`rule migrate over both scopes an unrelated rulebook holding the default
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/project-rules/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/project-rules-2",
     },
     {
@@ -1034,7 +958,6 @@ exports[`rule migrate over both scopes an unrelated rulebook holding the default
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/project-rules-2/rulebook.json",
     },
     {
@@ -1051,7 +974,6 @@ exports[`rule migrate over both scopes an unrelated rulebook holding the default
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -1073,7 +995,6 @@ exports[`rule migrate over both scopes an unrelated rulebook holding the default
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -1094,32 +1015,26 @@ exports[`rule migrate over both scopes a scope the reload refuses is restored to
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/project-rules",
     },
     {
@@ -1135,7 +1050,6 @@ exports[`rule migrate over both scopes a scope the reload refuses is restored to
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -1157,7 +1071,6 @@ exports[`rule migrate over both scopes a scope the reload refuses is restored to
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],
@@ -1178,33 +1091,27 @@ exports[`rule migrate over both scopes a rule config that cannot be read stops i
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "content": "{ not json",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -1226,7 +1133,6 @@ exports[`rule migrate over both scopes a rule config that cannot be read stops i
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.safety-net.json",
     },
   ],

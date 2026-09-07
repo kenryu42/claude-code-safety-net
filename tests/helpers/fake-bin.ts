@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
@@ -40,6 +40,12 @@ export function createFakeBin(
       `#!/bin/sh\nexec "${process.execPath}" "${FAKE_COMMAND}" "${command}" "$@"\n`,
       { mode: 0o755 },
     );
+    // Windows cannot run a shell script from PATH; the `.cmd` shim is what a spawn there finds.
+    if (process.platform === 'win32')
+      writeFileSync(
+        join(binDir, `${command}.cmd`),
+        `@echo off\r\n"${process.execPath}" "${FAKE_COMMAND}" ${command} %*\r\n`,
+      );
   }
   return {
     binDir,
@@ -51,11 +57,16 @@ export function createFakeBin(
       CC_SAFETY_NET_FAKE_LOG: logPath,
       CC_SAFETY_NET_FAKE_SCRIPT: scriptPath,
     },
-    /** One line per call, `<command> <args>` and the working directory, with `root` as `<root>`. */
+    /**
+     * One line per call, `<command> <args>` and the working directory, with `root` as `<root>` in
+     * either spelling: the command logs the directory it actually ran in, which is the real path.
+     */
     readLog: (): string[] =>
       (existsSync(logPath) ? readFileSync(logPath, 'utf-8') : '')
         .split('\n')
         .filter(Boolean)
-        .map((line) => line.replace(`\t${root}`, '\t<root>')),
+        .map((line) =>
+          line.replace(`\t${realpathSync(root)}`, '\t<root>').replace(`\t${root}`, '\t<root>'),
+        ),
   };
 }

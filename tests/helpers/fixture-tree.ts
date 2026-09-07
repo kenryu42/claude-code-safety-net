@@ -36,29 +36,32 @@ export function writeTree(root: string, spec: TreeSpec): void {
 export type TreeEntry = {
   path: string;
   kind: 'file' | 'directory' | 'symlink' | 'other';
-  mode: number;
   content?: string;
   target?: string;
 };
 
-/** Every entry under `root`, sorted, with regular-file content and raw symlink targets. */
+/**
+ * Every entry under `root`, sorted, with regular-file content and raw symlink targets. No mode: a
+ * symlink's is 0777 on Linux and 0755 on macOS, Windows reports 0666 for everything, and a
+ * directory's is the runner's umask, so a recorded mode pins the recording host rather than the
+ * code. A test whose contract is a mode (an owner-only policy file) asserts it with `lstatSync`.
+ */
 export function snapshotTree(root: string, prefix = ''): TreeEntry[] {
   return readdirSync(join(root, prefix))
     .sort()
     .flatMap((name): TreeEntry[] => {
       const path = prefix === '' ? name : `${prefix}/${name}`;
       const stat = lstatSync(join(root, path));
-      const mode = stat.mode & 0o777;
       if (stat.isSymbolicLink()) {
-        return [{ path, kind: 'symlink', mode, target: readlinkSync(join(root, path)) }];
+        return [{ path, kind: 'symlink', target: readlinkSync(join(root, path)) }];
       }
       if (stat.isDirectory()) {
-        return [{ path, kind: 'directory', mode }, ...snapshotTree(root, path)];
+        return [{ path, kind: 'directory' }, ...snapshotTree(root, path)];
       }
       if (stat.isFile()) {
-        return [{ path, kind: 'file', mode, content: readFileSync(join(root, path), 'utf-8') }];
+        return [{ path, kind: 'file', content: readFileSync(join(root, path), 'utf-8') }];
       }
-      return [{ path, kind: 'other', mode }];
+      return [{ path, kind: 'other' }];
     });
 }
 

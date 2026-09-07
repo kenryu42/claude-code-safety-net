@@ -127,12 +127,10 @@ exports[`the GUI project draft follows the directory the picker chose and binds 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -164,22 +162,18 @@ exports[`the GUI project draft follows the directory the picker chose and binds 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "picked/.cc-safety-net",
     },
     {
@@ -193,12 +187,10 @@ exports[`the GUI project draft follows the directory the picker chose and binds 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "picked/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -229,12 +221,10 @@ exports[`the GUI project draft binds an apply to the revision it read at entry, 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -266,27 +256,22 @@ exports[`the GUI project draft binds an apply to the revision it read at entry, 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net",
     },
     {
@@ -300,7 +285,6 @@ exports[`the GUI project draft binds an apply to the revision it read at entry, 
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/policy.json",
     },
   ],
@@ -360,12 +344,10 @@ exports[`the GUI project draft leaves the draft where it was when the dialog can
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -397,22 +379,18 @@ exports[`the GUI project draft leaves the draft where it was when the dialog can
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -473,12 +451,10 @@ exports[`the GUI project draft leaves the draft where it was when the dialog can
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -510,22 +486,18 @@ exports[`the GUI project draft leaves the draft where it was when the dialog can
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -569,12 +541,10 @@ exports[`the GUI project draft refuses a body with no revision, an audit section
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -606,22 +576,18 @@ exports[`the GUI project draft refuses a body with no revision, an audit section
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -703,12 +669,10 @@ exports[`the GUI project draft starts the draft empty over a project file it can
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -740,27 +704,22 @@ exports[`the GUI project draft starts the draft empty over a project file it can
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
@@ -774,7 +733,6 @@ exports[`the GUI project draft starts the draft empty over a project file it can
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/policy.json",
     },
   ],
@@ -799,12 +757,10 @@ exports[`the GUI project draft refuses to follow a .cc-safety-net symlink out of
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -836,32 +792,26 @@ exports[`the GUI project draft refuses to follow a .cc-safety-net symlink out of
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "outside",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "picked",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "symlink",
-      "mode": 511,
       "path": "project/.cc-safety-net",
       "target": "../outside",
     },
@@ -916,28 +866,23 @@ exports[`the GUI project draft carries the diagnostics of a user policy that can
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "content": "{ not json",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -991,12 +936,10 @@ exports[`the GUI project draft carries the diagnostics of a user policy that the
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -1010,17 +953,14 @@ exports[`the GUI project draft carries the diagnostics of a user policy that the
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1054,12 +994,10 @@ exports[`the GUI project draft shows the rows \`policy check\` prints for the sa
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -1091,22 +1029,18 @@ exports[`the GUI project draft shows the rows \`policy check\` prints for the sa
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
@@ -1120,7 +1054,6 @@ exports[`the GUI project draft shows the rows \`policy check\` prints for the sa
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/policy.json",
     },
   ],

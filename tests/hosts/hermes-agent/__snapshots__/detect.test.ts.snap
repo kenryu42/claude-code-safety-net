@@ -9,7 +9,6 @@ exports[`reading whether Hermes would load the plugin reads a block sequence nam
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -20,12 +19,10 @@ exports[`reading whether Hermes would load the plugin reads a block sequence nam
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -41,7 +38,6 @@ exports[`reading whether Hermes would load the plugin reads a quoted sequence en
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -52,12 +48,10 @@ exports[`reading whether Hermes would load the plugin reads a quoted sequence en
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -73,7 +67,6 @@ exports[`reading whether Hermes would load the plugin reads a plugin listed as e
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -86,12 +79,10 @@ exports[`reading whether Hermes would load the plugin reads a plugin listed as e
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -107,7 +98,6 @@ exports[`reading whether Hermes would load the plugin reads a config with no plu
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -116,12 +106,10 @@ exports[`reading whether Hermes would load the plugin reads a config with no plu
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -137,7 +125,6 @@ exports[`reading whether Hermes would load the plugin reads a plugins block the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -147,12 +134,10 @@ model: fast
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -168,7 +153,6 @@ exports[`reading whether Hermes would load the plugin reads an enabled list nami
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -179,12 +163,10 @@ exports[`reading whether Hermes would load the plugin reads an enabled list nami
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -200,7 +182,6 @@ exports[`reading whether Hermes would load the plugin reads no config file at al
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -222,7 +203,6 @@ exports[`reading whether Hermes would load the plugin carries a block sequence n
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -233,17 +213,14 @@ exports[`reading whether Hermes would load the plugin carries a block sequence n
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -415,7 +392,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -431,12 +407,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -458,7 +432,6 @@ exports[`reading whether Hermes would load the plugin carries a quoted sequence 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -469,17 +442,14 @@ exports[`reading whether Hermes would load the plugin carries a quoted sequence 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -651,7 +621,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -667,12 +636,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -696,7 +663,6 @@ exports[`reading whether Hermes would load the plugin carries a plugin listed as
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -709,17 +675,14 @@ exports[`reading whether Hermes would load the plugin carries a plugin listed as
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -891,7 +854,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -907,12 +869,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -936,7 +896,6 @@ exports[`reading whether Hermes would load the plugin carries a config with no p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -945,17 +904,14 @@ exports[`reading whether Hermes would load the plugin carries a config with no p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -1127,7 +1083,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1143,12 +1098,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1172,7 +1125,6 @@ exports[`reading whether Hermes would load the plugin carries a plugins block th
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -1182,17 +1134,14 @@ model: fast
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -1364,7 +1313,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1380,12 +1328,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1409,7 +1355,6 @@ exports[`reading whether Hermes would load the plugin carries an enabled list na
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -1420,17 +1365,14 @@ exports[`reading whether Hermes would load the plugin carries an enabled list na
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -1602,7 +1544,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1618,12 +1559,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1647,17 +1586,14 @@ exports[`reading whether Hermes would load the plugin carries no config file at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -1829,7 +1765,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1845,12 +1780,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1874,7 +1807,6 @@ exports[`reading the installed Hermes Agent artifact reports an install stamped 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -1885,17 +1817,14 @@ exports[`reading the installed Hermes Agent artifact reports an install stamped 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -2067,7 +1996,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -2083,12 +2011,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2113,17 +2039,14 @@ exports[`reading the installed Hermes Agent artifact reports an outdated install
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -2295,7 +2218,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -2311,12 +2233,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2336,7 +2256,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call a home that
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -2347,12 +2266,10 @@ exports[`reading the installed Hermes Agent artifact refuses to call a home that
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2375,7 +2292,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call a symlink s
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -2386,23 +2302,19 @@ exports[`reading the installed Hermes Agent artifact refuses to call a symlink s
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "symlink",
-      "mode": 511,
       "path": ".hermes/plugins/cc-safety-net",
       "target": "../../elsewhere",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2425,7 +2337,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call an install 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -2436,17 +2347,14 @@ exports[`reading the installed Hermes Agent artifact refuses to call an install 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -2618,12 +2526,10 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2646,7 +2552,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call a shim some
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -2657,17 +2562,14 @@ exports[`reading the installed Hermes Agent artifact refuses to call a shim some
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -2676,7 +2578,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call a shim some
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -2692,12 +2593,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2720,7 +2619,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call a shim trun
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -2731,17 +2629,14 @@ exports[`reading the installed Hermes Agent artifact refuses to call a shim trun
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -2751,7 +2646,6 @@ exports[`reading the installed Hermes Agent artifact refuses to call a shim trun
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -2767,12 +2661,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

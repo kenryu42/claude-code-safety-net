@@ -6,14 +6,14 @@ exports[`one Amp tool call through both handlers a destructive command 1`] = `
     {
       "entry": {
         "agent": "amp",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
+        "intent": "use_alternative",
         "level": "standard",
-        "reason": "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
-        "ruleId": "rm.recursive-force-root-or-home",
-        "segment": "rm -rf /",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "amp-1",
         "toolName": "Bash",
         "v": "dev",
@@ -26,13 +26,13 @@ exports[`one Amp tool call through both handlers a destructive command 1`] = `
     "message": 
 "BLOCKED by CC Safety Net
 
-Reason: rm -rf targeting root or home directory is extremely dangerous and always blocked.
+Reason: git push --force destroys remote history. Use --force-with-lease for safer force push.
 
-Rule: rm.recursive-force-root-or-home
+Rule: git.push-force
 
-Command: rm -rf /
+Command: git push --force origin main
 
-Do not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."
+Do not retry the blocked form. Continue the task using the safer alternative described above."
 ,
   },
   "stderr": [],

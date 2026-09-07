@@ -64,7 +64,7 @@ function evaluatedRow(command: string, failing = false) {
   };
 }
 
-const DENIED = evaluatedRow('rm -rf /');
+const DENIED = evaluatedRow('git push --force origin main');
 const ROWS = [
   evaluatedRow('git status'),
   DENIED,

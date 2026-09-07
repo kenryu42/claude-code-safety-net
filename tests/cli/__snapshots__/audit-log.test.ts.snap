@@ -19,37 +19,30 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -61,13 +54,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -76,7 +67,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -89,17 +79,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -125,37 +112,30 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -167,13 +147,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -182,7 +160,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -195,7 +172,6 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
@@ -204,17 +180,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/second-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -235,38 +208,31 @@ exports[`logs selection a regular file where the logs directory is expected is o
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -293,37 +259,30 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -335,13 +294,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -350,7 +307,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -363,17 +319,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -394,37 +347,30 @@ exports[`logs selection --limit truncates after the sort, keeping the newest 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -436,13 +382,11 @@ exports[`logs selection --limit truncates after the sort, keeping the newest 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -451,7 +395,6 @@ exports[`logs selection --limit truncates after the sort, keeping the newest 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -464,17 +407,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -499,37 +439,30 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -541,13 +474,11 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -556,7 +487,6 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -569,17 +499,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -600,37 +527,30 @@ exports[`logs selection --agent and --rule each select one entry 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -642,13 +562,11 @@ exports[`logs selection --agent and --rule each select one entry 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -657,7 +575,6 @@ exports[`logs selection --agent and --rule each select one entry 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -670,17 +587,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -702,37 +616,30 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -744,13 +651,11 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -759,7 +664,6 @@ b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git rese
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -772,17 +676,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -804,37 +705,30 @@ a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clea
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -846,13 +740,11 @@ a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clea
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -861,7 +753,6 @@ a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clea
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -874,17 +765,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -908,37 +796,30 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -950,13 +831,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -965,7 +844,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -978,17 +856,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1009,37 +884,30 @@ exports[`logs selection --project admits the directory it names and nothing besi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1051,13 +919,11 @@ exports[`logs selection --project admits the directory it names and nothing besi
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1066,7 +932,6 @@ exports[`logs selection --project admits the directory it names and nothing besi
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1079,17 +944,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1113,37 +975,30 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1155,13 +1010,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1170,7 +1023,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1183,17 +1035,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1216,37 +1065,30 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1258,13 +1100,11 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1273,7 +1113,6 @@ b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf p
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1286,17 +1125,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1314,37 +1150,30 @@ exports[`logs selection an unknown option is refused before the tree is read 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1356,7 +1185,6 @@ exports[`logs selection an unknown option is refused before the tree is read 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -1365,7 +1193,6 @@ exports[`logs selection an unknown option is refused before the tree is read 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1378,17 +1205,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1406,37 +1230,30 @@ exports[`logs selection a stray positional is refused the same way 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1448,7 +1265,6 @@ exports[`logs selection a stray positional is refused the same way 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -1457,7 +1273,6 @@ exports[`logs selection a stray positional is refused the same way 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1470,17 +1285,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1593,37 +1405,30 @@ exports[`logs selection --json prints the selected entries as read 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1635,13 +1440,11 @@ exports[`logs selection --json prints the selected entries as read 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1650,7 +1453,6 @@ exports[`logs selection --json prints the selected entries as read 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1663,17 +1465,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1710,37 +1509,30 @@ segment:   git reset --hard
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1752,13 +1544,11 @@ segment:   git reset --hard
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1767,7 +1557,6 @@ segment:   git reset --hard
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1780,17 +1569,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1811,37 +1597,30 @@ exports[`logs --id an id nothing recorded is reported as retained history having
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1853,13 +1632,11 @@ exports[`logs --id an id nothing recorded is reported as retained history having
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1868,7 +1645,6 @@ exports[`logs --id an id nothing recorded is reported as retained history having
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1881,17 +1657,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1910,37 +1683,30 @@ Multiple audit log entries found for id b1c2e3f405162740.
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -1952,13 +1718,11 @@ Multiple audit log entries found for id b1c2e3f405162740.
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
@@ -1967,7 +1731,6 @@ Multiple audit log entries found for id b1c2e3f405162740.
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -1980,17 +1743,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2008,37 +1768,30 @@ exports[`logs --id a malformed id is refused before the tree is read 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2050,7 +1803,6 @@ exports[`logs --id a malformed id is refused before the tree is read 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2059,7 +1811,6 @@ exports[`logs --id a malformed id is refused before the tree is read 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -2072,17 +1823,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2100,37 +1848,30 @@ exports[`logs --id --id refuses to be narrowed further 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2142,7 +1883,6 @@ exports[`logs --id --id refuses to be narrowed further 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2151,7 +1891,6 @@ exports[`logs --id --id refuses to be narrowed further 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -2164,17 +1903,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2194,37 +1930,30 @@ Run the same command without --dry-run to delete them.
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2236,7 +1965,6 @@ Run the same command without --dry-run to delete them.
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2245,7 +1973,6 @@ Run the same command without --dry-run to delete them.
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -2258,17 +1985,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2286,37 +2010,30 @@ exports[`logs --prune-legacy --dry-run --json reports the same set as counts 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2328,7 +2045,6 @@ exports[`logs --prune-legacy --dry-run --json reports the same set as counts 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2337,7 +2053,6 @@ exports[`logs --prune-legacy --dry-run --json reports the same set as counts 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -2350,17 +2065,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2380,37 +2092,30 @@ This deletion cannot be undone.
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2422,7 +2127,6 @@ This deletion cannot be undone.
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2431,17 +2135,14 @@ This deletion cannot be undone.
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2459,37 +2160,30 @@ exports[`logs --prune-legacy --json reports the deletion as counts and bytes 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2501,7 +2195,6 @@ exports[`logs --prune-legacy --json reports the deletion as counts and bytes 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2510,17 +2203,14 @@ exports[`logs --prune-legacy --json reports the deletion as counts and bytes 1`]
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2538,37 +2228,30 @@ exports[`logs --prune-legacy --dry-run alone has nothing to preview 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
     },
     {
@@ -2580,7 +2263,6 @@ exports[`logs --prune-legacy --dry-run alone has nothing to preview 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
     },
     {
@@ -2589,7 +2271,6 @@ exports[`logs --prune-legacy --dry-run alone has nothing to preview 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
     },
     {
@@ -2602,455 +2283,14 @@ not json
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
-      "path": "project",
-    },
-  ],
-}
-`;
-
-exports[`logs window the configured retention is the ceiling --since cannot pass 1`] = `
-{
-  "exitCode": 1,
-  "stderr": 
-"--since must be a positive number of days no greater than 5
-"
-,
-  "stdout": "",
-  "tree": [
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
-{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
-{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
-{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": 
-"audit logs live here
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
-{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
-not json
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
-    },
-    {
-      "content": 
-"{
-  "version": 1,
-  "audit": {
-    "retention_days": 5
-  }
-}
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/policy.json",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/tmp",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "project",
-    },
-  ],
-}
-`;
-
-exports[`logs window the configured retention is the ceiling --since cannot pass 2`] = `
-{
-  "exitCode": 0,
-  "stderr": 
-"warning: 1 audit log source could not be read; these results are incomplete
-"
-,
-  "stdout": 
-"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
-a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
-b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
-b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
-b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
-b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
-"
-,
-  "tree": [
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
-{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
-{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
-{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": "",
-      "kind": "file",
-      "mode": 384,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
-    },
-    {
-      "content": 
-"audit logs live here
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
-{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
-not json
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
-    },
-    {
-      "content": 
-"{
-  "version": 1,
-  "audit": {
-    "retention_days": 5
-  }
-}
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/policy.json",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/tmp",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "project",
-    },
-  ],
-}
-`;
-
-exports[`logs window the default ceiling is thirty days, and a window has to be positive 1`] = `
-{
-  "exitCode": 1,
-  "stderr": 
-"--since must be a positive number of days no greater than 30
-"
-,
-  "stdout": "",
-  "tree": [
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
-{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
-{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
-{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": 
-"audit logs live here
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
-{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
-not json
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/tmp",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "project",
-    },
-  ],
-}
-`;
-
-exports[`logs window the default ceiling is thirty days, and a window has to be positive 2`] = `
-{
-  "exitCode": 1,
-  "stderr": 
-"--limit must be a positive number
-"
-,
-  "stdout": "",
-  "tree": [
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
-{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
-{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
-{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
-    },
-    {
-      "content": 
-"audit logs live here
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
-    },
-    {
-      "content": 
-"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
-{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
-{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
-not json
-"
-,
-      "kind": "file",
-      "mode": 420,
-      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/tmp",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "project",
-    },
-  ],
-}
-`;
-
-exports[`logs window a home with no audit tree reports an empty history 1`] = `
-{
-  "exitCode": 0,
-  "stderr": "",
-  "stdout": 
-"No audit log entries found.
-"
-,
-  "tree": [
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
-      "path": "home/tmp",
-    },
-    {
-      "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -3077,5 +2317,389 @@ exports[`logs --prune-legacy failure --json reports the refusal as a failed file
     "{"removedFiles":0,"removedBytes":0,"failedFiles":1}",
   ],
   "returned": 1,
+}
+`;
+
+exports[`logs window the configured retention is the ceiling --since cannot pass 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--since must be a positive number of days no greater than 5
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "audit": {
+    "retention_days": 5
+  }
+}
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the configured retention is the ceiling --since cannot pass 2`] = `
+{
+  "exitCode": 0,
+  "stderr": 
+"warning: 1 audit log source could not be read; these results are incomplete
+"
+,
+  "stdout": 
+"a1c2e3f405162738  <time>  deny   claude-code      git.reset-hard        ↳ git reset --hard  [<root>/project]
+a1c2e3f405162739  <time>  deny   cursor           git.clean-force       git clean -fd  [/home/agent/other]
+b1c2e3f405162740  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162741  <time>  deny   claude-code      rm.recursive-force    rm -rf build  [/home/agent/legacy]
+b1c2e3f405162740  <time>  deny   claude-code      git.reset-hard        git reset --hard origin/main  [/home/agent/legacy]
+b1c2e3f405162742  <time>  deny   claude-code      -                     tar xf payload.tar  [/home/agent/legacy]
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": "",
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "content": 
+"{
+  "version": 1,
+  "audit": {
+    "retention_days": 5
+  }
+}
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/policy.json",
+    },
+    {
+      "kind": "directory",
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the default ceiling is thirty days, and a window has to be positive 1`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--since must be a positive number of days no greater than 30
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window the default ceiling is thirty days, and a window has to be positive 2`] = `
+{
+  "exitCode": 1,
+  "stderr": 
+"--limit must be a positive number
+"
+,
+  "stdout": "",
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>",
+    },
+    {
+      "kind": "directory",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"a1c2e3f405162738","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"git.reset-hard","command":"git reset --hard && echo done","segment":"git reset --hard","reason":"Discards uncommitted work irreversibly."}
+{"ts":"<time>","id":"a1c2e3f405162739","v":"dev","decision":"deny","agent":"cursor","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"/home/agent/other","ruleId":"git.clean-force","command":"git clean -fd","segment":"git clean -fd","reason":"Removes untracked files."}
+{"ts":"<time>","id":"a1c2e3f40516273a","v":"dev","decision":"allow","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","command":"git status","segment":"git status","reason":""}
+{"ts":"<time>","id":"a1c2e3f40516273b","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess1","cwd":"<root>/project","ruleId":"rm.recursive-force","command":"rm -rf archive","segment":"rm -rf archive","reason":"Recursive force delete."}
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/<project-dir>/<month>/<date>-sess1.jsonl",
+    },
+    {
+      "content": 
+"audit logs live here
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/README.md",
+    },
+    {
+      "content": 
+"{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162741","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"rm.recursive-force","command":"rm -rf build","segment":"rm -rf build","reason":"Recursive force delete."}
+{"ts":"<time>","id":"b1c2e3f405162742","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","failureStage":"command-analysis","errorCode":"analysis-failed","command":"tar xf payload.tar","segment":"tar xf payload.tar","reason":"Command analysis failed; denying to stay safe."}
+{"ts":"<time>","id":"b1c2e3f405162740","v":"dev","decision":"deny","agent":"claude-code","level":"standard","toolName":"Bash","sessionId":"sess2","cwd":"/home/agent/legacy","ruleId":"git.reset-hard","command":"git reset --hard origin/main","segment":"git reset --hard origin/main","reason":"Discards uncommitted work irreversibly."}
+not json
+"
+,
+      "kind": "file",
+      "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/legacy-sess.jsonl",
+    },
+    {
+      "kind": "directory",
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "path": "project",
+    },
+  ],
+}
+`;
+
+exports[`logs window a home with no audit tree reports an empty history 1`] = `
+{
+  "exitCode": 0,
+  "stderr": "",
+  "stdout": 
+"No audit log entries found.
+"
+,
+  "tree": [
+    {
+      "kind": "directory",
+      "path": "home",
+    },
+    {
+      "kind": "directory",
+      "path": "home/tmp",
+    },
+    {
+      "kind": "directory",
+      "path": "project",
+    },
+  ],
 }
 `;

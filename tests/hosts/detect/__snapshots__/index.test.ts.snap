@@ -140,7 +140,6 @@ exports[`an untouched home reports every host as not applicable, in doctor order
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -287,124 +286,101 @@ exports[`a home with every host configured reports all thirteen as verified 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{"plugin":["cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
       "content": "{"version":1,"hooks":{"preToolUse":[{"command":"npx -y cc-safety-net hook --cursor","timeout":30,"failClosed":true}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
       "content": "{"cc-safety-net":{"enabled":true,"PreToolUse":[{"hooks":[{"type":"command","command":"npx -y cc-safety-net hook --agy-cli","timeout":30}]}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
       "content": "{"hooks":{"PreToolUse":[{"hooks":[{"type":"command","command":"npx -y cc-safety-net hook --grok-build","timeout":30}]}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
@@ -415,17 +391,14 @@ exports[`a home with every host configured reports all thirteen as verified 1`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -597,7 +570,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -613,12 +585,10 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".kimi-code",
     },
     {
@@ -629,22 +599,18 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -655,7 +621,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -666,7 +631,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -677,34 +641,28 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "content": "{"plugins":{"entries":{"cc-safety-net":{"enabled":true}}}}",
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/openclaw.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":["npm:cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -867,103 +825,84 @@ exports[`a home where every host that can be switched off is switched off 1`] = 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
       "content": "{"cc-safety-net":{"enabled":false,"PreToolUse":[{"hooks":[{"command":"npx -y cc-safety-net hook --agy-cli"}]}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "content": "{"gemini-safety-net":{"overrides":["!user"]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".hermes/plugins/cc-safety-net",
     },
     {
@@ -1135,7 +1074,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1151,22 +1089,18 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".openclaw/extensions/cc-safety-net",
     },
     {
@@ -1177,7 +1111,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -1188,7 +1121,6 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/openclaw.plugin.json",
     },
     {
@@ -1199,28 +1131,23 @@ export default {};
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":[{"source":"npm:cc-safety-net","extensions":["-cc-safety-net"]}]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1351,88 +1278,71 @@ exports[`a home whose state files cannot be read reports uninspected, never abse
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/extensions/gemini-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1581,18 +1491,15 @@ exports[`a config that will not parse is a failed inspection, with the reason at
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
       "content": "{ "hooks"",
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

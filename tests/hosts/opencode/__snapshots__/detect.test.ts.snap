@@ -15,23 +15,19 @@ exports[`finds the plugin listed in a plain opencode.json 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{"plugin":["cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -53,23 +49,19 @@ exports[`finds the plugin listed in a versioned entry 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{"plugin":["other","cc-safety-net@1.2.3"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -91,12 +83,10 @@ exports[`finds the plugin listed in a commented opencode.jsonc 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
@@ -108,12 +98,10 @@ exports[`finds the plugin listed in a commented opencode.jsonc 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -135,29 +123,24 @@ exports[`reads the first config file before the second 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{"plugin":["cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "content": "{"plugin":["cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -181,29 +164,24 @@ exports[`carries the parse failure of the first file into the answer the second 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{ "plugin": [",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "content": "{"plugin":["cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -223,7 +201,6 @@ exports[`reports OpenCode absent when nothing is configured 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -243,23 +220,19 @@ exports[`reports OpenCode absent when the plugin array holds someone else 1`] = 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{"plugin":["other"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -279,23 +252,19 @@ exports[`reports OpenCode absent when there is no plugin array at all 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -317,23 +286,19 @@ exports[`reports the parse failure when no config names the plugin 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".config/opencode",
     },
     {
       "content": "{ "plugin": [",
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -355,23 +320,19 @@ exports[`follows XDG_CONFIG_HOME to the config OpenCode would read 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "xdg",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "xdg/opencode",
     },
     {
       "content": "{"plugin":["cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": "xdg/opencode/opencode.json",
     },
   ],

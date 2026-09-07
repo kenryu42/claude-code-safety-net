@@ -12,7 +12,6 @@ exports[`reading what Claude Code recorded reports a home Claude Code never wrot
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -31,22 +30,18 @@ exports[`reading what Claude Code recorded reports a directory where the install
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -65,23 +60,19 @@ exports[`reading what Claude Code recorded reports an install record that is not
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{ "plugins":",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -100,23 +91,19 @@ exports[`reading what Claude Code recorded reports an install record naming some
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"other@m":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -135,23 +122,19 @@ exports[`reading what Claude Code recorded reports an entry with no installed co
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -175,23 +158,19 @@ exports[`reading what Claude Code recorded reports an install with no settings f
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -210,28 +189,23 @@ exports[`reading what Claude Code recorded reports a directory where the setting
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -250,29 +224,24 @@ exports[`reading what Claude Code recorded reports settings that are not JSON 1`
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "content": "nope",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -293,29 +262,24 @@ exports[`reading what Claude Code recorded reports settings that switch the plug
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":true}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -339,29 +303,24 @@ exports[`reading what Claude Code recorded reports settings that switch the plug
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -385,29 +344,24 @@ exports[`reading what Claude Code recorded reports settings that never mention t
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -423,23 +377,19 @@ exports[`asking whether a specific plugin id is installed finds the pre-rename i
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"safety-net@cc-marketplace":[{}],"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -455,23 +405,19 @@ exports[`asking whether a specific plugin id is installed answers no when only t
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "{"plugins":{"cc-safety-net@cc-marketplace":[{}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -487,7 +433,6 @@ exports[`asking whether a specific plugin id is installed answers no when nothin
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -503,22 +448,18 @@ exports[`asking whether a specific plugin id is installed answers no when the re
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

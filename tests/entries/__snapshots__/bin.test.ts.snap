@@ -6,12 +6,14 @@ exports[`hook --coding-cli a denied command 1`] = `
     {
       "entry": {
         "agent": "unknown",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "shape": "claude-code",
         "toolName": "Bash",
@@ -23,7 +25,7 @@ exports[`hook --coding-cli a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }
@@ -538,12 +540,14 @@ exports[`hook --codex a denied command 1`] = `
     {
       "entry": {
         "agent": "codex",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "Bash",
         "v": "dev",
@@ -554,7 +558,7 @@ exports[`hook --codex a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }
@@ -901,12 +905,14 @@ exports[`hook --kimi-code a denied command 1`] = `
     {
       "entry": {
         "agent": "kimi-code",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "Bash",
         "v": "dev",
@@ -917,7 +923,7 @@ exports[`hook --kimi-code a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }
@@ -1373,12 +1379,14 @@ exports[`hook --gemini-cli a denied command 1`] = `
     {
       "entry": {
         "agent": "gemini-cli",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "run_shell_command",
         "v": "dev",
@@ -1389,7 +1397,7 @@ exports[`hook --gemini-cli a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"decision":"deny","reason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: run_shell_command\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task.","systemMessage":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: run_shell_command\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}
+"{"decision":"deny","reason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above.","systemMessage":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}
 "
 ,
 }
@@ -1736,12 +1744,14 @@ exports[`hook --copilot-cli a denied command 1`] = `
     {
       "entry": {
         "agent": "copilot-cli",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "bash",
         "v": "dev",
@@ -1752,7 +1762,7 @@ exports[`hook --copilot-cli a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}
+"{"permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}
 "
 ,
 }
@@ -2183,12 +2193,14 @@ exports[`hook --cursor a denied command 1`] = `
     {
       "entry": {
         "agent": "cursor",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "Shell",
         "v": "dev",
@@ -2199,7 +2211,7 @@ exports[`hook --cursor a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"permission":"deny","user_message":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Shell\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task.","agent_message":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Shell\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}
+"{"permission":"deny","user_message":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above.","agent_message":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}
 "
 ,
 }
@@ -2689,12 +2701,14 @@ exports[`hook --agy-cli a denied command 1`] = `
     {
       "entry": {
         "agent": "antigravity-cli",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "run_command",
         "v": "dev",
@@ -2705,7 +2719,7 @@ exports[`hook --agy-cli a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"decision":"deny","reason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: run_command\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}
+"{"decision":"deny","reason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}
 "
 ,
 }
@@ -3152,12 +3166,14 @@ exports[`hook --grok-build a denied command 1`] = `
     {
       "entry": {
         "agent": "grok-build",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "run_terminal_command",
         "v": "dev",
@@ -3168,7 +3184,7 @@ exports[`hook --grok-build a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"decision":"deny","reason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: run_terminal_command\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}
+"{"decision":"deny","reason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}
 "
 ,
 }
@@ -3602,12 +3618,14 @@ exports[`hook --hermes-agent a denied command 1`] = `
     {
       "entry": {
         "agent": "hermes-agent",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "toolName": "terminal",
         "v": "dev",
@@ -3618,7 +3636,7 @@ exports[`hook --hermes-agent a denied command 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"action":"block","message":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: terminal\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}
+"{"action":"block","message":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}
 "
 ,
 }
@@ -4046,12 +4064,14 @@ exports[`flag resolution \`hook --claude-code\` runs the Claude Code hook 1`] = 
     {
       "entry": {
         "agent": "unknown",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "shape": "claude-code",
         "toolName": "Bash",
@@ -4063,7 +4083,7 @@ exports[`flag resolution \`hook --claude-code\` runs the Claude Code hook 1`] = 
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }
@@ -4075,12 +4095,14 @@ exports[`flag resolution \`Hook --claude-code\` runs the Claude Code hook 1`] = 
     {
       "entry": {
         "agent": "unknown",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "shape": "claude-code",
         "toolName": "Bash",
@@ -4092,7 +4114,7 @@ exports[`flag resolution \`Hook --claude-code\` runs the Claude Code hook 1`] = 
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }
@@ -4104,12 +4126,14 @@ exports[`flag resolution \`--claude-code\` runs the Claude Code hook 1`] = `
     {
       "entry": {
         "agent": "unknown",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "shape": "claude-code",
         "toolName": "Bash",
@@ -4121,7 +4145,7 @@ exports[`flag resolution \`--claude-code\` runs the Claude Code hook 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }
@@ -4133,12 +4157,14 @@ exports[`flag resolution \`-cc\` runs the Claude Code hook 1`] = `
     {
       "entry": {
         "agent": "unknown",
-        "command": "rm -rf /",
+        "command": "git push --force origin main",
         "cwd": "<root>/project",
         "decision": "deny",
-        "intent": "hard_stop",
-        "reason": "This path contains the protected policy config and you must not modify or delete it.",
-        "segment": "/",
+        "intent": "use_alternative",
+        "level": "standard",
+        "reason": "git push --force destroys remote history. Use --force-with-lease for safer force push.",
+        "ruleId": "git.push-force",
+        "segment": "git push --force origin main",
         "sessionId": "s1",
         "shape": "claude-code",
         "toolName": "Bash",
@@ -4150,7 +4176,7 @@ exports[`flag resolution \`-cc\` runs the Claude Code hook 1`] = `
   "exitCode": 0,
   "stderr": "",
   "stdout": 
-"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: This path contains the protected policy config and you must not modify or delete it.\\n\\nTool: Bash\\n\\nCommand: rm -rf /\\n\\nSegment: /\\n\\nDo not retry this operation or attempt any workaround (other tools, flags, or paths). Report the block to the user and continue with the rest of the task."}}
+"{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"BLOCKED by CC Safety Net\\n\\nReason: git push --force destroys remote history. Use --force-with-lease for safer force push.\\n\\nRule: git.push-force\\n\\nCommand: git push --force origin main\\n\\nDo not retry the blocked form. Continue the task using the safer alternative described above."}}
 "
 ,
 }

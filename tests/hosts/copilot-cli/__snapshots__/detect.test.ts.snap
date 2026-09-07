@@ -13,7 +13,6 @@ exports[`the version gate on each hook source reports an untouched home as absen
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -33,7 +32,6 @@ exports[`the version gate on each hook source reports an untouched home as absen
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -53,7 +51,6 @@ exports[`the version gate on each hook source reports an untouched home as absen
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -73,7 +70,6 @@ exports[`the version gate on each hook source reports an untouched home as absen
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -98,28 +94,23 @@ exports[`the version gate on each hook source honours a repository hook file at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -144,28 +135,23 @@ exports[`the version gate on each hook source honours a repository hook file at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -190,28 +176,23 @@ exports[`the version gate on each hook source honours a repository hook file at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -236,28 +217,23 @@ exports[`the version gate on each hook source honours a repository hook file at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -279,23 +255,19 @@ exports[`the version gate on each hook source reads a user hook file only from 0
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/hooks/b.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -317,23 +289,19 @@ exports[`the version gate on each hook source reads a user hook file only from 0
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/hooks/b.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -358,23 +326,19 @@ exports[`the version gate on each hook source reads a user hook file only from 0
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/hooks/b.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -399,23 +363,19 @@ exports[`the version gate on each hook source reads a user hook file only from 0
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/hooks/b.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -437,28 +397,23 @@ exports[`the version gate on each hook source reads an inline hook definition on
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -480,28 +435,23 @@ exports[`the version gate on each hook source reads an inline hook definition on
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -526,28 +476,23 @@ exports[`the version gate on each hook source reads an inline hook definition on
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -575,61 +520,50 @@ exports[`the version gate on each hook source orders the matched sources reposit
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/hooks/b.json",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -654,39 +588,32 @@ exports[`disableAllHooks switches everything off on a version that supports it 1
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]},"disableAllHooks":true}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -713,39 +640,32 @@ exports[`disableAllHooks is treated as active, with a reason, when the version i
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]},"disableAllHooks":true}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -772,39 +692,32 @@ exports[`disableAllHooks is ignored by 0.0.400, which cannot read the file it si
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]},"disableAllHooks":true}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -831,39 +744,32 @@ exports[`disableAllHooks is ignored by 0.0.422, which cannot read the file it si
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]},"disableAllHooks":true}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -888,50 +794,41 @@ exports[`disableAllHooks a repository source that switches hooks on ends the sea
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "content": "{"disableAllHooks":true}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/copilot",
     },
     {
       "content": "{"disableAllHooks":false}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -956,13 +853,11 @@ exports[`disableAllHooks reads the user settings as JSONC, so a commented false 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "content": "{"disableAllHooks":true}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/config.json",
     },
     {
@@ -974,33 +869,27 @@ exports[`disableAllHooks reads the user settings as JSONC, so a commented false 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1022,28 +911,23 @@ exports[`config files it cannot use reports a hook list that is not an array at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":{}}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1065,28 +949,23 @@ exports[`config files it cannot use reports a hook list that is not an array at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":{}}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1108,28 +987,23 @@ exports[`config files it cannot use reports a hook list that is not an array at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":{}}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1151,28 +1025,23 @@ exports[`config files it cannot use reports a hook list that is not an array at 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":{}}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1199,34 +1068,28 @@ exports[`config files it cannot use reports a repository hook file that is not J
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "repo/.github/hooks",
     },
     {
       "content": "{ "hooks"",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/a.json",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "repo/.github/hooks/c.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1249,33 +1112,27 @@ exports[`the plugin checkout under the Copilot home reports an installed plugin 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1298,33 +1155,27 @@ exports[`the plugin checkout under the Copilot home reports an installed plugin 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1347,33 +1198,27 @@ exports[`the plugin checkout under the Copilot home reports an installed plugin 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1396,33 +1241,27 @@ exports[`the plugin checkout under the Copilot home reports an installed plugin 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1446,39 +1285,32 @@ exports[`the plugin checkout under the Copilot home reports a plugin the setting
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "content": "{"enabledPlugins":{"cc-safety-net@cc-marketplace":false}}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1501,39 +1333,32 @@ exports[`the plugin checkout under the Copilot home treats an absent enabledPlug
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1552,38 +1377,31 @@ exports[`the plugin checkout under the Copilot home refuses to guess when the se
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{"name":"cc-safety-net"}",
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".copilot/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1608,44 +1426,36 @@ exports[`follows COPILOT_HOME to the user hook file and the plugin checkout 1`] 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere/hooks",
     },
     {
       "content": "{"hooks":{"preToolUse":[{"type":"command","bash":"npx -y cc-safety-net hook --copilot-cli"}]}}",
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/hooks/b.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere/installed-plugins",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere/installed-plugins/cc-marketplace",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "elsewhere/installed-plugins/cc-marketplace/cc-safety-net",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "elsewhere/installed-plugins/cc-marketplace/cc-safety-net/plugin.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

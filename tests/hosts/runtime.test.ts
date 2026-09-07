@@ -72,10 +72,10 @@ const ROWS: readonly Row[] = [
   },
   {
     name: 'a rule denial',
-    command: 'rm -rf /',
+    command: 'git push --force origin main',
     auditAllowed: false,
     lines: 1,
-    entry: { decision: 'deny', command: 'rm -rf /' },
+    entry: { decision: 'deny', command: 'git push --force origin main' },
   },
   {
     name: 'an analyzer that fails with an ordinary error',

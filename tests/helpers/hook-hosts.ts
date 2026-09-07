@@ -439,7 +439,7 @@ function commonRows(spec: HostSpec, fixture: HookFixture): HookRow[] {
   const inProject = (command: string) => commandPayload(command, fixture.project);
 
   return [
-    { name: 'a denied command', stdin: inProject('rm -rf /') },
+    { name: 'a denied command', stdin: inProject('git push --force origin main') },
     { name: 'an allowed command', stdin: inProject('git status') },
     {
       name: 'an allowed command under the blocked-only audit scope',
@@ -482,8 +482,8 @@ function commonRows(spec: HostSpec, fixture: HookFixture): HookRow[] {
     { name: 'a payload without a cwd', stdin: commandPayload('git status') },
     { name: 'a cwd that is a regular file', stdin: commandPayload('git status', fixture.file) },
     {
-      // Denied after the config load, unlike `rm -rf /`, so the degraded policy still reaches the
-      // document as a `Config warning:` paragraph and the audit line as `configFallback`.
+      // Denied after the config load, so the degraded policy still reaches the document as a
+      // `Config warning:` paragraph and the audit line as `configFallback`.
       name: 'a denied command under a malformed user policy',
       stdin: inProject('git reset --hard HEAD~1'),
       env: { CC_SAFETY_NET_HOME: join(fixture.root, BAD_CONFIG_DIR) },

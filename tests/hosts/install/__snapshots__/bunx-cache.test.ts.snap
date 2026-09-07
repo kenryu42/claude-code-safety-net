@@ -10,29 +10,24 @@ exports[`clearing the bunx cache removes only the entries this uid installed for
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "bunx-<uid>-cc-safety-net-extra@1",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "bunx-<uid>-cc-safety-net-extra@1/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "bunx-<other-uid>-cc-safety-net@1",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "bunx-<other-uid>-cc-safety-net@1/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "other",
     },
   ],
@@ -50,40 +45,33 @@ exports[`clearing the bunx cache keeps the entry the running process was launche
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "bunx-<uid>-cc-safety-net-extra@1",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "bunx-<uid>-cc-safety-net-extra@1/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "bunx-<uid>-cc-safety-net@latest",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "bunx-<uid>-cc-safety-net@latest/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "bunx-<other-uid>-cc-safety-net@1",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "bunx-<other-uid>-cc-safety-net@1/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "other",
     },
   ],
@@ -99,18 +87,15 @@ exports[`clearing the bunx cache takes every numeric id on Windows, where the te
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "bunx-<uid>-cc-safety-net-extra@1",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": "bunx-<uid>-cc-safety-net-extra@1/package.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "other",
     },
   ],

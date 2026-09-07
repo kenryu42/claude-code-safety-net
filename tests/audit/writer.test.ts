@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { lstatSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getAuditLogHomeDir, writeAuditLog } from '@/audit/writer';
@@ -286,9 +286,16 @@ describe('audit writer parity', () => {
           .map((node) => node.path)
           .sort(),
       ).toStrictEqual(fixture.file === null ? [] : [MARKER, fixture.file].sort());
-      expect([...new Set(produced.map((node) => `${node.kind} ${node.mode.toString(8)}`))]).toEqual(
-        fixture.file === null ? [] : ['directory 700', 'file 600'],
-      );
+      // Windows has no POSIX mode to assert.
+      if (process.platform === 'win32') return;
+      expect([
+        ...new Set(
+          produced.map(
+            (node) =>
+              `${node.kind} ${(lstatSync(join(nextHome, node.path)).mode & 0o777).toString(8)}`,
+          ),
+        ),
+      ]).toEqual(fixture.file === null ? [] : ['directory 700', 'file 600']);
     });
   }
 });

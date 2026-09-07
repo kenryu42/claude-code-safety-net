@@ -15,17 +15,14 @@ Changes (1):
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -39,7 +36,6 @@ Changes (1):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -60,17 +56,14 @@ Changes (1):
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -84,7 +77,6 @@ Changes (1):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -105,12 +97,10 @@ Changes (1):
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
@@ -124,17 +114,14 @@ Changes (1):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -148,7 +135,6 @@ Changes (1):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -166,17 +152,14 @@ exports[`policy check an unrecognized level is refused with the validator diagno
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -190,7 +173,6 @@ exports[`policy check an unrecognized level is refused with the validator diagno
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -208,17 +190,14 @@ exports[`policy check an audit section names the one scope that reads it 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -232,7 +211,6 @@ exports[`policy check an audit section names the one scope that reads it 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -251,17 +229,14 @@ missing.json: Config must be an object
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -297,17 +272,14 @@ EXAMPLES:
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -325,17 +297,14 @@ exports[`policy usage an unknown subcommand, a missing file and an extra argumen
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -353,17 +322,14 @@ exports[`policy usage an unknown subcommand, a missing file and an extra argumen
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -382,17 +348,14 @@ Unexpected policy argument: c
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -418,17 +381,14 @@ Changes (1):
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -442,7 +402,6 @@ Changes (1):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -467,17 +426,14 @@ Changes (1):
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -491,7 +447,6 @@ Changes (1):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -505,22 +460,18 @@ exports[`policy apply at a terminal a typed yes writes only the fields the propo
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
@@ -534,7 +485,6 @@ exports[`policy apply at a terminal a typed yes writes only the fields the propo
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/policy.json",
     },
     {
@@ -548,7 +498,6 @@ exports[`policy apply at a terminal a typed yes writes only the fields the propo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -570,12 +519,10 @@ exports[`policy apply at a terminal --global writes the user file readable by it
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
@@ -607,17 +554,14 @@ exports[`policy apply at a terminal --global writes the user file readable by it
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/policy.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -631,7 +575,6 @@ exports[`policy apply at a terminal --global writes the user file readable by it
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -652,17 +595,14 @@ exports[`policy apply at a terminal a typed no cancels and leaves the scope unto
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -676,7 +616,6 @@ exports[`policy apply at a terminal a typed no cancels and leaves the scope unto
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],
@@ -698,17 +637,14 @@ exports[`policy apply at a terminal a closed stream declines rather than waiting
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
@@ -722,7 +658,6 @@ exports[`policy apply at a terminal a closed stream declines rather than waiting
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/prop.json",
     },
   ],

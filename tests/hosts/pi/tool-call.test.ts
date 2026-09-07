@@ -55,7 +55,7 @@ const read = (path: string) => ({ type: 'tool_call', toolName: 'read', input: { 
 const ROWS: readonly Row[] = [
   {
     name: 'a destructive command',
-    event: () => bash('rm -rf /'),
+    event: () => bash('git push --force origin main'),
     contains: 'BLOCKED by CC Safety Net',
     blocked: true,
     lines: 1,
@@ -161,8 +161,8 @@ const ROWS: readonly Row[] = [
     lines: 1,
   },
   {
-    // Denied after the config load, unlike `rm -rf /`, so the degraded policy reaches the block
-    // reason as a `Config warning:` paragraph and the audit line as `configFallback`.
+    // Denied after the config load, so the degraded policy reaches the block reason as a
+    // `Config warning:` paragraph and the audit line as `configFallback`.
     name: 'a user policy file that is not valid JSON',
     event: () => bash('git reset --hard HEAD~1'),
     brokenPolicy: true,

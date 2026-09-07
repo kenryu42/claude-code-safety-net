@@ -13,27 +13,22 @@ exports[`runRuleSyncMigration a scope with nothing left behind says so and touch
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -47,7 +42,6 @@ exports[`runRuleSyncMigration a scope with nothing left behind says so and touch
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -68,27 +62,22 @@ exports[`runRuleSyncMigration a cached copy that still matches its digest is ven
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -104,12 +93,10 @@ exports[`runRuleSyncMigration a cached copy that still matches its digest is ven
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/x",
     },
     {
@@ -136,7 +123,6 @@ exports[`runRuleSyncMigration a cached copy that still matches its digest is ven
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/x/rulebook.json",
     },
   ],
@@ -157,27 +143,22 @@ exports[`runRuleSyncMigration a cached copy whose digest no longer matches names
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -193,7 +174,6 @@ exports[`runRuleSyncMigration a cached copy whose digest no longer matches names
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -214,17 +194,14 @@ exports[`runRuleSyncMigration the user scope names the refetch command with the 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -240,17 +217,14 @@ exports[`runRuleSyncMigration the user scope names the refetch command with the 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -270,17 +244,14 @@ exports[`runRuleSyncMigration a vendored file that is already usable is left alo
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -296,12 +267,10 @@ exports[`runRuleSyncMigration a vendored file that is already usable is left alo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cc-safety-net/rules/x",
     },
     {
@@ -328,17 +297,14 @@ exports[`runRuleSyncMigration a vendored file that is already usable is left alo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/x/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -359,27 +325,22 @@ exports[`runRuleSyncMigration a vendored file that no longer parses is restored,
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -395,12 +356,10 @@ exports[`runRuleSyncMigration a vendored file that no longer parses is restored,
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules/x",
     },
     {
@@ -427,7 +386,6 @@ exports[`runRuleSyncMigration a vendored file that no longer parses is restored,
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/x/rulebook.json",
     },
   ],
@@ -448,27 +406,22 @@ exports[`runRuleSyncMigration a lock row that recorded only the spec still finds
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -484,12 +437,10 @@ exports[`runRuleSyncMigration a lock row that recorded only the spec still finds
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "project/.cc-safety-net/rules/x",
     },
     {
@@ -516,7 +467,6 @@ exports[`runRuleSyncMigration a lock row that recorded only the spec still finds
 "
 ,
       "kind": "file",
-      "mode": 384,
       "path": "project/.cc-safety-net/rules/x/rulebook.json",
     },
   ],
@@ -536,27 +486,22 @@ exports[`runRuleSyncMigration a cache directory with no lock beside it is still 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -570,7 +515,6 @@ exports[`runRuleSyncMigration a cache directory with no lock beside it is still 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -591,37 +535,30 @@ exports[`runRuleSyncMigration a rule config that cannot be read keeps the leftov
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/cache/rulebooks",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/cache/rulebooks/acme-repo-v2-0-x--94acf0e4b378",
     },
     {
@@ -648,18 +585,15 @@ exports[`runRuleSyncMigration a rule config that cannot be read keeps the leftov
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/cache/rulebooks/acme-repo-v2-0-x--94acf0e4b378/rulebook.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "content": "{ not json",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
     {
@@ -680,7 +614,6 @@ exports[`runRuleSyncMigration a rule config that cannot be read keeps the leftov
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.lock",
     },
   ],
@@ -701,27 +634,22 @@ exports[`runRuleSyncMigration a missing rule config with lock rows keeps the onl
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -742,7 +670,6 @@ exports[`runRuleSyncMigration a missing rule config with lock rows keeps the onl
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.lock",
     },
   ],
@@ -762,27 +689,22 @@ exports[`runRuleSyncMigration a missing rule config with an empty lock has nothi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
   ],

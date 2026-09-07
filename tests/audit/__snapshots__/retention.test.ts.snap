@@ -4,13 +4,11 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 [
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": "logs/.last-prune",
   },
   {
@@ -19,13 +17,11 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/README.md",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-empty.jsonl",
   },
   {
@@ -34,12 +30,10 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-fresh-mtime.jsonl",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/legacy-link.jsonl",
     "target": "../symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
@@ -49,7 +43,6 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-malformed.jsonl",
   },
   {
@@ -59,28 +52,23 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-mixed.jsonl",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/linked-project",
     "target": "../symlink-target",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-04",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/proj-b/2026-04/2026-04-16-link.jsonl",
     "target": "../../../symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
@@ -90,7 +78,6 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/2026-04-17-sess.jsonl",
   },
   {
@@ -99,7 +86,6 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/2026-04-99-impossible.jsonl",
   },
   {
@@ -108,7 +94,6 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/garbage.jsonl",
   },
   {
@@ -117,12 +102,10 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/notes.txt",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-05",
   },
   {
@@ -131,7 +114,6 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-05/2026-03-02-wrong-month.jsonl",
   },
   {
@@ -140,12 +122,10 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-05/2026-05-16-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-06",
   },
   {
@@ -154,12 +134,10 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-06/2026-06-01-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/notamonth",
   },
   {
@@ -168,22 +146,18 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/notamonth/2026-03-02-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c/2026-03",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c/2026-03/nested",
   },
   {
@@ -192,27 +166,22 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-c/2026-03/nested/2026-03-02-deep.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-empty-current",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-empty-current/2026-05",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "symlink-target",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "symlink-target/2026-03",
   },
   {
@@ -221,7 +190,6 @@ exports[`audit retention parity sweeps the same tree under no policy file 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
 ]
@@ -231,13 +199,11 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 [
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": "logs/.last-prune",
   },
   {
@@ -246,13 +212,11 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/README.md",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-empty.jsonl",
   },
   {
@@ -261,12 +225,10 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-fresh-mtime.jsonl",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/legacy-link.jsonl",
     "target": "../symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
@@ -276,7 +238,6 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-malformed.jsonl",
   },
   {
@@ -286,28 +247,23 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-mixed.jsonl",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/linked-project",
     "target": "../symlink-target",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-04",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/proj-b/2026-04/2026-04-16-link.jsonl",
     "target": "../../../symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
@@ -317,7 +273,6 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/2026-04-99-impossible.jsonl",
   },
   {
@@ -326,7 +281,6 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/garbage.jsonl",
   },
   {
@@ -335,12 +289,10 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/notes.txt",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-05",
   },
   {
@@ -349,7 +301,6 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-05/2026-03-02-wrong-month.jsonl",
   },
   {
@@ -358,12 +309,10 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-05/2026-05-16-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-06",
   },
   {
@@ -372,12 +321,10 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-06/2026-06-01-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/notamonth",
   },
   {
@@ -386,22 +333,18 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/notamonth/2026-03-02-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c/2026-03",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c/2026-03/nested",
   },
   {
@@ -410,27 +353,22 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-c/2026-03/nested/2026-03-02-deep.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-empty-current",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-empty-current/2026-05",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "symlink-target",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "symlink-target/2026-03",
   },
   {
@@ -439,7 +377,6 @@ exports[`audit retention parity sweeps the same tree under a three-day window 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
 ]
@@ -449,13 +386,11 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 [
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": "logs/.last-prune",
   },
   {
@@ -464,13 +399,11 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/README.md",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-empty.jsonl",
   },
   {
@@ -479,12 +412,10 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-fresh-mtime.jsonl",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/legacy-link.jsonl",
     "target": "../symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
@@ -494,7 +425,6 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-malformed.jsonl",
   },
   {
@@ -504,28 +434,23 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/legacy-mixed.jsonl",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/linked-project",
     "target": "../symlink-target",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-04",
   },
   {
     "kind": "symlink",
-    "mode": 511,
     "path": "logs/proj-b/2026-04/2026-04-16-link.jsonl",
     "target": "../../../symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
@@ -535,7 +460,6 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/2026-04-17-sess.jsonl",
   },
   {
@@ -544,7 +468,6 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/2026-04-99-impossible.jsonl",
   },
   {
@@ -553,7 +476,6 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/garbage.jsonl",
   },
   {
@@ -562,12 +484,10 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-04/notes.txt",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-05",
   },
   {
@@ -576,7 +496,6 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-05/2026-03-02-wrong-month.jsonl",
   },
   {
@@ -585,12 +504,10 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-05/2026-05-16-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/2026-06",
   },
   {
@@ -599,12 +516,10 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/2026-06/2026-06-01-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-b/notamonth",
   },
   {
@@ -613,22 +528,18 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-b/notamonth/2026-03-02-sess.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c/2026-03",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-c/2026-03/nested",
   },
   {
@@ -637,27 +548,22 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "logs/proj-c/2026-03/nested/2026-03-02-deep.jsonl",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-empty-current",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "logs/proj-empty-current/2026-05",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "symlink-target",
   },
   {
     "kind": "directory",
-    "mode": 493,
     "path": "symlink-target/2026-03",
   },
   {
@@ -666,7 +572,6 @@ exports[`audit retention parity sweeps the same tree under a malformed policy 1`
 "
 ,
     "kind": "file",
-    "mode": 420,
     "path": "symlink-target/2026-03/2026-03-02-sess.jsonl",
   },
 ]
@@ -677,7 +582,6 @@ exports[`audit retention throttle a file that becomes eligible after the marker 
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".last-prune",
   },
 ]

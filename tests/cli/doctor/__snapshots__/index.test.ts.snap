@@ -313,17 +313,14 @@ exports[`doctor --json a fresh home reports no configured integration and exits 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -636,12 +633,10 @@ exports[`doctor --json an installed Cursor hook clears the none-configured findi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/.cursor",
     },
     {
@@ -661,17 +656,14 @@ exports[`doctor --json an installed Cursor hook clears the none-configured findi
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -1021,17 +1013,14 @@ exports[`doctor --json both scopes report their own invalid rule config 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/rules",
     },
     {
@@ -1042,33 +1031,27 @@ exports[`doctor --json both scopes report their own invalid rule config 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules/rule.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
       "content": "not json",
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.json",
     },
   ],
@@ -1399,37 +1382,30 @@ exports[`doctor --json a v2 lock and cache are reported once, naming both scopes
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/cache",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project/.cc-safety-net/rules",
     },
     {
@@ -1438,7 +1414,6 @@ exports[`doctor --json a v2 lock and cache are reported once, naming both scopes
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "project/.cc-safety-net/rules/rule.lock",
     },
   ],
@@ -1787,12 +1762,10 @@ exports[`doctor --json a regular file where the config directory belongs is an u
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
@@ -1801,17 +1774,14 @@ exports[`doctor --json a regular file where the config directory belongs is an u
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/rules",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2152,37 +2122,30 @@ exports[`doctor --json a seeded audit tree is summarised over the denials alone 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/-home-agent-project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/-home-agent-project/<month>",
     },
     {
@@ -2194,23 +2157,19 @@ exports[`doctor --json a seeded audit tree is summarised over the denials alone 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/-home-agent-project/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2541,17 +2500,14 @@ exports[`doctor --json an invalid audit scope and a legacy flag are both reporte
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2665,17 +2621,14 @@ Update Check
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2794,37 +2747,30 @@ Update Check
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/-home-agent-project",
     },
     {
       "kind": "directory",
-      "mode": 448,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/-home-agent-project/<month>",
     },
     {
@@ -2836,23 +2782,19 @@ Update Check
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/-home-agent-project/<month>/<date>-sess1.jsonl",
     },
     {
       "content": "",
       "kind": "file",
-      "mode": 384,
       "path": "home/.cc-safety-net/audit/.cc-safety-net/logs/.last-prune",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2966,17 +2908,14 @@ Update Check
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],
@@ -2994,17 +2933,14 @@ exports[`doctor rendered an unknown option is refused before anything is inspect
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "home/tmp",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "project",
     },
   ],

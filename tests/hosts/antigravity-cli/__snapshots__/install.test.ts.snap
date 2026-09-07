@@ -29,12 +29,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -57,12 +55,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -84,12 +80,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -112,12 +106,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -138,12 +130,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -156,12 +146,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -171,12 +159,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -189,12 +175,10 @@ exports[`the Antigravity hook config differential writes the managed definition 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -230,12 +214,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -261,12 +243,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -288,12 +268,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -319,12 +297,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -345,12 +321,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -366,12 +340,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -381,12 +353,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -402,12 +372,10 @@ exports[`the Antigravity hook config differential adds the definition beside the
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -443,12 +411,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -472,12 +438,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -499,12 +463,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -528,12 +490,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -554,12 +514,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -573,12 +531,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -588,12 +544,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -607,12 +561,10 @@ exports[`the Antigravity hook config differential flips a definition the user di
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -648,12 +600,10 @@ exports[`the Antigravity hook config differential reports an active definition w
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -676,12 +626,10 @@ exports[`the Antigravity hook config differential reports an active definition w
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -703,12 +651,10 @@ exports[`the Antigravity hook config differential reports an active definition w
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -731,12 +677,10 @@ exports[`the Antigravity hook config differential reports an active definition w
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -757,12 +701,10 @@ exports[`the Antigravity hook config differential reports an active definition w
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -775,12 +717,10 @@ exports[`the Antigravity hook config differential reports an active definition w
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -790,12 +730,10 @@ exports[`the Antigravity hook config differential reports an active definition w
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -808,12 +746,10 @@ exports[`the Antigravity hook config differential reports an active definition w
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -849,12 +785,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -863,12 +797,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -889,12 +821,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -903,12 +833,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -929,12 +857,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -943,12 +869,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -958,12 +882,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -972,12 +894,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1013,12 +933,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -1027,12 +945,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1053,12 +969,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -1067,12 +981,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1093,12 +1005,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -1107,12 +1017,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1122,12 +1030,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -1136,12 +1042,10 @@ exports[`the Antigravity hook config differential refuses a shape it cannot edit
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1179,12 +1083,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -1196,12 +1098,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1225,12 +1125,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -1242,12 +1140,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1271,12 +1167,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".gemini/config",
           },
           {
@@ -1288,12 +1182,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".gemini/config/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1303,12 +1195,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -1320,12 +1210,10 @@ exports[`the Antigravity hook config differential refuses a hook config carrying
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1346,12 +1234,10 @@ exports[`the Antigravity detector differential finds the managed handler 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -1374,12 +1260,10 @@ exports[`the Antigravity detector differential finds the managed handler 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1400,12 +1284,10 @@ exports[`the Antigravity detector differential reports a definition the user dis
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -1429,12 +1311,10 @@ exports[`the Antigravity detector differential reports a definition the user dis
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1454,12 +1334,10 @@ exports[`the Antigravity detector differential says nothing is installed for a f
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -1472,12 +1350,10 @@ exports[`the Antigravity detector differential says nothing is installed for a f
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1497,7 +1373,6 @@ exports[`the Antigravity detector differential says nothing is installed for a f
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1520,12 +1395,10 @@ exports[`the Antigravity detector differential reports a config it cannot parse 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".gemini/config",
     },
     {
@@ -1534,12 +1407,10 @@ exports[`the Antigravity detector differential reports a config it cannot parse 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

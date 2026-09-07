@@ -250,5 +250,6 @@ export async function runGuiRow(row: {
   recordPorted(ported);
   // An atomic write that failed halfway leaves its scratch file behind, which no row spells.
   expect(ported.tree.filter((entry) => /\.[0-9a-f]{16}\.tmp$/.test(entry.path))).toStrictEqual([]);
-  return ported;
+  // The home is handed back unrecorded, for the rows whose contract is a file's mode.
+  return { ...ported, home: portedSide.home };
 }

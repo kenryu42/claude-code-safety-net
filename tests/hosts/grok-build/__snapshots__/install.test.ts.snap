@@ -30,12 +30,10 @@ exports[`the Grok Build hook config differential writes the canonical entry when
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -58,12 +56,10 @@ exports[`the Grok Build hook config differential writes the canonical entry when
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -86,12 +82,10 @@ exports[`the Grok Build hook config differential writes the canonical entry when
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -114,12 +108,10 @@ exports[`the Grok Build hook config differential writes the canonical entry when
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -140,17 +132,14 @@ exports[`the Grok Build hook config differential writes the canonical entry when
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -160,17 +149,14 @@ exports[`the Grok Build hook config differential writes the canonical entry when
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -207,12 +193,10 @@ exports[`the Grok Build hook config differential repairs content the host would 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -235,12 +219,10 @@ exports[`the Grok Build hook config differential repairs content the host would 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -263,12 +245,10 @@ exports[`the Grok Build hook config differential repairs content the host would 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -291,12 +271,10 @@ exports[`the Grok Build hook config differential repairs content the host would 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -317,17 +295,14 @@ exports[`the Grok Build hook config differential repairs content the host would 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -337,17 +312,14 @@ exports[`the Grok Build hook config differential repairs content the host would 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -384,12 +356,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -422,12 +392,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -450,12 +418,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -488,12 +454,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -514,12 +478,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -543,12 +505,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -558,12 +518,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
@@ -587,12 +545,10 @@ exports[`the Grok Build hook config differential appends beside a foreign entry 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -629,12 +585,10 @@ exports[`the Grok Build hook config differential reports a canonical file withou
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -657,12 +611,10 @@ exports[`the Grok Build hook config differential reports a canonical file withou
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -685,12 +637,10 @@ exports[`the Grok Build hook config differential reports a canonical file withou
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
@@ -713,12 +663,10 @@ exports[`the Grok Build hook config differential reports a canonical file withou
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".grok/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -739,17 +687,14 @@ exports[`the Grok Build hook config differential reports a canonical file withou
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".grok/hooks",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -759,17 +704,14 @@ exports[`the Grok Build hook config differential reports a canonical file withou
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -806,12 +748,10 @@ exports[`the Grok Build hook config differential follows GROK_HOME out of the ho
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "grok-home",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "grok-home/hooks",
           },
           {
@@ -834,12 +774,10 @@ exports[`the Grok Build hook config differential follows GROK_HOME out of the ho
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "grok-home/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -862,12 +800,10 @@ exports[`the Grok Build hook config differential follows GROK_HOME out of the ho
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "grok-home",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "grok-home/hooks",
           },
           {
@@ -890,12 +826,10 @@ exports[`the Grok Build hook config differential follows GROK_HOME out of the ho
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "grok-home/hooks/cc-safety-net.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -916,17 +850,14 @@ exports[`the Grok Build hook config differential follows GROK_HOME out of the ho
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": "grok-home",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "grok-home/hooks",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -936,17 +867,14 @@ exports[`the Grok Build hook config differential follows GROK_HOME out of the ho
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "grok-home",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "grok-home/hooks",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -968,23 +896,19 @@ exports[`the Grok Build hook config differential leaves content it cannot parse 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
       "content": "not json",
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1006,12 +930,10 @@ exports[`the Grok Build detector differential finds the managed entry 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
@@ -1034,12 +956,10 @@ exports[`the Grok Build detector differential finds the managed entry 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1063,12 +983,10 @@ exports[`the Grok Build detector differential names the drift a reinstall would 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
@@ -1092,12 +1010,10 @@ exports[`the Grok Build detector differential names the drift a reinstall would 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1121,12 +1037,10 @@ exports[`the Grok Build detector differential names the drift a reinstall would 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
@@ -1149,12 +1063,10 @@ exports[`the Grok Build detector differential names the drift a reinstall would 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1178,12 +1090,10 @@ exports[`the Grok Build detector differential names the drift a reinstall would 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
@@ -1206,12 +1116,10 @@ exports[`the Grok Build detector differential names the drift a reinstall would 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1231,12 +1139,10 @@ exports[`the Grok Build detector differential says nothing is installed for a fo
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
@@ -1259,12 +1165,10 @@ exports[`the Grok Build detector differential says nothing is installed for a fo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1284,7 +1188,6 @@ exports[`the Grok Build detector differential says nothing is installed for a fo
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1307,23 +1210,19 @@ exports[`the Grok Build detector differential reports a file it cannot parse ins
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".grok/hooks",
     },
     {
       "content": "not json",
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

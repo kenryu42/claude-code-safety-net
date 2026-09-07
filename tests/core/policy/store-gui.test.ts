@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { lstatSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createTestEnvironment } from '@/core/environment';
 import { deriveEffectiveSafetyLevel } from '@/core/policy/env';
@@ -313,10 +313,12 @@ describe('repairing the user policy file', () => {
       {
         path: '.cc-safety-net/policy.json',
         kind: 'file',
-        mode: 0o600,
         content: `${JSON.stringify(repaired.policy, null, 2)}\n`,
       },
     ]);
+    // Windows has no POSIX mode to assert.
+    if (process.platform !== 'win32')
+      expect(lstatSync(join(home.root, '.cc-safety-net', 'policy.json')).mode & 0o777).toBe(0o600);
     // What repair wrote validates cleanly, so a repaired file never degrades the next load.
     expect(getUserPolicyDiagnostics(repaired.policy, home.environment.home)).toEqual([]);
   });

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { type Budget, createBudget } from '@/core/budget';
@@ -187,9 +187,11 @@ describe('protected path scanner walk', () => {
         ),
       ),
     );
-    expect(trackedCwds).toContain(join(workspace, 'policy'));
-    expect(trackedCwds).toContain(home);
-    expect(trackedCwds).toContain(root);
+    // The walk canonicalizes a `cd` target's existing prefix, so the tracked cwd spells the real
+    // path of the fixture (`work/policy` itself does not exist).
+    expect(trackedCwds).toContain(join(realpathSync(workspace), 'policy'));
+    expect(trackedCwds).toContain(realpathSync(home));
+    expect(trackedCwds).toContain(realpathSync(root));
     // A `cd` through a symlink is canonicalized, so the guard sees one spelling of the target.
     expect(
       completedWalk(
@@ -430,9 +432,10 @@ describe('protected candidate canonicalization', () => {
   test('the file candidate skips the ancestor walk only for implausible basenames', () => {
     const environments = pairedEnvironments({ HOME: home }, home);
     const missing = join(root, 'missing', 'deeper.json');
+    // The existing prefix is canonicalized, so the answer spells the fixture's real path.
     expect(
       normalizeProtectedFileCandidate(missing, workspace, environments, createBudget(), () => true),
-    ).toBe(missing);
+    ).toBe(join(realpathSync(root), 'missing', 'deeper.json'));
     expect(
       normalizeProtectedFileCandidate(
         missing,

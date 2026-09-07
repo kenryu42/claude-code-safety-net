@@ -2,6 +2,7 @@ import { expect } from 'bun:test';
 import { mkdirSync, mkdtempSync, realpathSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
+import { encodeCwdForLogDirname } from '@/audit/writer';
 import { createTestEnvironment, processPathResolver } from '@/core/environment';
 import { createSpawnEnv } from '../helpers';
 import { snapshotTree } from './fixture-tree';
@@ -60,6 +61,9 @@ export function isolationEnv(
     CC_SAFETY_NET_AUDIT_HOME: join(home, '.cc-safety-net', 'audit'),
     npm_config_cache: join(home, '.npm'),
     TMPDIR: join(home, 'tmp'),
+    // `bun run` caches transpiled sources under the isolated HOME (`.bun/install/cache` on Linux,
+    // `Library/Caches/bun` on macOS), which a tree snapshot of that home would otherwise carry.
+    BUN_RUNTIME_TRANSPILER_CACHE_PATH: '0',
     ...overrides,
   };
 }
@@ -160,6 +164,17 @@ export const rootFolds = (root: string) =>
   [
     [realpathSync(root), '<root>'],
     [root, '<root>'],
+  ] as const;
+
+/**
+ * The audit writer names a project's log directory after the directory the call ran in, encoded
+ * the way `encodeCwdForLogDirname` spells it (every non-alphanumeric character a `-`), which no
+ * path fold reaches. Both spellings of `path` are folded to `marker`, canonical first.
+ */
+export const auditDirnameFolds = (path: string, marker: string) =>
+  [
+    [encodeCwdForLogDirname(realpathSync(path)), marker],
+    [encodeCwdForLogDirname(path), marker],
   ] as const;
 
 /**

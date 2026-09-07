@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, spyOn, test } from 'bun:test';
+import { lstatSync } from 'node:fs';
 import { join } from 'node:path';
 import { PassThrough } from 'node:stream';
 import { runPolicyCommand as portedPolicyCommand } from '@/cli/policy/index';
@@ -184,9 +185,12 @@ async function driveApply(
     });
     answer(input as unknown as PassThrough);
     const code = await running;
-    return normalize({ code, written, prompt: output.text(), tree: snapshotTree(root) }, [
-      [root, '<root>'],
-    ]);
+    return {
+      home,
+      outcome: normalize({ code, written, prompt: output.text(), tree: snapshotTree(root) }, [
+        [root, '<root>'],
+      ]),
+    };
   } finally {
     log.mockRestore();
     error.mockRestore();
@@ -201,8 +205,8 @@ async function applyBothWays(extra: readonly string[], answer: (input: PassThrou
       output: context.output,
     }),
   );
-  expect(ported).toMatchSnapshot();
-  return ported;
+  expect(ported.outcome).toMatchSnapshot();
+  return { ...ported.outcome, home: ported.home };
 }
 
 describe('policy apply at a terminal', () => {
@@ -221,8 +225,10 @@ describe('policy apply at a terminal', () => {
     const outcome = await applyBothWays(['--global'], (input) => input.write('y\n'));
     expect(outcome.code).toBe(0);
     const applied = outcome.tree.find((entry) => entry.path === 'home/.cc-safety-net/policy.json');
-    expect(applied?.mode).toBe(0o600);
     expect(JSON.parse(applied?.content ?? '')).toMatchObject({ safety: { level: 'strict' } });
+    // Windows has no POSIX mode to assert.
+    if (process.platform === 'win32') return;
+    expect(lstatSync(join(outcome.home, '.cc-safety-net', 'policy.json')).mode & 0o777).toBe(0o600);
   }, 30_000);
 
   test('a typed no cancels and leaves the scope untouched', async () => {

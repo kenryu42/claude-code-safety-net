@@ -9,7 +9,7 @@ import {
   type HookRow,
   hostEnv,
 } from '../../helpers/hook-hosts';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
+import { auditDirnameFolds, recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * Every stdin host, driven over its own payload: the document it prints, the stderr it leaves and
@@ -53,14 +53,14 @@ const fixture = createHookFixture('next-hook-adapters-');
 
 /**
  * Every machine path a recorded row can spell: the fixture, and the checkout the suite runs in,
- * which a payload without a cwd of its own falls back to. Both are also spelled with `-` for every
- * separator, the way the audit writer names the log directory after the directory the call ran in.
+ * which a payload without a cwd of its own falls back to. Both are also spelled the way the audit
+ * writer names the log directory after the directory the call ran in.
  */
 const FOLDS = [
   ...rootFolds(fixture.root),
-  [fixture.root.replaceAll('/', '-'), '<root>'],
+  ...auditDirnameFolds(fixture.root, '<root>'),
   [process.cwd(), '<cwd>'],
-  [process.cwd().replaceAll('/', '-'), '<cwd>'],
+  ...auditDirnameFolds(process.cwd(), '<cwd>'),
 ] as const;
 
 afterAll(() => {

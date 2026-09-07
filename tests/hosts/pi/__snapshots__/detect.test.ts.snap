@@ -12,7 +12,6 @@ exports[`reports Pi absent when Pi never wrote its settings 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -31,23 +30,19 @@ exports[`reports Pi absent when the settings hold no package list 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -66,23 +61,19 @@ exports[`reports Pi absent when the package list is empty 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":[]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -101,23 +92,19 @@ exports[`reports Pi absent when another package is installed 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":["npm:other",{"source":"npm:cc-safety-net-fork"}]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -138,23 +125,19 @@ exports[`reports the package configured for a bare source string with a version 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":["npm:cc-safety-net@1"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -175,23 +158,19 @@ exports[`reports the package configured for a bare source string without one 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":["npm:cc-safety-net"]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -212,23 +191,19 @@ exports[`reports the package configured for an entry with no resource filter 1`]
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":[{"source":"npm:cc-safety-net"}]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -249,23 +224,19 @@ exports[`reports the package configured for a filter that keeps the extension 1`
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":[{"source":"npm:cc-safety-net","extensions":["cc-safety-net"]}]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -289,23 +260,19 @@ exports[`reports a \`-\`-prefixed resource filter as disabled 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{"packages":[{"source":"npm:cc-safety-net","extensions":["-cc-safety-net"]}]}",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -324,22 +291,18 @@ exports[`refuses to guess when a directory sits where the settings belong 1`] = 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -358,23 +321,19 @@ exports[`refuses to guess when the settings are not JSON 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".pi/agent",
     },
     {
       "content": "{ packages: ",
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

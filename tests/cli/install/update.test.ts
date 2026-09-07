@@ -17,7 +17,8 @@ const NUDGE =
   'Update available: cc-safety-net dev → 9.9.9. Update this CLI with your package manager, e.g. `npm i -g cc-safety-net@latest` for a global install.';
 const PERSISTENT_SCRIPT = '/opt/cc-safety-net/bin/cc-safety-net';
 /** bunx names its cache entries after the running user; the suite's own id is the one it uses. */
-const BUNX_ENTRY = `bunx-${process.getuid?.() ?? 0}-cc-safety-net@`;
+const BUNX_PREFIX = `bunx-${process.getuid?.() ?? 0}-`;
+const BUNX_ENTRY = `${BUNX_PREFIX}cc-safety-net@`;
 
 /** Detection asks three host CLIs for their state; every row scripts that instead of spawning. */
 const versions = (canned: Record<string, string> = {}) => ({
@@ -180,7 +181,7 @@ test('the bunx entry the update runs from survives while the stale one goes', as
     seedTmp: {
       [`${BUNX_ENTRY}latest/running.txt`]: 'running\n',
       [`${BUNX_ENTRY}1.2.3/stale.txt`]: 'stale\n',
-      'bunx-0-other-tool@latest/keep.txt': 'keep\n',
+      [`${BUNX_PREFIX}other-tool@latest/keep.txt`]: 'keep\n',
     },
     options: (home) => ({
       fetchVersion: async () => null,
@@ -203,8 +204,8 @@ test('the bunx entry the update runs from survives while the stale one goes', as
   expect(result.tmp.map((entry) => entry.path)).toEqual([
     `${BUNX_ENTRY}latest`,
     `${BUNX_ENTRY}latest/running.txt`,
-    'bunx-0-other-tool@latest',
-    'bunx-0-other-tool@latest/keep.txt',
+    `${BUNX_PREFIX}other-tool@latest`,
+    `${BUNX_PREFIX}other-tool@latest/keep.txt`,
   ]);
 });
 

@@ -138,12 +138,10 @@ exports[`writing a scope file leaves what the shipped writer leaves writes a def
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope/rules",
   },
   {
@@ -157,7 +155,6 @@ exports[`writing a scope file leaves what the shipped writer leaves writes a def
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": "scope/rules/written.json",
   },
 ]
@@ -167,12 +164,10 @@ exports[`writing a scope file leaves what the shipped writer leaves writes a def
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope/rules",
   },
   {
@@ -189,7 +184,6 @@ exports[`writing a scope file leaves what the shipped writer leaves writes a def
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": "scope/rules/written.json",
   },
 ]
@@ -199,12 +193,10 @@ exports[`writing a scope file leaves what the shipped writer leaves writes the p
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope/rules",
   },
   {
@@ -240,7 +232,6 @@ exports[`writing a scope file leaves what the shipped writer leaves writes the p
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": "scope/rules/written.json",
   },
 ]
@@ -250,12 +241,10 @@ exports[`writing a scope file leaves what the shipped writer leaves writes the u
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": "scope/rules",
   },
   {
@@ -291,7 +280,6 @@ exports[`writing a scope file leaves what the shipped writer leaves writes the u
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": "scope/rules/written.json",
   },
 ]

@@ -95,7 +95,6 @@ exports[`Cursor installs, reports the second run, and uninstalls 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -147,7 +146,6 @@ exports[`Cursor installs, reports the second run, and uninstalls 2`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -185,7 +183,6 @@ exports[`Cursor installs, reports the second run, and uninstalls 3`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -256,7 +253,6 @@ exports[`Antigravity CLI installs, reports the second run, and uninstalls 1`] = 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
@@ -315,7 +311,6 @@ exports[`Antigravity CLI installs, reports the second run, and uninstalls 2`] = 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
@@ -356,7 +351,6 @@ exports[`Antigravity CLI installs, reports the second run, and uninstalls 3`] = 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/config/hooks.json",
     },
     {
@@ -427,7 +421,6 @@ exports[`Grok Build installs, reports the second run, and uninstalls 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
@@ -486,7 +479,6 @@ exports[`Grok Build installs, reports the second run, and uninstalls 2`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".grok/hooks/cc-safety-net.json",
     },
     {
@@ -569,7 +561,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -612,7 +603,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -645,7 +635,6 @@ exports[`Kimi Code installs, reports the second run, and uninstalls 3`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -695,7 +684,6 @@ exports[`a file where the config directory belongs stops the install 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor",
     },
     {
@@ -728,7 +716,6 @@ Check that every parent path component is a directory."
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini",
     },
     {
@@ -810,7 +797,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -855,7 +841,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {
@@ -1062,7 +1047,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1078,7 +1062,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -1115,7 +1098,6 @@ exports[`Hermes Agent writes the shim and enables it through the CLI 2`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/config.yaml",
     },
     {
@@ -1295,7 +1277,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1311,7 +1292,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -1518,7 +1498,6 @@ def register(ctx):
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/__init__.py",
     },
     {
@@ -1534,7 +1513,6 @@ provides_hooks:
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".hermes/plugins/cc-safety-net/plugin.yaml",
     },
     {
@@ -1635,7 +1613,6 @@ exports[`Claude Code adds the marketplace, then updates and enables what is alre
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -1644,7 +1621,6 @@ exports[`Claude Code adds the marketplace, then updates and enables what is alre
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
@@ -1685,7 +1661,6 @@ exports[`Claude Code adds the marketplace, then updates and enables what is alre
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -1694,7 +1669,6 @@ exports[`Claude Code adds the marketplace, then updates and enables what is alre
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
@@ -1735,7 +1709,6 @@ exports[`the pre-rename Claude Code plugin is cleaned up, and a failed cleanup o
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -1744,7 +1717,6 @@ exports[`the pre-rename Claude Code plugin is cleaned up, and a failed cleanup o
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
@@ -1785,7 +1757,6 @@ exports[`the pre-rename Claude Code plugin is cleaned up, and a failed cleanup o
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -1794,7 +1765,6 @@ exports[`the pre-rename Claude Code plugin is cleaned up, and a failed cleanup o
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
@@ -1965,7 +1935,6 @@ exports[`Copilot CLI installs the plugin and flips its disabled flag in place 1`
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".copilot/settings.json",
     },
     {
@@ -2030,7 +1999,6 @@ exports[`Gemini CLI installs, updates, or updates and enables its extension 2`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/gemini-safety-net/gemini-extension.json",
     },
     {
@@ -2070,7 +2038,6 @@ exports[`Gemini CLI installs, updates, or updates and enables its extension 3`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/extension-enablement.json",
     },
     {
@@ -2083,7 +2050,6 @@ exports[`Gemini CLI installs, updates, or updates and enables its extension 3`] 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".gemini/extensions/gemini-safety-net/gemini-extension.json",
     },
     {
@@ -2129,7 +2095,6 @@ exports[`Pi drops the extensions filter its settings carried 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".pi/agent/settings.json",
     },
     {
@@ -2184,7 +2149,6 @@ exports[`OpenCode installs only when the cached plugin actually exports a factor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/index.mjs",
     },
     {
@@ -2193,7 +2157,6 @@ exports[`OpenCode installs only when the cached plugin actually exports a factor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/package.json",
     },
     {
@@ -2249,7 +2212,6 @@ exports[`OpenCode installs only when the cached plugin actually exports a factor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/index.mjs",
     },
     {
@@ -2258,7 +2220,6 @@ exports[`OpenCode installs only when the cached plugin actually exports a factor
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cache/opencode/packages/cc-safety-net@latest/node_modules/cc-safety-net/package.json",
     },
     {
@@ -2298,7 +2259,6 @@ exports[`uninstalling OpenCode drops our entry and leaves the JSONC comments alo
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".config/opencode/opencode.jsonc",
     },
     {
@@ -2391,7 +2351,6 @@ exports[`an OpenClaw extension directory that is not ours is never touched 1`] =
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".openclaw/extensions/cc-safety-net/index.js",
     },
     {
@@ -2431,7 +2390,6 @@ exports[`Amp commits the plugin with the embedded policy into the personal repos
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "staged/README.md",
     },
     {
@@ -2444,7 +2402,6 @@ exports[`Amp commits the plugin with the embedded policy into the personal repos
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "staged/cc-safety-net/index.ts",
     },
   ],
@@ -2459,7 +2416,6 @@ exports[`Amp commits the plugin with the embedded policy into the personal repos
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cc-safety-net/policy.json",
     },
     {
@@ -2499,7 +2455,6 @@ exports[`uninstalling Amp removes only our entry from the checkout 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "staged/README.md",
     },
     {
@@ -2513,7 +2468,6 @@ exports[`uninstalling Amp removes only our entry from the checkout 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "staged/cc-safety-net/index.ts",
     },
   ],
@@ -2580,7 +2534,6 @@ exports[`the selector can cancel, install several targets in order, or hand over
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -2595,7 +2548,6 @@ command = "npx -y cc-safety-net hook --kimi-code"
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".kimi-code/config.toml",
     },
     {

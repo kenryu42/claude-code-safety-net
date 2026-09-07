@@ -9,7 +9,7 @@ import {
 } from '@/gate/intake';
 import { runConfiguredHookAdapter as portedRunAdapter } from '@/hosts/hook/common';
 import { captureHookRun, readAuditEntries } from '../../helpers/hook-capture';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
+import { auditDirnameFolds, recordPorted, rootFolds } from '../../helpers/temp-home';
 
 /**
  * The hook runner itself, driven through one fake host whose documents are `{deny}` and `{allow}`
@@ -95,7 +95,7 @@ const shellPayload = (fixture: Fixture, command: string) =>
 const ROWS: readonly Row[] = [
   {
     name: 'a denied command',
-    input: (fixture) => shellPayload(fixture, 'rm -rf /'),
+    input: (fixture) => shellPayload(fixture, 'git push --force origin main'),
     contains: 'BLOCKED by CC Safety Net',
     lines: 1,
   },
@@ -257,14 +257,12 @@ describe('one payload through both runners', () => {
     test(row.name, async () => {
       const ported = await runSide(row);
 
-      // The audit writer names a project's log directory after the directory the call ran in,
-      // with every separator spelled `-`, which neither path fold reaches; the row without a cwd
-      // of its own falls back to the checkout the suite runs in.
+      // The row without a cwd of its own falls back to the checkout the suite runs in.
       recordPorted(ported, [
         ...rootFolds(fixture.home),
-        [fixture.home.replaceAll('/', '-'), '<home>'],
+        ...auditDirnameFolds(fixture.home, '<home>'),
         [process.cwd(), '<cwd>'],
-        [process.cwd().replaceAll('/', '-'), '<cwd>'],
+        ...auditDirnameFolds(process.cwd(), '<cwd>'),
       ]);
       expect(ported.entries).toHaveLength(row.lines);
       expect(ported.stdout.join('\n')).toContain(row.contains ?? '');

@@ -272,7 +272,8 @@ function lowLayerBans(path: string, source: string): string[] {
 }
 
 function dynamicImportBans(path: string, source: string): string[] {
-  if (DYNAMIC_IMPORT_ALLOWANCES.includes(path)) return [];
+  // The allowance is spelled with `/`; `path` carries the host's separator.
+  if (DYNAMIC_IMPORT_ALLOWANCES.includes(path.split(sep).join('/'))) return [];
   return matchedBans(path, source, [NON_LITERAL_IMPORT]);
 }
 

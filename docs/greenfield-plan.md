@@ -598,8 +598,9 @@ Status legend: `[ ]` pending, `[~]` in progress, `[x]` done. Complexity: S, M, L
   shipped 463 KB of chunks plus the vendored zod because the four entries share their code
   through chunks instead of the bin, while the tarball is 66 KB smaller; `gui-bundle-repair.ts`
   stays because the tests that build the ported layout import `next/gui/assets` in-process; tsc
-  leaves empty directories under `dist-next`. Windows-only gaps left as recorded (CI runs
-  `bun test` on ubuntu and macos): `DYNAMIC_IMPORT_ALLOWANCES` compares a native `relative()`
+  leaves empty directories under `dist-next`. Windows-only gaps left as recorded at the
+  time (wrongly: `test-windows.yml` runs `check:ci` on windows-latest, so the cutover PR closed
+  them): `DYNAMIC_IMPORT_ALLOWANCES` compares a native `relative()`
   path against a `/`-spelled literal, about 45 `<home>/`-spelled row-table constants remain, and
   the CLI differential's fake bin is `#!/bin/sh`. Pre-existing leaks outside this phase: the
   per-fixture `safety-net-worktree-*` roots whose callers never call `cleanup`, the module-scope

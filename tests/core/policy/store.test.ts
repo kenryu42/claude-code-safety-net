@@ -1,5 +1,5 @@
 import { afterAll, afterEach, describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { lstatSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createTestEnvironment } from '@/core/environment';
@@ -630,6 +630,11 @@ describe('writing the user policy from the GUI', () => {
     });
     return { result, tree: snapshotTree(root), root };
   };
+  /** The directory's and the file's permission bits, in that order. */
+  const modes = (root: string) =>
+    ['.cc-safety-net', '.cc-safety-net/policy.json'].map((path) =>
+      (lstatSync(join(root, path)).mode & 0o777).toString(8),
+    );
 
   test('an accepted proposal lands as an owner-only file inside an owner-only directory', () => {
     const written = write({
@@ -647,28 +652,29 @@ describe('writing the user policy from the GUI', () => {
     expect(written.result.policy.destructive_command_protection.allow_paths).toEqual(['~/scratch']);
     expect(written.result.policy.audit.retention_days).toBe(45);
     expect(written.tree).toEqual([
-      { path: '.cc-safety-net', kind: 'directory', mode: 0o700 },
+      { path: '.cc-safety-net', kind: 'directory' },
       {
         path: '.cc-safety-net/policy.json',
         kind: 'file',
-        mode: 0o600,
         content: `${JSON.stringify(written.result.policy, null, 2)}\n`,
       },
     ]);
+    // Windows has no POSIX mode to assert.
+    if (process.platform !== 'win32') expect(modes(written.root)).toEqual(['700', '600']);
   });
 
   test('the minimal document lands as the canonical default policy', () => {
     const written = write({ version: 1 });
     expect(written.result.policy).toEqual(ported.DEFAULT_GUI_POLICY);
     expect(written.tree).toEqual([
-      { path: '.cc-safety-net', kind: 'directory', mode: 0o700 },
+      { path: '.cc-safety-net', kind: 'directory' },
       {
         path: '.cc-safety-net/policy.json',
         kind: 'file',
-        mode: 0o600,
         content: `${JSON.stringify(ported.DEFAULT_GUI_POLICY, null, 2)}\n`,
       },
     ]);
+    if (process.platform !== 'win32') expect(modes(written.root)).toEqual(['700', '600']);
   });
 
   test.each([

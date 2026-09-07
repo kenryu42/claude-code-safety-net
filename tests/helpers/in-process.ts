@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { withEnv } from '../helpers';
 import { clearAuditLogs, readAuditEntries } from './hook-capture';
 import { type HookFixture, hostEnv } from './hook-hosts';
-import { recordPorted, rootFolds } from './temp-home';
+import { auditDirnameFolds, recordPorted, rootFolds } from './temp-home';
 
 /**
  * The harness the four in-process host entries share: one call into a handler, captured whole, and
@@ -63,11 +63,9 @@ export function describeDifferential<Row extends { name: string }, Outcome>(
         const outcome = await run(row);
 
         const fixtureRoot = root();
-        // The audit writer names a project's log file after the directory the call ran in, with
-        // every separator spelled `-`, which neither path fold reaches.
         recordPorted(outcome, [
           ...rootFolds(fixtureRoot),
-          [fixtureRoot.replaceAll('/', '-'), '<root>'],
+          ...auditDirnameFolds(fixtureRoot, '<root>'),
         ]);
         check(row, outcome);
       });

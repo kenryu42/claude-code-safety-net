@@ -106,8 +106,10 @@ describe('audit retention throttle', () => {
     sweep(NOW_MS);
     const marker = join(nextSide.logs, '.last-prune');
     expect(snapshotTree(nextSide.logs)).toStrictEqual([
-      { path: '.last-prune', kind: 'file', mode: 0o600, content: '' },
+      { path: '.last-prune', kind: 'file', content: '' },
     ]);
+    // Owner-only; Windows has no POSIX mode to assert.
+    if (process.platform !== 'win32') expect(statSync(marker).mode & 0o777).toBe(0o600);
     expect(statSync(marker).mtimeMs).toBe(NOW_MS);
 
     addExpired(nextSide.logs);

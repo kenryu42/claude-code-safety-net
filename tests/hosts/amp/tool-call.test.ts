@@ -76,7 +76,7 @@ function createFakeAmp(fixture: HookFixture, api: Row['api']) {
 const ROWS: readonly Row[] = [
   {
     name: 'a destructive command',
-    event: () => shell('rm -rf /'),
+    event: () => shell('git push --force origin main'),
     contains: 'BLOCKED by CC Safety Net',
     rejected: true,
     lines: 1,

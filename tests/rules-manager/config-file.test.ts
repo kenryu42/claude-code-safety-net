@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
+import { lstatSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   readScopeRulesConfig,
@@ -108,12 +109,15 @@ describe('writing a scope file leaves what the shipped writer leaves', () => {
     const tree = snapshotTree(portedRoot);
     expect(tree).toMatchSnapshot();
     // The write is owner-only inside owner-only directories, and leaves no temp file behind.
-    expect(tree.map((entry) => ({ path: entry.path, kind: entry.kind, mode: entry.mode }))).toEqual(
-      [
-        { path: 'scope', kind: 'directory', mode: 0o700 },
-        { path: 'scope/rules', kind: 'directory', mode: 0o700 },
-        { path: target, kind: 'file', mode: 0o600 },
-      ],
-    );
+    expect(tree.map((entry) => ({ path: entry.path, kind: entry.kind }))).toEqual([
+      { path: 'scope', kind: 'directory' },
+      { path: 'scope/rules', kind: 'directory' },
+      { path: target, kind: 'file' },
+    ]);
+    // Windows has no POSIX mode to assert.
+    if (process.platform === 'win32') return;
+    expect(
+      tree.map((entry) => (lstatSync(join(portedRoot, entry.path)).mode & 0o777).toString(8)),
+    ).toEqual(['700', '700', '600']);
   });
 });

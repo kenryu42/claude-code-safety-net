@@ -4,22 +4,18 @@ exports[`audit writer parity plain deny 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -28,13 +24,11 @@ exports[`audit writer parity plain deny 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-plain.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -44,22 +38,18 @@ exports[`audit writer parity allow 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -68,13 +58,11 @@ exports[`audit writer parity allow 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-allow.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -84,22 +72,18 @@ exports[`audit writer parity rule id and intent 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -108,13 +92,11 @@ exports[`audit writer parity rule id and intent 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-rule.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -124,22 +106,18 @@ exports[`audit writer parity failure stage keeps an over-long command whole 1`] 
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -148,13 +126,11 @@ exports[`audit writer parity failure stage keeps an over-long command whole 1`] 
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-failure.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -164,22 +140,18 @@ exports[`audit writer parity the same over-long command without a failure stage 
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -188,13 +160,11 @@ exports[`audit writer parity the same over-long command without a failure stage 
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-capped.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -204,22 +174,18 @@ exports[`audit writer parity agent, shape, level and configFallback 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -228,13 +194,11 @@ exports[`audit writer parity agent, shape, level and configFallback 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-meta.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -244,22 +208,18 @@ exports[`audit writer parity tool name over its cap 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -268,13 +228,11 @@ exports[`audit writer parity tool name over its cap 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-toolname.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -284,28 +242,23 @@ exports[`audit writer parity null cwd 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/no-cwd",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/no-cwd/2026-05",
   },
   {
@@ -314,7 +267,6 @@ exports[`audit writer parity null cwd 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/no-cwd/2026-05/2026-05-17-session-nocwd.jsonl",
   },
 ]
@@ -324,22 +276,18 @@ exports[`audit writer parity redaction decides the project directory name 1`] = 
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-API-KEY--redacted-",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-API-KEY--redacted-/2026-05",
   },
   {
@@ -348,13 +296,11 @@ exports[`audit writer parity redaction decides the project directory name 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-API-KEY--redacted-/2026-05/2026-05-17-session-secret-cwd.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -364,22 +310,18 @@ exports[`audit writer parity cwd over both caps 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/2026-05",
   },
   {
@@ -388,13 +330,11 @@ exports[`audit writer parity cwd over both caps 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp/2026-05/2026-05-17-session-longcwd.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -404,22 +344,18 @@ exports[`audit writer parity session id that walks out of the tree 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -428,13 +364,11 @@ exports[`audit writer parity session id that walks out of the tree 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-etc_passwd.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -444,22 +378,18 @@ exports[`audit writer parity absolute session id 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -468,13 +398,11 @@ exports[`audit writer parity absolute session id 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-abs_path.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -484,22 +412,18 @@ exports[`audit writer parity session id with a space 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -508,13 +432,11 @@ exports[`audit writer parity session id with a space 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-a_b.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -524,22 +446,18 @@ exports[`audit writer parity session id over its cap 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -548,13 +466,11 @@ exports[`audit writer parity session id over its cap 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-sxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -568,22 +484,18 @@ exports[`audit writer parity segment over its cap 1`] = `
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work-project/2026-05",
   },
   {
@@ -592,13 +504,11 @@ exports[`audit writer parity segment over its cap 1`] = `
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work-project/2026-05/2026-05-17-session-segment.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]
@@ -608,22 +518,18 @@ exports[`audit writer parity provider token, JWT and Authorization header 1`] = 
 [
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work--redacted-",
   },
   {
     "kind": "directory",
-    "mode": 448,
     "path": ".cc-safety-net/logs/-work--redacted-/2026-05",
   },
   {
@@ -632,13 +538,11 @@ exports[`audit writer parity provider token, JWT and Authorization header 1`] = 
 "
 ,
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/-work--redacted-/2026-05/2026-05-17-session-tokens.jsonl",
   },
   {
     "content": "",
     "kind": "file",
-    "mode": 384,
     "path": ".cc-safety-net/logs/.last-prune",
   },
 ]

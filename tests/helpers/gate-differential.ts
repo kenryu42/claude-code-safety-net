@@ -1,7 +1,15 @@
 import { expect } from 'bun:test';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, sep } from 'node:path';
 import { createTestEnvironment, type Environment } from '@/core/environment';
@@ -135,6 +143,15 @@ export function portedVerdict(
 const DIGEST_FILE = join(import.meta.dir, '..', 'fixtures', 'gate', 'harvested-digests.json');
 
 /**
+ * The canonical spelling of `/tmp` where it is a symlink (`/private/tmp` on macOS): a corpus source
+ * that changes into `/tmp` is canonicalized there, and the digest was recorded where `/tmp` is real.
+ */
+const TMP_FOLDS =
+  existsSync('/tmp') && realpathSync('/tmp') !== '/tmp'
+    ? [[realpathSync('/tmp'), '/tmp'] as const]
+    : [];
+
+/**
  * The recorded oracle for a corpus too large to snapshot row by row: the SHA-256 of the canonical
  * JSON of `pairs` — sorted by input, with every plain object's keys sorted — under `key` in
  * `tests/fixtures/gate/harvested-digests.json`. Call it with the values the gate produced, folded
@@ -161,6 +178,7 @@ export function expectRecordedDigest(
 ): void {
   const folds = [
     ...(root === undefined ? [] : rootFolds(root)),
+    ...TMP_FOLDS,
     ...(sep === '/' ? [] : [[sep, '/'] as const]),
   ];
   const rows = pairs.map(([label, value]) => [normalize(label, folds), value] as const);

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
+import { lstatSync } from 'node:fs';
 import { join } from 'node:path';
 import * as ported from '@/core/policy/config-file';
 import { snapshotTree, type TreeSpec, writeTree } from '../../helpers/fixture-tree';
@@ -221,9 +222,11 @@ describe('the atomic JSON writer', () => {
       {
         path: 'rule.json',
         kind: 'file',
-        mode: 0o600,
         content: `${JSON.stringify({ version: 1, rules: ['project-rules'], overrides: {} }, null, 2)}\n`,
       },
     ]);
+    // Owner-only; Windows has no POSIX mode to assert.
+    if (process.platform !== 'win32')
+      expect(lstatSync(join(root, 'rule.json')).mode & 0o777).toBe(0o600);
   });
 });

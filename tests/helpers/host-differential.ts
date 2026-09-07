@@ -1,6 +1,6 @@
 import { expect } from 'bun:test';
 import { mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import type { Environment } from '@/core/environment';
 import type { HookDetection } from '@/hosts/detect/context';
 import type { InstallResult } from '@/hosts/install/types';
@@ -52,7 +52,11 @@ export async function differential<T>(options: {
   );
 
   return {
-    outcome: normalize(ported, [[portedHome, '<home>']]),
+    // The separator is folded with the home, so a `<home>/`-spelled expectation holds on Windows.
+    outcome: normalize(ported, [
+      [portedHome, '<home>'],
+      ...(sep === '/' ? [] : [[sep, '/'] as const]),
+    ]),
     tree: snapshotHome(portedHome),
   };
 }

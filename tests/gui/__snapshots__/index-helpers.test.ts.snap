@@ -95,7 +95,6 @@ exports[`the GUI integrations probe lists every catalog target in order with its
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -197,12 +196,10 @@ exports[`the GUI integrations probe reads the Claude Code plugin state off disk 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
@@ -211,7 +208,6 @@ exports[`the GUI integrations probe reads the Claude Code plugin state off disk 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -220,12 +216,10 @@ exports[`the GUI integrations probe reads the Claude Code plugin state off disk 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -327,12 +321,10 @@ exports[`the GUI integrations probe reads the Claude Code plugin state off disk 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
@@ -341,7 +333,6 @@ exports[`the GUI integrations probe reads the Claude Code plugin state off disk 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -350,12 +341,10 @@ exports[`the GUI integrations probe reads the Claude Code plugin state off disk 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -457,23 +446,19 @@ exports[`the GUI integrations probe reports a plugin record it cannot parse as u
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
       "content": "nope",
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -575,7 +560,6 @@ exports[`the GUI integrations probe reports a plugin record it cannot parse as u
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -609,12 +593,10 @@ exports[`the GUI health probe lists only the runtimes it detected and passes the
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".claude/plugins",
     },
     {
@@ -623,7 +605,6 @@ exports[`the GUI health probe lists only the runtimes it detected and passes the
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/plugins/installed_plugins.json",
     },
     {
@@ -632,12 +613,10 @@ exports[`the GUI health probe lists only the runtimes it detected and passes the
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".claude/settings.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -666,7 +645,6 @@ exports[`the GUI health probe lists only the runtimes it detected and passes the
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -682,7 +660,6 @@ exports[`the GUI installer wrapper installs and removes the target the GUI asked
   "installed": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -702,19 +679,16 @@ exports[`the GUI installer wrapper installs and removes the target the GUI asked
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
   "removed": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -728,12 +702,10 @@ exports[`the GUI installer wrapper installs and removes the target the GUI asked
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -764,7 +736,6 @@ exports[`the GUI installer wrapper serializes overlapping runs so neither captur
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -778,12 +749,10 @@ exports[`the GUI installer wrapper serializes overlapping runs so neither captur
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],

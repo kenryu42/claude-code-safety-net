@@ -30,7 +30,6 @@ exports[`the Cursor hook config differential writes the canonical entry when the
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -50,12 +49,10 @@ exports[`the Cursor hook config differential writes the canonical entry when the
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -78,7 +75,6 @@ exports[`the Cursor hook config differential writes the canonical entry when the
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -98,12 +94,10 @@ exports[`the Cursor hook config differential writes the canonical entry when the
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -124,7 +118,6 @@ exports[`the Cursor hook config differential writes the canonical entry when the
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -138,12 +131,10 @@ exports[`the Cursor hook config differential writes the canonical entry when the
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -153,7 +144,6 @@ exports[`the Cursor hook config differential writes the canonical entry when the
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -167,12 +157,10 @@ exports[`the Cursor hook config differential writes the canonical entry when the
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -209,7 +197,6 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -233,12 +220,10 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -261,7 +246,6 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -285,12 +269,10 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -311,7 +293,6 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -330,12 +311,10 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -345,7 +324,6 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -364,12 +342,10 @@ exports[`the Cursor hook config differential leaves a foreign entry alone and re
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -406,7 +382,6 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -430,12 +405,10 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -458,7 +431,6 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -482,12 +454,10 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -508,7 +478,6 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -527,12 +496,10 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -542,7 +509,6 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -561,12 +527,10 @@ exports[`the Cursor hook config differential loses the formatting the user wrote
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -603,7 +567,6 @@ exports[`the Cursor hook config differential reports an install that is already 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -623,12 +586,10 @@ exports[`the Cursor hook config differential reports an install that is already 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -651,7 +612,6 @@ exports[`the Cursor hook config differential reports an install that is already 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -671,12 +631,10 @@ exports[`the Cursor hook config differential reports an install that is already 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -697,7 +655,6 @@ exports[`the Cursor hook config differential reports an install that is already 
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -711,12 +668,10 @@ exports[`the Cursor hook config differential reports an install that is already 
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -726,7 +681,6 @@ exports[`the Cursor hook config differential reports an install that is already 
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -740,12 +694,10 @@ exports[`the Cursor hook config differential reports an install that is already 
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -782,7 +734,6 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -806,12 +757,10 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -834,7 +783,6 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -858,12 +806,10 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -884,7 +830,6 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -903,12 +848,10 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -918,7 +861,6 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -937,12 +879,10 @@ exports[`the Cursor hook config differential collapses a drifted entry and its d
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -980,7 +920,6 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -992,12 +931,10 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1021,7 +958,6 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1033,12 +969,10 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1062,7 +996,6 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1074,12 +1007,10 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1089,7 +1020,6 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1101,12 +1031,10 @@ exports[`the Cursor hook config differential refuses a hook config carrying comm
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1142,7 +1070,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1151,12 +1078,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1177,7 +1102,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1186,12 +1110,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1212,7 +1134,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1221,12 +1142,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1236,7 +1155,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1245,12 +1163,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1286,7 +1202,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1295,12 +1210,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1321,7 +1234,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1330,12 +1242,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1356,7 +1266,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1365,12 +1274,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1380,7 +1287,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1389,12 +1295,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1430,7 +1334,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1439,12 +1342,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1465,7 +1366,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1474,12 +1374,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1500,7 +1398,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1509,12 +1406,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1524,7 +1419,6 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1533,12 +1427,10 @@ exports[`the Cursor hook config differential refuses a shape it cannot edit safe
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1575,7 +1467,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1599,7 +1490,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
@@ -1618,12 +1508,10 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "foreign.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1646,7 +1534,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1670,7 +1557,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
@@ -1689,12 +1575,10 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "foreign.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1715,7 +1599,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
         "tree": [
           {
             "kind": "directory",
-            "mode": 493,
             "path": ".cursor",
           },
           {
@@ -1734,7 +1617,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": ".cursor/hooks.json",
           },
           {
@@ -1753,12 +1635,10 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
             "kind": "file",
-            "mode": 420,
             "path": "foreign.json",
           },
           {
             "kind": "directory",
-            "mode": 493,
             "path": "tmp",
           },
         ],
@@ -1768,7 +1648,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1787,7 +1666,6 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
@@ -1806,12 +1684,10 @@ exports[`the Cursor hook config differential replaces a symlinked hook config wi
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": "foreign.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1833,7 +1709,6 @@ exports[`the Cursor detector differential finds the managed entry 1`] = `
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1853,12 +1728,10 @@ exports[`the Cursor detector differential finds the managed entry 1`] = `
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1884,7 +1757,6 @@ exports[`the Cursor detector differential names every drift a reinstall would re
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1912,12 +1784,10 @@ exports[`the Cursor detector differential names every drift a reinstall would re
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1937,7 +1807,6 @@ exports[`the Cursor detector differential says nothing is installed for a foreig
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -1956,12 +1825,10 @@ exports[`the Cursor detector differential says nothing is installed for a foreig
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -1981,7 +1848,6 @@ exports[`the Cursor detector differential says nothing is installed for a foreig
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
@@ -2004,7 +1870,6 @@ exports[`the Cursor detector differential reports a config it cannot parse inste
   "tree": [
     {
       "kind": "directory",
-      "mode": 493,
       "path": ".cursor",
     },
     {
@@ -2013,12 +1878,10 @@ exports[`the Cursor detector differential reports a config it cannot parse inste
 "
 ,
       "kind": "file",
-      "mode": 420,
       "path": ".cursor/hooks.json",
     },
     {
       "kind": "directory",
-      "mode": 493,
       "path": "tmp",
     },
   ],
