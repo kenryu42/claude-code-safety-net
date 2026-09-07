@@ -38,6 +38,10 @@ writeSymlinkLoopTree(root, {
 const canonicalRoot = realpathSync(root).replace(/\\/g, '/');
 const under = (...parts: string[]) => posix.join(canonicalRoot, ...parts);
 
+/** The fixture as `resolveExistingPath` and `probeExistingPath` hand it back: canonical, in the
+ *  host's own spelling. Only the protected-path candidates above it are reported with `/`. */
+const resolved = (...parts: string[]) => join(realpathSync(root), ...parts);
+
 const environment = pairedEnvironments(
   { HOME: home, TMPDIR: '/tmp', XDG_CONFIG_HOME: '/xdg' },
   home,
@@ -300,32 +304,32 @@ describe('existing-prefix resolution', () => {
     {
       name: 'returns the canonical path of a directory that exists',
       target: join(root, 'existing'),
-      expected: under('existing'),
+      expected: resolved('existing'),
     },
     {
       name: 'resolves a symlink to its target',
       target: join(root, 'alias'),
-      expected: under('existing'),
+      expected: resolved('existing'),
     },
     {
       name: 'appends the missing components to the canonical existing prefix',
       target: join(root, 'alias', 'missing', 'leaf'),
-      expected: under('existing', 'missing', 'leaf'),
+      expected: resolved('existing', 'missing', 'leaf'),
     },
     {
       name: 'keeps a dangling symlink in the missing suffix instead of failing',
       target: join(root, 'broken', 'child'),
-      expected: under('broken', 'child'),
+      expected: resolved('broken', 'child'),
     },
     {
       name: 'keeps a symlink cycle in the missing suffix instead of looping',
       target: join(root, 'loop-a', 'child'),
-      expected: under('loop-a', 'child'),
+      expected: resolved('loop-a', 'child'),
     },
     {
       name: 'keeps a path descending through a file in the missing suffix',
       target: join(root, 'file', 'under-a-file'),
-      expected: under('file', 'under-a-file'),
+      expected: resolved('file', 'under-a-file'),
     },
     {
       name: 'returns the empty candidate unchanged rather than resolving the cwd',
@@ -352,9 +356,13 @@ describe('existing-prefix resolution', () => {
   test('answers a repeated candidate from the budget cache without charging again', () => {
     const budget = createBudget();
     const target = join(root, 'missing', 'leaf');
-    expect(resolveExistingPath(target, processPathResolver, budget)).toBe(under('missing', 'leaf'));
+    expect(resolveExistingPath(target, processPathResolver, budget)).toBe(
+      resolved('missing', 'leaf'),
+    );
     const charged = new Map(budget.counters);
-    expect(resolveExistingPath(target, processPathResolver, budget)).toBe(under('missing', 'leaf'));
+    expect(resolveExistingPath(target, processPathResolver, budget)).toBe(
+      resolved('missing', 'leaf'),
+    );
     expect(new Map(budget.counters)).toEqual(charged);
   });
 
@@ -362,12 +370,12 @@ describe('existing-prefix resolution', () => {
     {
       name: 'answers with the canonical path when the entry exists',
       target: join(root, 'existing'),
-      expected: under('existing'),
+      expected: resolved('existing'),
     },
     {
       name: 'answers with the symlink target when the entry is a link',
       target: join(root, 'alias'),
-      expected: under('existing'),
+      expected: resolved('existing'),
     },
     {
       name: 'answers null for a missing entry instead of walking up',
@@ -388,7 +396,9 @@ describe('existing-prefix resolution', () => {
     const budget = createBudget();
     const target = join(root, 'missing', 'leaf');
     resolveExistingPath(target, processPathResolver, budget);
-    expect(probeExistingPath(target, processPathResolver, budget)).toBe(under('missing', 'leaf'));
+    expect(probeExistingPath(target, processPathResolver, budget)).toBe(
+      resolved('missing', 'leaf'),
+    );
   });
 
   /** The call index that first breached, and the kind it breached on. */

@@ -19,7 +19,7 @@ import {
   resolveWorktreeFacts,
 } from '@/core/git/worktree';
 import { createLinkedWorktreeFixture } from '../../helpers';
-import { recordPorted, rootFolds } from '../../helpers/temp-home';
+import { type Fold, recordPorted, rootFolds } from '../../helpers/temp-home';
 
 const fixture = createLinkedWorktreeFixture();
 let scratch = '';
@@ -123,6 +123,12 @@ describe('linked worktree facts', () => {
   });
 
   test('normalizes comparison paths like the shipped helper', () => {
+    // The helper case-folds on Windows so a comparison there is case-insensitive; the record holds
+    // one spelling, so the drive letter it folds is put back before the value is recorded.
+    const driveCase: Fold = [/^([a-z]):/g, (_match, drive: string) => `${drive.toUpperCase()}:`];
+    expect(normalizePathForComparison('C:\\X')).toBe(
+      process.platform === 'win32' ? 'c:/x' : 'C:/X',
+    );
     for (const path of [
       '\\\\?\\C:\\x\\',
       '\\\\?\\UNC\\srv\\share\\',
@@ -133,7 +139,7 @@ describe('linked worktree facts', () => {
       '',
       fixture.linkedWorktree,
     ]) {
-      recordPorted(normalizePathForComparison(path), pathFolds());
+      recordPorted(normalizePathForComparison(path), [...pathFolds(), driveCase]);
     }
   });
 
@@ -175,21 +181,26 @@ describe('linked worktree facts', () => {
     );
   });
 
-  test('takes the answer from the git binary it is pointed at', () => {
-    expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('echo true; exit 0'))).toEqual({
-      recursiveSubmodules: true,
-    });
-    expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('echo off; exit 0'))).toEqual({
-      recursiveSubmodules: false,
-    });
-    expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('exit 1'))).toEqual({
-      recursiveSubmodules: false,
-    });
-    expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('exit 128'))).toBeNull();
-    expect(resolveWorktreeFacts(fixture.linkedWorktree, null)).toEqual({
-      recursiveSubmodules: true,
-    });
-  });
+  // A fake git is a script, and `resolveWorktreeFacts` spawns the binary it is given without a
+  // shell, which on Windows can only start a real executable — there is nothing to point it at.
+  test.skipIf(process.platform === 'win32')(
+    'takes the answer from the git binary it is pointed at',
+    () => {
+      expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('echo true; exit 0'))).toEqual({
+        recursiveSubmodules: true,
+      });
+      expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('echo off; exit 0'))).toEqual({
+        recursiveSubmodules: false,
+      });
+      expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('exit 1'))).toEqual({
+        recursiveSubmodules: false,
+      });
+      expect(resolveWorktreeFacts(fixture.linkedWorktree, fakeGit('exit 128'))).toBeNull();
+      expect(resolveWorktreeFacts(fixture.linkedWorktree, null)).toEqual({
+        recursiveSubmodules: true,
+      });
+    },
+  );
 
   test('gives up without relaxation when git hangs past the timeout', () => {
     const started = performance.now();

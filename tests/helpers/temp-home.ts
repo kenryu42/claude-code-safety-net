@@ -192,25 +192,29 @@ export const WINDOWS_SEPARATOR_FOLDS: readonly Fold[] =
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
- * Both spellings of a temp root, canonical first so a `/private` prefix cannot survive the fold,
+ * Every spelling of a temp root, canonical first so a `/private` prefix cannot survive the fold,
  * each also as a JSON document spells it (`C:\\\\Users\\\\…`), for a root inside a document a host
  * printed. On Windows the same root also comes back in another letter case (`c:/users/runner~1`)
- * or with `/` for `\\`, so there the fold is one pattern over case and separator.
+ * or with `/` for `\\`, so there the fold is one pattern over case and separator; and a producer
+ * that asks the OS for the canonical name (git writing a `gitdir:` line) answers with the long
+ * name where the temp root was handed to us in its 8.3 form, which is what `realpath.native` gives.
  */
 export const rootFolds = (root: string, marker = '<root>'): readonly Fold[] =>
-  [realpathSync(root), root].flatMap((spelling): readonly Fold[] => {
-    if (sep !== '/')
-      return [
-        [new RegExp(spelling.split(sep).map(escapeRegExp).join('(?:\\\\{1,2}|/)'), 'gi'), marker],
-      ];
-    const escaped = JSON.stringify(spelling).slice(1, -1);
-    return escaped === spelling
-      ? [[spelling, marker]]
-      : [
-          [escaped, marker],
-          [spelling, marker],
+  [...new Set([realpathSync.native(root), realpathSync(root), root])].flatMap(
+    (spelling): readonly Fold[] => {
+      if (sep !== '/')
+        return [
+          [new RegExp(spelling.split(sep).map(escapeRegExp).join('(?:\\\\{1,2}|/)'), 'gi'), marker],
         ];
-  });
+      const escaped = JSON.stringify(spelling).slice(1, -1);
+      return escaped === spelling
+        ? [[spelling, marker]]
+        : [
+            [escaped, marker],
+            [spelling, marker],
+          ];
+    },
+  );
 
 /**
  * The audit writer names a project's log directory after the directory the call ran in, encoded

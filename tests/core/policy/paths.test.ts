@@ -98,7 +98,7 @@ describe('the user policy scope', () => {
     expect(slash(paths.userScope.root)).toBe(row.scopeRoot);
     expect(paths.userScope.label).toBe('user policy');
     expect(slash(paths.userConfigTarget.path)).toBe(row.configPath);
-    expect(paths.userConfigTarget.relativePath).toBe(row.targetRelativePath);
+    expect(slash(paths.userConfigTarget.relativePath)).toBe(row.targetRelativePath);
   });
 
   test.each(
@@ -168,7 +168,7 @@ describe('the project policy scope', () => {
     expect(slash(paths.projectScope.root)).toBe(row.scopeRoot);
     expect(paths.projectScope.label).toBe('project policy');
     expect(slash(paths.projectConfigTarget.path)).toBe(row.configPath);
-    expect(paths.projectConfigTarget.relativePath).toBe(row.targetRelativePath);
+    expect(slash(paths.projectConfigTarget.relativePath)).toBe(row.targetRelativePath);
   });
 
   test.each([

@@ -65,7 +65,9 @@ beforeAll(() => {
   userHome = join(fixture, 'home');
   repo = join(userHome, 'work');
   codexHome = join(fixture, 'codex');
-  systemGemini = join(fixture, 'etc', 'gemini', 'settings.json');
+  // Named to the guard through an environment variable and spliced into a command, so it is
+  // spelled with `/`, which every host reads as a path and no shell reads as an escape.
+  systemGemini = shellPath(fixture, 'etc', 'gemini', 'settings.json');
   writeTree(fixture, {
     'vault/ssh/id_rsa': 'PRIVATE KEY',
     'vault/ssh/config': 'Host *',
@@ -885,9 +887,10 @@ describe('secret protection through tool inputs', () => {
         },
         {
           name: 'a grep search directory',
+          // A path field is not read by a shell, so it carries the host's own spelling.
           input: { pattern: 'token', path: join(userHome, '.aws') },
           route: { kind: 'grep' },
-          expected: aws(shellPath(userHome, '.aws')),
+          expected: aws(join(userHome, '.aws')),
         },
         {
           name: 'a grep glob filter naming a secret extension',

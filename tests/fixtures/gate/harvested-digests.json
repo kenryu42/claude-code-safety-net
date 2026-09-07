@@ -248,7 +248,7 @@
   "guards-policy-apply/semantic-facts": "ae6c09c3b502b00a4e7c6e183c997396a018b4666b876218db9c2d39011fe70c",
   "guards-policy-apply/semantic-facts@win32": "ae6c09c3b502b00a4e7c6e183c997396a018b4666b876218db9c2d39011fe70c",
   "guards-policy-protection/corpus-fuzz": "fcab5a01665f633b58a143a38fa0a153079d1d71e657dd2dc871e9c87679fbc7",
-  "guards-policy-protection/corpus-fuzz@win32": "ce93ae71f6ed442393f71c9884e82b886ffc55d131a0b7665972ff029c47b8c9",
+  "guards-policy-protection/corpus-fuzz@win32": "1f698020df3162f5c0d54342ae8e0669c3be7ef5f1dade98e97ad3662f5dc2e9",
   "guards-policy-protection/declared-facts": "dbc849037e4a3f1b1fb1d18922c95da4f155a08b464691460397f1e358e44261",
   "guards-policy-protection/declared-facts@win32": "dbc849037e4a3f1b1fb1d18922c95da4f155a08b464691460397f1e358e44261",
   "guards-policy-protection/shell-commands": "5fa407d40d8db654b7169fcf934d5251ea200f9fe0cc93e29f7da87fd78a1e48",
@@ -274,7 +274,7 @@
   "guards-safety-net-invocation/subcommand-index": "5856d8bec0967bd8ad01c9136b28f4285d17ef15c0e5df84065fcae65c73fc47",
   "guards-safety-net-invocation/subcommand-index@win32": "417c228975001ae41a10889ac59f538f106bfa6aec779d93227a48b82d7e5af2",
   "guards-semantic-facts/corpus-facts": "f698bb4b8fcbffce4543115de0967926b0594f490ae9762bcfb8077606f89487",
-  "guards-semantic-facts/corpus-facts@win32": "8fe5c378935d58286e51b561239966202a40b0fd3231714d08cc5041adc2024d",
+  "guards-semantic-facts/corpus-facts@win32": "c83d9dcf747dae904d63027b026e0b9c608cd24a5befde9ea598a4edc87e0b38",
   "guards-semantic-facts/limit-error": "6c0a3f5cbe4f39f38854db9a1592eb841d1112f366dda093bf210d708b5c72e9",
   "guards-semantic-facts/limit-error@win32": "6c0a3f5cbe4f39f38854db9a1592eb841d1112f366dda093bf210d708b5c72e9",
   "guards-semantic-facts/sensitive-text": "89cb2d84209130dcc73f934d705fba64a131b513946b2bb4bca8e3ec6839220e",
@@ -282,5 +282,5 @@
   "guards-semantic-facts/store-programs": "46ae170076eeb7c9202224e7300e5fcf425c47c4ca84854f217df43c2b6cf046",
   "guards-semantic-facts/store-programs@win32": "7d82136606622d5e6f675ef90d6bc326a0d6d221dc8c381b4d053e70f6f48998",
   "guards-semantic-facts/usage-facts": "c0326a9c568c121a203a724e0715557e0601864d5e7826815c885bf866e68f19",
-  "guards-semantic-facts/usage-facts@win32": "137efcb1f29c683b3d9549c18a3c1ddabe2c35a60da830da4547f8352c274325"
+  "guards-semantic-facts/usage-facts@win32": "48c523a612387ac7d1cd7778cd27a8a02b0b3a3b08d11faa5944cc619c12147d"
 }

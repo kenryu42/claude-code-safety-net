@@ -164,6 +164,32 @@ function decide(input: string, index: number, environment: Environment) {
   return { row, verdicts: decided.map((cell) => cell.verdict) };
 }
 
+/**
+ * The literals whose verdict is decided by something no two hosts share, with the cell Windows
+ * reaches instead. Every column of these rows carries the same value, so one cell per literal
+ * says it. Three facts account for all of them:
+ *
+ * - `/tmp` is where the fixture itself lives on a POSIX host, which puts the user policy config
+ *   underneath it, so a command that deletes `/tmp` is a policy-protection denial there. On
+ *   Windows `/tmp` names a directory on the current drive that holds nothing of ours.
+ * - A backslash is a separator on Windows, so a quoted regex like `"\.npmrc"` reads as a path
+ *   whose basename is a secret's rather than as an escaped dot.
+ * - `$HOME` expands to a Windows home the home-anchored secret rule does not match, so the
+ *   basename rule names the same file instead.
+ */
+const WINDOWS_CELLS: Readonly<Record<string, string>> = {
+  'find /tmp -depth -delete': 'deny find.delete @command-analysis',
+  'find /tmp -execdir env rm -rf {} +': 'deny find.exec-rm-recursive-force @command-analysis',
+  'find /tmp -execdir rm -rf {} +': 'deny find.exec-rm-recursive-force @command-analysis',
+  'git grep -n "\\.npmrc"': 'deny secret.basename.npmrc @secret-protection',
+  'git grep -n "process\\.env" -- .': 'deny secret.basename.env @secret-protection',
+  'git log --grep "fix\\.env"': 'deny secret.basename.env @secret-protection',
+  'printf %s `cat $HOME/.ssh/id_rsa`': 'deny secret.basename.id-rsa @secret-protection',
+  'rm -rf /tmp': 'allow',
+  'rm -rf /tmp allowed': 'allow',
+  'rm -rf /tmp target in home cwd allowed': 'allow',
+};
+
 /** Every cell of a row that disagrees with the table, named so the reader sees what flipped. */
 function mismatchesAgainstTable(row: HarvestedRow, index: number): string[] {
   const label = `literal ${index + 1} ${JSON.stringify(row.literal).slice(0, 120)}`;
@@ -172,9 +198,10 @@ function mismatchesAgainstTable(row: HarvestedRow, index: number): string[] {
     row.literal,
   );
   expect(Object.keys(expected ?? {}), `${label}: recorded cells`).toStrictEqual(Object.keys(row));
+  const windows = process.platform === 'win32' ? WINDOWS_CELLS[row.literal] : undefined;
   return Object.keys(row)
-    .filter((column) => column !== 'literal' && row[column] !== expected?.[column])
-    .map((column) => `${label}: ${column}: ${expected?.[column]} -> ${row[column]}`);
+    .filter((column) => column !== 'literal' && row[column] !== (windows ?? expected?.[column]))
+    .map((column) => `${label}: ${column}: ${windows ?? expected?.[column]} -> ${row[column]}`);
 }
 
 const BATCH_SIZE = 250;

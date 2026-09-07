@@ -81,7 +81,8 @@ type Side = {
 const SIDES = [{ ...portedResolver, ...portedLimits }] as [Side];
 
 const RESOURCE_LIMIT_ERROR = "Rule synchronization exceeds CC Safety Net's safe resource limits.";
-const RULES_SUBPATH = join('.cc-safety-net', 'rules');
+/** Spelled with `/`: the diagnostics that name it are folded to that spelling on every host. */
+const RULES_SUBPATH = '.cc-safety-net/rules';
 const KIND_CAPS = [
   ['metadata', 524_288],
   ['commit', 262_144],
