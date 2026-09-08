@@ -2949,6 +2949,49 @@ describe('secret protection exempts every documented explain invocation', () => 
 describe('secret protection allow paths', () => {
   const cwd = join(tmpdir(), 'secret-protection-allow-project');
 
+  test('assignment operands honor allow paths without relaxing other sensitive paths', () => {
+    ['corp-ca-bundle.pem', 'certs/corp ca=bundle.pem', 'C:/Users/me/corp-ca-bundle.pem'].forEach(
+      (path) => {
+        const config = { denyPaths: [], allowPaths: [path] };
+        [
+          `export GIT_SSL_CAINFO="${path}"`,
+          `export NODE_EXTRA_CA_CERTS="${path}"`,
+          `git -c http.sslCAInfo="${path}" ls-remote origin`,
+          `git -C . -c http.sslCAInfo="${path}" ls-remote origin`,
+          `git -chttp.sslCAInfo="${path}" ls-remote origin`,
+          `GIT_SSL_CAINFO="${path}" gh api user`,
+        ].forEach((command) => {
+          expect(findSensitiveTargetInCommand(command, cwd, config)).toBeNull();
+          expect(findSensitiveTargetInCommand(command, cwd)?.ruleId).toBe('secret.ext.pem');
+          expect(
+            findSensitiveTargetInCommand(command, cwd, { ...config, denyPaths: [path] })?.ruleId,
+          ).toBe('secret.deny-path');
+        });
+      },
+    );
+  });
+
+  test('assignment handling preserves literal equals filenames and coding-CLI protection', () => {
+    ['cat key=corp.pem', 'git show HEAD:key=corp.pem', 'git checkout -c key=corp.pem'].forEach(
+      (command) => {
+        expect(
+          findSensitiveTargetInCommand(command, cwd, {
+            denyPaths: [],
+            allowPaths: ['corp.pem'],
+          })?.ruleId,
+        ).toBe('secret.ext.pem');
+      },
+    );
+    ['export CONFIG=./.mcp.json', 'git -c custom.path=./.mcp.json status'].forEach((command) => {
+      expect(
+        findSensitiveTargetInCommand(command, cwd, {
+          denyPaths: [],
+          allowPaths: ['.mcp.json'],
+        })?.ruleId,
+      ).toBe('secret.cli.claude-code.config');
+    });
+  });
+
   test('an exact-file allow entry suppresses pattern rules for that file only', () => {
     const config = { disabledRules: [], denyPaths: [], allowPaths: ['.env.test'] };
     expect(findSensitivePathTarget(['.env.test'], cwd, config)).toBeNull();
