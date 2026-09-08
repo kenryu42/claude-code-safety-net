@@ -63,11 +63,10 @@ function staticClosure(path: string, seen = new Set<string>()): string[] {
 test('the hook closure stays under 400,000 bytes', () => {
   const files = staticClosure(bin);
   const bytes = files.reduce((total, file) => total + Buffer.byteLength(readFileSync(file)), 0);
-  console.log(`hook closure: ${bytes} bytes over ${files.length} files`);
 
   // A walk that resolved no chunk at all would pass the byte budget on the 7 KB bin alone.
   expect(files.length).toBeGreaterThan(1);
-  expect(bytes).toBeLessThanOrEqual(400_000);
+  expect(bytes, `hook closure over ${files.length} files`).toBeLessThanOrEqual(400_000);
 });
 
 test('the hook cold start stays within 150 ms of node itself', () => {
@@ -108,9 +107,10 @@ test('the hook cold start stays within 150 ms of node itself', () => {
   const median = (values: number[]) => [...values].sort((a, b) => a - b)[3] ?? Number.NaN;
   const nodeMedian = median(samples.map((sample) => sample.node));
   const hookMedian = median(samples.map((sample) => sample.hook));
-  console.log(
-    `cold start medians: node ${nodeMedian.toFixed(1)} ms, hook ${hookMedian.toFixed(1)} ms`,
-  );
 
-  expect(hookMedian).toBeLessThanOrEqual(nodeMedian + 150);
+  // The node median is the baseline the allowance is measured from, so a failure has to name it.
+  expect(
+    hookMedian,
+    `hook cold start against a node median of ${nodeMedian.toFixed(1)} ms`,
+  ).toBeLessThanOrEqual(nodeMedian + 150);
 }, 60_000);
