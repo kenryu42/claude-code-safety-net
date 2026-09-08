@@ -66,7 +66,9 @@ test('the hook closure stays under 400,000 bytes', () => {
 
   // A walk that resolved no chunk at all would pass the byte budget on the 7 KB bin alone.
   expect(files.length).toBeGreaterThan(1);
-  expect(bytes, `hook closure over ${files.length} files`).toBeLessThanOrEqual(400_000);
+  expect(bytes, `hook closure: ${bytes} bytes over ${files.length} files`).toBeLessThanOrEqual(
+    400_000,
+  );
 });
 
 test('the hook cold start stays within 150 ms of node itself', () => {
@@ -111,6 +113,6 @@ test('the hook cold start stays within 150 ms of node itself', () => {
   // The node median is the baseline the allowance is measured from, so a failure has to name it.
   expect(
     hookMedian,
-    `hook cold start against a node median of ${nodeMedian.toFixed(1)} ms`,
+    `cold start medians: node ${nodeMedian.toFixed(1)} ms, hook ${hookMedian.toFixed(1)} ms`,
   ).toBeLessThanOrEqual(nodeMedian + 150);
 }, 60_000);
