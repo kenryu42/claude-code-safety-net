@@ -1058,6 +1058,52 @@ describe('the policy layer over the built-in catalog', () => {
     });
   });
 
+  test('a path bound to a name in an operand is decided as that path, allow entries included', () => {
+    // `export KEY=path` and `git -c key=path` name a file the same way a bare operand does, so an
+    // allow entry has to reach it — and a deny entry and the bare rule have to survive it.
+    for (const path of ['corp-ca-bundle.pem', 'certs/corp ca=bundle.pem', 'C:/keys/corp.pem']) {
+      for (const command of [
+        `export GIT_SSL_CAINFO="${path}"`,
+        `export NODE_EXTRA_CA_CERTS="${path}"`,
+        `git -c http.sslCAInfo="${path}" ls-remote origin`,
+        `git -C . -c http.sslCAInfo="${path}" ls-remote origin`,
+        `git -chttp.sslCAInfo="${path}" ls-remote origin`,
+        `GIT_SSL_CAINFO="${path}" gh api user`,
+      ]) {
+        expect(secretIn(command, UNSET), command).toStrictEqual({
+          target: path,
+          ruleId: 'secret.ext.pem',
+        });
+        expect(secretIn(command, UNSET, { denyPaths: [], allowPaths: [path] }), command).toBeNull();
+        expect(
+          secretIn(command, UNSET, { denyPaths: [path], allowPaths: [path] }),
+          command,
+        ).toStrictEqual({ target: path, ruleId: 'secret.deny-path' });
+      }
+    }
+  });
+
+  test('an operand that only looks like an assignment keeps its own name', () => {
+    // The equals belongs to the filename here, so allowing `corp.pem` leaves the file untouched.
+    for (const command of [
+      'cat key=corp.pem',
+      'git show HEAD:key=corp.pem',
+      'git checkout -c key=corp.pem',
+    ]) {
+      expect(
+        secretIn(command, UNSET, { denyPaths: [], allowPaths: ['corp.pem'] })?.ruleId,
+        command,
+      ).toBe('secret.ext.pem');
+    }
+    // The coding-CLI tier is exempt from every allow entry, bound to a name or not.
+    for (const command of ['export CONFIG=./.mcp.json', 'git -c custom.path=./.mcp.json status']) {
+      expect(
+        secretIn(command, UNSET, { denyPaths: [], allowPaths: ['.mcp.json'] })?.ruleId,
+        command,
+      ).toBe('secret.cli.claude-code.config');
+    }
+  });
+
   test('the three roots an allow entry can never cover', () => {
     const allowed = (target: string, root: string) =>
       targetVerdict([target], { denyPaths: [], allowPaths: [root] }) === null;
