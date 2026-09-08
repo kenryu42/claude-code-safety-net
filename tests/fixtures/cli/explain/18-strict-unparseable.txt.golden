@@ -1,0 +1,20 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  echo 'unterminated
+
+STEP 1 - Split shell commands
+  Segment 1: ["echo","unterminated"]
+
+RESULT
+  Status: BLOCKED
+  Reason: Command could not be safely analyzed (strict mode). Simplify the
+          command and retry, or ask the user to verify.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: strict
+  Rule customizations: 0

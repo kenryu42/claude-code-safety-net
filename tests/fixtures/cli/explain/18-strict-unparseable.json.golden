@@ -1,0 +1,56 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "echo 'unterminated",
+        "segments": [
+          [
+            "echo",
+            "unterminated"
+          ]
+        ]
+      },
+      {
+        "type": "strict-unparseable",
+        "rawCommand": "echo 'unterminated",
+        "reason": "Command could not be safely analyzed (strict mode). Simplify the command and retry, or ask the user to verify."
+      }
+    ],
+    "segments": []
+  },
+  "result": "blocked",
+  "reason": "Command could not be safely analyzed (strict mode). Simplify the command and retry, or ask the user to verify.",
+  "segment": "echo 'unterminated",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "strict",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": true,
+      "source": "environment",
+      "sources": [
+        "policy safety.level=standard",
+        "env CC_SAFETY_NET_LEVEL=strict"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "environment",
+      "sources": [
+        "policy safety.level=standard",
+        "env CC_SAFETY_NET_LEVEL=strict"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "environment",
+      "sources": [
+        "policy safety.level=standard",
+        "env CC_SAFETY_NET_LEVEL=strict"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

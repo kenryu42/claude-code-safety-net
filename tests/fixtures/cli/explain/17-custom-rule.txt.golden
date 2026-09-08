@@ -1,0 +1,26 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  docker system prune
+
+STEP 1 - Split shell commands
+  Segment 1: ["docker","system","prune"]
+
+STEP 2 - Custom rules
+  Result: MATCHED
+
+RESULT
+  Status: BLOCKED
+  Rule: project-rules/block-docker-system-prune
+  Rulebook: project-rules 1.0.0
+  Source: project-rules
+  Reason: [project-rules/block-docker-system-prune] Use targeted cleanup
+          instead.
+
+CONFIG
+  Path: <root>/project/.cc-safety-net/rules/rule.json
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

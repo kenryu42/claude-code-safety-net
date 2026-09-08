@@ -1,0 +1,77 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "docker system prune",
+        "segments": [
+          [
+            "docker",
+            "system",
+            "prune"
+          ]
+        ]
+      }
+    ],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "fallback-scan",
+            "tokensScanned": [
+              "system",
+              "prune"
+            ]
+          },
+          {
+            "type": "custom-rules-check",
+            "rulesChecked": true,
+            "matched": true,
+            "reason": "[project-rules/block-docker-system-prune] Use targeted cleanup instead."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "[project-rules/block-docker-system-prune] Use targeted cleanup instead.",
+  "segment": "docker system prune",
+  "ruleId": "custom.project-rules/block-docker-system-prune",
+  "customRule": {
+    "id": "project-rules/block-docker-system-prune",
+    "rulebook": {
+      "name": "project-rules",
+      "version": "1.0.0"
+    },
+    "source": "project-rules"
+  },
+  "configSource": "<root>/project/.cc-safety-net/rules/rule.json",
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

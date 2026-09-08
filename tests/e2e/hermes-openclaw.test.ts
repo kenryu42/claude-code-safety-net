@@ -4,7 +4,7 @@
  * What is proven here, on every machine:
  *
  * - Hermes: the built adapter's stdin/stdout contract, driven with the payload Hermes'
- *   `_serialize_payload` emits, and the shipped Python plugin — written by the built CLI's
+ *   `_serialize_payload` emits, and the Python plugin it ships — written by the built CLI's
  *   installer and executed by real `python3`. The dispatch through Hermes' own PluginManager is
  *   NOT covered: it only happens inside an agent turn, which needs a model and network.
  * - OpenClaw: the built plugin bundle registers `before_tool_call` for `exec` and enforces
@@ -18,13 +18,15 @@
  */
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
-import { HERMES_AGENT_PLUGIN_NAME } from '@/integrations/hermes-agent/artifact';
-import { getHermesAgentPluginDir } from '@/integrations/hermes-agent/install';
-import { OPENCLAW_PLUGIN_ENTRY_FILE, OPENCLAW_PLUGIN_ID } from '@/integrations/openclaw/artifact';
+import { createTestEnvironment } from '@/core/environment';
+import { HERMES_AGENT_PLUGIN_NAME } from '@/hosts/hermes-agent/artifact';
+import { getHermesAgentPluginDir } from '@/hosts/hermes-agent/install';
+import { OPENCLAW_PLUGIN_ENTRY_FILE, OPENCLAW_PLUGIN_ID } from '@/hosts/openclaw/artifact';
 import { buildOpenClawBundle, buildRuntimeBundles } from '../../scripts/build-runtime';
 import { OPENCLAW_HOST_SCRIPT } from '../../scripts/integration-host-scripts';
-import { writeFakeCommands } from '../integrations/install/install-test-helpers';
+import { writeFakeCommands } from '../helpers/fake-commands';
 import {
   buildE2EArtifacts,
   describeHermesGates,
@@ -108,7 +110,7 @@ const hermesHookGate = {
   },
 };
 
-// The shipped Python plugin, written by the built CLI's installer and executed by real python3
+// The Python plugin the installer ships, written by the built CLI and executed by real python3
 // with `npx` standing in for the published package so no install reaches the network.
 const HERMES_PLUGIN_HOST = `
 import importlib.util, json, sys
@@ -176,7 +178,12 @@ process.exit(await child.exited);`,
         'terminal',
         JSON.stringify({ command }),
         sessionId,
-        join(getHermesAgentPluginDir(home), '__init__.py'),
+        join(
+          getHermesAgentPluginDir(
+            createTestEnvironment({ home, tmpdir: tmpdir(), env: new Map() }),
+          ),
+          '__init__.py',
+        ),
       ],
       '',
       cwd,

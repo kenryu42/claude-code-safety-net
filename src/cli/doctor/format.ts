@@ -4,7 +4,8 @@
 
 import { colors } from '@/cli/utils/colors';
 import { renderTerminalText } from '@/cli/utils/terminal';
-import { doctorIntegrationOrder, getIntegrationDisplayName } from '@/integrations/catalog';
+import { describePolicyScope } from '@/core/policy/types';
+import { doctorIntegrationOrder, getIntegrationDisplayName } from '@/hosts/catalog';
 import type {
   ActivitySummary,
   ConfigSourceInfo,
@@ -15,9 +16,8 @@ import type {
   HookStatus,
   SystemInfo,
   UpdateInfo,
-} from '@/integrations/doctor-types';
-import type { SelfTestSummary } from '@/integrations/self-test';
-import { describePolicyScope } from '@/ir/policy';
+} from '@/hosts/doctor-types';
+import type { SelfTestSummary } from '@/hosts/self-test';
 
 interface TableOptions {
   headers?: string[];

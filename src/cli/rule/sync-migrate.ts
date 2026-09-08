@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { readRulesConfig } from '@/rules/policy';
+import type { Environment } from '@/core/environment';
 import {
   getPolicyFilesystemTargetForPath,
   type PolicyFilesystemScope,
@@ -10,16 +10,17 @@ import {
   removePolicyDirectory,
   removePolicyFile,
   writePolicyFileAtomic,
-} from '@/rules/policy/filesystem';
+} from '@/core/io/safe-read';
+import { getLocalRulebookPath } from '@/core/policy/paths';
+import { readRulesConfig } from '@/core/policy/rules-config';
+import { validateRulebookContent } from '@/core/policy/scope-policy';
 import {
-  getLocalRulebookPath,
-  getScopePaths,
+  isGitHubRulebookSource,
+  parseGitHubSource,
   RULEBOOK_FILE,
-  type ScopePaths,
-} from '@/rules/policy/paths';
-import { validateRulebookContent } from '@/rules/policy/scope-policy';
-import { isGitHubRulebookSource, parseGitHubSource } from '@/rules/policy/source-syntax';
-import type { SyncRulesConfigOptions } from '@/rules/policy/types';
+} from '@/core/policy/source-syntax';
+import { getScopePaths, type ScopePaths } from '@/rules-manager/paths';
+import type { SyncRulesConfigOptions } from '@/rules-manager/types';
 
 /**
  * `rule sync` no longer synchronizes anything: every rulebook is a live file. What is left is a
@@ -42,8 +43,11 @@ interface V2LockEntry {
   display_ref?: unknown;
 }
 
-export function runRuleSyncMigration(options: SyncRulesConfigOptions = {}): number {
-  const scope = getScopePaths(options);
+export function runRuleSyncMigration(
+  environment: Environment,
+  options: SyncRulesConfigOptions = {},
+): number {
+  const scope = getScopePaths(environment, options);
   const cacheTarget = getPolicyFilesystemTargetForPath(
     scope.filesystemScope,
     getV2CacheDir(scope.configDir),
@@ -83,11 +87,11 @@ export function runRuleSyncMigration(options: SyncRulesConfigOptions = {}): numb
 }
 
 /** The leftovers doctor reports, in both scopes, without reading or removing anything. */
-export function findRuleV2Leftovers(cwd: string): string[] {
+export function findRuleV2Leftovers(environment: Environment, cwd: string): string[] {
   return [
     ...new Set(
       [{ cwd }, { cwd, global: true }].flatMap((options) => {
-        const scope = getScopePaths(options);
+        const scope = getScopePaths(environment, options);
         return [scope.lockPath, getV2CacheDir(scope.configDir)];
       }),
     ),

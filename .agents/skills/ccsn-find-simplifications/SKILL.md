@@ -13,12 +13,12 @@ Over-engineering is this repo's documented dominant failure mode (see Scope Disc
 ## Start With Repo Context
 
 - Read `AGENTS.md` (Scope Discipline, Style Guide, Knip rules), `REVIEW.md` (threat model and review boundary), and `SECURITY.md` (the standard/strict/paranoid mode contract).
-- Read `docs/residual-risk.md` before judging anything in `src/parser`, `src/analyzer`, or `src/rules`. Adjudicated bypass families are settled decisions; fixtures pinning them are load-bearing even when nothing else references them.
+- Read `docs/residual-risk.md` before judging anything in `src/core/shell`, `src/gate/analyzer`, or `src/core/rules`. Adjudicated bypass families are settled decisions; fixtures pinning them are load-bearing even when nothing else references them.
 - The mode contract is the repo's central seam: standard mode blocks recognizable accidental destruction and is explicitly not bypass-proof; strict/paranoid fail closed. Complexity that exists only to chase crafted adversarial shapes in standard mode exceeds the documented contract — `REVIEW.md` forbids adding it, which makes any existing instance a prime simplification candidate. Conversely, fail-closed machinery in strict/paranoid is contract, not bloat.
 
 ## Treat As Intentional By Default
 
-- The per-tool integrations in `src/integrations` (Claude Code, OpenCode, Codex, Copilot CLI, Cursor, Amp, Pi, Kimi Code, Gemini CLI, OpenClaw, Antigravity, Hermes, …). Each exists because a real host tool needs it; propose deleting one only if the user says the tool is dropped. Removing an unused hook or method *inside* one is still fair game.
+- The per-tool integrations in `src/hosts` (Claude Code, OpenCode, Codex, Copilot CLI, Cursor, Amp, Pi, Kimi Code, Gemini CLI, OpenClaw, Antigravity, Hermes, …). Each exists because a real host tool needs it; propose deleting one only if the user says the tool is dropped. Removing an unused hook or method *inside* one is still fair game.
 - The residual-risk registry pair (`docs/residual-risk-registry.json` + `docs/residual-risk.md`) and the strict/paranoid fail-closed fixtures that back its families.
 - The single-runtime-dependency posture (`zod` only). Hand-rolled shell parsing is the product, not a hand-rolling smell — this is a security hook with a deliberately minimal supply chain. Do not propose swapping the parser or a guard for an npm package; a new dependency is a maintainer decision to propose separately, never a "low effort" cleanup.
 - Adversarial-looking strings in tests are analyzer input data, never executed. Do not propose removing them as dangerous or redundant without checking which contract or residual-risk family they pin.
@@ -42,11 +42,11 @@ Thin candidates are not enough: one typo, a single `knip` run, "this looks compl
 
 Use parallel subagents when the user asks for breadth. Give each a domain and require evidence, not guesses:
 
-- Parser and IR (`src/parser`, `src/ir`): normalization passes, node kinds, fields nothing downstream reads.
-- Analyzer and rules (`src/analyzer`, `src/rules`): rule machinery, severity plumbing, contract-exceeding emulation.
-- Guards and policy (`src/guards`, `src/policy`): backstops mirroring the same fact, config knobs nothing sets.
-- Engine and CLI (`src/engine`, `src/cli`): commands, flags, install/detect flows, output formatting.
-- Integrations (`src/integrations`, `hooks/`, root plugin manifests): per-tool duplication, unused adapter methods.
+- Parser and IR (`src/core/shell`, `src/core`): normalization passes, node kinds, fields nothing downstream reads.
+- Analyzer and rules (`src/gate/analyzer`, `src/core/rules`): rule machinery, severity plumbing, contract-exceeding emulation.
+- Guards and policy (`src/gate/guards`, `src/core/policy`): backstops mirroring the same fact, config knobs nothing sets.
+- Engine and CLI (`src/gate`, `src/cli`): commands, flags, install/detect flows, output formatting.
+- Integrations (`src/hosts`, `hooks/`, root plugin manifests): per-tool duplication, unused adapter methods.
 - GUI (`src/gui`): surfaces or state with no interaction path.
 - Tests, scripts, build (`tests/`, `scripts/`): redundant fixtures, verification scripts checking what another gate already checks.
 

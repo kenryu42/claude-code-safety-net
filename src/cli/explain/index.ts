@@ -8,4 +8,4 @@ export { parseExplainFlags } from '@/cli/explain/flags';
 // Formatting utilities
 export { formatTraceHuman, formatTraceJson } from '@/cli/explain/format';
 // Core analysis logic
-export { explainCommand } from '@/engine/facade';
+export { explainCommand } from '@/gate/explain';

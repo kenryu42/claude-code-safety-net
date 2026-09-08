@@ -1,0 +1,28 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  sudo git reset --hard
+
+STEP 1 - Split shell commands
+  Segment 1: ["sudo","git","reset","--hard"]
+
+STEP 2 - Strip wrappers
+  Removed: sudo
+  Tokens:  ["git","reset","--hard"]
+
+STEP 3 - Match rules
+  Rule:   git:analyzeGitMatch()
+  Result: MATCHED
+
+RESULT
+  Status: BLOCKED
+  Reason: git reset --hard destroys all uncommitted changes permanently. Use
+          'git stash' first.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

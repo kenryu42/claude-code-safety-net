@@ -25,4 +25,4 @@ exec env \
   CC_SAFETY_NET_PARANOID_RM='' \
   CC_SAFETY_NET_PARANOID_INTERPRETERS='' \
   CC_SAFETY_NET_WORKTREE='' \
-  bun run "$REPO/src/cli/cc-safety-net.ts" "$@"
+  bun run "$REPO/src/entries/bin.ts" "$@"

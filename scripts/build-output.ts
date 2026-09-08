@@ -8,17 +8,13 @@ export function getBundledOutputs(outputs: BuildOutput[]) {
     indexOutput: outputs.find((output) =>
       normalizeBuildPath(output.path).endsWith('dist/index.js'),
     ),
-    binOutput: outputs.find((output) =>
-      normalizeBuildPath(output.path).endsWith('dist/cli/cc-safety-net.js'),
-    ),
-    piOutput: outputs.find((output) =>
-      normalizeBuildPath(output.path).endsWith('dist/integrations/pi/index.js'),
-    ),
+    binOutput: outputs.find((output) => normalizeBuildPath(output.path).endsWith('dist/bin.js')),
+    piOutput: outputs.find((output) => normalizeBuildPath(output.path).endsWith('dist/pi.js')),
   };
 }
 
 export function isPublicDeclarationOutput(path: string): boolean {
-  return ['dist/index.d.ts', 'dist/api.d.ts'].includes(normalizeBuildPath(path));
+  return ['dist/entries/index.d.ts', 'dist/entries/api.d.ts'].includes(normalizeBuildPath(path));
 }
 
 function normalizeBuildPath(path: string): string {

@@ -1,7 +1,4 @@
-import { analyzeCommand } from '@/analyzer';
-import { resolveProtectedGitMetadata } from '@/guards/git-metadata-protection';
-import type { AnalyzeOptions, EnvironmentContext, ProtectedGitMetadata } from '@/ir/analysis';
-import type { ExplainOptions } from '@/ir/explain';
+import { createPolicySnapshot } from '@/core/policy/snapshot';
 import type {
   CustomRule,
   CustomRuleMetadata,
@@ -10,19 +7,7 @@ import type {
   PolicySafetyLevel,
   PolicySnapshot,
   SecretProtectionConfig,
-} from '@/ir/policy';
-import { getCCSafetyNetEnvModes } from '@/policy/env';
-import {
-  createPolicySnapshot,
-  loadPolicySnapshot,
-  type PolicySnapshotOptions,
-} from '@/policy/snapshot';
-import { createCommandAnalysisPolicy } from '@/rules/destructive-command-rules';
-import { TEST_ENVIRONMENT } from './environment';
-
-export type TestExplainOptions = Omit<ExplainOptions, 'policySnapshot'> & {
-  config?: TestPolicyInput;
-};
+} from '@/core/policy/types';
 
 export interface TestPolicyInput {
   version?: number;
@@ -78,64 +63,4 @@ export function policySnapshot(input: TestPolicyInput = {}): PolicySnapshot {
       : undefined,
     input.ruleMetadata,
   );
-}
-
-export function commandAnalysisPolicy(snapshot: PolicySnapshot = policySnapshot()) {
-  return createCommandAnalysisPolicy(
-    snapshot.policy,
-    getCCSafetyNetEnvModes(snapshot.policy).capabilities,
-  );
-}
-
-export function analyzeTestCommand(
-  command: string,
-  options: Omit<AnalyzeOptions, 'policySnapshot'> & {
-    config?: TestPolicyInput;
-    environment?: EnvironmentContext;
-    protectedGitMetadata?: ProtectedGitMetadata | null;
-  } = {},
-) {
-  const { config, ...analyzeOptions } = options;
-  const snapshot = policySnapshot(config);
-  return analyzeCommand(command, {
-    environment: TEST_ENVIRONMENT,
-    effectiveCapabilities: getCCSafetyNetEnvModes(snapshot.policy).capabilities,
-    protectedGitMetadata: resolveProtectedGitMetadata([options.cwd]),
-    ...analyzeOptions,
-    policySnapshot: snapshot,
-  });
-}
-
-export function loadTestPolicy(
-  cwd?: string,
-  options: Omit<PolicySnapshotOptions, 'cwd'> = {},
-): TestPolicyInput {
-  const snapshot = loadPolicySnapshot({ ...options, cwd });
-  return {
-    rules: snapshot.policy.rules.map((rule) => ({
-      ...rule,
-      block_args: [...rule.block_args],
-    })),
-    transparent_wrappers: snapshot.policy.transparentWrappers,
-    safety: snapshot.policy.safety,
-    worktreeMode: snapshot.policy.worktreeMode,
-    destructiveCommandProtectionEnabled: snapshot.policy.destructiveCommandProtectionEnabled,
-    destructiveCommandRuleOverrides: snapshot.policy.destructiveCommandRuleOverrides,
-    destructiveCommandAllowPaths: snapshot.policy.destructiveCommandAllowPaths,
-    secretProtection: {
-      ...snapshot.policy.secretProtection,
-      disabledRules: [...snapshot.policy.secretProtection.disabledRules],
-      denyPaths: [...snapshot.policy.secretProtection.denyPaths],
-      allowPaths: [...snapshot.policy.secretProtection.allowPaths],
-    },
-    ...(snapshot.state === 'degraded' ? { configFallbackReason: snapshot.reason } : {}),
-  };
-}
-
-export function testExplainOptions(options: TestExplainOptions = {}): ExplainOptions {
-  const { config, ...explainOptions } = options;
-  return {
-    ...explainOptions,
-    ...(config ? { policySnapshot: policySnapshot(config) } : {}),
-  };
 }

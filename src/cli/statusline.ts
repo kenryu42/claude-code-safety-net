@@ -1,14 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
-import {
-  ENV_FLAGS,
-  envTruthy,
-  getCCSafetyNetEnvModes,
-  loadPolicySnapshot,
-  resolveEffectiveDestructiveCommandRules,
-} from '@/engine/facade';
-import { readBoundedHookInput } from '@/integrations/hook/common';
+import type { Environment } from '@/core/environment';
+import { resolveEffectiveDestructiveCommandRules } from '@/core/policy/effective-rules';
+import { ENV_FLAGS, envTruthy, getCCSafetyNetEnvModes } from '@/core/policy/env';
+import { loadPolicySnapshot } from '@/core/policy/snapshot';
+import { readBoundedHookInput } from '@/gate/intake';
 
 /**
  * Read piped stdin content asynchronously, bounded by the hook input limit.
@@ -27,12 +23,13 @@ async function readStdinAsync(input: StatuslineInput): Promise<string | null> {
   return content?.trim() || null;
 }
 
-function getSettingsPath(): string {
+function getSettingsPath(environment: Environment): string {
   // Allow override for testing
-  if (process.env.CLAUDE_SETTINGS_PATH) {
-    return process.env.CLAUDE_SETTINGS_PATH;
+  const override = environment.env.get('CLAUDE_SETTINGS_PATH');
+  if (override) {
+    return override;
   }
-  return join(homedir(), '.claude', 'settings.json');
+  return join(environment.home, '.claude', 'settings.json');
 }
 
 interface ClaudeSettings {
@@ -43,8 +40,8 @@ interface ClaudeSettings {
  * Whether the plugin is enabled in Claude Code. Nothing is enforced while it is
  * off, however valid the configuration is.
  */
-export function isPluginEnabled(): boolean {
-  const settingsPath = getSettingsPath();
+export function isPluginEnabled(environment: Environment): boolean {
+  const settingsPath = getSettingsPath(environment);
 
   if (!existsSync(settingsPath)) {
     // Default to disabled if settings file doesn't exist
@@ -68,7 +65,7 @@ export function isPluginEnabled(): boolean {
 
     return settings.enabledPlugins[pluginKey] === true;
   } catch (error) {
-    if (envTruthy(ENV_FLAGS.debug)) {
+    if (envTruthy(ENV_FLAGS.debug, environment.env)) {
       console.error(
         `CC Safety Net debug: failed to read Claude settings: ${settingsPath}: ${error instanceof Error ? error.message : String(error)}`,
       );
@@ -78,8 +75,11 @@ export function isPluginEnabled(): boolean {
   }
 }
 
-export async function printStatusline(input: StatuslineInput = process.stdin): Promise<void> {
-  const enabled = isPluginEnabled();
+export async function printStatusline(
+  environment: Environment,
+  input: StatuslineInput = process.stdin,
+): Promise<void> {
+  const enabled = isPluginEnabled(environment);
 
   // Build our status string
   let status: string;
@@ -87,9 +87,9 @@ export async function printStatusline(input: StatuslineInput = process.stdin): P
   if (!enabled) {
     status = '🛡️ CC Safety Net ❌';
   } else {
-    const snapshot = loadPolicySnapshot({ cwd: process.cwd() });
+    const snapshot = loadPolicySnapshot(environment, { cwd: process.cwd() });
     const policy = snapshot.policy;
-    const modes = getCCSafetyNetEnvModes(policy);
+    const modes = getCCSafetyNetEnvModes(policy, environment.env);
     const hasEffectiveRuleCustomization = Object.values(
       resolveEffectiveDestructiveCommandRules(policy, modes.capabilities),
     ).some((rule) => rule.changesInherited);

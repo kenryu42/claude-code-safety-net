@@ -1,0 +1,22 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  git status
+
+STEP 1 - Split shell commands
+  Segment 1: ["git","status"]
+
+STEP 2 - Match rules
+  Rule:   git:analyzeGitMatch()
+  Result: No match
+
+RESULT
+  Status: ALLOWED
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

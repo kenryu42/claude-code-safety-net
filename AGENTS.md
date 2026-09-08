@@ -4,6 +4,19 @@
 - Keep implementation modular; put tests in `tests/` mirroring `src/`, not colocated in `src/`.
 - Files in `docs/` use lowercase kebab-case names.
 
+## Testing
+
+- A behavior change lands as a failing expectation first — a contract corpus row or a stated
+  assertion — then the fix. Re-recording a golden is never the first step.
+- State what a test expects; do not record it. `toMatchSnapshot` is not used in this repository:
+  a test that cannot say what it expects is not yet a test.
+- Goldens are kept only for the output surfaces whose bytes are the contract, and there are three:
+  `explain` (`tests/fixtures/cli/explain`), `doctor --json` (`tests/fixtures/cli/doctor`) and the
+  harvested verdict table. A change that re-records one must name in its commit message which
+  entries changed and why.
+- `tests/fixtures/gate/harvested-verdicts.jsonl` is the readable verdict table. Re-record it only
+  with `CC_SAFETY_NET_UPDATE_GOLDENS=1`, alongside a contract row that explains the flip.
+
 ## Scope Discipline
 
 Over-engineering is this project's dominant failure mode. The evidence rule that governs analyzer

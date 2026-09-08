@@ -81,7 +81,7 @@ unreadable `rule.json` loses it for that scope, so a destructive command behind 
 declared is no longer unwrapped. There is no verified copy to fall back to — `rule.json` carries no
 digest by design — and the alternative is the lockout this contract exists to remove. An agent can
 already delete that key from a readable `rule.json` without tripping anything, so the gap sits inside
-the tamper boundary rather than opening a new one. Both halves are pinned in `tests/engine/guard-config-recovery.test.ts`.
+the tamper boundary rather than opening a new one. Both halves are pinned in `tests/core/policy/snapshot.test.ts`.
 
 Failures unrelated to configuration are unchanged: malformed hook or tool payloads, unparseable
 commands in strict mode, and parser or resource-limit failures still deny that one tool call.

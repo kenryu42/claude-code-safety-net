@@ -1,0 +1,50 @@
+{
+  "trace": {
+    "steps": [],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "rule-check",
+            "rule": "git-metadata-protection:findGitMetadataMutationTargetInSemanticFacts",
+            "matched": true,
+            "reason": "Git metadata and hooks are protected. Ask the user before modifying them."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "Git metadata and hooks are protected. Ask the user before modifying them.",
+  "segment": ".git",
+  "ruleId": "git-metadata-protection",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

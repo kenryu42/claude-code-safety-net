@@ -1,0 +1,50 @@
+{
+  "trace": {
+    "steps": [],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "rule-check",
+            "rule": "policy-apply-protection:findPolicyApplyInvocationInSemanticFacts",
+            "matched": true,
+            "reason": "Only the user may apply a policy proposal, because it rewrites the configuration CC Safety Net enforces. Ask them to run `cc-safety-net policy apply <file>` themselves in a terminal; you can run `cc-safety-net policy check <file>` to show them what it would change."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "Only the user may apply a policy proposal, because it rewrites the configuration CC Safety Net enforces. Ask them to run `cc-safety-net policy apply <file>` themselves in a terminal; you can run `cc-safety-net policy check <file>` to show them what it would change.",
+  "segment": "npx -y cc-safety-net policy apply team.json",
+  "ruleId": "policy-apply-protection",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

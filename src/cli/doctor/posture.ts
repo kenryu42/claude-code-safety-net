@@ -1,11 +1,12 @@
 import { lstatSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { getAuditLogsDir } from '@/engine/facade';
+import { getAuditLogsDir } from '@/audit/writer';
+import type { Environment } from '@/core/environment';
 import type {
   DoctorPosture,
   ProtectedDirectoryKind,
   ProtectedDirectoryPosture,
-} from '@/integrations/doctor-types';
+} from '@/hosts/doctor-types';
 
 function inspectDirectory(kind: ProtectedDirectoryKind, path: string): ProtectedDirectoryPosture {
   try {
@@ -29,8 +30,8 @@ function inspectDirectory(kind: ProtectedDirectoryKind, path: string): Protected
   }
 }
 
-export function getDoctorPosture(userConfigPath: string): DoctorPosture {
-  const auditPath = getAuditLogsDir();
+export function getDoctorPosture(environment: Environment, userConfigPath: string): DoctorPosture {
+  const auditPath = getAuditLogsDir(environment);
   return {
     directories: [
       inspectDirectory('policy', dirname(dirname(userConfigPath))),

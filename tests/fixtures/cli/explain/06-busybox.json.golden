@@ -1,0 +1,79 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "busybox rm -rf /",
+        "segments": [
+          [
+            "busybox",
+            "rm",
+            "-rf",
+            "/"
+          ]
+        ]
+      }
+    ],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "busybox",
+            "subcommand": "rm"
+          },
+          {
+            "type": "recurse",
+            "reason": "busybox",
+            "innerCommand": "rm -rf /",
+            "depth": 1
+          },
+          {
+            "type": "tmpdir-check",
+            "tmpdirValue": "<redacted>",
+            "isOverriddenToNonTemp": false,
+            "allowTmpdirVar": true
+          },
+          {
+            "type": "rule-check",
+            "rule": "analyzer/rm.ts:analyzeRmMatch",
+            "matched": true,
+            "reason": "rm -rf targeting root or home directory is extremely dangerous and always blocked."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
+  "segment": "busybox rm -rf /",
+  "ruleId": "rm.recursive-force-root-or-home",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

@@ -26,10 +26,7 @@
       "adjudication": {
         "kind": "legacy",
         "date": "2026-07-22",
-        "sources": [
-          "SECURITY.md safety-preset contract",
-          "tests/analyzer/strict-unverifiable.test.ts"
-        ]
+        "sources": ["SECURITY.md safety-preset contract", "tests/gate/behavioral-contract-cases.ts"]
       }
     },
     {
@@ -44,7 +41,7 @@
         "sources": [
           "SECURITY.md safety-preset and allow-path contracts",
           "docs/rm-temp-target-security-findings.md section 2",
-          "tests/analyzer/strict-unverifiable.test.ts"
+          "tests/gate/behavioral-contract-cases.ts"
         ]
       }
     },

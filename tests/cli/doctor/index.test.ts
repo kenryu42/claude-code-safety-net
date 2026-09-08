@@ -1,295 +1,292 @@
-import { describe, expect, spyOn, test } from 'bun:test';
-import { chmodSync, mkdirSync, writeFileSync } from 'node:fs';
-import * as os from 'node:os';
-import { join } from 'node:path';
-import { runDoctor } from '@/cli/doctor';
-import * as hookDetection from '@/integrations/detect';
-import * as selfTest from '@/integrations/self-test';
-import { withEnv, withTempDir } from '../../helpers.ts';
+import { afterEach, describe, expect, test } from 'bun:test';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, posix } from 'node:path';
+import { encodeCwdForLogDirname, getAuditLogsDir } from '@/audit/writer';
+import { installCursor } from '@/hosts/cursor/install';
+import type { DoctorReport } from '@/hosts/doctor-types';
+import {
+  type CliOutcome,
+  type CliRow,
+  type CliSide,
+  runCliDifferential,
+  seedFiles,
+} from '../../helpers/cli-differential';
+import { json } from '../../helpers/cli-fixtures';
+import { foldWindowsPosture, normalizeDoctorJson } from '../../helpers/doctor-json';
+import { environmentFor, removeTempRoots } from '../../helpers/temp-home';
 
-function captureConsoleLog() {
-  const output: string[] = [];
-  const log = spyOn(console, 'log').mockImplementation((value) => {
-    output.push(String(value ?? ''));
-  });
-  return { output, log };
-}
+/**
+ * `doctor` is the widest projection of one policy resolution, so each row seeds the single fact
+ * a finding rule reads and pins the finding it produces. The JSON form is also written to a
+ * literal golden, which guards the document shape on its own.
+ *
+ * The run is recorded raw: every byte a doctor document carries, down to which entry it calls the
+ * oldest and which version it reports, is pinned. Only the golden is normalized, because what the
+ * normalizer folds is exactly what the literal file cannot pin across machines: the rendered
+ * relative times, the package version (`dev` in a checkout, a real number in a tarball) and the
+ * platform.
+ */
 
-async function withoutTtyStdout<T>(fn: () => Promise<T>): Promise<T> {
-  const originalIsTTY = process.stdout.isTTY;
-  Object.defineProperty(process.stdout, 'isTTY', {
-    value: false,
-    writable: true,
-    configurable: true,
-  });
-  try {
-    return await fn();
-  } finally {
-    Object.defineProperty(process.stdout, 'isTTY', {
-      value: originalIsTTY,
-      writable: true,
-      configurable: true,
-    });
+afterEach(() => {
+  removeTempRoots();
+});
+
+/** `.golden` rather than `.json`: seven renderings of one document share most of their lines, and
+ *  the duplication scan the repository runs over `tests/` tokenizes every `.json` and `.txt` file
+ *  it finds. The suffix keeps the goldens out of that scan without an ignore rule. */
+const goldenPath = (slug: string) =>
+  join(import.meta.dir, '..', '..', 'fixtures', 'cli', 'doctor', `${slug}.json.golden`);
+
+function pinGolden(slug: string, document: string): void {
+  if (process.env.CC_SAFETY_NET_UPDATE_GOLDENS === '1') {
+    mkdirSync(dirname(goldenPath(slug)), { recursive: true });
+    writeFileSync(goldenPath(slug), document);
+    return;
   }
+  expect(document).toBe(readFileSync(goldenPath(slug), 'utf-8'));
 }
 
-/** Healthy host mocks shared by the exit-code tests: one configured hook, a
- *  passing self-test, and an isolated home. */
-function mockHealthyDoctorHost(cwd: string) {
-  const detectHooks = spyOn(hookDetection, 'detectAllHooks').mockReturnValue([
-    {
-      platform: 'claude-code',
-      detected: true,
-      configured: true,
-      inspectionStatus: 'verified',
-    },
-  ]);
-  const runSelfTest = spyOn(selfTest, 'runIntegrationSelfTest');
-  runSelfTest.mockReturnValue({ passed: 3, failed: 0, total: 3, results: [] });
-  const homeDir = spyOn(os, 'homedir').mockReturnValue(cwd);
-  const captured = captureConsoleLog();
-  return {
-    captured,
-    env: {
-      HOME: cwd,
-      CC_SAFETY_NET_HOME: `${cwd}/safety-net`,
-      PATH: '',
-      COPILOT_HOME: `${cwd}/copilot`,
-      GROK_HOME: `${cwd}/grok`,
-      KIMI_CODE_HOME: `${cwd}/kimi`,
-    },
-    restore: () => {
-      captured.log.mockRestore();
-      homeDir.mockRestore();
-      runSelfTest.mockRestore();
-      detectHooks.mockRestore();
-    },
-  };
-}
-
-/** Runs doctor once as JSON and once as human output under the mocked host,
- *  returning both exit codes with the parsed report and rendered text. */
-async function runDoctorBothModes(cwd: string, host: ReturnType<typeof mockHealthyDoctorHost>) {
-  const jsonExit = await withEnv(host.env, () =>
-    runDoctor({ cwd, json: true, skipUpdateCheck: true }),
-  );
-  const report = JSON.parse(host.captured.output.join('\n')) as {
-    findings: unknown[];
-    effectiveSafety: { policyScopes?: unknown };
-    v2Leftovers?: unknown;
-  };
-
-  host.captured.output.length = 0;
-  const humanExit = await withoutTtyStdout(() =>
-    withEnv(host.env, () => runDoctor({ cwd, skipUpdateCheck: true })),
-  );
-  return { jsonExit, humanExit, report, human: host.captured.output.join('\n') };
-}
-
-describe('doctor report verification ownership', () => {
-  test('runs one shared engine self-test and keeps its failure separate from integrations', async () => {
-    await withTempDir('doctor-report-', async (cwd) => {
-      const runSelfTest = spyOn(selfTest, 'runIntegrationSelfTest').mockReturnValue({
-        passed: 2,
-        failed: 1,
-        total: 3,
-        results: [],
-      });
-      const homeDir = spyOn(os, 'homedir').mockReturnValue(cwd);
-      const captured = captureConsoleLog();
-
-      try {
-        const exitCode = await withEnv(
-          {
-            HOME: cwd,
-            PATH: '',
-            COPILOT_HOME: `${cwd}/copilot`,
-            GROK_HOME: `${cwd}/grok`,
-            KIMI_CODE_HOME: `${cwd}/kimi`,
-          },
-          () => runDoctor({ cwd, json: true, skipUpdateCheck: true }),
-        );
-
-        expect(exitCode).toBe(1);
-        expect(runSelfTest).toHaveBeenCalledTimes(1);
-        const report = JSON.parse(captured.output.join('\n')) as Record<string, unknown>;
-        expect(report.engineSelfTest).toMatchObject({ passed: 2, failed: 1, total: 3 });
-        expect(report.posture).toHaveProperty('directories');
-        expect(report.findings).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({ checkId: 'integration.none-configured', severity: 'error' }),
-          ]),
-        );
-        expect(report.hooks).toBeArray();
-        for (const hook of report.hooks as Record<string, unknown>[]) {
-          expect(hook).not.toHaveProperty('selfTest');
-          expect(hook).toHaveProperty('detected');
-          expect(hook).toHaveProperty('configured');
-        }
-        expect(
-          (report.hooks as Record<string, unknown>[]).map((hook) => ({
-            platform: hook.platform,
-            inspectionStatus: hook.inspectionStatus,
-          })),
-        ).toEqual([
-          { platform: 'claude-code', inspectionStatus: 'not-applicable' },
-          { platform: 'amp', inspectionStatus: 'not-applicable' },
-          { platform: 'antigravity-cli', inspectionStatus: 'not-applicable' },
-          { platform: 'codex', inspectionStatus: 'not-applicable' },
-          { platform: 'cursor', inspectionStatus: 'not-applicable' },
-          { platform: 'gemini-cli', inspectionStatus: 'not-applicable' },
-          { platform: 'copilot-cli', inspectionStatus: 'not-applicable' },
-          { platform: 'grok-build', inspectionStatus: 'not-applicable' },
-          { platform: 'hermes-agent', inspectionStatus: 'not-applicable' },
-          { platform: 'kimi-code', inspectionStatus: 'not-applicable' },
-          { platform: 'openclaw', inspectionStatus: 'not-applicable' },
-          { platform: 'opencode', inspectionStatus: 'not-applicable' },
-          { platform: 'pi', inspectionStatus: 'not-applicable' },
-        ]);
-      } finally {
-        captured.log.mockRestore();
-        homeDir.mockRestore();
-        runSelfTest.mockRestore();
-      }
-    });
+async function runDoctorJson(slug: string, row: Omit<CliRow, 'args'>) {
+  const result = await runCliDifferential({
+    args: ['doctor', '--json', '--skip-update-check'],
+    ...row,
   });
+  const outcome = { ...result, stdout: foldWindowsPosture(result.stdout) };
+  pinGolden(slug, normalizeDoctorJson(outcome.stdout));
+  return { outcome, report: JSON.parse(outcome.stdout) as DoctorReport };
+}
 
-  test('uses the same empty findings for JSON and human output without changing exit behavior', async () => {
-    await withTempDir('doctor-report-', async (cwd) => {
-      const host = mockHealthyDoctorHost(cwd);
+/** A directory the posture check reads has to be created 0700, or the runner's umask makes it
+ *  a `permissions` finding and the row stops describing what it seeds. */
+const mkdirPrivate = (path: string) => mkdirSync(path, { recursive: true, mode: 0o700 });
 
-      try {
-        const run = await runDoctorBothModes(cwd, host);
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
 
-        expect(run.jsonExit).toBe(0);
-        expect(run.humanExit).toBe(0);
-        expect(run.report.findings).toEqual([]);
-        expect(run.human).toContain('No findings from inspected doctor facts.');
-      } finally {
-        host.restore();
-      }
-    });
-  });
+type AuditFixtureEntry = Record<string, unknown>;
 
-  // Windows has no Unix mode-bit ownership check for this posture finding.
-  test.skipIf(process.platform === 'win32')(
-    'an unsafe protected directory fails the run for JSON and human output',
-    async () => {
-      await withTempDir('doctor-report-', async (cwd) => {
-        const host = mockHealthyDoctorHost(cwd);
+/** The working directory the entries record. A temp root would encode into a directory name the
+ *  harness cannot spell as `<root>`, so the two sides would disagree on the tree; nothing opens
+ *  this path, it is only the key the writer's layout is derived from. */
+const RECORDED_CWD = '/home/agent/project';
 
-        try {
-          mkdirSync(join(cwd, 'safety-net'));
-          chmodSync(join(cwd, 'safety-net'), 0o777);
-          const run = await runDoctorBothModes(cwd, host);
-
-          expect(run.report.findings).toEqual(
-            expect.arrayContaining([
-              expect.objectContaining({
-                checkId: 'posture.policy-directory-unsafe',
-                severity: 'error',
-              }),
-            ]),
-          );
-          expect(run.jsonExit).toBe(1);
-          expect(run.humanExit).toBe(1);
-        } finally {
-          host.restore();
-        }
-      });
-    },
+function seedAuditLog(side: CliSide, session: string, entries: readonly AuditFixtureEntry[]): void {
+  const logsDir = getAuditLogsDir(environmentFor(side.home, side.env));
+  if (!logsDir) throw new Error('the isolated environment resolved no audit logs directory');
+  const newest = String(entries[0]?.ts);
+  const file = join(
+    logsDir,
+    encodeCwdForLogDirname(RECORDED_CWD),
+    newest.slice(0, 7),
+    `${newest.slice(0, 10)}-${session}.jsonl`,
   );
+  mkdirPrivate(dirname(file));
+  writeFileSync(file, entries.map((entry) => `${JSON.stringify(entry)}\n`).join(''));
+}
 
-  // The project scope is honored as written, so what it relaxes is reported and
-  // never turned into a finding: findings own the exit code, and a team policy
-  // in force is not a failure.
-  test('reports what the project policy weakened without raising a finding', async () => {
-    await withTempDir('doctor-project-policy-', async (cwd) => {
-      const host = mockHealthyDoctorHost(cwd);
+/** Three denials and one allow, each far enough from an hour or day boundary that the relative
+ *  time both bins render is the same string. */
+function auditFixture(session: string) {
+  const now = Date.now();
+  const at = (ago: number) => new Date(now - ago).toISOString();
+  const entry = (ago: number, id: string, fields: AuditFixtureEntry) => ({
+    ts: at(ago),
+    id,
+    v: 'dev',
+    sessionId: session,
+    decision: 'deny',
+    agent: 'claude-code',
+    cwd: RECORDED_CWD,
+    ...fields,
+  });
+  return [
+    entry(HOUR, 'a1b2c3d4e5f60001', {
+      decision: 'allow',
+      command: 'git status',
+      segment: 'git status',
+      reason: '',
+    }),
+    entry(3 * HOUR + 30 * 60 * 1000, 'a1b2c3d4e5f60002', {
+      ruleId: 'git.reset-hard',
+      command: 'git reset --hard',
+      segment: 'git reset --hard',
+      reason: 'Discards uncommitted work irreversibly.',
+    }),
+    entry(DAY + 12 * HOUR, 'a1b2c3d4e5f60003', {
+      ruleId: 'rm.recursive-force',
+      command: 'rm -rf build',
+      segment: 'rm -rf build',
+      reason: 'Recursive force delete.',
+    }),
+    entry(2 * DAY + 12 * HOUR, 'a1b2c3d4e5f60004', {
+      ruleId: 'git.clean-force',
+      command: 'git clean -fd',
+      segment: 'git clean -fd',
+      reason: 'Removes untracked files.',
+    }),
+  ];
+}
 
-      try {
-        mkdirSync(join(cwd, 'safety-net'), { recursive: true });
+describe('doctor --json', () => {
+  test('a fresh home reports no configured integration and exits 1', async () => {
+    const { outcome, report } = await runDoctorJson('fresh', {});
+    expect(outcome.exitCode).toBe(1);
+    expect(report.findings.map((finding) => finding.checkId)).toEqual([
+      'integration.none-configured',
+    ]);
+    expect(report.engineSelfTest.passed).toBe(3);
+  }, 120_000);
+
+  test('an installed Cursor hook clears the none-configured finding', async () => {
+    const { outcome, report } = await runDoctorJson('cursor', {
+      seed: (side) => {
+        installCursor(environmentFor(side.home, side.env));
+      },
+    });
+    expect(outcome.exitCode).toBe(0);
+    expect(report.findings).toEqual([]);
+    expect(report.hooks.filter((hook) => hook.configured).map((hook) => hook.platform)).toEqual([
+      'cursor',
+    ]);
+  }, 120_000);
+
+  test('both scopes report their own invalid rule config', async () => {
+    const { report } = await runDoctorJson('invalid-configs', {
+      seed: (side) => {
+        mkdirPrivate(join(side.home, '.cc-safety-net', 'rules'));
         writeFileSync(
-          join(cwd, 'safety-net', 'policy.json'),
-          JSON.stringify({ version: 1, safety: { level: 'strict' } }),
+          join(side.home, '.cc-safety-net', 'rules', 'rule.json'),
+          json({ version: 2 }),
         );
-        mkdirSync(join(cwd, '.cc-safety-net'), { recursive: true });
-        writeFileSync(
-          join(cwd, '.cc-safety-net', 'policy.json'),
-          JSON.stringify({ version: 1, safety: { level: 'standard' } }),
-        );
-        const run = await runDoctorBothModes(cwd, host);
-
-        expect(run.report.effectiveSafety.policyScopes).toEqual({
-          levelScope: 'project',
-          weakenings: ['project policy lowers level: strict -> standard'],
-        });
-        expect(run.human).toContain('Selected preset: standard (project policy)');
-        expect(run.human).toContain('project policy lowers level: strict -> standard');
-        expect(run.report.findings).toEqual([]);
-        expect(run.jsonExit).toBe(0);
-        expect(run.humanExit).toBe(0);
-      } finally {
-        host.restore();
-      }
+        seedFiles(side, { 'project/.cc-safety-net/rules/rule.json': 'not json' });
+      },
     });
-  });
+    expect(report.findings.map((finding) => finding.checkId)).toEqual([
+      'integration.none-configured',
+      'config.user-invalid',
+      'config.project-invalid',
+      'config.runtime-degraded',
+    ]);
+    expect(report.userConfig.valid).toBe(false);
+    expect(report.projectConfig.valid).toBe(false);
+  }, 120_000);
 
-  test('points a scope that still carries v2 leftovers at the migration command', async () => {
-    await withTempDir('doctor-v2-leftovers-', async (cwd) => {
-      const host = mockHealthyDoctorHost(cwd);
-
-      try {
-        mkdirSync(join(cwd, '.cc-safety-net', 'rules'), { recursive: true });
-        writeFileSync(join(cwd, '.cc-safety-net', 'rules', 'rule.lock'), '{"version":1}');
-        const run = await runDoctorBothModes(cwd, host);
-
-        expect(run.report.v2Leftovers).toEqual([join(cwd, '.cc-safety-net', 'rules', 'rule.lock')]);
-        expect(run.report.findings).toEqual([
-          expect.objectContaining({ checkId: 'config.v2-leftovers', severity: 'info' }),
-        ]);
-        expect(run.human).toContain('Rulebook lock and cache leftovers detected');
-        expect(run.jsonExit).toBe(0);
-        expect(run.humanExit).toBe(0);
-      } finally {
-        host.restore();
-      }
+  test('a v2 lock and cache are reported once, naming both scopes', async () => {
+    const { report } = await runDoctorJson('v2-leftovers', {
+      seed: (side) => {
+        mkdirPrivate(join(side.home, '.cc-safety-net', 'cache'));
+        seedFiles(side, { 'project/.cc-safety-net/rules/rule.lock': '{}\n' });
+      },
     });
-  });
+    expect(report.v2Leftovers).toEqual([
+      posix.join('<root>', 'project/.cc-safety-net/rules/rule.lock'),
+      posix.join('<root>', 'home/.cc-safety-net/cache'),
+    ]);
+    const leftovers = report.findings.filter(
+      (finding) => finding.checkId === 'config.v2-leftovers',
+    );
+    expect(leftovers).toHaveLength(1);
+    expect(leftovers[0]?.severity).toBe('info');
+    expect(leftovers[0]?.detail).toContain(
+      posix.join('<root>', 'project/.cc-safety-net/rules/rule.lock'),
+    );
+    expect(leftovers[0]?.detail).toContain(posix.join('<root>', 'home/.cc-safety-net/cache'));
+  }, 120_000);
 
-  test('reports the runtime configuration state the guard would enforce', async () => {
-    await withTempDir('doctor-config-state-', async (cwd) => {
-      mkdirSync(join(cwd, '.cc-safety-net', 'rules'), { recursive: true });
-      writeFileSync(join(cwd, '.cc-safety-net', 'rules', 'rule.json'), '{ "version": 1,');
-      const homeDir = spyOn(os, 'homedir').mockReturnValue(cwd);
-      const captured = captureConsoleLog();
-
-      try {
-        await withEnv({ HOME: cwd, PATH: '' }, () =>
-          runDoctor({ cwd, json: true, skipUpdateCheck: true }),
-        );
-        const report = JSON.parse(captured.output.join('\n')) as {
-          configState: { state: string; reason: string };
-          findings: unknown[];
-        };
-
-        expect(report.configState.state).toBe('degraded');
-        // The reason carries the failing file, the rejected condition, and what is
-        // no longer active through to the finding detail.
-        expect(report.configState.reason).toContain('Those rule sources are not active');
-        expect(report.findings).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              checkId: 'config.runtime-degraded',
-              severity: 'warning',
-              detail: expect.stringContaining('Those rule sources are not active') as string,
-            }),
-          ]),
-        );
-      } finally {
-        captured.log.mockRestore();
-        homeDir.mockRestore();
-      }
+  test('a regular file where the config directory belongs is an unsafe posture', async () => {
+    const { report } = await runDoctorJson('unsafe-posture', {
+      seed: (side) => {
+        mkdirPrivate(join(side.home, '.cc-safety-net'));
+        writeFileSync(join(side.home, '.cc-safety-net', 'rules'), 'not a directory\n');
+      },
     });
-  });
+    expect(report.posture.directories.filter((directory) => directory.status === 'unsafe')).toEqual(
+      [
+        {
+          kind: 'config',
+          path: posix.join('<root>', 'home/.cc-safety-net/rules'),
+          status: 'unsafe',
+          issues: ['not-directory'],
+        },
+      ],
+    );
+    expect(report.findings.map((finding) => finding.checkId)).toContain(
+      'posture.config-directory-unsafe',
+    );
+  }, 120_000);
+
+  test('a seeded audit tree is summarised over the denials alone', async () => {
+    const entries = auditFixture('sess1');
+    const { report } = await runDoctorJson('audit-entries', {
+      seed: (side) => seedAuditLog(side, 'sess1', entries),
+    });
+    expect(report.activity.totalBlocked).toBe(3);
+    expect(report.activity.sessionCount).toBe(1);
+    expect(report.activity.unreadable).toBe(0);
+    expect(report.activity.recentEntries.map((recent) => recent.command)).toEqual([
+      'git reset --hard',
+      'rm -rf build',
+      'git clean -fd',
+    ]);
+  }, 120_000);
+
+  test('an invalid audit scope and a legacy flag are both reported', async () => {
+    const { report } = await runDoctorJson('env-flags', {
+      env: { CC_SAFETY_NET_AUDIT_SCOPE: 'bogus', SAFETY_NET_STRICT: '1' },
+    });
+    expect(report.findings.map((finding) => finding.checkId)).toContain(
+      'environment.audit-scope-invalid',
+    );
+    expect(
+      report.environment.find((variable) => variable.name === 'CC_SAFETY_NET_STRICT'),
+    ).toMatchObject({ isSet: true, legacyName: 'SAFETY_NET_STRICT', legacyIsSet: true });
+  }, 120_000);
+});
+
+/**
+ * A table's column widths follow its widest cell, and the platform cell (`darwin arm64`, `linux
+ * x64`) is the host's, so the record keeps one border dash and one space of padding per cell.
+ */
+const foldTableWidths = (outcome: CliOutcome): CliOutcome => ({
+  ...outcome,
+  stdout: outcome.stdout.replace(/─+/g, '─').replace(/ +│/g, ' │'),
+});
+
+describe('doctor rendered', () => {
+  test('a fresh home renders the self-test and the single error finding', async () => {
+    const outcome = foldTableWidths(
+      await runCliDifferential({ args: ['doctor', '--skip-update-check'] }),
+    );
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stdout).toContain('Guard Engine Verification');
+    expect(outcome.stdout).toContain('3/3 passed');
+    expect(outcome.stdout).toContain('1 finding: 1 error.');
+  }, 120_000);
+
+  test('a seeded audit tree renders its activity header', async () => {
+    const entries = auditFixture('sess1');
+    const outcome = foldTableWidths(
+      await runCliDifferential({
+        args: ['doctor', '--skip-update-check'],
+        seed: (side) => seedAuditLog(side, 'sess1', entries),
+      }),
+    );
+    expect(outcome.stdout).toContain('Recent Activity · last 7 days (3 blocked / 1 sessions)');
+    expect(outcome.stdout).toContain('git reset --hard');
+  }, 120_000);
+
+  test('the legacy --doctor spelling reaches the same report', async () => {
+    const outcome = foldTableWidths(
+      await runCliDifferential({ args: ['--doctor', '--skip-update-check'] }),
+    );
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stdout).toContain('Guard Engine Verification');
+  }, 120_000);
+
+  test('an unknown option is refused before anything is inspected', async () => {
+    const outcome = await runCliDifferential({ args: ['doctor', '--nope'] });
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stdout).toBe('');
+    expect(outcome.stderr).toBe('Unknown option for doctor: --nope\n');
+  }, 60_000);
 });

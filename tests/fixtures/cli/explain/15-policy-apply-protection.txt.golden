@@ -1,0 +1,21 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+
+STEP 1 - Match rules
+  Rule:   policy-apply-protection:findPolicyApplyInvocationInSemanticFacts()
+  Result: MATCHED
+
+RESULT
+  Status: BLOCKED
+  Reason: Only the user may apply a policy proposal, because it rewrites the
+          configuration CC Safety Net enforces. Ask them to run `cc-safety-net
+          policy apply <file>` themselves in a terminal; you can run
+          `cc-safety-net policy check <file>` to show them what it would change.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

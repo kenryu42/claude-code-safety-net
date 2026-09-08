@@ -1,0 +1,28 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  rtk git reset --hard
+
+STEP 1 - Split shell commands
+  Segment 1: ["rtk","git","reset","--hard"]
+
+STEP 2 - Transparent wrapper
+  Wrapper: rtk
+  Tokens:  ["git","reset","--hard"]
+
+STEP 3 - Match rules
+  Rule:   git:analyzeGitMatch()
+  Result: MATCHED
+
+RESULT
+  Status: BLOCKED
+  Reason: git reset --hard destroys all uncommitted changes permanently. Use
+          'git stash' first.
+
+CONFIG
+  Path: <root>/project/.cc-safety-net/rules/rule.json
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

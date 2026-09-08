@@ -205,7 +205,7 @@ describe('built CLI protection contract', () => {
     ['secret metadata', 'test -f "$HOME/.ssh/id_rsa"'],
     [
       'self-explain output',
-      `bun src/cli/cc-safety-net.ts explain --json --cwd /tmp/ccsn-scout 'cat /tmp/ccsn-scout/fixture/.env' | jq -c '{result}'`,
+      `bun src/entries/bin.ts explain --json --cwd /tmp/ccsn-scout 'cat /tmp/ccsn-scout/fixture/.env' | jq -c '{result}'`,
     ],
   ] as const)('Coding CLI allows log-derived %s in standard mode', async (name, command) => {
     await withWorkspace(async ({ cwd, home }) => {

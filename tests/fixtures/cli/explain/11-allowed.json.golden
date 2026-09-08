@@ -1,0 +1,66 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "git status",
+        "segments": [
+          [
+            "git",
+            "status"
+          ]
+        ]
+      }
+    ],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "rule-check",
+            "rule": "git:analyzeGitMatch",
+            "matched": false
+          },
+          {
+            "type": "fallback-scan",
+            "tokensScanned": []
+          },
+          {
+            "type": "custom-rules-check",
+            "rulesChecked": false,
+            "matched": false
+          }
+        ]
+      }
+    ]
+  },
+  "result": "allowed",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

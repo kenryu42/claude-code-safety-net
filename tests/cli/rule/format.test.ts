@@ -1,193 +1,212 @@
 import { describe, expect, test } from 'bun:test';
-import { printRuleAddResult, printRuleChangeResult, printRulesListReport } from '@/cli/rule/format';
-import type { CustomRule } from '@/ir/policy';
-import type { AddRulebookSourceResult, LoadedRulesPolicy } from '@/rules/policy';
-import { captureConsoleOutput } from '../../helpers';
+import * as portedFormat from '@/cli/rule/format';
+import { captureConsole } from '../../helpers/console-capture';
 
-const entry = {
-  spec: 'owner/repo#main/aws',
-  name: 'aws',
-  version: '1.0.0',
-  ruleCount: 2,
-};
+/**
+ * The add and change reports over fixed result objects. A repository add is the only caller that
+ * fills the `add` block, and it is unreachable without the network, so the block is handed to the
+ * printers directly here and the process-level rows cover the local shapes end to end.
+ */
 
-function repositoryAddResult(added: boolean): AddRulebookSourceResult {
-  return {
-    ok: true,
-    errors: [],
-    entries: [entry],
-    add: {
-      source: 'owner/repo',
-      ref: 'main',
-      selected: ['aws'],
-      added: added ? ['aws'] : [],
-      alreadyConfigured: added ? [] : ['aws'],
-      commits: ['abcdef1234567890'],
-    },
-  };
-}
+type Printers = Pick<typeof portedFormat, 'printRuleAddResult' | 'printRuleChangeResult'>;
 
-function listPolicyWithRule(rule: CustomRule): LoadedRulesPolicy {
-  return {
-    rules: [rule],
-    transparent_wrappers: [],
-    rulebooks: [
-      {
-        source: 'project',
-        spec: 'owner/repo#main/aws',
-        name: 'aws',
-        version: '1.0.0',
-        rules: [rule.name],
-      },
-    ],
-    errors: [],
-    warnings: [],
-    userConfigPath: '/user/rule.json',
-    projectConfigPath: '/project/rule.json',
-  };
-}
+const SCOPE_LINE = 'Project scope: .cc-safety-net/rules/rule.json';
+const CATALOG_A = { spec: 'acme/catalog#main/a', name: 'a', version: '1.0.0', ruleCount: 1 };
+const CATALOG_B = { spec: 'acme/catalog#main/b', name: 'b', version: '2.1.0', ruleCount: 3 };
+const LOCAL_ENTRY = { spec: 'team-rules', name: 'team-rules', version: '1.0.0', ruleCount: 1 };
 
-const scopeLine = 'Scope: project (/tmp/x/.cc-safety-net/rules)';
-
-describe('rule add output', () => {
-  test('reports only newly selected repository rulebooks and the resolved commit', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRuleAddResult(repositoryAddResult(true), 'owner/repo', scopeLine),
-    );
-
-    expect(output.stdout[0]).toBe(scopeLine);
-    expect(output.stdout).toContain('Added 1 rulebook from owner/repo at main:');
-    expect(output.stdout).toContain('  - aws');
-    expect(output.stdout).toContain('Vendored at abcdef1.');
-    expect(output.stdout).toContain('Rule config updated.');
-    expect(output.stdout).toContain('    Source: owner/repo#main/aws');
-  });
-
-  test('describes an idempotent repository add without claiming another addition', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRuleAddResult(repositoryAddResult(false), 'owner/repo', scopeLine),
-    );
-
-    expect(output.stdout).toContain('Rulebooks already configured from owner/repo at main: aws');
-    expect(output.stdout).not.toContain('Added 1 rulebook');
-  });
-
-  // A failed add wrote nothing, so naming a destination would claim a change that never landed.
-  test('omits the scope line when the add failed', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRuleAddResult({ ok: false, errors: ['boom'], entries: [] }, 'owner/repo', scopeLine),
-    );
-
-    expect(output.stdout).toEqual([]);
-    expect(output.stderr).toContain('boom');
-  });
-});
-
-describe('rule update output', () => {
-  test('prints what vendoring changed above the summary', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRuleChangeResult(
+const rows = [
+  {
+    name: 'a catalogue add names what it took, what it skipped and the commit it pinned',
+    print: (printers: Printers) =>
+      printers.printRuleAddResult(
         {
           ok: true,
           errors: [],
-          changes: ['Updated owner/repo#main/aws (1.0.0 -> 2.0.0)', '  + aws/block-delete'],
-          entries: [entry],
+          changes: ['  + acme/catalog#main/a', '  + acme/catalog#main/b'],
+          entries: [CATALOG_A, CATALOG_B],
+          add: {
+            source: 'acme/catalog',
+            ref: 'main',
+            selected: ['a', 'b', 'c'],
+            added: ['a', 'b'],
+            alreadyConfigured: ['c'],
+            commits: ['0123456789abcdef'],
+          },
         },
+        'acme/catalog',
+        SCOPE_LINE,
+      ),
+    log: [
+      SCOPE_LINE,
+      'Added 2 rulebooks from acme/catalog at main:',
+      '  - a',
+      '  - b',
+      'Rulebooks already configured from acme/catalog at main: c',
+      'Vendored at 0123456.',
+      '  + acme/catalog#main/a',
+      '  + acme/catalog#main/b',
+      'Rule config updated.',
+      '',
+      'Active rulebooks (2):',
+      '  - a 1.0.0 (1 rule)',
+      '    Source: acme/catalog#main/a',
+      '  - b 2.1.0 (3 rules)',
+      '    Source: acme/catalog#main/b',
+    ],
+    error: [],
+  },
+  {
+    name: 'one rulebook out of a catalogue is counted in the singular',
+    print: (printers: Printers) =>
+      printers.printRuleAddResult(
+        {
+          ok: true,
+          errors: [],
+          entries: [CATALOG_A],
+          add: {
+            source: 'acme/catalog',
+            ref: 'main',
+            selected: ['a'],
+            added: ['a'],
+            alreadyConfigured: [],
+            commits: ['0123456789abcdef'],
+          },
+        },
+        'acme/catalog',
+        SCOPE_LINE,
+      ),
+    log: [
+      SCOPE_LINE,
+      'Added 1 rulebook from acme/catalog at main:',
+      '  - a',
+      'Vendored at 0123456.',
+      'Rule config updated.',
+      '',
+      'Active rulebooks (1):',
+      '  - a 1.0.0 (1 rule)',
+      '    Source: acme/catalog#main/a',
+    ],
+    error: [],
+  },
+  {
+    name: 'a re-add that took nothing says so without an added list or a commit line',
+    print: (printers: Printers) =>
+      printers.printRuleAddResult(
+        {
+          ok: true,
+          errors: [],
+          entries: [CATALOG_A],
+          add: {
+            source: 'acme/catalog',
+            ref: 'main',
+            selected: ['a'],
+            added: [],
+            alreadyConfigured: ['a'],
+            commits: [],
+          },
+        },
+        'acme/catalog',
+        SCOPE_LINE,
+      ),
+    log: [
+      SCOPE_LINE,
+      'Rulebooks already configured from acme/catalog at main: a',
+      'Rule config updated.',
+      '',
+      'Active rulebooks (1):',
+      '  - a 1.0.0 (1 rule)',
+      '    Source: acme/catalog#main/a',
+    ],
+    error: [],
+  },
+  {
+    name: 'a local add carries no add block and names the source it took',
+    print: (printers: Printers) =>
+      printers.printRuleAddResult(
+        { ok: true, errors: [], changes: ['  + team-rules'], entries: [LOCAL_ENTRY] },
+        'team-rules',
+        SCOPE_LINE,
+      ),
+    log: [
+      SCOPE_LINE,
+      '  + team-rules',
+      'Added rulebook source: team-rules',
+      '',
+      'Active rulebooks (1):',
+      '  - team-rules 1.0.0 (1 rule)',
+      '    Source: team-rules',
+    ],
+    error: [],
+  },
+  {
+    name: 'a failed local add names no scope, because it wrote nowhere',
+    print: (printers: Printers) =>
+      printers.printRuleAddResult(
+        { ok: false, errors: ['Rulebook not found: team-rules'], entries: [] },
+        'team-rules',
+        SCOPE_LINE,
+      ),
+    log: [],
+    error: ['Rulebook not found: team-rules'],
+  },
+  {
+    name: 'a failed catalogue add reports its errors and nothing it would have taken',
+    print: (printers: Printers) =>
+      printers.printRuleAddResult(
+        {
+          ok: false,
+          errors: ['Failed to fetch acme/catalog: 500'],
+          entries: [],
+          add: {
+            source: 'acme/catalog',
+            ref: 'main',
+            selected: ['a'],
+            added: ['a'],
+            alreadyConfigured: [],
+            commits: ['0123456789abcdef'],
+          },
+        },
+        'acme/catalog',
+        SCOPE_LINE,
+      ),
+    log: [],
+    error: ['Failed to fetch acme/catalog: 500'],
+  },
+  {
+    name: 'a scope left with nothing active says so instead of printing an empty list',
+    print: (printers: Printers) =>
+      printers.printRuleChangeResult(
+        { ok: true, errors: [], changes: ['  - team-rules'], entries: [] },
+        'Removed rulebook source: team-rules',
+      ),
+    log: ['  - team-rules', 'Removed rulebook source: team-rules', '', 'Active rulebooks: (none)'],
+    error: [],
+  },
+  {
+    name: 'a change that leaves one rulebook counts its single rule in the singular',
+    print: (printers: Printers) =>
+      printers.printRuleChangeResult(
+        { ok: true, errors: [], entries: [LOCAL_ENTRY] },
         'Rule config updated.',
       ),
-    );
-
-    expect(output.stdout.slice(0, 3)).toEqual([
-      'Updated owner/repo#main/aws (1.0.0 -> 2.0.0)',
-      '  + aws/block-delete',
+    log: [
       'Rule config updated.',
-    ]);
-  });
-});
+      '',
+      'Active rulebooks (1):',
+      '  - team-rules 1.0.0 (1 rule)',
+      '    Source: team-rules',
+    ],
+    error: [],
+  },
+] as const;
 
-describe('rule list output', () => {
-  test('shows each source as the spec configured in rule.json', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRulesListReport({
-        rules: [],
-        transparent_wrappers: [],
-        rulebooks: [
-          {
-            source: 'project',
-            spec: 'owner/repo#main/aws',
-            name: 'aws',
-            version: '1.0.0',
-            rules: [],
-          },
-        ],
-        errors: [],
-        warnings: [],
-        userConfigPath: '/user/rule.json',
-        projectConfigPath: '/project/rule.json',
-      } satisfies LoadedRulesPolicy),
-    );
-
-    expect(output.stdout).toContain('  - [project] aws 1.0.0');
-    expect(output.stdout).toContain('      Source: owner/repo#main/aws');
-  });
-
-  test('describes a version 1 rule by its subcommand and block arguments', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRulesListReport(
-        listPolicyWithRule({
-          name: 'project-rules/block-docker-prune',
-          command: 'docker',
-          subcommand: 'system',
-          block_args: ['prune'],
-          reason: 'Use targeted cleanup instead.',
-        }),
-      ),
-    );
-
-    expect(output.stdout).toContain('      Command: docker system');
-    expect(output.stdout).toContain('      Block args: prune');
-    expect(output.stdout).not.toContain('Any args:');
-  });
-
-  test('describes a version 2 rule by its command path instead of an empty block args row', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRulesListReport(
-        listPolicyWithRule({
-          name: 'infra/block-terraform-destroy',
-          command: 'terraform',
-          block_args: [],
-          match: {
-            command_path: ['apply'],
-            any_args: ['-destroy', '--destroy'],
-            exclude_args: ['--dry-run'],
-          },
-          reason: 'Review a destroy plan first.',
-        }),
-      ),
-    );
-
-    expect(output.stdout).toContain('      Command: terraform apply');
-    expect(output.stdout).toContain('      Any args: -destroy, --destroy');
-    expect(output.stdout).toContain('      Exclude args: --dry-run');
-    expect(output.stdout).not.toContain('Block args:');
-  });
-
-  test('omits the optional match rows a version 2 rule leaves unset', async () => {
-    const output = await captureConsoleOutput(() =>
-      printRulesListReport(
-        listPolicyWithRule({
-          name: 'infra/block-gcloud-delete',
-          command: 'gcloud',
-          block_args: [],
-          match: { command_path: ['compute', 'instances', 'delete'] },
-          reason: 'Delete instances from the console.',
-        }),
-      ),
-    );
-
-    expect(output.stdout).toContain('      Command: gcloud compute instances delete');
-    expect(output.stdout).not.toContain('Any args:');
-    expect(output.stdout).not.toContain('Exclude args:');
-    expect(output.stdout).not.toContain('Block args:');
-  });
+describe('the rule report both implementations print', () => {
+  for (const row of rows) {
+    test(row.name, async () => {
+      const ported = await captureConsole(() => row.print(portedFormat));
+      expect(ported.log).toEqual([...row.log]);
+      expect(ported.error).toEqual([...row.error]);
+    });
+  }
 });

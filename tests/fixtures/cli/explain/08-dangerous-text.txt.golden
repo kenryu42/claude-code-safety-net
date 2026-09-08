@@ -1,0 +1,31 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  W=<redacted>; $W
+
+STEP 1 - Split shell commands
+  Segment 1: ["W=<redacted> <redacted> <redacted>"]
+  Segment 2: ["$W"]
+
+===== Segment 1: W=<redacted> <redacted> <redacted> ======
+
+STEP 2 - Dangerous text check
+  Token:  W=<redacted> <redacted> <redacted>
+  Result: MATCHED
+
+===================== Segment 2: $W ======================
+
+  (skipped — prior segment blocked)
+
+RESULT
+  Status: BLOCKED
+  Reason: Unparseable command text contains a destructive pattern (rm -rf).
+          Rewrite as a plain, parseable command so it can be analyzed.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

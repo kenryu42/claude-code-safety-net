@@ -13,7 +13,7 @@ All command examples are analyzer input strings only. Do not execute them in a s
 - A finding that falls inside a listed family is pre-adjudicated. It is not merge-blocking and does
   not get a standard-mode parser fix. Report it, if at all, as a non-blocking residual note.
 - The productive response to a newly crafted bypass inside a listed family is a strict or paranoid
-  fail-closed fixture (see `tests/analyzer/strict-unverifiable.test.ts`), not more standard-mode
+  fail-closed fixture (see `tests/gate/behavioral-contract-cases.ts`), not more standard-mode
   parser logic. Strict mode's fail-closed promise is finite and checkable; standard's blocklist is
   not.
 - Realistic non-adversarial provenance or field evidence makes a standard-mode false negative
@@ -21,7 +21,7 @@ All command examples are analyzer input strings only. Do not execute them in a s
   gates in `REVIEW.md` pass and an independent classifier confirms it. Otherwise it is
   evidence-invalid.
 - Corpus growth follows evidence, not imagination. New must-block entries in
-  `tests/analyzer/behavioral-contract-cases.ts` come from field evidence; the fix is then the
+  `tests/gate/behavioral-contract-cases.ts` come from field evidence; the fix is then the
   smallest change that makes the corpus pass, preferring an ownership boundary, a bounded
   conservative check, or a strict-only denial over parser fidelity.
 
@@ -55,7 +55,7 @@ evidence must cite existing repository files:
   "boundary": "distinct-ownership-boundary",
   "affected_modes": ["standard"],
   "strict_fixture": {
-    "path": "tests/analyzer/strict-unverifiable.test.ts",
+    "path": "tests/gate/behavioral-contract-cases.ts",
     "case_id": "rr-11-case-id",
     "mode": "strict",
     "command": "analyzer input that must fail closed",
@@ -114,7 +114,7 @@ dynamic-input rules and the linear dangerous-text scans, stay active. Strict fai
 unverifiable forms.
 
 Adjudicated 2026-07-22. Sources: `SECURITY.md` safety-preset contract;
-`tests/analyzer/strict-unverifiable.test.ts`.
+`tests/gate/behavioral-contract-cases.ts`.
 
 ### RR-3: Unverifiable Recursive-Delete Targets
 
@@ -127,7 +127,7 @@ remains enforced.
 
 Adjudicated 2026-07-22. Sources: `SECURITY.md` safety-preset and allow-path contracts;
 `docs/rm-temp-target-security-findings.md` section 2;
-`tests/analyzer/strict-unverifiable.test.ts`.
+`tests/gate/behavioral-contract-cases.ts`.
 
 ### RR-4: Runtime-Reconstructed Strings Inside Interpreter Code
 
@@ -217,7 +217,7 @@ Adjudicated 2026-08-28. Sources: `TEAM-POLICY-DESIGN.md` threat model adjudicati
 
 The guard on `<project>/.cc-safety-net/policy.json` inherits the user-scope gaps: writes laundered
 through `git` are not recognized as mutations of the protected file. Brace groups and subshells are
-traversed by the guard; `tests/guards/policy-protection.test.ts` locks group coverage for both
+traversed by the guard; `tests/gate/guards/policy-protection.test.ts` locks group coverage for both
 scopes. The guard exists for the mistake model, a helpful agent routing around a block, and that
 agent writes the file plainly. Closing the gaps means the exact-shell-emulation work already
 refused in RR-5 through RR-9, on a file whose deliberate-attack case is RR-11 and therefore out of

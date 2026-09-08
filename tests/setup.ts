@@ -13,6 +13,11 @@ const testHome = mkdtempSync(
 process.env.CC_SAFETY_NET_AUDIT_HOME = join(testHome, 'audit-home');
 process.env.CC_SAFETY_NET_HOME ??= join(testHome, 'safety-net-home');
 process.env.CC_SAFETY_NET_NO_UPDATE_CHECK = '1';
+// `shouldUseColor()` reads the suite's own stdout, so every record of CLI output would carry
+// ANSI escapes when a developer runs the tests in a terminal and none when CI pipes them. The
+// records hold the plain text; the rows whose contract is the colored output hold a terminal open
+// and unset this themselves.
+process.env.NO_COLOR = '1';
 // Agent detection reads these as evidence; running the suite inside a Claude
 // Code session would otherwise flip 'unknown' expectations to 'claude-code'.
 delete process.env.CLAUDECODE;

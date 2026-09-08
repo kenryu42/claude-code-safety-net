@@ -1,130 +1,142 @@
-import { describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { afterEach, describe, expect, test } from 'bun:test';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { getActivityFeed } from '@/gui/activity';
+import { getActivityFeed as portedFeed } from '@/gui/activity';
+import {
+  createTempRoot,
+  environmentFor,
+  isolationEnv,
+  normalize,
+  removeTempRoots,
+} from '../helpers/temp-home';
 
-const ENTRY_CAP = 500;
+/**
+ * The feed the dashboard renders from: one window over the audit tree, the aggregates the tiles
+ * count in full, and a capped entry list that has to keep both decision classes visible. The feed
+ * reads its home off the `Environment` it is handed, so each row seeds one log tree and records the
+ * answer with that tree's paths folded out.
+ */
 
-function withFeed<T>(
-  counts: { denied: number; allowed: number },
-  fn: (feed: ReturnType<typeof getActivityFeed>) => T,
-): T {
-  const logsDir = mkdtempSync(join(tmpdir(), 'safety-net-gui-activity-'));
-  try {
-    // Noon local keeps every entry inside today's calendar-day window whatever
-    // the runner's offset from UTC.
-    const today = new Date();
-    const at = (index: number) =>
-      new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        12,
-        0,
-        Math.min(index, 59),
-      ).toISOString();
-    const line = (decision: 'allow' | 'deny', index: number) =>
-      JSON.stringify({
-        ts: at(index),
-        sessionId: 's1',
-        decision,
-        agent: 'claude-code',
-        command: `git status ${decision} ${index}`,
-        segment: `git status ${decision} ${index}`,
-        reason: 'fixture',
-        ...(decision === 'deny' ? { ruleId: 'git.reset-hard' } : {}),
-      });
-    const monthDir = join(logsDir, '-project-a', at(0).slice(0, 7));
-    mkdirSync(monthDir, { recursive: true });
-    writeFileSync(
-      join(monthDir, `${at(0).slice(0, 10)}-s1.jsonl`),
+type Seeded = { daysAgo: number; second: number; record: Record<string, unknown> };
+
+const noon = (daysAgo: number, second: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  date.setHours(12, 0, second, 0);
+  return date.toISOString();
+};
+
+const seedFeed = (logsDir: string, entries: readonly Seeded[], rawLines: readonly string[]) => {
+  mkdirSync(logsDir, { recursive: true });
+  const lines = entries.map((entry) =>
+    JSON.stringify({ ts: noon(entry.daysAgo, entry.second), ...entry.record }),
+  );
+  writeFileSync(join(logsDir, 'feed.jsonl'), [...lines, ...rawLines].map((l) => `${l}\n`).join(''));
+};
+
+const deny = (second: number, record: Record<string, unknown> = {}): Seeded => ({
+  daysAgo: 0,
+  second,
+  record: { command: 'git push --force', decision: 'deny', agent: 'claude-code', ...record },
+});
+
+const allow = (second: number, record: Record<string, unknown> = {}): Seeded => ({
+  daysAgo: 0,
+  second,
+  record: { command: 'ls', decision: 'allow', agent: 'claude-code', ...record },
+});
+
+/** The feed over one seeded tree, with the home and the log directory it read folded out. */
+const feedOverBothSides = (
+  entries: readonly Seeded[],
+  rawLines: readonly string[],
+  days: number,
+) => {
+  const home = createTempRoot('gui-activity-ported-');
+  seedFeed(join(home, 'logs'), entries, rawLines);
+  // `homeDir` is the home the feed's `Environment` carries, so it folds out with the tree.
+  const ported = normalize(
+    portedFeed(environmentFor(home, isolationEnv(home)), days, join(home, 'logs')),
+    [
+      [join(home, 'logs'), '<logs>'],
+      [home, '<home>'],
+    ],
+  );
+  return ported;
+};
+
+const denials = (count: number, from: number) =>
+  Array.from({ length: count }, (_unused, index) => deny(from + index));
+
+const allowances = (count: number, from: number) =>
+  Array.from({ length: count }, (_unused, index) => allow(from + index));
+
+const decisionsOf = (feed: { entries: readonly { decision?: string }[] }) => {
+  const denied = feed.entries.filter((entry) => entry.decision !== 'allow').length;
+  return { denied, allowed: feed.entries.length - denied };
+};
+
+describe('the GUI activity feed', () => {
+  afterEach(removeTempRoots);
+
+  test('drops the records it cannot read and counts them', () => {
+    const feed = feedOverBothSides(
       [
-        ...Array.from({ length: counts.denied }, (_, i) => line('deny', i)),
-        ...Array.from({ length: counts.allowed }, (_, i) => line('allow', i)),
-      ].join('\n'),
+        deny(1, { ruleId: 'destructive.git-push-force', segment: 'git push --force' }),
+        allow(2),
+        deny(3, { failureStage: 'analysis' }),
+      ],
+      ['{ not json', JSON.stringify({ ts: 1234, command: 'ls', decision: 'allow' })],
+      7,
     );
-    return fn(getActivityFeed(1, logsDir));
-  } finally {
-    rmSync(logsDir, { recursive: true, force: true });
-  }
-}
 
-const shown = (feed: ReturnType<typeof getActivityFeed>) => ({
-  denied: feed.entries.filter((entry) => entry.decision !== 'allow').length,
-  allowed: feed.entries.filter((entry) => entry.decision === 'allow').length,
-});
-
-describe('activity feed record validation', () => {
-  // An entry with an object agent would flow into per-agent counting; it must
-  // be dropped by the shared reader and captioned as unreadable instead.
-  test('drops records with wrong field shapes and reports them as unreadable', () => {
-    const logsDir = mkdtempSync(join(tmpdir(), 'safety-net-gui-activity-'));
-    try {
-      const today = new Date();
-      const ts = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12).toISOString();
-      const monthDir = join(logsDir, '-project-a', ts.slice(0, 7));
-      mkdirSync(monthDir, { recursive: true });
-      writeFileSync(
-        join(monthDir, `${ts.slice(0, 10)}-s1.jsonl`),
-        [
-          JSON.stringify({
-            ts,
-            sessionId: 's1',
-            decision: 'deny',
-            agent: 'claude-code',
-            command: 'git status',
-            segment: 'git status',
-            reason: 'fixture',
-          }),
-          JSON.stringify({ ts, command: 'evil', agent: { nested: true } }),
-        ].join('\n'),
-      );
-
-      const feed = getActivityFeed(1, logsDir);
-      expect(feed.totalInWindow).toBe(1);
-      expect(feed.unreadable).toBe(1);
-    } finally {
-      rmSync(logsDir, { recursive: true, force: true });
-    }
-  });
-});
-
-describe('activity feed entry cap', () => {
-  test('keeps both decisions when denials alone would fill the cap', () => {
-    // A fail-closed storm produced enough denials to crowd every allowed entry
-    // out of the capped list, so the Allowed chip counted thousands and its
-    // filter rendered nothing.
-    withFeed({ denied: ENTRY_CAP + 200, allowed: 900 }, (feed) => {
-      expect(feed.counts.blocked).toBe(ENTRY_CAP + 200);
-      expect(feed.counts.allowed).toBe(900);
-      expect(shown(feed)).toEqual({ denied: 250, allowed: 250 });
-    });
+    expect(feed.unreadable).toBe(2);
+    expect(feed.entries).toHaveLength(3);
+    expect(feed.entries.map((entry) => entry.command)).toEqual([
+      'git push --force',
+      'ls',
+      'git push --force',
+    ]);
+    expect(feed.counts.blocked).toBe(2);
+    expect(feed.counts.errors).toBe(1);
+    expect(feed.counts.commands).toEqual({ 'git push': 2 });
+    expect(feed.homeDir).toBe('<home>');
+    expect(feed.logsDir).toBe('<logs>');
   });
 
-  test('lends the unused half to allowed entries when denials are few', () => {
-    withFeed({ denied: 5, allowed: 900 }, (feed) => {
-      expect(shown(feed)).toEqual({ denied: 5, allowed: ENTRY_CAP - 5 });
-    });
+  test.each([
+    ['a denial storm still shows every allow', 600, 200, 300, 200, true],
+    ['a denial storm just under the cap keeps its allows', 490, 20, 480, 20, true],
+    ['a quiet class lends the rest of the cap away', 10, 490, 10, 490, false],
+    ['a window under the cap is shown whole', 30, 30, 30, 30, false],
+  ])('caps the entry list so %s', (_label, denied, allowed, keptDenied, keptAllowed, truncated) => {
+    const feed = feedOverBothSides([...denials(denied, 0), ...allowances(allowed, denied)], [], 7);
+
+    expect(feed.entries).toHaveLength(keptDenied + keptAllowed);
+    expect(decisionsOf(feed)).toEqual({ denied: keptDenied, allowed: keptAllowed });
+    expect(feed.truncated).toBe(truncated);
+    expect(feed.counts.blocked).toBe(denied);
+    expect(feed.counts.allowed).toBe(allowed);
+    expect(feed.totalInWindow).toBe(denied + allowed);
+    // Newest first, so the list the client renders opens on what just happened.
+    const timestamps = feed.entries.map((entry) => entry.ts);
+    expect(timestamps).toEqual([...timestamps].sort().reverse());
   });
 
-  test('lends the unused half to denials when allowed entries are few', () => {
-    withFeed({ denied: 900, allowed: 5 }, (feed) => {
-      expect(shown(feed)).toEqual({ denied: ENTRY_CAP - 5, allowed: 5 });
-    });
-  });
+  test('buckets whole local days and drops what falls outside the window', () => {
+    const feed = feedOverBothSides(
+      [deny(1), allow(2), { ...deny(3), daysAgo: 1 }, { ...deny(4), daysAgo: 4 }],
+      [],
+      3,
+    );
 
-  test('returns everything and reports no truncation below the cap', () => {
-    withFeed({ denied: 10, allowed: 20 }, (feed) => {
-      expect(feed.truncated).toBe(false);
-      expect(shown(feed)).toEqual({ denied: 10, allowed: 20 });
-    });
-  });
-
-  test('orders the capped list newest first', () => {
-    withFeed({ denied: ENTRY_CAP, allowed: ENTRY_CAP }, (feed) => {
-      const timestamps = feed.entries.map((entry) => new Date(entry.ts).getTime());
-      expect(timestamps).toEqual([...timestamps].sort((a, b) => b - a));
-    });
+    expect(feed.days).toBe(3);
+    expect(feed.counts.blockedByDay).toHaveLength(3);
+    expect(feed.counts.blockedByDay.reduce((sum, count) => sum + count, 0)).toBe(
+      feed.counts.blocked,
+    );
+    expect(feed.counts.blockedByDay).toEqual([0, 1, 1]);
+    expect(feed.counts.analyzedByDay).toEqual([0, 1, 2]);
+    expect(feed.totalInWindow).toBe(3);
   });
 });

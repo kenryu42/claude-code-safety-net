@@ -1,13 +1,12 @@
 #!/usr/bin/env bun
 import * as z from 'zod';
-import { getRulesConfigSchema } from '../src/policy/schema';
+import { getRulesConfigSchema } from '../src/core/policy/schema';
 
 const SCHEMA_OUTPUT_PATH = 'assets/cc-safety-net.schema.json';
 
-async function main(): Promise<void> {
-  console.log('Generating JSON Schema...');
-
-  const jsonSchema = z.toJSONSchema(getRulesConfigSchema(), {
+/** @internal */
+export async function writeRulesConfigJsonSchema(schema: z.core.$ZodType, outputPath: string) {
+  const jsonSchema = z.toJSONSchema(schema, {
     io: 'input',
     target: 'draft-7',
   }) as Record<string, unknown>;
@@ -21,15 +20,19 @@ async function main(): Promise<void> {
     ...jsonSchema,
   };
 
-  await Bun.write(SCHEMA_OUTPUT_PATH, `${JSON.stringify(finalSchema, null, 2)}\n`);
+  await Bun.write(outputPath, `${JSON.stringify(finalSchema, null, 2)}\n`);
 
   // Format with Biome to ensure consistent formatting with the linter
-  const result = Bun.spawnSync(['bunx', 'biome', 'format', '--write', SCHEMA_OUTPUT_PATH]);
+  return Bun.spawnSync(['bunx', 'biome', 'format', '--write', outputPath]);
+}
+
+async function main(): Promise<void> {
+  console.log('Generating JSON Schema...');
+  const result = await writeRulesConfigJsonSchema(getRulesConfigSchema(), SCHEMA_OUTPUT_PATH);
   if (result.exitCode !== 0) {
     console.error('Failed to format schema:', result.stderr.toString());
     process.exit(1);
   }
-
   console.log(`✓ JSON Schema generated: ${SCHEMA_OUTPUT_PATH}`);
 }
 
@@ -42,4 +45,4 @@ function setUniqueItems(schema: Record<string, unknown>, propertyName: string): 
   (property as Record<string, unknown>).uniqueItems = true;
 }
 
-main();
+if (import.meta.main) await main();

@@ -1,0 +1,31 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  cd .. && rm -rf build
+
+STEP 1 - Split shell commands
+  Segment 1: ["cd",".."]
+  Segment 2: ["rm","-rf","build"]
+
+==================== Segment 1: cd .. ====================
+
+  ✓ Allowed (no matching rules)
+
+================ Segment 2: rm -rf build =================
+
+STEP 2 - Match rules
+  Rule:   analyzer/rm.ts:analyzeRmMatch()
+  Result: MATCHED
+
+RESULT
+  Status: BLOCKED
+  Reason: rm -rf outside cwd is blocked. Retry deleting only explicit paths
+          inside the current directory; escalate for anything outside it.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

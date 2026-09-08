@@ -1,4 +1,4 @@
-import { ENV_FLAGS } from '@/engine/facade';
+import { ENV_FLAGS } from '@/core/policy/env';
 import { type Command, commands, findCommand } from './commands';
 
 declare const __PKG_VERSION__: string | undefined;

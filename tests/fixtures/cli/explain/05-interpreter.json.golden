@@ -1,0 +1,91 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "python -c \"import os; os.system('rm -rf /')\"",
+        "segments": [
+          [
+            "python",
+            "-c",
+            "import os; os.system('rm -rf /')"
+          ]
+        ]
+      }
+    ],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "interpreter",
+            "interpreter": "python",
+            "codeArg": "import os; os.system('rm -rf /')",
+            "paranoidBlocked": false
+          },
+          {
+            "type": "recurse",
+            "reason": "interpreter",
+            "innerCommand": "import os; os.system('rm -rf /')",
+            "depth": 1
+          },
+          {
+            "type": "fallback-scan",
+            "tokensScanned": [
+              "os"
+            ]
+          },
+          {
+            "type": "custom-rules-check",
+            "rulesChecked": false,
+            "matched": false
+          },
+          {
+            "type": "dangerous-text",
+            "token": "os.system(rm -rf /",
+            "matched": true,
+            "reason": "Unparseable command text contains a destructive pattern (rm -rf). Rewrite as a plain, parseable command so it can be analyzed."
+          },
+          {
+            "type": "dangerous-text",
+            "token": "import os; os.system('rm -rf /')",
+            "matched": true,
+            "reason": "Interpreter code contains a dangerous command. Run the underlying command directly so it can be analyzed, or use the safer alternative for that command."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "Interpreter code contains a dangerous command. Run the underlying command directly so it can be analyzed, or use the safer alternative for that command.",
+  "segment": "python -c import os; os.system('rm -rf /')",
+  "ruleId": "interpreter.dangerous-command",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

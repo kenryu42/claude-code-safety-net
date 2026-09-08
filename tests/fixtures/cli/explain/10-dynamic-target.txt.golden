@@ -1,0 +1,23 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  rm -rf "$target"
+
+STEP 1 - Split shell commands
+  Segment 1: ["rm","-rf","$target"]
+
+STEP 2 - Match rules
+  Rule:   analyzer/rm.ts:analyzeRmMatch()
+  Result: No match
+
+RESULT
+  Status: ALLOWED
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0
+  Rule activation: rm.recursive-force-dynamic-target — off via preset

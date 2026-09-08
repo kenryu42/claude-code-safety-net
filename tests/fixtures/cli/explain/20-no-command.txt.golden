@@ -1,0 +1,12 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+ERROR
+  No command provided
+
+RESULT
+  Status: ALLOWED
+
+CONFIG
+  Path: none

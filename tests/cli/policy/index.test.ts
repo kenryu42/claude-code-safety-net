@@ -1,406 +1,252 @@
-import { describe, expect, test } from 'bun:test';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { afterEach, describe, expect, spyOn, test } from 'bun:test';
+import { lstatSync } from 'node:fs';
+import { join, posix } from 'node:path';
 import { PassThrough } from 'node:stream';
-import { runPolicyCommand } from '@/cli/policy';
-import { captureConsoleOutput, withEnv, withTempDir } from '../../helpers';
+import { runPolicyCommand as portedPolicyCommand } from '@/cli/policy/index';
+import { runCliDifferential, seedFiles } from '../../helpers/cli-differential';
+import { json, PROJECT_POLICY, USER_POLICY } from '../../helpers/cli-fixtures';
+import { createFakeOutput } from '../../helpers/fake-tty';
+import { snapshotTree, writeTree } from '../../helpers/fixture-tree';
+import {
+  createTempRoot,
+  environmentFor,
+  isolationEnv,
+  normalize,
+  removeTempRoots,
+  WINDOWS_SEPARATOR_FOLDS,
+} from '../../helpers/temp-home';
 
-type PromptStreams = {
-  input: NodeJS.ReadStream;
-  output: NodeJS.WriteStream;
-  written: string[];
-};
+/**
+ * `policy check` reports what a proposal would change, `policy apply` writes it after a human
+ * confirms. The reported diff is the whole value of `check`, so each row pins the rows it prints
+ * for one seeded scope; `apply` is driven in-process because a real terminal is the one thing the
+ * process harness cannot hand it.
+ */
 
-/** A TTY-shaped stream pair; `answer` is the line the confirmation reads back. */
-function createPromptStreams(answer?: string): PromptStreams {
-  const input = new PassThrough() as unknown as NodeJS.ReadStream & { isTTY: boolean };
-  const output = new PassThrough() as unknown as NodeJS.WriteStream & { isTTY: boolean };
-  input.isTTY = true;
-  output.isTTY = true;
-  const written: string[] = [];
-  output.on('data', (chunk: Buffer) => written.push(String(chunk)));
-  if (answer !== undefined) input.write(`${answer}\n`);
-  return { input, output, written };
+afterEach(() => {
+  removeTempRoots();
+});
+
+const STRICT_PROPOSAL = json({ version: 1, safety: { level: 'strict' } });
+const STANDARD_PROPOSAL = json({ version: 1, safety: { level: 'standard' } });
+const PROPOSAL_FILE = 'project/prop.json';
+
+async function runPolicy(args: readonly string[], files: Record<string, string> = {}) {
+  return await runCliDifferential({
+    args: ['policy', ...args],
+    seed: (side) => seedFiles(side, files),
+  });
 }
-
-function createNonTtyStreams(): PromptStreams {
-  const streams = createPromptStreams();
-  (streams.input as unknown as { isTTY: boolean }).isTTY = false;
-  (streams.output as unknown as { isTTY: boolean }).isTTY = false;
-  return streams;
-}
-
-async function runPolicy(
-  args: string[],
-  options?: { cwd?: string; input?: NodeJS.ReadStream; output?: NodeJS.WriteStream },
-) {
-  const {
-    result: exitCode,
-    stdout,
-    stderr,
-  } = await captureConsoleOutput(() => runPolicyCommand(args, options));
-  return { exitCode, stdout: stdout.join('\n'), stderr: stderr.join('\n') };
-}
-
-function writeProposal(dir: string, policy: unknown): string {
-  const path = join(dir, 'proposal.json');
-  writeFileSync(path, JSON.stringify(policy, null, 2));
-  return path;
-}
-
-/** Isolates the user scope; project-scope diffs read the user policy for the effective merge. */
-function runPolicyIsolated(
-  tempDir: string,
-  args: string[],
-  options?: { input?: NodeJS.ReadStream; output?: NodeJS.WriteStream },
-) {
-  return withEnv({ CC_SAFETY_NET_HOME: join(tempDir, 'home') }, () =>
-    runPolicy(args, { cwd: tempDir, ...options }),
-  );
-}
-
-function writeUserPolicy(tempDir: string, policy: unknown): void {
-  const home = join(tempDir, 'home');
-  mkdirSync(home, { recursive: true });
-  writeFileSync(join(home, 'policy.json'), JSON.stringify(policy));
-}
-
-const STRICT_PROPOSAL = {
-  version: 1,
-  safety: { level: 'strict', overrides: {} },
-  workflow: { worktree_mode: false },
-  destructive_command_protection: { enabled: true, overrides: {}, allow_paths: [] },
-  secret_protection: { enabled: true, overrides: {}, deny_paths: [], allow_paths: [] },
-};
 
 describe('policy check', () => {
-  test('reports the project scope target and the field-level diff', async () => {
-    await withTempDir('safety-net-policy-check-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, {
-        ...STRICT_PROPOSAL,
-        workflow: { worktree_mode: true },
-      });
+  test('a project proposal is reported against the merged effective policy', async () => {
+    const outcome = await runPolicy(['check', 'prop.json'], { [PROPOSAL_FILE]: STRICT_PROPOSAL });
+    expect(outcome.exitCode).toBe(0);
+    expect(outcome.stdout).toBe(
+      [
+        `Scope: project (${posix.join('<root>', PROJECT_POLICY)})`,
+        'Proposal: prop.json',
+        'Effective policy (user + project merged):',
+        'Changes (1):',
+        '  safety.level: standard -> strict',
+        '',
+      ].join('\n'),
+    );
+    expect(outcome.stderr).toBe('');
+  }, 60_000);
 
-      const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain(
-        `Scope: project (${join(tempDir, '.cc-safety-net', 'policy.json')})`,
-      );
-      expect(result.stdout).toContain(`Proposal: ${proposal}`);
-      expect(result.stdout).toContain('safety.level: standard -> strict');
-      expect(result.stdout).toContain('workflow.worktree_mode: false -> true');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
+  test('--global reports the same proposal against the user file', async () => {
+    const outcome = await runPolicy(['check', 'prop.json', '--global'], {
+      [PROPOSAL_FILE]: STRICT_PROPOSAL,
     });
-  });
+    expect(outcome.exitCode).toBe(0);
+    expect(outcome.stdout).toContain(`Scope: user (${posix.join('<root>', USER_POLICY)})`);
+    expect(outcome.stdout).toContain('  safety.level: standard -> strict');
+  }, 60_000);
 
-  test('diffs against the policy already in the target scope', async () => {
-    await withTempDir('safety-net-policy-check-current-', async (tempDir) => {
-      mkdirSync(join(tempDir, '.cc-safety-net'));
-      writeFileSync(
-        join(tempDir, '.cc-safety-net', 'policy.json'),
-        JSON.stringify({ ...STRICT_PROPOSAL, secret_protection: { enabled: false } }),
-      );
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-
-      const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('secret_protection.enabled: false -> true');
-      expect(result.stdout).not.toContain('safety.level:');
+  test('a proposal that relaxes the user scope shows the level it drops', async () => {
+    const outcome = await runPolicy(['check', 'prop.json', '--global'], {
+      [PROPOSAL_FILE]: STANDARD_PROPOSAL,
+      [USER_POLICY]: STRICT_PROPOSAL,
     });
-  });
+    expect(outcome.stdout).toContain('  safety.level: strict -> standard');
+  }, 60_000);
 
-  test('reports no changes when the proposal matches the current policy', async () => {
-    await withTempDir('safety-net-policy-check-same-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, {
-        ...STRICT_PROPOSAL,
-        safety: { level: 'standard', overrides: {} },
-      });
-
-      const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('No changes.');
+  test('an unrecognized level is refused with the validator diagnostic', async () => {
+    const outcome = await runPolicy(['check', 'prop.json'], {
+      [PROPOSAL_FILE]: json({ version: 1, safety: { level: 'nope' } }),
     });
-  });
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stdout).toBe('');
+    expect(outcome.stderr).toContain('prop.json: ');
+    expect(outcome.stderr).toContain('safety.level');
+  }, 60_000);
 
-  test('shows the effective change when a proposal overrides inherited strictness', async () => {
-    await withTempDir('safety-net-policy-check-effective-', async (tempDir) => {
-      writeUserPolicy(tempDir, { version: 1, safety: { level: 'strict' } });
-      const proposal = writeProposal(tempDir, { version: 1, safety: { level: 'standard' } });
-      const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-      // A field-level diff of the file alone would show nothing here; only the
-      // user-plus-project merge reveals that applying drops the inherited level.
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('safety.level: strict -> standard');
+  test('an audit section names the one scope that reads it', async () => {
+    const outcome = await runPolicy(['check', 'prop.json'], {
+      [PROPOSAL_FILE]: json({ version: 1, audit: { retention_days: 5 } }),
     });
-  });
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stderr).toBe(
+      'prop.json: audit settings are user scope only; remove the audit section from a project proposal\n',
+    );
+  }, 60_000);
 
-  test('the effective diff uses the embedded baseline when no user file exists', async () => {
-    await withTempDir('safety-net-policy-check-embedded-', async (tempDir) => {
-      const globals = globalThis as Record<string, unknown>;
-      globals.__CC_SAFETY_NET_EMBEDDED_POLICY__ = { version: 1, safety: { level: 'strict' } };
-      try {
-        const proposal = writeProposal(tempDir, {
-          version: 1,
-          safety: { level: 'standard' },
-          workflow: { worktree_mode: true },
-        });
-        const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-        // An Amp install runs against the embedded snapshot, so diffing against
-        // plain defaults would hide that this proposal lowers the enforced level.
-        expect(result.stdout).toContain('safety.level: strict -> standard');
-        expect(result.stdout).toContain('workflow.worktree_mode: false -> true');
-      } finally {
-        delete globals.__CC_SAFETY_NET_EMBEDDED_POLICY__;
-      }
-    });
-  });
-
-  test('a malformed user file falls back to defaults, not the embedded baseline', async () => {
-    await withTempDir('safety-net-policy-check-malformed-user-', async (tempDir) => {
-      const globals = globalThis as Record<string, unknown>;
-      globals.__CC_SAFETY_NET_EMBEDDED_POLICY__ = { version: 1, safety: { level: 'strict' } };
-      try {
-        const home = join(tempDir, 'home');
-        mkdirSync(home, { recursive: true });
-        writeFileSync(join(home, 'policy.json'), '{ not json');
-        const proposal = writeProposal(tempDir, { version: 1, safety: { level: 'strict' } });
-
-        const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-
-        // Runtime treats an unreadable existing file as protective defaults; the
-        // embedded snapshot only stands in when no user file exists at all.
-        expect(result.stdout).toContain('safety.level: standard -> strict');
-      } finally {
-        delete globals.__CC_SAFETY_NET_EMBEDDED_POLICY__;
-      }
-    });
-  });
-
-  test('shows inheritance returning when a proposal unsets a project field', async () => {
-    await withTempDir('safety-net-policy-check-inherit-', async (tempDir) => {
-      writeUserPolicy(tempDir, { version: 1, safety: { level: 'strict' } });
-      mkdirSync(join(tempDir, '.cc-safety-net'));
-      writeFileSync(
-        join(tempDir, '.cc-safety-net', 'policy.json'),
-        JSON.stringify({ version: 1, safety: { level: 'paranoid' } }),
-      );
-      const proposal = writeProposal(tempDir, { version: 1, workflow: { worktree_mode: true } });
-
-      const result = await runPolicyIsolated(tempDir, ['check', proposal]);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('safety.level: paranoid -> strict');
-    });
-  });
-
-  test('prints the schema diagnostics and exits 1 for an invalid proposal', async () => {
-    await withTempDir('safety-net-policy-check-invalid-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, {
-        version: 1,
-        safety: { level: 'nope', overrides: {} },
-      });
-
-      const result = await runPolicy(['check', proposal], { cwd: tempDir });
-
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain(proposal);
-      expect(result.stderr).toContain('safety.level');
-      expect(result.stdout).not.toContain('Changes');
-    });
-  });
-
-  test('reports malformed JSON without claiming a schema problem', async () => {
-    await withTempDir('safety-net-policy-check-json-', async (tempDir) => {
-      const proposal = join(tempDir, 'proposal.json');
-      writeFileSync(proposal, '{ not json');
-
-      const result = await runPolicy(['check', proposal], { cwd: tempDir });
-
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Invalid JSON');
-    });
-  });
-
-  test('reports a missing proposal file', async () => {
-    await withTempDir('safety-net-policy-check-missing-', async (tempDir) => {
-      const result = await runPolicy(['check', join(tempDir, 'absent.json')], { cwd: tempDir });
-
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('absent.json');
-    });
-  });
+  test('a file that does not exist is reported by path', async () => {
+    const outcome = await runPolicy(['check', 'missing.json']);
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stderr).toBe(
+      'missing.json: file not found\nmissing.json: Config must be an object\n',
+    );
+  }, 60_000);
 });
 
-describe('policy apply', () => {
-  test('refuses to apply without a terminal and names the human flow', async () => {
-    await withTempDir('safety-net-policy-apply-notty-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-      const streams = createNonTtyStreams();
+describe('policy usage', () => {
+  test('the bare verb prints its help on stderr', async () => {
+    const outcome = await runPolicy([]);
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stdout).toBe('');
+    expect(outcome.stderr).toContain('cc-safety-net policy');
+  }, 60_000);
 
-      const result = await runPolicyIsolated(tempDir, ['apply', proposal], streams);
-
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('run this yourself in a terminal');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
-    });
-  });
-
-  test('closing the input stream declines instead of hanging', async () => {
-    await withTempDir('safety-net-policy-apply-eof-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-      const streams = createPromptStreams();
-      (streams.input as unknown as PassThrough).end();
-
-      const result = await runPolicyIsolated(tempDir, ['apply', proposal], streams);
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('Cancelled');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
-    });
-  });
-
-  test('declining the confirmation cancels without writing and exits 0', async () => {
-    await withTempDir('safety-net-policy-apply-decline-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-      const streams = createPromptStreams('n');
-
-      const result = await runPolicyIsolated(tempDir, ['apply', proposal], streams);
-
-      expect(result.exitCode).toBe(0);
-      expect(streams.written.join('')).toContain('[y/N]');
-      expect(result.stdout).toContain('Cancelled');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
-    });
-  });
-
-  test('confirming writes the proposal to the project scope', async () => {
-    await withTempDir('safety-net-policy-apply-project-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-      const streams = createPromptStreams('y');
-
-      const result = await runPolicyIsolated(tempDir, ['apply', proposal], streams);
-
-      const written = join(tempDir, '.cc-safety-net', 'policy.json');
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain(`Policy applied: ${written}`);
-      const applied = JSON.parse(readFileSync(written, 'utf-8')) as Record<string, unknown>;
-      expect(applied.safety).toEqual({ level: 'strict', overrides: {} });
-    });
-  });
-
-  test('a project proposal with an audit section fails validation instead of dropping it', async () => {
-    await withTempDir('safety-net-policy-apply-audit-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, {
-        ...STRICT_PROPOSAL,
-        audit: { retention_days: 90 },
-      });
-      const streams = createPromptStreams('y');
-
-      const result = await runPolicyIsolated(tempDir, ['apply', proposal], streams);
-
-      // Writing while silently omitting a validated section would let apply claim
-      // success for a policy that is not the one the proposal described.
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('audit settings are user scope only');
-      expect(streams.written.join('')).not.toContain('[y/N]');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
-    });
-  });
-
-  test('keeps a sparse proposal sparse so unset fields inherit from user scope', async () => {
-    await withTempDir('safety-net-policy-apply-sparse-', async (tempDir) => {
-      writeUserPolicy(tempDir, { version: 1, safety: { level: 'strict' } });
-      const proposal = writeProposal(tempDir, { version: 1, workflow: { worktree_mode: true } });
-      const streams = createPromptStreams('y');
-
-      const result = await runPolicyIsolated(tempDir, ['apply', proposal], streams);
-
-      expect(result.exitCode).toBe(0);
-      const applied = JSON.parse(
-        readFileSync(join(tempDir, '.cc-safety-net', 'policy.json'), 'utf-8'),
-      ) as Record<string, unknown>;
-      // Writing defaults for absent fields would materialize safety.level "standard"
-      // and silently defeat inheritance from the stricter user policy.
-      expect(Object.keys(applied).sort()).toEqual(['version', 'workflow']);
-    });
-  });
-
-  test('--global applies to the user scope instead', async () => {
-    await withTempDir('safety-net-policy-apply-global-', async (tempDir) => {
-      const home = join(tempDir, 'home');
-      mkdirSync(home);
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-      const streams = createPromptStreams('y');
-
-      const result = await withEnv({ CC_SAFETY_NET_HOME: home }, () =>
-        runPolicy(['apply', proposal, '--global'], { cwd: tempDir, ...streams }),
-      );
-
-      expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain(`Scope: user (${join(home, 'policy.json')})`);
-      const applied = JSON.parse(readFileSync(join(home, 'policy.json'), 'utf-8')) as Record<
-        string,
-        unknown
-      >;
-      expect(applied.safety).toEqual({ level: 'strict', overrides: {} });
-      expect(applied.audit).toEqual({ retention_days: 30 });
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
-    });
-  });
-
-  test('an invalid proposal never reaches the confirmation', async () => {
-    await withTempDir('safety-net-policy-apply-invalid-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, { version: 2 });
-      const streams = createPromptStreams('y');
-
-      const result = await runPolicy(['apply', proposal], { cwd: tempDir, ...streams });
-
-      expect(result.exitCode).toBe(1);
-      expect(streams.written.join('')).not.toContain('[y/N]');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
-    });
-  });
+  test('an unknown subcommand, a missing file and an extra argument each name themselves', async () => {
+    const unknown = await runPolicy(['frob', 'x']);
+    expect(unknown.stderr).toBe('Unknown policy subcommand: frob\n');
+    const noFile = await runPolicy(['check']);
+    expect(noFile.stderr).toBe('policy check requires a file\n');
+    const extra = await runPolicy(['check', 'a', 'b', 'c']);
+    expect(extra.stderr).toBe('Unexpected policy argument: b\nUnexpected policy argument: c\n');
+  }, 60_000);
 });
 
-describe('policy argument handling', () => {
-  test('rejects --yes as an unknown option so an applied policy always needs a human', async () => {
-    await withTempDir('safety-net-policy-yes-', async (tempDir) => {
-      const proposal = writeProposal(tempDir, STRICT_PROPOSAL);
-
-      const result = await runPolicy(['apply', proposal, '--yes'], {
-        cwd: tempDir,
-        ...createPromptStreams('y'),
-      });
-
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('Unknown option for policy: --yes');
-      expect(existsSync(join(tempDir, '.cc-safety-net', 'policy.json'))).toBe(false);
+describe('policy apply without a terminal', () => {
+  test('a piped stdin is refused in both scopes and writes nothing', async () => {
+    const outcome = await runPolicy(['apply', 'prop.json'], { [PROPOSAL_FILE]: STRICT_PROPOSAL });
+    expect(outcome.exitCode).toBe(1);
+    expect(outcome.stderr).toBe(
+      [
+        'policy apply confirms interactively; run this yourself in a terminal:',
+        '  cc-safety-net policy apply prop.json',
+        '',
+      ].join('\n'),
+    );
+    expect(outcome.tree.map((entry) => entry.path)).toEqual([
+      'home',
+      'home/tmp',
+      'project',
+      'project/prop.json',
+    ]);
+    const global = await runPolicy(['apply', 'prop.json', '--global'], {
+      [PROPOSAL_FILE]: STRICT_PROPOSAL,
     });
-  });
+    expect(global.stderr).toContain('  cc-safety-net policy apply prop.json --global\n');
+    expect(global.tree).toStrictEqual(outcome.tree);
+  }, 60_000);
+});
 
-  test('rejects unknown options and unknown subcommands', async () => {
-    const unknownOption = await runPolicy(['check', 'p.json', '--force']);
-    const unknownSubcommand = await runPolicy(['edit', 'p.json']);
+/** One `policy apply` run against a private root, with the terminal it insists on. */
+async function driveApply(
+  label: string,
+  extra: readonly string[],
+  answer: (input: PassThrough) => void,
+  call: (context: {
+    home: string;
+    env: Record<string, string | undefined>;
+    cwd: string;
+    args: string[];
+    input: NodeJS.ReadStream;
+    output: NodeJS.WriteStream;
+  }) => Promise<number>,
+) {
+  const root = createTempRoot(`policy-${label}-`);
+  const home = join(root, 'home');
+  const env = isolationEnv(home);
+  writeTree(root, { [PROPOSAL_FILE]: STRICT_PROPOSAL });
+  // A `PassThrough` rather than the suite's fake terminal: readline consumes a real readable.
+  const input = Object.assign(new PassThrough(), { isTTY: true }) as unknown as NodeJS.ReadStream;
+  const output = createFakeOutput({ isTTY: true });
+  const written: string[] = [];
+  const record = (...parts: unknown[]) => {
+    written.push(parts.join(' '));
+  };
+  const log = spyOn(console, 'log').mockImplementation(record);
+  const error = spyOn(console, 'error').mockImplementation(record);
+  try {
+    const running = call({
+      home,
+      env,
+      cwd: join(root, 'project'),
+      // The proposal is named absolutely: the file is read relative to the process working
+      // directory, which an in-process run cannot move.
+      args: ['apply', join(root, PROPOSAL_FILE), ...extra],
+      input,
+      output: output as unknown as NodeJS.WriteStream,
+    });
+    answer(input as unknown as PassThrough);
+    const code = await running;
+    return {
+      home,
+      outcome: normalize({ code, written, prompt: output.text(), tree: snapshotTree(root) }, [
+        [root, '<root>'],
+        ...WINDOWS_SEPARATOR_FOLDS,
+      ]),
+    };
+  } finally {
+    log.mockRestore();
+    error.mockRestore();
+  }
+}
 
-    expect(unknownOption.exitCode).toBe(1);
-    expect(unknownOption.stderr).toContain('Unknown option for policy: --force');
-    expect(unknownSubcommand.exitCode).toBe(1);
-    expect(unknownSubcommand.stderr).toContain('Unknown policy subcommand: edit');
-  });
+async function applyBothWays(extra: readonly string[], answer: (input: PassThrough) => void) {
+  const ported = await driveApply('ported', extra, answer, (context) =>
+    portedPolicyCommand(environmentFor(context.home, context.env), context.args, {
+      cwd: context.cwd,
+      input: context.input,
+      output: context.output,
+    }),
+  );
+  return { ...ported.outcome, home: ported.home };
+}
 
-  test('requires a subcommand and a proposal file', async () => {
-    const bare = await runPolicy([]);
-    const noFile = await runPolicy(['apply']);
-    const extra = await runPolicy(['check', 'a.json', 'b.json']);
+describe('policy apply at a terminal', () => {
+  test('a typed yes writes only the fields the proposal set', async () => {
+    const outcome = await applyBothWays([], (input) => input.write('y\n'));
+    expect(outcome.code).toBe(0);
+    expect(outcome.prompt).toBe(
+      `Apply this policy to ${posix.join('<root>', PROJECT_POLICY)}? [y/N] `,
+    );
+    expect(outcome.written).toContain(`Policy applied: ${posix.join('<root>', PROJECT_POLICY)}`);
+    const applied = outcome.tree.find(
+      (entry) => entry.path === 'project/.cc-safety-net/policy.json',
+    );
+    expect(applied?.content).toBe(STRICT_PROPOSAL);
+  }, 30_000);
 
-    expect(bare.exitCode).toBe(1);
-    expect(bare.stderr).toContain('cc-safety-net policy');
-    expect(noFile.exitCode).toBe(1);
-    expect(noFile.stderr).toContain('policy apply requires a file');
-    expect(extra.exitCode).toBe(1);
-    expect(extra.stderr).toContain('Unexpected policy argument: b.json');
-  });
+  test('--global writes the user file readable by its owner alone', async () => {
+    const outcome = await applyBothWays(['--global'], (input) => input.write('y\n'));
+    expect(outcome.code).toBe(0);
+    const applied = outcome.tree.find((entry) => entry.path === 'home/.cc-safety-net/policy.json');
+    expect(JSON.parse(applied?.content ?? '')).toMatchObject({ safety: { level: 'strict' } });
+    // Windows has no POSIX mode to assert.
+    if (process.platform === 'win32') return;
+    expect(lstatSync(join(outcome.home, '.cc-safety-net', 'policy.json')).mode & 0o777).toBe(0o600);
+  }, 30_000);
+
+  test('a typed no cancels and leaves the scope untouched', async () => {
+    const outcome = await applyBothWays([], (input) => input.write('n\n'));
+    expect(outcome.code).toBe(0);
+    expect(outcome.written).toContain('Cancelled; nothing was written.');
+    expect(outcome.tree.map((entry) => entry.path)).toEqual([
+      'home',
+      'home/tmp',
+      'project',
+      'project/prop.json',
+    ]);
+  }, 30_000);
+
+  test('a closed stream declines rather than waiting for a line that never comes', async () => {
+    const outcome = await applyBothWays([], (input) => input.end());
+    expect(outcome.code).toBe(0);
+    expect(outcome.written).toContain('Cancelled; nothing was written.');
+  }, 30_000);
 });

@@ -1,129 +1,101 @@
 import { describe, expect, test } from 'bun:test';
-import { PassThrough } from 'node:stream';
-import { printInstallBanner } from '@/cli/install/banner';
-import { withEnv } from '../../helpers';
-import { createLolcatOutput, renderTerminal } from '../lolcat-test-helpers';
+import { printInstallBanner as portedPrintInstallBanner } from '@/cli/install/banner';
+import { createFakeInput, createFakeOutput } from '../../helpers/fake-tty';
 
-async function withoutNoColor<T>(fn: () => Promise<T>) {
-  const original = process.env.NO_COLOR;
-  delete process.env.NO_COLOR;
+/**
+ * The banner owns the terminal for the length of one animation: it takes raw mode only when the
+ * keyboard is a TTY, gives it back exactly as it found it, and turns Ctrl-C into the caller's
+ * interrupt rather than a stray signal. The keypress is delivered from inside the first sleep, so
+ * the interrupt always lands on the same frame.
+ */
 
-  try {
-    return await fn();
-  } finally {
-    if (original === undefined) {
-      delete process.env.NO_COLOR;
-    } else {
-      process.env.NO_COLOR = original;
-    }
+type KeyPress = { name: string; value?: string; ctrl?: boolean };
+
+async function runBanner(options: { inputTTY: boolean; outputTTY: boolean; keypress?: KeyPress }) {
+  const input = createFakeInput({ isTTY: options.inputTTY });
+  const output = createFakeOutput({ isTTY: options.outputTTY });
+  const interrupts: string[] = [];
+  let sleeps = 0;
+
+  await portedPrintInstallBanner({
+    input: input as unknown as NodeJS.ReadStream,
+    onInterrupt: () => interrupts.push('interrupt'),
+    output,
+    seed: 7,
+    sleep: async () => {
+      sleeps += 1;
+      const keypress = options.keypress;
+      if (sleeps === 1 && keypress) input.press(keypress.name, keypress.value, keypress.ctrl);
+    },
+  });
+
+  return {
+    chunks: output.chunks,
+    interrupts,
+    rawModeCalls: input.rawModeCalls,
+    streamCalls: input.streamCalls,
+  };
+}
+
+const BEGIN_SYNC = '\x1b[?2026h';
+const END_SYNC = '\x1b[?2026l';
+/** The cursor hidden, two lines opened for the banner, and the cursor parked above them. */
+const OPENING = '\x1b[?25l\n\n\x1b[2A\x1b7';
+/** Back to the saved position, down past the banner, and the cursor handed back. */
+const CLOSING = ['\x1b8', '\x1b[2B', '\n\x1b[0m\x1b[?25h'];
+
+/** Every frame is one write, wrapped so a half-painted banner never reaches the terminal. */
+const framesOf = (chunks: readonly string[]) => {
+  const frames = chunks.slice(1, -3);
+  for (const frame of frames) {
+    expect(frame, frame).toStartWith(BEGIN_SYNC);
+    expect(frame, frame).toEndWith(END_SYNC);
   }
-}
+  return frames;
+};
 
-function createBannerInput() {
-  const rawModes: boolean[] = [];
-  const input = new PassThrough() as unknown as NodeJS.ReadStream & {
-    isRaw: boolean;
-    isTTY: boolean;
-    setRawMode: (mode: boolean) => NodeJS.ReadStream;
-  };
-  input.isRaw = false;
-  input.isTTY = true;
-  input.setRawMode = (mode) => {
-    input.isRaw = mode;
-    rawModes.push(mode);
-    return input;
-  };
+const ENTER: KeyPress = { name: 'return', value: '\r' };
+const CTRL_C: KeyPress = { name: 'c', value: '\x03', ctrl: true };
 
-  return { input, rawModes };
-}
-
-describe('install banner', () => {
-  test('prints animated rainbow ASCII art when stdout is a TTY', async () => {
-    const { chunks, output } = createLolcatOutput();
-
-    await withoutNoColor(() =>
-      printInstallBanner({
-        duration: 2,
-        output,
-        seed: 0,
-        sleep: async () => {},
-      }),
-    );
-
-    const printed = chunks.join('');
-    const visibleText = renderTerminal(chunks);
-    expect(printed).toContain('\x1b[?25l');
-    expect(printed).toContain('\x1b[38;2;');
-    expect(visibleText).toContain('┏━┛┏━┛  ┏━┛┏━┃┏━┛┏━┛━┏┛┃ ┃  ┏━ ┏━┛━┏┛');
-    expect(visibleText).toContain('┃  ┃    ━━┃┏━┃┏━┛┏━┛ ┃ ━┏┛  ┃ ┃┏━┛ ┃');
-    expect(visibleText).toContain('━━┛━━┛  ━━┛┛ ┛┛  ━━┛ ┛  ┛   ┛ ┛━━┛ ┛');
-    expect(printed).toContain('\x1b[?25h');
+describe('cli/install/banner', () => {
+  test('a non-TTY keyboard runs the animation to the end on both implementations', async () => {
+    const ported = await runBanner({ inputTTY: false, outputTTY: true });
+    // No raw mode to take and no stream to resume: a keyboard that is not a TTY is left alone.
+    expect(ported.rawModeCalls).toEqual([]);
+    expect(ported.streamCalls).toEqual([]);
+    expect(ported.chunks[0]).toBe(OPENING);
+    expect(ported.chunks.slice(-3)).toEqual(CLOSING);
+    expect(framesOf(ported.chunks)).toHaveLength(55);
   });
 
-  test('does not print when stdout is not a TTY', async () => {
-    const { chunks, output } = createLolcatOutput(false);
+  test('Enter cuts the animation short and restores the keyboard on both implementations', async () => {
+    const ported = await runBanner({ inputTTY: true, keypress: ENTER, outputTTY: true });
+    expect(ported.rawModeCalls).toEqual([true, false]);
+    expect(ported.streamCalls).toEqual(['resume', 'pause']);
+    expect(ported.interrupts).toEqual([]);
+    // The frame the key landed on and the finished banner, instead of the whole animation.
+    expect(framesOf(ported.chunks)).toHaveLength(2);
+    expect(ported.chunks[0]).toBe(OPENING);
+    expect(ported.chunks.slice(-3)).toEqual(CLOSING);
+  });
 
-    await printInstallBanner({
-      output,
-      sleep: async () => {},
+  test('Ctrl-C reaches the caller once on both implementations', async () => {
+    const ported = await runBanner({ inputTTY: true, keypress: CTRL_C, outputTTY: true });
+    // Ctrl-C ends the animation like any key, and reaches the caller once — never as a signal.
+    expect(ported.interrupts).toEqual(['interrupt']);
+    expect(ported.rawModeCalls).toEqual([true, false]);
+    expect(ported.streamCalls).toEqual(['resume', 'pause']);
+    expect(framesOf(ported.chunks)).toHaveLength(2);
+    expect(ported.chunks.slice(-3)).toEqual(CLOSING);
+  });
+
+  test('a non-TTY sink prints nothing on either implementation', async () => {
+    const ported = await runBanner({ inputTTY: true, outputTTY: false });
+    expect(ported).toEqual({
+      chunks: [],
+      interrupts: [],
+      rawModeCalls: [],
+      streamCalls: [],
     });
-
-    expect(chunks).toEqual([]);
-  });
-
-  test('prints when NO_COLOR is set to match lolcat behavior', async () => {
-    const { chunks, output } = createLolcatOutput();
-
-    await withEnv({ NO_COLOR: '1' }, () =>
-      printInstallBanner({
-        output,
-        sleep: async () => {},
-      }),
-    );
-
-    expect(chunks.join('')).toContain('\x1b[38;2;');
-  });
-
-  test('skips on Enter and restores the input state', async () => {
-    const { input, rawModes } = createBannerInput();
-    const { chunks, output } = createLolcatOutput();
-    let sleeps = 0;
-
-    await printInstallBanner({
-      input,
-      output,
-      seed: 0,
-      sleep: async () => {
-        sleeps += 1;
-        input.emit('keypress', '', { name: 'return' });
-      },
-    });
-
-    expect(sleeps).toBe(1);
-    expect(rawModes).toEqual([true, false]);
-    expect(input.isPaused()).toBe(true);
-    expect(renderTerminal(chunks)).toContain('┏━┛┏━┛');
-  });
-
-  test('preserves Ctrl+C while listening for Enter', async () => {
-    const { input, rawModes } = createBannerInput();
-    const { output } = createLolcatOutput();
-    let interrupted = false;
-    input.resume();
-
-    await printInstallBanner({
-      input,
-      onInterrupt: () => {
-        interrupted = true;
-      },
-      output,
-      sleep: async () => {
-        input.emit('keypress', '', { ctrl: true, name: 'c' });
-      },
-    });
-
-    expect(interrupted).toBe(true);
-    expect(rawModes).toEqual([true, false]);
-    expect(input.isPaused()).toBe(false);
   });
 });

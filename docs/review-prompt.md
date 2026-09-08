@@ -56,7 +56,7 @@ body:
 These families from `docs/residual-risk.md` are already adjudicated as accepted residual risk for
 standard mode. Do not report findings inside them as blocking, and do not propose standard-mode
 parser fixes for them. If an instance lacks strict or paranoid fail-closed coverage, suggesting a
-fixture for `tests/analyzer/strict-unverifiable.test.ts` is welcome.
+fixture for `tests/gate/behavioral-contract-cases.ts` is welcome.
 
 - RR-1: Dynamic executables and computed command names, such as `$(printf r)m` or `"$c"` in
   command position.

@@ -54,5 +54,5 @@ Preconditions:
   them the same or `logs` will look in the wrong per-project directory.
 - Payload field names differ per integration (`hook_event_name`/`tool_name` here are Claude
   Code's shape). For another `--<integration>` flag, read its
-  `src/integrations/<id>/hook.ts` input type first.
+  `src/hosts/<id>/hook.ts` input type first.
 - Never "test" the hook by letting a real shell run the command afterward.

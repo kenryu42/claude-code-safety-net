@@ -1,20 +1,21 @@
 import type { BunPlugin } from 'bun';
-import * as guiAssets from '../src/gui/assets';
 
 /**
- * Freezes src/gui/assets.ts into the bundle: the module reads the frontend
+ * Freezes `src/gui/assets.ts` into the bundle: the module reads the frontend
  * files and builds frontend/main.ts with Bun, neither of which the published
  * Node CLI can do, so the built bundle gets the produced strings as literals.
+ * The assets module is imported inside the function, so importing this module
+ * from a test file does not build the frontend at load time.
  */
-export const guiAssetsPlugin: BunPlugin = {
-  name: 'gui-assets',
-  setup(build) {
-    // `args.path` is native, so the separator is a backslash on Windows.
-    build.onLoad({ filter: /src[\\/]gui[\\/]assets\.ts$/ }, () => ({
-      contents: Object.entries(guiAssets)
-        .map(([name, value]) => `export const ${name} = ${JSON.stringify(value)};`)
-        .join('\n'),
-      loader: 'js',
-    }));
-  },
-};
+export async function guiAssetsPlugin(): Promise<BunPlugin> {
+  const contents = Object.entries(await import('../src/gui/assets'))
+    .map(([name, value]) => `export const ${name} = ${JSON.stringify(value)};`)
+    .join('\n');
+  return {
+    name: 'gui-assets',
+    setup(build) {
+      // `args.path` is native, so the separator is a backslash on Windows.
+      build.onLoad({ filter: /src[\\/]gui[\\/]assets\.ts$/ }, () => ({ contents, loader: 'js' }));
+    },
+  };
+}

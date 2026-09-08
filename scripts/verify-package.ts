@@ -13,7 +13,7 @@ import {
 import { tmpdir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { AMP_PLUGIN_ENTRY } from '../src/integrations/amp/artifact';
+import { AMP_PLUGIN_ENTRY } from '../src/hosts/amp/artifact';
 import { AMP_HOST_SCRIPT, OPENCODE_HOST_SCRIPT, PI_HOST_SCRIPT } from './integration-host-scripts';
 import { verifyBuildArtifacts } from './verify-build';
 
@@ -23,10 +23,9 @@ const PACKAGE_ROOT_FILES = [
   'package/THIRD_PARTY_LICENSES.txt',
   'package/package.json',
 ] as const;
-// The standalone Amp and OpenClaw plugins each bundle their own trimmed zod
-// copy, and dist/vendor/zod.cjs ships a third for the repository-checkout
-// channels, so the tarball is materially larger than the pure-Node bundles
-// alone. Current size is ~490 KB; the cap leaves ~57 KB of headroom.
+// The four Node entries share their code through chunks rather than through the bin, and the
+// CLI chunk carries a trimmed zod, so the tarball is materially larger than the entries alone.
+// Current size is 449,053 bytes; the cap leaves ~111 KB of headroom.
 const MAX_TARBALL_BYTES = 560_000;
 
 interface PackResult {

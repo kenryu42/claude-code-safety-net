@@ -1,0 +1,31 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  git reset --hard && git status
+
+STEP 1 - Split shell commands
+  Segment 1: ["git","reset","--hard"]
+  Segment 2: ["git","status"]
+
+============== Segment 1: git reset --hard ===============
+
+STEP 2 - Match rules
+  Rule:   git:analyzeGitMatch()
+  Result: MATCHED
+
+================= Segment 2: git status ==================
+
+  (skipped — prior segment blocked)
+
+RESULT
+  Status: BLOCKED
+  Reason: git reset --hard destroys all uncommitted changes permanently. Use
+          'git stash' first.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

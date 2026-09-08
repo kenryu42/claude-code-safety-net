@@ -1,0 +1,22 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  rm -rf $TMPDIR/build
+
+STEP 1 - Split shell commands
+  Segment 1: ["rm","-rf","$TMPDIR/build"]
+
+STEP 2 - Match rules
+  Rule:   analyzer/rm.ts:analyzeRmMatch()
+  Result: No match
+
+RESULT
+  Status: ALLOWED
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

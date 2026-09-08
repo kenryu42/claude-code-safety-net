@@ -1,0 +1,19 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+
+STEP 1 - Match rules
+  Rule:   policy-protection:findPolicyConfigMutationTargetInSemanticFacts()
+  Result: MATCHED
+
+RESULT
+  Status: BLOCKED
+  Reason: This path contains the protected policy config and you must not modify
+          or delete it.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

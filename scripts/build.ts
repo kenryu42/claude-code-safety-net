@@ -4,8 +4,9 @@
  * to avoid embedding the full package.json in the bundle.
  */
 
-import { statSync } from 'node:fs';
-import { AMP_PLUGIN_ENTRY } from '../src/integrations/amp/artifact';
+import { renameSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { AMP_PLUGIN_ENTRY } from '../src/hosts/amp/artifact';
 import { getBundledOutputs, isPublicDeclarationOutput } from './build-output';
 import { buildAmpBundle, buildOpenClawBundle, buildRuntimeBundles } from './build-runtime';
 import { generateThirdPartyLicenses } from './generate-third-party-licenses';
@@ -50,6 +51,11 @@ if (typesResult.exitCode !== 0) {
 
 for await (const path of new Bun.Glob('dist/**/*.d.ts').scan('.')) {
   if (!isPublicDeclarationOutput(path)) await Bun.file(path).delete();
+}
+// tsc names a declaration after its source directory relative to rootDir, so an entry that
+// lives in a subdirectory is emitted into one; the package exposes both at the outdir root.
+for (const name of ['index', 'api']) {
+  renameSync(join('dist', 'entries', `${name}.d.ts`), join('dist', `${name}.d.ts`));
 }
 
 const schemaResult = Bun.spawnSync(['bun', 'run', 'build:schema']);

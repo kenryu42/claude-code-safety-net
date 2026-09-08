@@ -1,0 +1,93 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "cd .. && rm -rf build",
+        "segments": [
+          [
+            "cd",
+            ".."
+          ],
+          [
+            "rm",
+            "-rf",
+            "build"
+          ]
+        ]
+      }
+    ],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "fallback-scan",
+            "tokensScanned": [
+              ".."
+            ]
+          },
+          {
+            "type": "custom-rules-check",
+            "rulesChecked": false,
+            "matched": false
+          },
+          {
+            "type": "cwd-change",
+            "segment": "cd ..",
+            "effectiveCwdNowUnknown": true
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "steps": [
+          {
+            "type": "tmpdir-check",
+            "tmpdirValue": "<redacted>",
+            "isOverriddenToNonTemp": false,
+            "allowTmpdirVar": true
+          },
+          {
+            "type": "rule-check",
+            "rule": "analyzer/rm.ts:analyzeRmMatch",
+            "matched": true,
+            "reason": "rm -rf outside cwd is blocked. Retry deleting only explicit paths inside the current directory; escalate for anything outside it."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "rm -rf outside cwd is blocked. Retry deleting only explicit paths inside the current directory; escalate for anything outside it.",
+  "segment": "rm -rf build",
+  "ruleId": "rm.recursive-force-outside-cwd",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

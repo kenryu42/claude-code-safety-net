@@ -1,0 +1,314 @@
+{
+  "hooks": [
+    {
+      "platform": "claude-code",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    },
+    {
+      "platform": "amp",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    },
+    {
+      "platform": "antigravity-cli",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable",
+      "configPath": "<root>/home/.gemini/config/hooks.json"
+    },
+    {
+      "platform": "codex",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    },
+    {
+      "platform": "cursor",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable",
+      "configPath": "<root>/home/.cursor/hooks.json"
+    },
+    {
+      "platform": "gemini-cli",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    },
+    {
+      "platform": "copilot-cli",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    },
+    {
+      "platform": "grok-build",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable",
+      "configPath": "<root>/home/.grok/hooks/cc-safety-net.json"
+    },
+    {
+      "platform": "hermes-agent",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable",
+      "configPath": "<root>/home/.hermes/plugins/cc-safety-net"
+    },
+    {
+      "platform": "kimi-code",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable",
+      "configPath": "<root>/home/.kimi-code/config.toml"
+    },
+    {
+      "platform": "openclaw",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable",
+      "configPath": "<root>/home/.openclaw/extensions/cc-safety-net"
+    },
+    {
+      "platform": "opencode",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    },
+    {
+      "platform": "pi",
+      "detected": false,
+      "configured": false,
+      "inspectionStatus": "not-applicable"
+    }
+  ],
+  "engineSelfTest": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "results": [
+      {
+        "command": "git reset --hard",
+        "description": "git reset --hard",
+        "expected": "blocked",
+        "actual": "blocked",
+        "passed": true,
+        "reason": "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.",
+        "ruleId": "git.reset-hard"
+      },
+      {
+        "command": "rm -rf /",
+        "description": "rm -rf /",
+        "expected": "blocked",
+        "actual": "blocked",
+        "passed": true,
+        "reason": "rm -rf targeting root or home directory is extremely dangerous and always blocked.",
+        "ruleId": "rm.recursive-force-root-or-home"
+      },
+      {
+        "command": "rm -rf ./node_modules",
+        "description": "rm in cwd (safe)",
+        "expected": "allowed",
+        "actual": "allowed",
+        "passed": true
+      }
+    ]
+  },
+  "userConfig": {
+    "path": "<root>/home/.cc-safety-net/rules/rule.json",
+    "exists": false,
+    "valid": false,
+    "ruleCount": 0
+  },
+  "projectConfig": {
+    "path": "<root>/project/.cc-safety-net/rules/rule.json",
+    "exists": false,
+    "valid": false,
+    "ruleCount": 0
+  },
+  "configState": {
+    "state": "ready"
+  },
+  "effectiveRules": [],
+  "shadowedRules": [],
+  "environment": [
+    {
+      "name": "CC_SAFETY_NET_LEVEL",
+      "isSet": false,
+      "description": "Safety level preset: standard, strict, or paranoid",
+      "defaultBehavior": "standard"
+    },
+    {
+      "name": "CC_SAFETY_NET_STRICT",
+      "value": "1",
+      "isSet": true,
+      "legacyName": "SAFETY_NET_STRICT",
+      "legacyValue": "1",
+      "legacyIsSet": true,
+      "description": "Legacy; equivalent to safety.overrides.fail_closed",
+      "defaultBehavior": "permissive"
+    },
+    {
+      "name": "CC_SAFETY_NET_PARANOID",
+      "isSet": false,
+      "legacyName": "SAFETY_NET_PARANOID",
+      "legacyIsSet": false,
+      "description": "Legacy; equivalent to safety.overrides.paranoid_rm and paranoid_interpreters",
+      "defaultBehavior": "off"
+    },
+    {
+      "name": "CC_SAFETY_NET_PARANOID_RM",
+      "isSet": false,
+      "legacyName": "SAFETY_NET_PARANOID_RM",
+      "legacyIsSet": false,
+      "description": "Legacy; equivalent to safety.overrides.paranoid_rm",
+      "defaultBehavior": "off"
+    },
+    {
+      "name": "CC_SAFETY_NET_PARANOID_INTERPRETERS",
+      "isSet": false,
+      "legacyName": "SAFETY_NET_PARANOID_INTERPRETERS",
+      "legacyIsSet": false,
+      "description": "Legacy; equivalent to safety.overrides.paranoid_interpreters",
+      "defaultBehavior": "off"
+    },
+    {
+      "name": "CC_SAFETY_NET_WORKTREE",
+      "isSet": false,
+      "legacyName": "SAFETY_NET_WORKTREE",
+      "legacyIsSet": false,
+      "description": "Allow local git discards in linked worktrees",
+      "defaultBehavior": "off"
+    },
+    {
+      "name": "CC_SAFETY_NET_DEBUG",
+      "isSet": false,
+      "description": "Print diagnostic messages to stderr",
+      "defaultBehavior": "off"
+    },
+    {
+      "name": "CC_SAFETY_NET_AUDIT_SCOPE",
+      "value": "bogus",
+      "isSet": true,
+      "description": "Command decisions recorded: all, or blocked (privacy-minimizing, denials only)",
+      "defaultBehavior": "all"
+    },
+    {
+      "name": "CC_SAFETY_NET_HOME",
+      "value": "<root>/home/.cc-safety-net",
+      "isSet": true,
+      "description": "Override user-scope config/cache directory",
+      "defaultBehavior": "~/.cc-safety-net"
+    }
+  ],
+  "effectiveSafety": {
+    "selectedPreset": "standard",
+    "level": "strict",
+    "capabilities": {
+      "fail_closed": {
+        "enabled": true,
+        "source": "environment",
+        "sources": [
+          "policy safety.level=standard",
+          "env CC_SAFETY_NET_STRICT"
+        ]
+      },
+      "paranoid_rm": {
+        "enabled": false,
+        "source": "preset",
+        "sources": [
+          "policy safety.level=standard"
+        ]
+      },
+      "paranoid_interpreters": {
+        "enabled": false,
+        "source": "preset",
+        "sources": [
+          "policy safety.level=standard"
+        ]
+      }
+    },
+    "ruleOverrides": {},
+    "weakenedRuleOverrides": [],
+    "ruleCounts": {
+      "stored": 0,
+      "effective": 0
+    }
+  },
+  "posture": {
+    "directories": [
+      {
+        "kind": "policy",
+        "path": "<root>/home/.cc-safety-net",
+        "status": "not-applicable",
+        "issues": []
+      },
+      {
+        "kind": "config",
+        "path": "<root>/home/.cc-safety-net/rules",
+        "status": "not-applicable",
+        "issues": []
+      },
+      {
+        "kind": "audit",
+        "path": "<root>/home/.cc-safety-net/audit/.cc-safety-net/logs",
+        "status": "not-applicable",
+        "issues": []
+      }
+    ]
+  },
+  "activity": {
+    "totalBlocked": 0,
+    "sessionCount": 0,
+    "recentEntries": [],
+    "unreadable": 0
+  },
+  "update": {
+    "currentVersion": "<version>",
+    "latestVersion": null,
+    "updateAvailable": false
+  },
+  "system": {
+    "version": "<version>",
+    "versions": {
+      "amp": null,
+      "antigravity-cli": null,
+      "claude-code": null,
+      "codex": null,
+      "cursor": null,
+      "gemini-cli": null,
+      "copilot-cli": null,
+      "grok-build": null,
+      "hermes-agent": null,
+      "kimi-code": null,
+      "openclaw": null,
+      "opencode": null,
+      "pi": null
+    },
+    "codexPluginListOutput": null,
+    "ampPluginListOutput": null,
+    "nodeVersion": null,
+    "npmVersion": null,
+    "bunVersion": null,
+    "platform": "<platform>"
+  },
+  "findings": [
+    {
+      "checkId": "integration.none-configured",
+      "severity": "error",
+      "title": "No integration configured",
+      "detail": "CC Safety Net is not connected to any supported coding-agent integration.",
+      "fixHint": "Run `cc-safety-net install` and configure at least one integration."
+    },
+    {
+      "checkId": "environment.audit-scope-invalid",
+      "severity": "warning",
+      "title": "Audit scope value is invalid",
+      "detail": "CC_SAFETY_NET_AUDIT_SCOPE is not `all` or `blocked`, so allowed command decisions are not recorded.",
+      "fixHint": "Set CC_SAFETY_NET_AUDIT_SCOPE to `all` or `blocked`, then restart the integration."
+    }
+  ]
+}

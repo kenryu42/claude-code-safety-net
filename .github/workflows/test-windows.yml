@@ -30,6 +30,12 @@ jobs:
         run: bun run check:ci
         env:
           CC_SAFETY_NET_E2E_ARTIFACTS: ${{ runner.temp }}/cc-safety-net-e2e
+          # The pair lists behind every digest, uploaded with the failure evidence so a Windows
+          # digest can be recorded from what the runner produced.
+          CC_SAFETY_NET_DUMP_VERDICTS: ${{ runner.temp }}/cc-safety-net-e2e/digests
+          # A short temp root, as the macOS leg pins: a `status` row renders a fixture path into a
+          # fixed-width column, and the default user temp directory is too long for it.
+          CC_SAFETY_NET_TEST_TMPDIR: ${{ runner.temp }}
       - run: bun run build
       - run: git diff --exit-code -- dist assets/cc-safety-net.schema.json THIRD_PARTY_LICENSES.txt
       - name: Verify Windows command behavior

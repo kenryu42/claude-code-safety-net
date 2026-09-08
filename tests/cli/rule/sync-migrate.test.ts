@@ -1,263 +1,300 @@
-import { describe, expect, test } from 'bun:test';
-import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { findRuleV2Leftovers, runRuleSyncMigration } from '@/cli/rule/sync-migrate';
-import { captureConsoleOutput, withEnv, withTempDir } from '../../helpers';
+import { afterEach, describe, expect, test } from 'bun:test';
+import { join, posix } from 'node:path';
+import {
+  findRuleV2Leftovers as findPorted,
+  runRuleSyncMigration as runPortedMigration,
+} from '@/cli/rule/sync-migrate';
+import { captureConsole } from '../../helpers/console-capture';
+import { type TreeSpec, writeTree } from '../../helpers/fixture-tree';
+import {
+  json,
+  rulesConfig,
+  sha256Digest,
+  v1Rulebook,
+  v2CacheDir,
+  v2Lock,
+} from '../../helpers/rulebook-seeds';
+import { runManagerDifferential } from '../../helpers/rules-manager-differential';
+import {
+  createTempRoot,
+  environmentFor,
+  isolationEnv,
+  removeTempRoots,
+} from '../../helpers/temp-home';
 
-type CachedState = 'valid' | 'mismatch' | 'invalid' | 'missing';
+/**
+ * Doctor's only reason to name a version 2 lock or cache is that the file is there, so each row
+ * puts one where a scope would have left it and asserts the run names the same
+ * absolute paths in the same order — project scope first, then user scope, lock before cache.
+ * The user scope is resolved from `CC_SAFETY_NET_HOME`, which the last row moves.
+ */
 
-interface V2Source {
-  name: string;
-  cached: CachedState;
+afterEach(() => {
+  removeTempRoots();
+});
+
+function findLeftovers(spec: TreeSpec, overrides: Record<string, string | undefined> = {}) {
+  const root = createTempRoot('rule-leftovers-');
+  const home = join(root, 'home');
+  const values = isolationEnv(
+    home,
+    Object.fromEntries(
+      Object.entries(overrides).map(([name, value]) => [
+        name,
+        value === undefined ? undefined : join(root, value),
+      ]),
+    ),
+  );
+  writeTree(root, spec);
+  return { root, paths: findPorted(environmentFor(home, values), join(root, 'project')) };
 }
 
-const DEPRECATION = '`cc-safety-net rule sync` is deprecated';
-
-describe('rule sync migration', () => {
-  test('vendors the cached rulebooks, prunes the leftovers, and announces the deprecation', async () => {
-    await withTempDir('safety-net-rule-sync-migrate-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'valid' }]);
-
-      const run = await captureMigration({ cwd: tempDir });
-
-      expect(run.exitCode).toBe(0);
-      expect(run.stdout).toContain(DEPRECATION);
-      expect(run.stdout).toContain('Vendored owner/repo#main/team-rules from the v2 cache.');
-      expect(readFileSync(vendoredPath(tempDir, 'team-rules'), 'utf-8')).toBe(
-        rulebookJson('team-rules'),
-      );
-      expect(existsSync(join(rulesDir(tempDir), 'rule.lock'))).toBe(false);
-      expect(existsSync(cacheDir(tempDir))).toBe(false);
-    });
+describe('findRuleV2Leftovers', () => {
+  test('a scope with nothing left behind reports nothing', () => {
+    expect(findLeftovers({ 'project/.cc-safety-net/rules/rule.json': '{}\n' }).paths).toEqual([]);
   });
 
-  test('restores the verified cache copy over an invalid vendored file', async () => {
-    await withTempDir('safety-net-rule-sync-restore-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'valid' }]);
-      mkdirSync(join(rulesDir(tempDir), 'team-rules'), { recursive: true });
-      writeFileSync(vendoredPath(tempDir, 'team-rules'), '{ half-written');
-
-      const run = await captureMigration({ cwd: tempDir });
-
-      // Counting the broken destination as already migrated would delete the last
-      // digest-verified copy while leaving the source inactive.
-      expect(run.exitCode).toBe(0);
-      expect(run.stdout).toContain(
-        'Restored owner/repo#main/team-rules from the v2 cache over an invalid file.',
-      );
-      expect(readFileSync(vendoredPath(tempDir, 'team-rules'), 'utf-8')).toBe(
-        rulebookJson('team-rules'),
-      );
-      expect(
-        [join(rulesDir(tempDir), 'rule.lock'), cacheDir(tempDir)].filter((path) =>
-          existsSync(path),
-        ),
-      ).toEqual([]);
-    });
+  test('a project lock is reported on its own', () => {
+    const { root, paths } = findLeftovers({ 'project/.cc-safety-net/rules/rule.lock': '{}\n' });
+    expect(paths).toEqual([join(root, 'project/.cc-safety-net/rules/rule.lock')]);
   });
 
-  test('aborts and preserves the leftovers when rule.json is unreadable', async () => {
-    await withTempDir('safety-net-rule-sync-unreadable-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'valid' }]);
-      writeFileSync(join(rulesDir(tempDir), 'rule.json'), '{ not json');
-
-      const run = await captureMigration({ cwd: tempDir });
-
-      // Deleting the lock and cache here would destroy the only offline copies of
-      // sources the unreadable config still lists, with no way back after repair.
-      expect(run.exitCode).toBe(1);
-      expect(existsSync(join(rulesDir(tempDir), 'rule.lock'))).toBe(true);
-      expect(existsSync(cacheDir(tempDir))).toBe(true);
-      expect(existsSync(vendoredPath(tempDir, 'team-rules'))).toBe(false);
-
-      // A missing config with lock entries is the same hazard: the lock is then
-      // the only record of the source specs and their verified bytes.
-      rmSync(join(rulesDir(tempDir), 'rule.json'));
-      const rerun = await captureMigration({ cwd: tempDir });
-      expect(rerun.exitCode).toBe(1);
-      expect(existsSync(join(rulesDir(tempDir), 'rule.lock'))).toBe(true);
-      expect(existsSync(cacheDir(tempDir))).toBe(true);
-    });
+  test('a user cache directory is reported on its own', () => {
+    const { root, paths } = findLeftovers({ 'home/.cc-safety-net/cache/rulebooks': null });
+    expect(paths).toEqual([join(root, 'home/.cc-safety-net/cache')]);
   });
 
-  test('reports every source the v2 cache cannot migrate', async () => {
-    await withTempDir('safety-net-rule-sync-partial-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [
-        { name: 'team-rules', cached: 'valid' },
-        { name: 'drifted-rules', cached: 'mismatch' },
-        { name: 'broken-rules', cached: 'invalid' },
-        { name: 'absent-rules', cached: 'missing' },
-      ]);
-
-      const run = await captureMigration({ cwd: tempDir });
-
-      expect(run.exitCode).toBe(0);
-      expect(existsSync(vendoredPath(tempDir, 'team-rules'))).toBe(true);
-      for (const name of ['drifted-rules', 'broken-rules', 'absent-rules']) {
-        expect(existsSync(vendoredPath(tempDir, name))).toBe(false);
-        expect(run.stdout).toContain(
-          `Run \`cc-safety-net rule update owner/repo#main/${name}\` to vendor it.`,
-        );
-      }
-      expect(existsSync(join(rulesDir(tempDir), 'rule.lock'))).toBe(false);
-      expect(existsSync(cacheDir(tempDir))).toBe(false);
+  test('both scopes report lock before cache, project before user', () => {
+    const { root, paths } = findLeftovers({
+      'project/.cc-safety-net/rules/rule.lock': '{}\n',
+      'project/.cc-safety-net/cache/rulebooks': null,
+      'home/.cc-safety-net/rules/rule.lock': '{}\n',
+      'home/.cc-safety-net/cache/rulebooks': null,
     });
+    expect(paths).toEqual([
+      join(root, 'project/.cc-safety-net/rules/rule.lock'),
+      join(root, 'project/.cc-safety-net/cache'),
+      join(root, 'home/.cc-safety-net/rules/rule.lock'),
+      join(root, 'home/.cc-safety-net/cache'),
+    ]);
   });
 
-  test('a second run reports nothing to migrate and leaves the vendored file alone', async () => {
-    await withTempDir('safety-net-rule-sync-rerun-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'valid' }]);
-      await captureMigration({ cwd: tempDir });
-      writeFileSync(vendoredPath(tempDir, 'team-rules'), rulebookJson('team-rules', '2.0.0'));
-
-      const run = await captureMigration({ cwd: tempDir });
-
-      expect(run.exitCode).toBe(0);
-      expect(run.stdout).toContain('No v2 lock or cache leftovers found');
-      expect(run.stdout).not.toContain('Vendored');
-      expect(readFileSync(vendoredPath(tempDir, 'team-rules'), 'utf-8')).toBe(
-        rulebookJson('team-rules', '2.0.0'),
-      );
-    });
-  });
-
-  test('prunes an unreadable lock and names the sources it could not migrate', async () => {
-    await withTempDir('safety-net-rule-sync-broken-lock-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'valid' }]);
-      writeFileSync(join(rulesDir(tempDir), 'rule.lock'), '{not json');
-
-      const run = await captureMigration({ cwd: tempDir });
-
-      expect(run.exitCode).toBe(0);
-      expect(run.stdout).toContain(
-        'Run `cc-safety-net rule update owner/repo#main/team-rules` to vendor it.',
-      );
-      expect(existsSync(join(rulesDir(tempDir), 'rule.lock'))).toBe(false);
-      expect(existsSync(cacheDir(tempDir))).toBe(false);
-    });
-  });
-
-  test('migrates the user scope with --global', async () => {
-    await withTempDir('safety-net-rule-sync-global-', async (tempDir) => {
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'missing' }]);
-
-      const run = await withEnv({ CC_SAFETY_NET_HOME: join(tempDir, '.cc-safety-net') }, () =>
-        captureMigration({ global: true }),
-      );
-
-      expect(run.exitCode).toBe(0);
-      expect(run.stdout).toContain(
-        'Run `cc-safety-net rule update owner/repo#main/team-rules --global` to vendor it.',
-      );
-      expect(existsSync(join(rulesDir(tempDir), 'rule.lock'))).toBe(false);
-      expect(existsSync(cacheDir(tempDir))).toBe(false);
-    });
-  });
-
-  test('reports the leftover paths doctor points at the migration', async () => {
-    await withTempDir('safety-net-rule-sync-detect-', async (tempDir) => {
-      expect(findRuleV2Leftovers(tempDir)).toEqual([]);
-      writeV2Leftovers(tempDir, [{ name: 'team-rules', cached: 'valid' }]);
-
-      expect(findRuleV2Leftovers(tempDir)).toEqual([
-        join(rulesDir(tempDir), 'rule.lock'),
-        cacheDir(tempDir),
-      ]);
-      await captureMigration({ cwd: tempDir });
-      expect(findRuleV2Leftovers(tempDir)).toEqual([]);
-    });
+  test('CC_SAFETY_NET_HOME moves the user scope the probe reads', () => {
+    const { root, paths } = findLeftovers(
+      {
+        'home/.cc-safety-net/rules/rule.lock': '{}\n',
+        'relocated/rules/rule.lock': '{}\n',
+      },
+      { CC_SAFETY_NET_HOME: 'relocated' },
+    );
+    expect(paths).toEqual([join(root, 'relocated/rules/rule.lock')]);
   });
 });
 
-async function captureMigration(options: { cwd?: string; global?: boolean }) {
-  const { result, stdout, stderr } = await captureConsoleOutput(async () =>
-    runRuleSyncMigration(options),
+/**
+ * The other half of `rule sync`: the one-time, offline migration of a version 2 lock and cache.
+ * Each row seeds the leftovers a v2 install would have published, runs the migration on both
+ * implementations over twin trees, and compares the report, the exit code and what survived —
+ * because the failure that matters here is a run that prunes the last offline copy of a rulebook
+ * it could not vendor.
+ */
+
+const PROJECT_SCOPE = 'project/.cc-safety-net';
+const USER_SCOPE = 'home/.cc-safety-net';
+const SPEC = 'acme/repo#main/x';
+const CACHED_RULEBOOK = v1Rulebook('x');
+const DIGEST = sha256Digest(CACHED_RULEBOOK);
+const LOCK_ENTRY = {
+  spec: SPEC,
+  digest: DIGEST,
+  name: 'x',
+  owner: 'acme',
+  repo: 'repo',
+  // The ref the v2 install displayed, which is what it slugged the cache directory with; a
+  // different spelling from the spec's `main` is what tells the two slug sources apart.
+  display_ref: 'v2.0',
+};
+const STALE_ENTRY = { ...LOCK_ENTRY, digest: sha256Digest('{"rulebook_version":1}\n') };
+const CANNOT_MIGRATE = `Cannot migrate: the rules config in ${posix.join('<root>', PROJECT_SCOPE)} is missing or unreadable while v2 leftovers remain. Restore rule.json, then re-run rule sync.`;
+
+const cachedAt = (scope: string, dir: string) => `${scope}/cache/rulebooks/${dir}/rulebook.json`;
+const removedUnder = (scope: string) =>
+  `Removed the v2 lock and cache under ${posix.join('<root>', scope)}.`;
+
+type Tree = { path: string; content?: string }[];
+
+const held = (tree: Tree, path: string) => tree.find((entry) => entry.path === path)?.content;
+const holdsAny = (tree: Tree, fragment: string) =>
+  tree.some((entry) => entry.path.includes(fragment));
+
+async function runMigration(spec: TreeSpec, global: boolean) {
+  return runManagerDifferential(spec, (side, environment) =>
+    captureConsole(() =>
+      runPortedMigration(
+        environment,
+        global ? { cwd: side.project, global: true } : { cwd: side.project },
+      ),
+    ),
   );
-  return { exitCode: result, stdout: stdout.join('\n'), stderr: stderr.join('\n') };
 }
 
-function rulesDir(root: string): string {
-  return join(root, '.cc-safety-net', 'rules');
-}
-
-function cacheDir(root: string): string {
-  return join(root, '.cc-safety-net', 'cache');
-}
-
-function vendoredPath(root: string, name: string): string {
-  return join(rulesDir(root), name, 'rulebook.json');
-}
-
-function rulebookJson(name: string, version = '1.0.0'): string {
-  return JSON.stringify({
-    rulebook_version: 1,
-    name,
-    version,
-    allowed_commands: ['echo'],
-    rules: [
-      {
-        name: `${name}-rule`,
-        command: 'echo',
-        block_args: ['danger'],
-        reason: 'Do not run echo danger.',
-      },
+const migrationRows: {
+  name: string;
+  files: TreeSpec;
+  global?: boolean;
+  code: number;
+  lines: string[];
+  errors?: string[];
+  check: (tree: Tree) => void;
+}[] = [
+  {
+    name: 'a scope with nothing left behind says so and touches nothing',
+    files: { [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([]) },
+    code: 0,
+    lines: [
+      `No v2 lock or cache leftovers found in ${posix.join('<root>', PROJECT_SCOPE)}; nothing to migrate.`,
     ],
-  });
-}
+    check: (tree) => expect(holdsAny(tree, 'rules/x')).toBeFalse(),
+  },
+  {
+    name: 'a cached copy that still matches its digest is vendored offline',
+    files: {
+      [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([SPEC]),
+      [`${PROJECT_SCOPE}/rules/rule.lock`]: v2Lock([LOCK_ENTRY]),
+      [cachedAt(PROJECT_SCOPE, v2CacheDir(LOCK_ENTRY))]: CACHED_RULEBOOK,
+    },
+    code: 0,
+    lines: [`Vendored ${SPEC} from the v2 cache.`, removedUnder(PROJECT_SCOPE)],
+    check: (tree) => {
+      expect(held(tree, `${PROJECT_SCOPE}/rules/x/rulebook.json`)).toBe(CACHED_RULEBOOK);
+      expect(holdsAny(tree, 'cache')).toBeFalse();
+      expect(holdsAny(tree, 'rule.lock')).toBeFalse();
+    },
+  },
+  {
+    name: 'a cached copy whose digest no longer matches names the command that refetches it',
+    files: {
+      [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([SPEC]),
+      [`${PROJECT_SCOPE}/rules/rule.lock`]: v2Lock([STALE_ENTRY]),
+      [cachedAt(PROJECT_SCOPE, v2CacheDir(STALE_ENTRY))]: CACHED_RULEBOOK,
+    },
+    code: 0,
+    lines: [
+      `Could not migrate ${SPEC} from the v2 cache. Run \`cc-safety-net rule update ${SPEC}\` to vendor it.`,
+      removedUnder(PROJECT_SCOPE),
+    ],
+    check: (tree) => expect(holdsAny(tree, 'rules/x')).toBeFalse(),
+  },
+  {
+    name: 'the user scope names the refetch command with the flag that reaches it',
+    files: {
+      [`${USER_SCOPE}/rules/rule.json`]: rulesConfig([SPEC]),
+      [`${USER_SCOPE}/rules/rule.lock`]: v2Lock([STALE_ENTRY]),
+    },
+    global: true,
+    code: 0,
+    lines: [
+      `Could not migrate ${SPEC} from the v2 cache. Run \`cc-safety-net rule update ${SPEC} --global\` to vendor it.`,
+      removedUnder(USER_SCOPE),
+    ],
+    check: (tree) => expect(holdsAny(tree, 'rule.lock')).toBeFalse(),
+  },
+  {
+    name: 'a vendored file that is already usable is left alone and reported on no line',
+    files: {
+      [`${USER_SCOPE}/rules/rule.json`]: rulesConfig([SPEC]),
+      [`${USER_SCOPE}/rules/rule.lock`]: v2Lock([LOCK_ENTRY]),
+      [`${USER_SCOPE}/rules/x/rulebook.json`]: CACHED_RULEBOOK,
+      [cachedAt(USER_SCOPE, v2CacheDir(LOCK_ENTRY))]: CACHED_RULEBOOK,
+    },
+    global: true,
+    code: 0,
+    lines: [removedUnder(USER_SCOPE)],
+    check: (tree) =>
+      expect(held(tree, `${USER_SCOPE}/rules/x/rulebook.json`)).toBe(CACHED_RULEBOOK),
+  },
+  {
+    name: 'a vendored file that no longer parses is restored, not counted as migrated',
+    files: {
+      [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([SPEC]),
+      [`${PROJECT_SCOPE}/rules/rule.lock`]: v2Lock([LOCK_ENTRY]),
+      [`${PROJECT_SCOPE}/rules/x/rulebook.json`]: '{ half a rulebook',
+      [cachedAt(PROJECT_SCOPE, v2CacheDir(LOCK_ENTRY))]: CACHED_RULEBOOK,
+    },
+    code: 0,
+    lines: [
+      `Restored ${SPEC} from the v2 cache over an invalid file.`,
+      removedUnder(PROJECT_SCOPE),
+    ],
+    check: (tree) =>
+      expect(held(tree, `${PROJECT_SCOPE}/rules/x/rulebook.json`)).toBe(CACHED_RULEBOOK),
+  },
+  {
+    name: 'a lock row that recorded only the spec still finds its cache directory',
+    files: {
+      [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([SPEC]),
+      [`${PROJECT_SCOPE}/rules/rule.lock`]: json({
+        version: 2,
+        rulebooks: [{ spec: SPEC, digest: DIGEST }],
+      }),
+      [cachedAt(PROJECT_SCOPE, `acme-repo-main-x--${DIGEST.slice(7, 19)}`)]: CACHED_RULEBOOK,
+    },
+    code: 0,
+    lines: [`Vendored ${SPEC} from the v2 cache.`, removedUnder(PROJECT_SCOPE)],
+    check: (tree) =>
+      expect(held(tree, `${PROJECT_SCOPE}/rules/x/rulebook.json`)).toBe(CACHED_RULEBOOK),
+  },
+  {
+    name: 'a cache directory with no lock beside it is still pruned',
+    files: {
+      [`${PROJECT_SCOPE}/rules/rule.json`]: rulesConfig([]),
+      [cachedAt(PROJECT_SCOPE, v2CacheDir(LOCK_ENTRY))]: CACHED_RULEBOOK,
+    },
+    code: 0,
+    lines: [removedUnder(PROJECT_SCOPE)],
+    check: (tree) => expect(holdsAny(tree, 'cache')).toBeFalse(),
+  },
+  {
+    name: 'a rule config that cannot be read keeps the leftovers it cannot interpret',
+    files: {
+      [`${PROJECT_SCOPE}/rules/rule.json`]: '{ not json',
+      [`${PROJECT_SCOPE}/rules/rule.lock`]: v2Lock([LOCK_ENTRY]),
+      [cachedAt(PROJECT_SCOPE, v2CacheDir(LOCK_ENTRY))]: CACHED_RULEBOOK,
+    },
+    code: 1,
+    lines: [],
+    errors: [CANNOT_MIGRATE],
+    check: (tree) => {
+      expect(holdsAny(tree, 'rule.lock')).toBeTrue();
+      expect(held(tree, cachedAt(PROJECT_SCOPE, v2CacheDir(LOCK_ENTRY)))).toBe(CACHED_RULEBOOK);
+    },
+  },
+  {
+    name: 'a missing rule config with lock rows keeps the only record of those specs',
+    files: { [`${PROJECT_SCOPE}/rules/rule.lock`]: v2Lock([LOCK_ENTRY]) },
+    code: 1,
+    lines: [],
+    errors: [CANNOT_MIGRATE],
+    check: (tree) => expect(holdsAny(tree, 'rule.lock')).toBeTrue(),
+  },
+  {
+    name: 'a missing rule config with an empty lock has nothing to lose and the lock goes',
+    files: { [`${PROJECT_SCOPE}/rules/rule.lock`]: json({ version: 2, rulebooks: [] }) },
+    code: 0,
+    lines: [removedUnder(PROJECT_SCOPE)],
+    check: (tree) => expect(holdsAny(tree, 'rule.lock')).toBeFalse(),
+  },
+];
 
-/** The on-disk shape a v2 install left behind: a lock plus a digest-named cache directory. */
-function writeV2Leftovers(root: string, sources: readonly V2Source[]): void {
-  const dir = rulesDir(root);
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(
-    join(dir, 'rule.json'),
-    JSON.stringify({
-      version: 1,
-      rules: sources.map((source) => `owner/repo#main/${source.name}`),
-      overrides: {},
-      transparent_wrappers: [],
-    }),
-  );
-  writeFileSync(
-    join(dir, 'rule.lock'),
-    JSON.stringify({
-      version: 1,
-      rulebooks: sources.map((source) => ({
-        spec: `owner/repo#main/${source.name}`,
-        kind: 'github',
-        owner: 'owner',
-        repo: 'repo',
-        ref: 'main',
-        commit: 'a'.repeat(40),
-        path: `.cc-safety-net/rules/${source.name}/rulebook.json`,
-        name: source.name,
-        version: '1.0.0',
-        digest: digestOf(cachedContent(source)),
-      })),
-    }),
-  );
-  for (const source of sources) writeCachedRulebook(root, source);
-}
-
-function writeCachedRulebook(root: string, source: V2Source): void {
-  if (source.cached === 'missing') return;
-  const digest = digestOf(cachedContent(source)).slice('sha256:'.length, 'sha256:'.length + 12);
-  const slug = `owner-repo-main-${source.name}`;
-  const dir = join(cacheDir(root), 'rulebooks', `${slug}--${digest}`);
-  mkdirSync(dir, { recursive: true });
-  writeFileSync(
-    join(dir, 'rulebook.json'),
-    source.cached === 'mismatch' ? rulebookJson(source.name, '9.9.9') : cachedContent(source),
-  );
-}
-
-function cachedContent(source: V2Source): string {
-  return source.cached === 'invalid'
-    ? JSON.stringify({ rulebook_version: 1, name: source.name })
-    : rulebookJson(source.name);
-}
-
-function digestOf(content: string): string {
-  return `sha256:${createHash('sha256').update(content).digest('hex')}`;
-}
+describe('runRuleSyncMigration', () => {
+  for (const row of migrationRows) {
+    test(row.name, async () => {
+      const agreed = await runMigration(row.files, row.global === true);
+      expect(agreed.results.returned).toBe(row.code);
+      expect(agreed.results.log[0]).toStartWith('`cc-safety-net rule sync` is deprecated:');
+      expect(agreed.results.log.slice(1)).toEqual(row.lines);
+      expect(agreed.results.error).toEqual(row.errors ?? []);
+      row.check(agreed.tree);
+    });
+  }
+});

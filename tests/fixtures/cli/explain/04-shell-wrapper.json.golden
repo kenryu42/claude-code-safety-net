@@ -1,0 +1,73 @@
+{
+  "trace": {
+    "steps": [
+      {
+        "type": "parse",
+        "input": "sh -c 'git reset --hard'",
+        "segments": [
+          [
+            "sh",
+            "-c",
+            "git reset --hard"
+          ]
+        ]
+      }
+    ],
+    "segments": [
+      {
+        "index": 0,
+        "steps": [
+          {
+            "type": "shell-wrapper",
+            "wrapper": "sh",
+            "innerCommand": "git reset --hard"
+          },
+          {
+            "type": "recurse",
+            "reason": "shell-wrapper",
+            "innerCommand": "git reset --hard",
+            "depth": 1
+          },
+          {
+            "type": "rule-check",
+            "rule": "git:analyzeGitMatch",
+            "matched": true,
+            "reason": "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first."
+          }
+        ]
+      }
+    ]
+  },
+  "result": "blocked",
+  "reason": "git reset --hard destroys all uncommitted changes permanently. Use 'git stash' first.",
+  "segment": "sh -c git reset --hard",
+  "ruleId": "git.reset-hard",
+  "configSource": null,
+  "configValid": true,
+  "effectiveLevel": "standard",
+  "selectedPreset": "standard",
+  "effectiveCapabilities": {
+    "fail_closed": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_rm": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    },
+    "paranoid_interpreters": {
+      "enabled": false,
+      "source": "preset",
+      "sources": [
+        "policy safety.level=standard"
+      ]
+    }
+  },
+  "destructiveCommandRuleOverrides": {}
+}

@@ -1,0 +1,38 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  python -c "import os; os.system('rm -rf /')"
+
+STEP 1 - Split shell commands
+  Segment 1: ["python","-c","import os; os.system('rm -rf /')"]
+
+STEP 2 - Detect interpreter
+  Interpreter: python
+  Code:        import os; os.system('rm -rf /')
+
+  +- RECURSING -------------------------------------------
+  |
+  | 
+  | STEP 3 - Dangerous text check
+  |   Token:  os.system(rm -rf /
+  |   Result: MATCHED
+  | 
+  | STEP 4 - Dangerous text check
+  |   Token:  import os; os.system('rm -rf /')
+  |   Result: MATCHED
+  |
+  +--------------------------------------------------------
+
+RESULT
+  Status: BLOCKED
+  Reason: Interpreter code contains a dangerous command. Run the underlying
+          command directly so it can be analyzed, or use the safer alternative
+          for that command.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

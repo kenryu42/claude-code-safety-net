@@ -1,0 +1,33 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  sh -c 'git reset --hard'
+
+STEP 1 - Split shell commands
+  Segment 1: ["sh","-c","git reset --hard"]
+
+STEP 2 - Detect shell wrapper
+  Wrapper: sh -c
+  Inner:   git reset --hard
+
+  +- RECURSING -------------------------------------------
+  |
+  | 
+  | STEP 3 - Match rules
+  |   Rule:   git:analyzeGitMatch()
+  |   Result: MATCHED
+  |
+  +--------------------------------------------------------
+
+RESULT
+  Status: BLOCKED
+  Reason: git reset --hard destroys all uncommitted changes permanently. Use
+          'git stash' first.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

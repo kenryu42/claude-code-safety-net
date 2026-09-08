@@ -256,7 +256,7 @@ bun run build
 - **Diagnostics**: Run `bunx cc-safety-net doctor` to verify your setup is working correctly
 - **Debug Analysis**: Run `bunx cc-safety-net explain "git command"` to see step-by-step how a command is analyzed
 - **Project Knowledge**: Check `CLAUDE.md` or `AGENTS.md` for detailed architecture and conventions
-- **Code Patterns**: Review existing implementations in `src/analyzer/`
+- **Code Patterns**: Review existing implementations in `src/gate/analyzer/`
 - **Test Patterns**: See `tests/helpers.ts` for test utilities
 - **Issues**: Open an issue for bugs or feature requests
 

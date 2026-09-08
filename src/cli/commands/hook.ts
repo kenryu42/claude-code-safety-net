@@ -1,12 +1,12 @@
-import { hookIntegrations } from '@/cli/hook-integrations';
+import { runtimeHookIntegrationMetadata } from '@/hosts/catalog';
 import type { Command } from './types';
 
-const platformOptions = hookIntegrations.map((integration) => ({
+const platformOptions = runtimeHookIntegrationMetadata.map((integration) => ({
   flags: integration.flags.join(', '),
   description: integration.description,
 }));
 
-const platformExamples = hookIntegrations.flatMap((integration) =>
+const platformExamples = runtimeHookIntegrationMetadata.flatMap((integration) =>
   integration.flags.map((flag) => `cc-safety-net hook ${flag}`),
 );
 

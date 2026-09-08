@@ -1,0 +1,32 @@
++==========================================================+
+|  Command Analysis                                        |
++==========================================================+
+
+INPUT
+  busybox rm -rf /
+
+STEP 1 - Split shell commands
+  Segment 1: ["busybox","rm","-rf","/"]
+
+STEP 2 - Busybox wrapper
+  Subcommand: rm
+
+  +- RECURSING -------------------------------------------
+  |
+  | 
+  | STEP 3 - Match rules
+  |   Rule:   analyzer/rm.ts:analyzeRmMatch()
+  |   Result: MATCHED
+  |
+  +--------------------------------------------------------
+
+RESULT
+  Status: BLOCKED
+  Reason: rm -rf targeting root or home directory is extremely dangerous and
+          always blocked.
+
+CONFIG
+  Path: none
+  Safety preset: standard
+  Effective capabilities: standard
+  Rule customizations: 0

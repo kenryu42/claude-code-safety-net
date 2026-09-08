@@ -16,19 +16,23 @@ import { createInterface } from 'node:readline';
 import { parseCommandArgs } from '@/cli/args';
 import { policyCommand } from '@/cli/commands/policy';
 import { printCommandHelp } from '@/cli/help';
+import type { Environment } from '@/core/environment';
+import { writeJsonAtomic } from '@/core/policy/config-file';
 import {
   buildProjectPolicyFileValue,
   diffPolicyRows,
-  getProjectPolicyPath,
-  getUserPolicyDiagnostics,
-  mergeProjectPolicy,
-  projectPolicyProjection,
   readPolicyJson,
   readRuntimeUserBaseline,
-} from '@/engine/facade';
-import type { GuiPolicy } from '@/ir/policy';
-import { getUserPolicyPath, normalizeGuiPolicy, writeUserPolicyFromGui } from '@/policy/store';
-import { writeJsonAtomic } from '@/rules/policy/config-file';
+} from '@/core/policy/diff';
+import { mergeProjectPolicy } from '@/core/policy/merge';
+import { getProjectPolicyPath, getUserPolicyPath } from '@/core/policy/paths';
+import {
+  normalizeGuiPolicy,
+  projectPolicyProjection,
+  writeUserPolicyFromGui,
+} from '@/core/policy/store';
+import type { GuiPolicy } from '@/core/policy/types';
+import { getUserPolicyDiagnostics } from '@/core/policy/validate';
 
 type PolicyCommandOptions = {
   cwd?: string;
@@ -41,6 +45,7 @@ const POLICY_SUBCOMMANDS = new Set(['check', 'apply']);
 const UNSET = '(unset)';
 
 export async function runPolicyCommand(
+  environment: Environment,
   args: readonly string[],
   options: PolicyCommandOptions = {},
 ): Promise<number> {
@@ -70,12 +75,14 @@ export async function runPolicyCommand(
   }
 
   const targetPath = parsed.flags.global
-    ? getUserPolicyPath()
+    ? getUserPolicyPath(environment)
     : getProjectPolicyPath(options.cwd ?? process.cwd());
   const proposal = readPolicyJson(file);
   const diagnostics = [
     ...proposal.errors,
-    ...getUserPolicyDiagnostics(proposal.value).map((error) => `${file}: ${error}`),
+    ...getUserPolicyDiagnostics(proposal.value, environment.home).map(
+      (error) => `${file}: ${error}`,
+    ),
     // Writing while silently omitting a validated section would let apply claim
     // success for a policy that is not the one the proposal described.
     ...(!parsed.flags.global && isRecord(proposal.value) && proposal.value.audit !== undefined
@@ -89,19 +96,26 @@ export async function runPolicyCommand(
     return 1;
   }
 
-  const proposed = normalizeGuiPolicy(proposal.value);
+  const proposed = normalizeGuiPolicy(proposal.value, environment.home);
   console.log(`Scope: ${parsed.flags.global ? 'user' : 'project'} (${targetPath})`);
   console.log(`Proposal: ${file}`);
   if (parsed.flags.global) {
-    printPolicyDiff(normalizeGuiPolicy(readPolicyJson(targetPath).value), proposed, true);
+    printPolicyDiff(
+      normalizeGuiPolicy(readPolicyJson(targetPath).value, environment.home),
+      proposed,
+      true,
+    );
   }
   if (!parsed.flags.global) {
-    const user = readRuntimeUserBaseline().baseline;
+    const user = readRuntimeUserBaseline(environment).baseline;
     console.log('Effective policy (user + project merged):');
     printPolicyDiff(
-      mergeProjectPolicy(user, projectPolicyProjection(readPolicyJson(targetPath).value).policy)
+      mergeProjectPolicy(
+        user,
+        projectPolicyProjection(readPolicyJson(targetPath).value, environment.home).policy,
+      ).policy,
+      mergeProjectPolicy(user, projectPolicyProjection(proposal.value, environment.home).policy)
         .policy,
-      mergeProjectPolicy(user, projectPolicyProjection(proposal.value).policy).policy,
       false,
     );
   }
@@ -120,7 +134,7 @@ export async function runPolicyCommand(
     return 0;
   }
 
-  writeScopePolicy(targetPath, proposal.value, proposed, parsed.flags.global);
+  writeScopePolicy(environment, targetPath, proposal.value, proposed, parsed.flags.global);
   console.log(`Policy applied: ${targetPath}`);
   return 0;
 }
@@ -145,13 +159,14 @@ function confirmApply(
 }
 
 function writeScopePolicy(
+  environment: Environment,
   path: string,
   proposalValue: unknown,
   normalized: GuiPolicy,
   global: boolean,
 ): void {
   if (global) {
-    writeUserPolicyFromGui(normalized);
+    writeUserPolicyFromGui(environment, normalized);
     return;
   }
   mkdirSync(dirname(path), { recursive: true });

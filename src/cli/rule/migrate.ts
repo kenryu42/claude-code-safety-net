@@ -1,8 +1,5 @@
 import { dirname, join } from 'node:path';
-import type { CustomRule } from '@/ir/policy';
-import { validateConfig } from '@/rules/config';
-import { readRulesConfig, type SyncRulesConfigOptions, syncRulesConfig } from '@/rules/policy';
-import { writeJsonAtomic } from '@/rules/policy/config-file';
+import type { Environment } from '@/core/environment';
 import {
   getPolicyFilesystemTargetForPath,
   type PolicyFilesystemScope,
@@ -10,14 +7,18 @@ import {
   readPolicyFile,
   removePolicyFile,
   writePolicyFileAtomic,
-} from '@/rules/policy/filesystem';
+} from '@/core/io/safe-read';
 import {
-  getLegacyProjectRulesConfigPath,
   getLegacyUserRulesConfigPath,
-  getProjectRulesConfigPath,
-  getScopePaths,
-  getUserRulesConfigPath,
-} from '@/rules/policy/paths';
+  validateConfig,
+  writeJsonAtomic,
+} from '@/core/policy/config-file';
+import { getProjectRulesConfigPath, getUserRulesConfigPath } from '@/core/policy/paths';
+import { readRulesConfig } from '@/core/policy/rules-config';
+import type { CustomRule } from '@/core/policy/types';
+import { getLegacyProjectRulesConfigPath, getScopePaths } from '@/rules-manager/paths';
+import { syncRulesConfig } from '@/rules-manager/sync';
+import type { SyncRulesConfigOptions } from '@/rules-manager/types';
 
 const PROJECT_MIGRATED_FROM = '.safety-net.json';
 const USER_MIGRATED_FROM = '~/.cc-safety-net/config.json';
@@ -43,9 +44,12 @@ interface LegacyRulesConfig {
 
 type FileSnapshot = { target: PolicyFilesystemTarget; content: string | null };
 
-export async function runRulesMigrate(options: RulesMigrateOptions): Promise<number> {
+export async function runRulesMigrate(
+  environment: Environment,
+  options: RulesMigrateOptions,
+): Promise<number> {
   const results = [
-    await migrateRulesScope({
+    await migrateRulesScope(environment, {
       legacyPath: getLegacyProjectRulesConfigPath({ cwd: options.cwd }),
       configPath: getProjectRulesConfigPath(options.cwd),
       defaultRulebookName: 'project-rules',
@@ -53,9 +57,9 @@ export async function runRulesMigrate(options: RulesMigrateOptions): Promise<num
       cleanup: options.cleanup,
       syncOptions: { cwd: options.cwd },
     }),
-    await migrateRulesScope({
-      legacyPath: getLegacyUserRulesConfigPath(),
-      configPath: getUserRulesConfigPath(),
+    await migrateRulesScope(environment, {
+      legacyPath: getLegacyUserRulesConfigPath(environment),
+      configPath: getUserRulesConfigPath(environment),
       defaultRulebookName: 'user-rules',
       migratedFrom: USER_MIGRATED_FROM,
       cleanup: options.cleanup,
@@ -65,8 +69,11 @@ export async function runRulesMigrate(options: RulesMigrateOptions): Promise<num
   return results.every((result) => result) ? 0 : 1;
 }
 
-async function migrateRulesScope(options: MigrateRulesScopeOptions): Promise<boolean> {
-  const scope = getScopePaths(options.syncOptions);
+async function migrateRulesScope(
+  environment: Environment,
+  options: MigrateRulesScopeOptions,
+): Promise<boolean> {
+  const scope = getScopePaths(environment, options.syncOptions);
   const legacyTarget = getPolicyFilesystemTargetForPath(scope.filesystemScope, options.legacyPath);
   const legacyContent = readPolicyFile(legacyTarget);
   if (legacyContent === null) {
@@ -104,6 +111,7 @@ async function migrateRulesScope(options: MigrateRulesScopeOptions): Promise<boo
   const snapshots = [snapshotFile(scope.configTarget), snapshotFile(rulebookTarget)];
 
   const result = await writeAndSyncMigratedRulebook(
+    environment,
     options,
     scope.configTarget,
     rulebookTarget,
@@ -143,6 +151,7 @@ async function migrateRulesScope(options: MigrateRulesScopeOptions): Promise<boo
 }
 
 async function writeAndSyncMigratedRulebook(
+  environment: Environment,
   options: MigrateRulesScopeOptions,
   configTarget: PolicyFilesystemTarget,
   rulebookTarget: PolicyFilesystemTarget,
@@ -160,7 +169,7 @@ async function writeAndSyncMigratedRulebook(
       transparent_wrappers: transparentWrappers,
     });
     writeJsonAtomic(rulebookTarget, getMigratedRulebook(rulebookName, options.migratedFrom, rules));
-    return await syncRulesConfig(options.syncOptions);
+    return await syncRulesConfig(environment, options.syncOptions);
   } catch (error) {
     return { ok: false, errors: [error instanceof Error ? error.message : String(error)] };
   }

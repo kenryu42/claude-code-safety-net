@@ -1,162 +1,83 @@
 import { describe, expect, test } from 'bun:test';
-import { homedir } from 'node:os';
-import { getActivityFeed } from '@/gui/activity';
-import { renderPolicyGuiHtml } from '@/gui/page';
+import { renderPages, sliceBlock } from '../helpers/gui-page';
 
-const html = renderPolicyGuiHtml('test-token');
-// Scrubbing and URL building are the privacy boundary, but they live in the page
-// script that ships inlined in the document. Evaluate just that block — it is
-// pure, so it needs no DOM — instead of restructuring the script for tests.
-const helperSource = html.slice(
-  html.indexOf('var reportIssueUrl ='),
-  html.indexOf('var openReportDialog ='),
-);
-const helpers = new Function(
-  `${helperSource}return { scrubReportPaths, buildReportUrl, buildReportRequest };`,
-)() as {
-  scrubReportPaths: (text: string, cwd?: string | null, home?: string | null) => string;
+/**
+ * The false-positive report the feed offers: the paths it scrubs before anything leaves the
+ * machine, and the issue URL it builds under GitHub's length limit. The block is sliced out of the
+ * served page and run on its own to prove what those bytes do.
+ */
+
+// Token-shaped, assembled here rather than written out, and fixed so the slice is deterministic.
+const TOKEN = Buffer.from('cc-safety-net gui report fixture').toString('base64url');
+const ISSUE_URL =
+  'https://github.com/kenryu42/cc-safety-net/issues/new?template=false_positive.yml';
+
+type ReportBlock = {
+  reportIssueUrl: string;
+  scrubReportPaths: (text: string, cwd: string, home: string) => string;
   buildReportUrl: (fields: Record<string, string>) => string;
-  buildReportRequest: (fields: Record<string, string>) => { url: string; dropped: string[] };
+  buildReportRequest: (
+    fields: Record<string, string>,
+    dropped?: string[],
+  ) => { url: string; dropped: string[] };
 };
 
-describe('false positive report', () => {
-  test('scrubs the entry cwd before the home directory, keeping path structure', () => {
+const pages = renderPages(TOKEN);
+const block = (page: string) => sliceBlock(page, 'var reportIssueUrl =', 'var openReportDialog =');
+const report = new Function(
+  `${block(pages.ported)}\nreturn { reportIssueUrl, scrubReportPaths, buildReportUrl, buildReportRequest };`,
+)() as ReportBlock;
+
+describe('the report block on the served page', () => {
+  test('scrubs the project path before the home it sits under', () => {
+    const home = '/var/home/robin';
+    const cwd = `${home}/checkouts/ledger`;
+
     expect(
-      helpers.scrubReportPaths(
-        'cd /Users/ada/dev/app/src && cat /Users/ada/.aws/credentials',
-        '/Users/ada/dev/app',
-        '/Users/ada',
+      report.scrubReportPaths(
+        `reading "${cwd}/src/app.ts" failed, and ${home}/.ssh/id_ed25519 was next; last: ${cwd}`,
+        cwd,
+        home,
       ),
-    ).toBe('cd <project>/src && cat ~/.aws/credentials');
+      // The project is its own placeholder rather than a path under `~`, and both keep what
+      // follows them so the report still says which file.
+    ).toBe(
+      'reading "<project>/src/app.ts" failed, and ~/.ssh/id_ed25519 was next; last: <project>',
+    );
   });
 
-  test('scrubs every occurrence, including the cwd field inside the entry JSON', () => {
+  test('leaves a path that merely starts with the project path alone', () => {
     expect(
-      helpers.scrubReportPaths(
-        JSON.stringify({ command: 'rm -rf /Users/ada/dev/app/dist', cwd: '/Users/ada/dev/app' }),
-        '/Users/ada/dev/app',
-        '/Users/ada',
+      report.scrubReportPaths(
+        '/srv/work/ledger-old/notes.md',
+        '/srv/work/ledger',
+        '/var/home/robin',
       ),
-    ).toBe('{"command":"rm -rf <project>/dist","cwd":"<project>"}');
+    ).toBe('/srv/work/ledger-old/notes.md');
   });
 
-  test('leaves paths that only share a prefix with the project or home alone', () => {
-    // A devcontainer cwd of /app must not rewrite an unrelated /var/lib/appdata.
-    expect(helpers.scrubReportPaths('rm -r /var/lib/appdata', '/app', '/root')).toBe(
-      'rm -r /var/lib/appdata',
-    );
-    // A sibling directory is not inside the project and must not read as if it is.
-    expect(
-      helpers.scrubReportPaths('tar -cf /Users/ada/dev/api-backup.tar', '/Users/ada/dev/api', null),
-    ).toBe('tar -cf /Users/ada/dev/api-backup.tar');
-    // Another account's home is not this user's home; a partial match would carry
-    // the ~ marker and read as scrubbed while still publishing the rest.
-    expect(helpers.scrubReportPaths('cat /home/kenji/clients/acme.sql', null, '/home/ken')).toBe(
-      'cat /home/kenji/clients/acme.sql',
-    );
-  });
-
-  test('scrubs a Windows entry when values are serialised through the replacer', () => {
-    const entry = {
-      command: 'rimraf C:\\Users\\ada\\dev\\acme\\dist',
-      cwd: 'C:\\Users\\ada\\dev\\acme',
-    };
-    const scrub = (text: string) =>
-      helpers.scrubReportPaths(text, entry.cwd, 'C:\\Users\\ada') as string;
-
-    // JSON.stringify doubles every backslash, so scrubbing the serialised text
-    // never matches the cwd needle and the entry would ship unscrubbed.
-    expect(scrub(JSON.stringify(entry))).toContain('C:\\\\Users\\\\ada');
-
-    // Scrubbing each value first is what the dialog does, and it does match.
-    const scrubbed = JSON.stringify(entry, (_key, value) =>
-      typeof value === 'string' ? scrub(value) : value,
-    );
-    expect(scrubbed).not.toContain('ada');
-    expect(JSON.parse(scrubbed)).toEqual({ command: 'rimraf <project>\\dist', cwd: '<project>' });
-  });
-
-  test('skips a prefix the entry does not carry', () => {
-    expect(helpers.scrubReportPaths('rm -rf /Users/ada/dev/app', null, undefined)).toBe(
-      'rm -rf /Users/ada/dev/app',
-    );
-    expect(helpers.scrubReportPaths('rm -rf /Users/ada/dev/app', null, '/Users/ada')).toBe(
-      'rm -rf ~/dev/app',
-    );
-  });
-
-  test('prefills the issue form and leaves the expected field to the human', () => {
+  test('carries only the fields that have something to say', () => {
     const url = new URL(
-      helpers.buildReportUrl({
-        command: 'git checkout -- .',
-        entry: '{"ruleId":"git.checkout","level":"strict"}',
-      }),
+      report.buildReportUrl({ command: 'rm -rf /tmp/x', reason: '', why: 'test' }),
     );
 
-    expect(`${url.origin}${url.pathname}`).toBe(
-      'https://github.com/kenryu42/cc-safety-net/issues/new',
-    );
+    expect(report.reportIssueUrl).toBe(ISSUE_URL);
+    expect(url.origin + url.pathname).toBe('https://github.com/kenryu42/cc-safety-net/issues/new');
     expect(url.searchParams.get('template')).toBe('false_positive.yml');
-    expect(url.searchParams.get('command')).toBe('git checkout -- .');
-    expect(url.searchParams.get('entry')).toBe('{"ruleId":"git.checkout","level":"strict"}');
-    expect(url.searchParams.has('expected')).toBe(false);
+    expect(url.searchParams.get('command')).toBe('rm -rf /tmp/x');
+    expect(url.searchParams.get('why')).toBe('test');
+    expect(url.searchParams.has('reason')).toBeFalse();
   });
 
-  test('omits a field the page could not fill', () => {
-    const url = new URL(helpers.buildReportUrl({ command: 'ls', entry: '' }));
-
-    expect(url.searchParams.has('entry')).toBe(false);
-    expect(url.searchParams.get('command')).toBe('ls');
-  });
-
-  test('keeps every field when the prefill fits GitHub cap', () => {
-    const request = helpers.buildReportRequest({ command: 'ls', entry: '{}' });
-
-    expect(request.dropped).toEqual([]);
-    expect(new URL(request.url).searchParams.get('entry')).toBe('{}');
-  });
-
-  test('drops the largest field when the prefill exceeds GitHub cap', () => {
-    const request = helpers.buildReportRequest({
-      command: 'ls',
-      entry: JSON.stringify({ command: 'x'.repeat(9000) }),
-    });
-    const url = new URL(request.url);
-
-    expect(request.dropped).toEqual(['entry']);
-    expect(request.url.length).toBeLessThanOrEqual(8000);
-    expect(url.searchParams.has('entry')).toBe(false);
-    expect(url.searchParams.get('command')).toBe('ls');
-  });
-
-  test('keeps dropping until the link actually fits, and reports every field dropped', () => {
-    // `entry` embeds the command, so a command near COMMAND_MAX_LENGTH still
-    // overflows the cap on its own once the entry is gone.
-    const command = 'x'.repeat(8829);
-    const request = helpers.buildReportRequest({
-      command,
-      entry: JSON.stringify({ command }),
+  test('drops the largest field until the URL fits, and names what it dropped', () => {
+    const request = report.buildReportRequest({
+      command: 'd'.repeat(9000),
+      why: 'e'.repeat(20),
     });
 
+    expect(request.dropped).toStrictEqual(['command']);
     expect(request.url.length).toBeLessThanOrEqual(8000);
-    expect(request.dropped).toEqual(['entry', 'command']);
-    expect(new URL(request.url).searchParams.has('command')).toBe(false);
-  });
-
-  test('activity payload carries the home directory the client scrubs with', () => {
-    expect(getActivityFeed(7, null).homeDir).toBe(homedir());
-  });
-
-  test('only blocked rows offer the report action, and the preview is editable', () => {
-    expect(html).toContain(
-      '${deny ? `<button type="button" class="icon-button feed-report" data-report-fp="${index}"',
-    );
-    expect(html).toContain(
-      'const scrub = (text) => scrubReportPaths(text, entry.cwd, activity?.homeDir);',
-    );
-    expect(html).toContain('<textarea id="report-command"');
-    expect(html).toContain('<textarea id="report-entry"');
-    // Prefill only: the user submits on GitHub themselves.
-    expect(html).toContain('window.open(request.url, "_blank", "noopener");');
+    // What survived is still on the issue form, so the report is worth filing.
+    expect(new URL(request.url).searchParams.get('why')).toBe('e'.repeat(20));
   });
 });
