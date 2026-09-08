@@ -2,6 +2,7 @@ import { homedir } from 'node:os';
 import { isAbsolute, posix, resolve, win32 } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { AWK_INTERPRETERS, extractAwkSystemCommands } from '@/analyzer/awk';
+import { GIT_GLOBAL_OPTS_WITH_VALUE } from '@/analyzer/git/worktree';
 import {
   createPathCanonicalizationBudget,
   type PathCanonicalizationBudget,
@@ -487,6 +488,19 @@ function extractSegmentPathTargets(
   if (NON_PATH_OPERAND_COMMANDS.has(command)) {
     return assignmentValues;
   }
+  if (command === 'export') {
+    return [
+      ...assignmentValues,
+      ...post.flatMap((token) =>
+        /^[A-Za-z_][A-Za-z0-9_]*=/.test(token)
+          ? [token.slice(token.indexOf('=') + 1)]
+          : extractOperandPathCandidates(command, token),
+      ),
+    ];
+  }
+  if (command === 'git') {
+    return [...assignmentValues, ...extractGitOperandPathTargets(post)];
+  }
   if (PATTERN_FIRST_COMMANDS.has(command)) {
     return [...assignmentValues, ...extractPatternCommandTargets(post)];
   }
@@ -753,6 +767,31 @@ function extractOperandPathCandidates(command: string, token: string): string[] 
   if (command === 'zip' && /\.zip$/i.test(token)) return candidates;
   candidates.push(token);
   return candidates;
+}
+
+function extractGitOperandPathTargets(tokens: readonly string[]): string[] {
+  const targets: string[] = [];
+  for (let index = 0; index < tokens.length; index++) {
+    const token = tokens[index] ?? '';
+    if (token === '--' || !token.startsWith('-')) {
+      return [
+        ...targets,
+        ...tokens.slice(index).flatMap((arg) => extractOperandPathCandidates('git', arg)),
+      ];
+    }
+    targets.push(...extractOperandPathCandidates('git', token));
+    if (!GIT_GLOBAL_OPTS_WITH_VALUE.has(token)) continue;
+    const value = tokens[index + 1];
+    if (value === undefined) break;
+    // Global -c consumes a config assignment, not a literal equals-containing filename.
+    targets.push(
+      ...(token === '-c' && value.includes('=')
+        ? [value.slice(value.indexOf('=') + 1)]
+        : extractOperandPathCandidates('git', value)),
+    );
+    index++;
+  }
+  return targets;
 }
 
 /**
