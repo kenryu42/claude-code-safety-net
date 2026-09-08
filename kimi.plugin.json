@@ -1,6 +1,6 @@
 {
   "name": "cc-safety-net",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Block destructive commands and secret-file access before Kimi Code runs a tool.",
   "keywords": ["kimi-code", "security", "safety", "guardrail", "pretooluse"],
   "author": {

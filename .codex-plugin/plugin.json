@@ -1,6 +1,6 @@
 {
   "name": "cc-safety-net",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Block destructive commands and secret access",
   "author": {
     "name": "J Liew",
