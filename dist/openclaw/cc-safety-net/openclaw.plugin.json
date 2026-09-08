@@ -2,7 +2,7 @@
   "id": "cc-safety-net",
   "name": "CC Safety Net",
   "description": "Block destructive commands and secret-file access before OpenClaw runs a tool.",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "activation": {
     "onStartup": true
   },
